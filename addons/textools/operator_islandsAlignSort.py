@@ -202,4 +202,4 @@ def SortAndPack():
     bpy.context.area.type = lastOperator
 
 
-SortAndPack()
+# SortAndPack()

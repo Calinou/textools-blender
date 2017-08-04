@@ -21,12 +21,19 @@ bl_info = {
     "version": (1, 0, 0),
     "blender": (2, 71, 0),
     "category": "UV",
-    #"location": "UV Image Editor > UVs > UVs to grid of squares",
-    #"warning": "",
-#    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/UV/Uv_Squares"
+    "location": "UV Image Editor > UVs > UVs to grid of squares",
+    "warning": "",
+    "wiki_url": "http://renderhjs.net/textools/"
     }
 
+# Import local modules
+if "bpy" in locals():
+    import imp
+    imp.reload(operator_islandsAlignSort)
+else:
+    from . import operator_islandsAlignSort
 
+# Import general modules. Important: must be placed here and not on top
 import bpy
 import bmesh
 
@@ -65,22 +72,22 @@ class TexToolsPanel(bpy.types.Panel):
         col.operator(SortAndPack.bl_idname, text="Sort And Pack", icon = "GRID")
         
 
-        row = layout.row()
-        row.label(text="UV Island")
-        split = layout.split()
-        col = split.column(align=True)
-        col.operator(SortAndPack.bl_idname, text="Align by Edge")
-        col.operator(SortAndPack.bl_idname, text="Align LT,RT,TP,BM")
-        col.operator(SortAndPack.bl_idname, text="Rotate 90")
-        col.operator(SortAndPack.bl_idname, text="Sort & Align")
+        # row = layout.row()
+        # row.label(text="UV Island")
+        # split = layout.split()
+        # col = split.column(align=True)
+        # col.operator(SortAndPack.bl_idname, text="Align by Edge")
+        # col.operator(SortAndPack.bl_idname, text="Align LT,RT,TP,BM")
+        # col.operator(SortAndPack.bl_idname, text="Rotate 90")
+        # col.operator(SortAndPack.bl_idname, text="Sort & Align")
         
-        row = layout.row()
-        row.label(text="Misc")
-        split = layout.split()
-        col = split.column(align=True)
-        col.operator(SortAndPack.bl_idname, text="Islands to Smoothing Groups")
-        col.operator(SortAndPack.bl_idname, text="Symmetry")
-        col.operator(SortAndPack.bl_idname, text="Align Island to Edge")
+        # row = layout.row()
+        # row.label(text="Misc")
+        # split = layout.split()
+        # col = split.column(align=True)
+        # col.operator(SortAndPack.bl_idname, text="Islands to Smoothing Groups")
+        # col.operator(SortAndPack.bl_idname, text="Symmetry")
+        # col.operator(SortAndPack.bl_idname, text="Align Island to Edge")
         
         
         

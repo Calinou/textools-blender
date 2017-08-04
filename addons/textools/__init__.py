@@ -35,7 +35,8 @@ else:
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
-import bmesh
+import os
+# import bmesh
 import bpy.utils.previews
 
 
@@ -71,7 +72,7 @@ class TexToolsPanel(bpy.types.Panel):
         #col.operator(UvSquaresByShape.bl_idname, text="To Grid By Shape", icon = "GRID")
         # col.operator(SortAndPack.bl_idname, text="Sort & Pack", icon = "GRID")
         
-        col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="Align & Sort", icon = "GRID")
+        col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="Align & Sort", icon_value = preview_icons["islandAlignByEdge"].icon_id)
         
 
         # row = layout.row()
@@ -110,12 +111,15 @@ class TexToolsPanel(bpy.types.Panel):
 
 
 def registerIcon(fileName):
-    print("Register: "+fileName)
-    # previews.load("islandAlignByEdge")
-    # preview_icons.append()
+    # global custom_icons
+    print("---> Register: "+fileName.split('.')[0])
+    name = fileName.split('.')[0]
+    icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+    preview_icons.load(name, os.path.join(icons_dir, fileName), 'IMAGE')
     
 def register():
     # Register global Icons
+    # Reference: https://blender.stackexchange.com/questions/32335/how-to-implement-custom-icons-for-my-script-addon
     global preview_icons
     preview_icons = bpy.utils.previews.new()
     registerIcon("islandAlignByEdge.png")
@@ -124,12 +128,6 @@ def register():
     bpy.utils.register_class(TexToolsPanel)
     bpy.utils.register_class(SortAndPack)
     bpy.utils.register_class(operator_islandsAlignSort.IslandsAlignSort)
-
-   
-
-    #menu
-    #bpy.types.IMAGE_MT_uvs.append(menu_func_uv_squares)
-   
 
     #handle the keymap
 #    wm = bpy.context.window_manager

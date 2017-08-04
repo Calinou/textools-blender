@@ -24,15 +24,6 @@ class IslandsAlignSort(bpy.types.Operator):
         main(context)
         return {'FINISHED'}
 
-
-def register():
-    bpy.utils.register_class(UvOperator)
-
-
-def unregister():
-    bpy.utils.unregister_class(UvOperator)
-
-
 if __name__ == "__main__":
     #register()
     print("Calling from __main__")

@@ -36,7 +36,7 @@ else:
 # Import general modules. Important: must be placed here and not on top
 import bpy
 import bmesh
-
+import bpy.utils.previews
 
 
 class SortAndPack(bpy.types.Operator):
@@ -69,7 +69,7 @@ class TexToolsPanel(bpy.types.Panel):
         split = layout.split()
         col = split.column(align=True)
         #col.operator(UvSquaresByShape.bl_idname, text="To Grid By Shape", icon = "GRID")
-        col.operator(SortAndPack.bl_idname, text="Sort & Pack", icon = "GRID")
+        # col.operator(SortAndPack.bl_idname, text="Sort & Pack", icon = "GRID")
         
         col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="Align & Sort", icon = "GRID")
         
@@ -106,14 +106,26 @@ class TexToolsPanel(bpy.types.Panel):
 #        row.label(text="Symmetry")
 #        row = layout.row()
 #        row.label(text="Sort")
-        
-        
+  
+
+
+def registerIcon(fileName):
+    print("Register: "+fileName)
+    # previews.load("islandAlignByEdge")
+    # preview_icons.append()
     
 def register():
+    # Register global Icons
+    global preview_icons
+    preview_icons = bpy.utils.previews.new()
+    registerIcon("islandAlignByEdge.png")
+
+    # Register Operators
     bpy.utils.register_class(TexToolsPanel)
     bpy.utils.register_class(SortAndPack)
-
     bpy.utils.register_class(operator_islandsAlignSort.IslandsAlignSort)
+
+   
 
     #menu
     #bpy.types.IMAGE_MT_uvs.append(menu_func_uv_squares)
@@ -129,10 +141,19 @@ def register():
     
 
 def unregister():
+    # Unregister icons
+    global preview_icons
+    bpy.utils.previews.remove(preview_icons)
+
+    #Unregister Operators
     bpy.utils.unregister_class(TexToolsPanel)
     bpy.utils.unregister_class(SortAndPack)
-
     bpy.utils.unregister_class(operator_islandsAlignSort.IslandsAlignSort)
+
+
+    bpy.utils.unregister_module(__name__)
+
+
 
 #    bpy.types.IMAGE_MT_uvs.remove(menu_func_uv_squares)
     

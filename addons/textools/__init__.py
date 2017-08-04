@@ -72,7 +72,7 @@ class TexToolsPanel(bpy.types.Panel):
         #col.operator(UvSquaresByShape.bl_idname, text="To Grid By Shape", icon = "GRID")
         # col.operator(SortAndPack.bl_idname, text="Sort & Pack", icon = "GRID")
         
-        col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="Align & Sort", icon_value = preview_icons["islandAlignByEdge"].icon_id)
+        col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="Align & Sort", icon_value = preview_icons["islandsAlignSort"].icon_id)
         
 
         # row = layout.row()
@@ -119,10 +119,9 @@ def registerIcon(fileName):
     
 def register():
     # Register global Icons
-    # Reference: https://blender.stackexchange.com/questions/32335/how-to-implement-custom-icons-for-my-script-addon
     global preview_icons
     preview_icons = bpy.utils.previews.new()
-    registerIcon("islandAlignByEdge.png")
+    registerIcon("islandsAlignSort.png")
 
     # Register Operators
     bpy.utils.register_class(TexToolsPanel)

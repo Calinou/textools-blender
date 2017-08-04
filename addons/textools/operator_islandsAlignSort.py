@@ -4,6 +4,50 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
+
+
+def main(context):
+    print("Executing IslandsAlignSort main")
+   
+
+
+class IslandsAlignSort(bpy.types.Operator):
+    """UV Operator description"""
+    bl_idname = "uv.simple_operator"
+    bl_label = "Simple UV Operator"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.mode == 'EDIT_MESH')
+
+    def execute(self, context):
+        main(context)
+        return {'FINISHED'}
+
+
+def register():
+    bpy.utils.register_class(UvOperator)
+
+
+def unregister():
+    bpy.utils.unregister_class(UvOperator)
+
+
+if __name__ == "__main__":
+    #register()
+    print("Calling from __main__")
+    # test call
+    #bpy.ops.uv.simple_operator()
+
+
+
+
+
+
+
+
+
+
 def CollectUVIslands():
     print("Collect UV islands")
     

@@ -24,7 +24,7 @@ bl_info = {
     "location": "UV Image Editor > UVs > UVs to grid of squares",
     "warning": "",
     "wiki_url": "http://renderhjs.net/textools/"
-    }
+}
 
 # Import local modules
 if "bpy" in locals():
@@ -69,7 +69,9 @@ class TexToolsPanel(bpy.types.Panel):
         split = layout.split()
         col = split.column(align=True)
         #col.operator(UvSquaresByShape.bl_idname, text="To Grid By Shape", icon = "GRID")
-        col.operator(SortAndPack.bl_idname, text="Sort And Pack", icon = "GRID")
+        col.operator(SortAndPack.bl_idname, text="Sort & Pack", icon = "GRID")
+        
+        col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="Align & Sort", icon = "GRID")
         
 
         # row = layout.row()
@@ -110,6 +112,9 @@ class TexToolsPanel(bpy.types.Panel):
 def register():
     bpy.utils.register_class(TexToolsPanel)
     bpy.utils.register_class(SortAndPack)
+
+    bpy.utils.register_class(operator_islandsAlignSort.IslandsAlignSort)
+
     #menu
     #bpy.types.IMAGE_MT_uvs.append(menu_func_uv_squares)
    
@@ -126,6 +131,9 @@ def register():
 def unregister():
     bpy.utils.unregister_class(TexToolsPanel)
     bpy.utils.unregister_class(SortAndPack)
+
+    bpy.utils.unregister_class(operator_islandsAlignSort.IslandsAlignSort)
+
 #    bpy.types.IMAGE_MT_uvs.remove(menu_func_uv_squares)
     
     # handle the keymap

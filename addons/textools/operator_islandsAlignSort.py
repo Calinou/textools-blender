@@ -54,7 +54,7 @@ def main(context):
 
 	islands = collectUVIslands()
 	
-	sizes = {}
+	sizes = {}	#https://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
 
 	for island in islands:
 		alignIslandMinimalBounds(uvLayer, island)

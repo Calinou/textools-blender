@@ -61,68 +61,36 @@ def main(context):
 
 
 def alignIslandMinimalBounds(uvLayer, faces):
-	print("Align island")
-
-	#Select Island
+	# Select Island
 	bpy.ops.uv.select_all(action='DESELECT')
 
 	for face in faces:
 		for loop in face.loops:
 			loop[uvLayer].select = True
 
-	steps = 12
+	steps = 8
 	angle = 70;
 
 	bboxPrevious = getSelectionBBox()
 
 	for i in range(0, steps):
-
-		print("Angle: "+str(angle))
-
+		# Rotate right
 		bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(0, 0, 1))
 		bbox = getSelectionBBox()
 
-		difference = bboxPrevious['minLength'] - bbox['minLength'];
-		
-		# if abs(difference)
-
-
-
 		if bbox['minLength'] < bboxPrevious['minLength']:
-			bboxPrevious = bbox;
+			bboxPrevious = bbox;	# Success
 		else:
+			# Rotate Left
 			bpy.ops.transform.rotate(value=(-angle*2 * pi / 180), axis=(0, 0, 1))
-			bboxPrevious = getSelectionBBox()
+			bbox = getSelectionBBox()
+			if bbox['minLength'] < bboxPrevious['minLength']:
+				bboxPrevious = bbox;	# Success
+			else:
+				# Restore angle
+				bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(0, 0, 1))
 
-
-
-		
 		angle = angle / 2
-
-
-	# for i in range(0, iterations):
-		
-	# 	angleBest = 0
-		
-	# 	bbox = getSelectionBBox()
-	# 	lengthA = bbox['minLength']
-		
-	# 	for j in range(1, steps-1):
-	# 		bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(-0, -0, -1))
-		
-	# 		bbox = getSelectionBBox()
-	# 		lengthB = bbox['minLength']
-	# 		if lengthB < lengthA:
-	# 			lengthA = lengthB;
-	# 			angleBest = j*angle
-		
-	# 	angleCorrection = angleBest - angle*(steps-1)
-	# 	#if i != 
-		
-	# 	bpy.ops.transform.rotate(value=(angleCorrection * pi / 180), axis=(-0, -0, -1))	
-		#print("BBox Size "+str(bbox['minLength']))    
-	
-	
 
 
 def collectUVIslands():

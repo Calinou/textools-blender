@@ -48,16 +48,19 @@ def main(context):
 	if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
 		bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 
-	#Select all linked islands
-	#bpy.ops.uv.select_linked(extend=False)
-	
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 	
+
 	islands = collectUVIslands()
 	
+	sizes = {}
+
 	for island in islands:
 		alignIslandMinimalBounds(uvLayer, island)
+		
+		# bbox = getSelectionBBox()
+		
 
 
 def alignIslandMinimalBounds(uvLayer, faces):
@@ -69,7 +72,7 @@ def alignIslandMinimalBounds(uvLayer, faces):
 			loop[uvLayer].select = True
 
 	steps = 8
-	angle = 70;
+	angle = 45;	# Starting Angle, half each step
 
 	bboxPrevious = getSelectionBBox()
 
@@ -87,10 +90,13 @@ def alignIslandMinimalBounds(uvLayer, faces):
 			if bbox['minLength'] < bboxPrevious['minLength']:
 				bboxPrevious = bbox;	# Success
 			else:
-				# Restore angle
+				# Restore angle of this iteration
 				bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(0, 0, 1))
 
 		angle = angle / 2
+
+	if bboxPrevious['width'] < bboxPrevious['height']:
+		bpy.ops.transform.rotate(value=(90 * pi / 180), axis=(0, 0, 1))
 
 
 def collectUVIslands():
@@ -193,15 +199,14 @@ def getSelectionBBox():
 	
 	bbox['min'] = boundsMin
 	bbox['max'] = boundsMax
+	bbox['width'] = (boundsMax - boundsMin).x
+	bbox['height'] = (boundsMax - boundsMin).y
 	bbox['center'] = boundsCenter / countFaces
-	bbox['minLength'] = (boundsMax - boundsMin).x * (boundsMax - boundsMin).y 
+	bbox['minLength'] = min(bbox['width'], bbox['height'])
 				
 	return bbox;
-	
 
 
-	
-	
 if __name__ == "__main__":
 	print("__main__ called from islandsAlignSort.py")
 

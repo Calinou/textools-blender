@@ -41,6 +41,8 @@ import bpy
 import os
 import bpy.utils.previews
 
+def getIcon(name):
+	return preview_icons[name].icon_id
 
 class TexToolsPanel(bpy.types.Panel):
 #    """TexTools Panel"""
@@ -52,17 +54,26 @@ class TexToolsPanel(bpy.types.Panel):
 		layout = self.layout
 		
 		row = layout.row()
-		row.label(text="Prototype scripts area")
+		row.label(text="UV Islands")
 		
-		split = layout.split()
-		col = split.column(align=True)
+		col = layout.split().column(align=True)
 		#col.operator(UvSquaresByShape.bl_idname, text="To Grid By Shape", icon = "GRID")
 		# col.operator(SortAndPack.bl_idname, text="Sort & Pack", icon = "GRID")
 		
-		col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="Align & Sort", icon_value = preview_icons["islandsAlignSort"].icon_id)
-		col.operator(operator_checkerMap.CheckerMap.bl_idname, text="Checker Map", icon_value = preview_icons["islandsAlignSort"].icon_id)
+		col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort"))
+		col.operator(operator_checkerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
 		
-		
+		row = layout.row()
+		row.label(text="Rotate Islands")
+		col = layout.split().column(align=True)
+		row = col.row(align=True)
+		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="90 Left", icon_value = getIcon("turnLeft"))
+		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="90 Right", icon_value = getIcon("turnRight"))
+
+
+
+		row = layout.row()
+		row.label(text="Texture Maps")
 
 
 
@@ -112,7 +123,10 @@ def register():
 	global preview_icons
 	preview_icons = bpy.utils.previews.new()
 	registerIcon("islandsAlignSort.png")
-
+	registerIcon("checkerMap.png")
+	registerIcon("turnLeft.png")
+	registerIcon("turnRight.png")
+	
 	# Register Operators
 	bpy.utils.register_class(TexToolsPanel)
 	bpy.utils.register_class(operator_islandsAlignSort.IslandsAlignSort)

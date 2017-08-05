@@ -14,7 +14,7 @@ def main(context):
 class CheckerMap(bpy.types.Operator):
 	"""UV Operator description"""
 	bl_idname = "uv.textools_checker_map"
-	bl_label = "Assign Checker Map"
+	bl_label = "Add Checker Map"
 
 	@classmethod
 	def poll(cls, context):

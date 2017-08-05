@@ -5,35 +5,10 @@ from collections import defaultdict
 from math import pi
 
 
-
-def main(context):
-	print("Executing IslandsAlignSort main")
-   
-	
-	
-	
-	#not in Synced mode
-	if bpy.context.scene.tool_settings.use_uv_select_sync == False:
-		#Only in Face or Island mode
-		if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
-			bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
-	
-		#Select all linked islands
-		#bpy.ops.uv.select_linked(extend=False)
-		
-		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-		uvLayer = bm.loops.layers.uv.verify();
-		
-		islands = CollectUVIslands()
-		
-		for island in islands:
-			AlignIslandMinimalBounds(uvLayer, island)
-	
-
 class IslandsAlignSort(bpy.types.Operator):
 	bl_idname = "uv.textools_islands_align_sort"
-	# bl_label = "Align & Sort"
-	bl_label = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
+	bl_label = "Align & Sort"
+	bl_description = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
     # bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -58,27 +33,99 @@ class IslandsAlignSort(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-if __name__ == "__main__":
-	print("__main__ called from islandsAlignSort.py")
+def main(context):
+	print("Executing IslandsAlignSort main")
+   	
+	if bpy.context.space_data.pivot_point != 'CENTER':
+		bpy.context.space_data.pivot_point = 'CENTER'
 
- 	# test call
-	lastOperator = bpy.context.area.type;
-	if bpy.context.area.type != 'IMAGE_EDITOR':
-		bpy.context.area.type = 'IMAGE_EDITOR'
+	#not in Synced mode
+	if bpy.context.scene.tool_settings.use_uv_select_sync == False:
+		#Only in Face or Island mode
+		if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
+			bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
+	
+		#Select all linked islands
+		#bpy.ops.uv.select_linked(extend=False)
+		
+		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+		uvLayer = bm.loops.layers.uv.verify();
+		
+		islands = collectUVIslands()
+		
+		for island in islands:
+			alignIslandMinimalBounds(uvLayer, island)
 
-	bpy.ops.uv.textools_islands_align_sort()
 
-	#restore context, e.g. back to code editor instead of uv editor
-	bpy.context.area.type = lastOperator
+def alignIslandMinimalBounds(uvLayer, faces):
+	print("Align island")
+
+	#Select Island
+	bpy.ops.uv.select_all(action='DESELECT')
+
+	for face in faces:
+		for loop in face.loops:
+			loop[uvLayer].select = True
+
+
+	
+	
+	# lengthA = 0
+	# lengthB = 0
+	
+	steps = 12
+	angle = 70;
+
+	bboxPrevious = getSelectionBBox()
+
+	for i in range(0, steps):
+
+		print("Angle: "+str(angle))
+
+		bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(0, 0, 1))
+		bbox = getSelectionBBox()
+
+		difference = bboxPrevious['minLength'] - bbox['minLength'];
+		
+		# if abs(difference)
 
 
 
+		if bbox['minLength'] < bboxPrevious['minLength']:
+			bboxPrevious = bbox;
+		else:
+			bpy.ops.transform.rotate(value=(-angle*2 * pi / 180), axis=(0, 0, 1))
+			bboxPrevious = getSelectionBBox()
+
+		angle = angle / 2
 
 
+	# for i in range(0, iterations):
+		
+	# 	angleBest = 0
+		
+	# 	bbox = getSelectionBBox()
+	# 	lengthA = bbox['minLength']
+		
+	# 	for j in range(1, steps-1):
+	# 		bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(-0, -0, -1))
+		
+	# 		bbox = getSelectionBBox()
+	# 		lengthB = bbox['minLength']
+	# 		if lengthB < lengthA:
+	# 			lengthA = lengthB;
+	# 			angleBest = j*angle
+		
+	# 	angleCorrection = angleBest - angle*(steps-1)
+	# 	#if i != 
+		
+	# 	bpy.ops.transform.rotate(value=(angleCorrection * pi / 180), axis=(-0, -0, -1))	
+		#print("BBox Size "+str(bbox['minLength']))    
+	
+	
 
 
-
-def CollectUVIslands():
+def collectUVIslands():
 	print("Collect UV islands")
 	
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
@@ -152,8 +199,7 @@ def CollectUVIslands():
 	return islands
 		
 
-
-def GetSelectionBBox():
+def getSelectionBBox():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 	
@@ -185,51 +231,18 @@ def GetSelectionBBox():
 	return bbox;
 	
 
-def AlignIslandMinimalBounds(uvLayer, faces):
-	print("Align island")
-	
-	
-	
-	
-	#Select Island
-	bpy.ops.uv.select_all(action='DESELECT')
 
-	for face in faces:
-		for loop in face.loops:
-			loop[uvLayer].select = True
+	
+	
+if __name__ == "__main__":
+	print("__main__ called from islandsAlignSort.py")
 
+ 	# test call
+	lastOperator = bpy.context.area.type;
+	if bpy.context.area.type != 'IMAGE_EDITOR':
+		bpy.context.area.type = 'IMAGE_EDITOR'
 
-	iterations = 4
-	steps = 8
-	angle = 90 / steps
-	
-	lengthA = 0
-	lengthB = 0
-	
-	for i in range(0, iterations):
-		
-		angleBest = 0
-		
-		bbox = GetSelectionBBox()
-		lengthA = bbox['minLength']
-		
-		for j in range(1, steps-1):
-			bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(-0, -0, -1))
-		
-			bbox = GetSelectionBBox()
-			lengthB = bbox['minLength']
-			if lengthB < lengthA:
-				lengthA = lengthB;
-				angleBest = j*angle
-		
-		angleCorrection = angleBest - angle*(steps-1)
-		#if i != 
-		
-		bpy.ops.transform.rotate(value=(angleCorrection * pi / 180), axis=(-0, -0, -1))
-			
-			
-		#print("BBox Size "+str(bbox['minLength']))    
-	
-	print("Angle: "+str(angle))
-	
-	
+	bpy.ops.uv.textools_islands_align_sort()
+
+	#restore context, e.g. back to code editor instead of uv editor
+	bpy.context.area.type = lastOperator

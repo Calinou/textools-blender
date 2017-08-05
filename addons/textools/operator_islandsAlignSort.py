@@ -26,6 +26,10 @@ class IslandsAlignSort(bpy.types.Operator):
 		if not bpy.context.object.data.uv_layers:
 			return False 	#self.report({'WARNING'}, "Object must have more than one UV map")
 
+		#Not in Synced mode
+		if bpy.context.scene.tool_settings.use_uv_select_sync == True:
+			return False
+
 		return True
 
 	def execute(self, context):
@@ -39,22 +43,21 @@ def main(context):
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
 
-	#not in Synced mode
-	if bpy.context.scene.tool_settings.use_uv_select_sync == False:
-		#Only in Face or Island mode
-		if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
-			bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 	
-		#Select all linked islands
-		#bpy.ops.uv.select_linked(extend=False)
-		
-		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-		uvLayer = bm.loops.layers.uv.verify();
-		
-		islands = collectUVIslands()
-		
-		for island in islands:
-			alignIslandMinimalBounds(uvLayer, island)
+	#Only in Face or Island mode
+	if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
+		bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
+
+	#Select all linked islands
+	#bpy.ops.uv.select_linked(extend=False)
+	
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+	uvLayer = bm.loops.layers.uv.verify();
+	
+	islands = collectUVIslands()
+	
+	for island in islands:
+		alignIslandMinimalBounds(uvLayer, island)
 
 
 def alignIslandMinimalBounds(uvLayer, faces):
@@ -67,12 +70,6 @@ def alignIslandMinimalBounds(uvLayer, faces):
 		for loop in face.loops:
 			loop[uvLayer].select = True
 
-
-	
-	
-	# lengthA = 0
-	# lengthB = 0
-	
 	steps = 12
 	angle = 70;
 
@@ -97,6 +94,9 @@ def alignIslandMinimalBounds(uvLayer, faces):
 			bpy.ops.transform.rotate(value=(-angle*2 * pi / 180), axis=(0, 0, 1))
 			bboxPrevious = getSelectionBBox()
 
+
+
+		
 		angle = angle / 2
 
 

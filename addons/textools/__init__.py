@@ -57,59 +57,20 @@ class TexToolsPanel(bpy.types.Panel):
 		row.label(text="UV Islands")
 		
 		col = layout.split().column(align=True)
-		#col.operator(UvSquaresByShape.bl_idname, text="To Grid By Shape", icon = "GRID")
-		# col.operator(SortAndPack.bl_idname, text="Sort & Pack", icon = "GRID")
-		
 		col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort"))
-		col.operator(operator_checkerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
+		# col.operator(operator_checkerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
 		
 		row = layout.row()
-		row.label(text="Rotate Islands")
+		row.label(text="Layout")
 		col = layout.split().column(align=True)
 		row = col.row(align=True)
-		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="90 Left", icon_value = getIcon("turnLeft"))
-		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="90 Right", icon_value = getIcon("turnRight"))
-
-
+		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="-90", icon_value = getIcon("turnLeft"))
+		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="+90", icon_value = getIcon("turnRight"))
 
 		row = layout.row()
-		row.label(text="Texture Maps")
-
-
-
-		# row = layout.row()
-		# row.label(text="UV Island")
-		# split = layout.split()
-		# col = split.column(align=True)
-		# col.operator(SortAndPack.bl_idname, text="Align by Edge")
-		# col.operator(SortAndPack.bl_idname, text="Align LT,RT,TP,BM")
-		# col.operator(SortAndPack.bl_idname, text="Rotate 90")
-		# col.operator(SortAndPack.bl_idname, text="Sort & Align")
-		
-		# row = layout.row()
-		# row.label(text="Misc")
-		# split = layout.split()
-		# col = split.column(align=True)
-		# col.operator(SortAndPack.bl_idname, text="Islands to Smoothing Groups")
-		# col.operator(SortAndPack.bl_idname, text="Symmetry")
-		# col.operator(SortAndPack.bl_idname, text="Align Island to Edge")
-		
-		
-		
-#        col.label(text="Islands to Smoothing Groups")
-
-#        row.label(text="Prototype scripts area")
-#        row = layout.row()
-#        row.label(text="Align Island to Edge")
-#        row = layout.row()
-#        row.label(text="Align Islands LT,RT,TP,BM")
-#        row = layout.row()
-#        row.label(text="Rotate Islands 90")
-#        row = layout.row()
-#        row.label(text="Symmetry")
-#        row = layout.row()
-#        row.label(text="Sort")
-  
+		row.label(text="Texels")
+		col = layout.split().column(align=True)
+		col.operator(operator_checkerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
 
 
 def registerIcon(fileName):

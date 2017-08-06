@@ -52,15 +52,42 @@ def main(context):
 	uvLayer = bm.loops.layers.uv.verify();
 	
 
+	bboxAll = getSelectionBBox()
+
+
 	islands = collectUVIslands()
-	
 	sizes = {}	#https://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
 
-	for island in islands:
-		alignIslandMinimalBounds(uvLayer, island)
+
+	for i in range(0, len(islands)):
+		alignIslandMinimalBounds(uvLayer, islands[i])
+
+		# Collect BBox sizes
+		bbox = getSelectionBBox()
+		sizes[i] = bbox['minLength'];
+
+	# Sort islands by minimum size
+	sortedIslands = sorted(sizes.values())
+
+	pos = bboxAll['min'] #Vector((99999999.0,99999999.0))
+	for i in range(0, len(sortedIslands)):
+		island = islands[ sortedIslands[i] ]
+		selectFaces( island )
+
+	# for island in islands:
+	# 	alignIslandMinimalBounds(uvLayer, island)
 		
-		# bbox = getSelectionBBox()
-		
+	# 	bbox = getSelectionBBox()
+	# 	sizes[island] = bbox['minLength'];
+
+
+def setSelectFaces(faces):
+
+
+
+def getSelectedFaces:
+
+
 
 
 def alignIslandMinimalBounds(uvLayer, faces):

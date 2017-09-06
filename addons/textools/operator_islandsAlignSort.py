@@ -81,11 +81,11 @@ def main(context):
 	# 	sizes[island] = bbox['minLength'];
 
 
-def setSelectFaces(faces):
+#def setSelectFaces(faces):
 
 
 
-def getSelectedFaces:
+#def getSelectedFaces:
 
 
 

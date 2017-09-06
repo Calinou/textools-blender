@@ -6,7 +6,7 @@ from math import pi
 
 
 class IslandsAlignSort(bpy.types.Operator):
-	bl_idname = "uv.textools_islands_align_sort"
+	bl_idname = "uv.textools_IslandsAlignSort"
 	bl_label = "Align & Sort"
 	bl_description = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
     # bl_options = {'REGISTER', 'UNDO'}
@@ -242,7 +242,7 @@ if __name__ == "__main__":
 	if bpy.context.area.type != 'IMAGE_EDITOR':
 		bpy.context.area.type = 'IMAGE_EDITOR'
 
-	bpy.ops.uv.textools_islands_align_sort()
+	bpy.ops.uv.textools_IslandsAlignSort()
 
 	#restore context, e.g. back to code editor instead of uv editor
 	bpy.context.area.type = lastOperator

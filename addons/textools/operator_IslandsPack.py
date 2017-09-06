@@ -7,15 +7,15 @@ from math import pi
 
 
 def main(context):
-	print("Executing operator_checkerMap main()")
+	print("Executing operator_IslandsPack main()")
    
 	
 
-class CheckerMap(bpy.types.Operator):
+class IslandsPack(bpy.types.Operator):
 	"""UV Operator description"""
-	bl_idname = "uv.textools_CheckerMap"
-	bl_label = "Checker Map"
-	bl_description = "Add a checker map to the selected model and UV view"
+	bl_idname = "uv.textools_IslandsPack"
+	bl_label = "Pack Islands"
+	bl_description = "Pack islands and remain scale"
 
 	@classmethod
 	def poll(cls, context):

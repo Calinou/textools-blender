@@ -29,11 +29,13 @@ bl_info = {
 # Import local modules
 if "bpy" in locals():
 	import imp
-	imp.reload(operator_islandsAlignSort)
-	imp.reload(operator_checkerMap)
+	imp.reload(operator_IslandsAlignSort)
+	imp.reload(operator_CheckerMap)
+	imp.reload(operator_IslandsPack)
 else:
-	from . import operator_islandsAlignSort
-	from . import operator_checkerMap
+	from . import operator_IslandsAlignSort
+	from . import operator_CheckerMap
+	from . import operator_IslandsPack
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -57,20 +59,22 @@ class TexToolsPanel(bpy.types.Panel):
 		row.label(text="UV Islands")
 		
 		col = layout.split().column(align=True)
-		col.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort"))
+		col.operator(operator_IslandsAlignSort.IslandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort"))
+		col.operator(operator_IslandsPack.IslandsPack.bl_idname, icon_value = getIcon("islandsAlignSort"))
+		
 		# col.operator(operator_checkerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
 		
 		row = layout.row()
 		row.label(text="Layout")
 		col = layout.split().column(align=True)
 		row = col.row(align=True)
-		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="-90", icon_value = getIcon("turnLeft"))
-		row.operator(operator_islandsAlignSort.IslandsAlignSort.bl_idname, text="+90", icon_value = getIcon("turnRight"))
+		row.operator(operator_IslandsAlignSort.IslandsAlignSort.bl_idname, text="-90", icon_value = getIcon("turnLeft"))
+		row.operator(operator_IslandsAlignSort.IslandsAlignSort.bl_idname, text="+90", icon_value = getIcon("turnRight"))
 
 		row = layout.row()
 		row.label(text="Texels")
 		col = layout.split().column(align=True)
-		col.operator(operator_checkerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
+		col.operator(operator_CheckerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
 
 
 def registerIcon(fileName):
@@ -90,8 +94,9 @@ def register():
 	
 	# Register Operators
 	bpy.utils.register_class(TexToolsPanel)
-	bpy.utils.register_class(operator_islandsAlignSort.IslandsAlignSort)
-	bpy.utils.register_class(operator_checkerMap.CheckerMap)
+	bpy.utils.register_class(operator_IslandsAlignSort.IslandsAlignSort)
+	bpy.utils.register_class(operator_CheckerMap.CheckerMap)
+	bpy.utils.register_class(operator_IslandsPack.IslandsPack)
 
 	#handle the keymap
 #    wm = bpy.context.window_manager
@@ -109,8 +114,9 @@ def unregister():
 
 	#Unregister Operators
 	bpy.utils.unregister_class(TexToolsPanel)
-	bpy.utils.unregister_class(operator_islandsAlignSort.IslandsAlignSort)
-	bpy.utils.unregister_class(operator_checkerMap.CheckerMap)
+	bpy.utils.unregister_class(operator_IslandsAlignSort.IslandsAlignSort)
+	bpy.utils.unregister_class(operator_CheckerMap.CheckerMap)
+	bpy.utils.unregister_class(operator_IslandsPack.IslandsPack)
 
 
 	bpy.utils.unregister_module(__name__)

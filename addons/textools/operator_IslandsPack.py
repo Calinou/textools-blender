@@ -11,9 +11,8 @@ def main(context):
    
 	
 
-class IslandsPack(bpy.types.Operator):
-	"""UV Operator description"""
-	bl_idname = "uv.textools_IslandsPack"
+class operator_islandsPack(bpy.types.Operator):
+	bl_idname = "uv.textools_islands_pack"
 	bl_label = "Pack Islands"
 	bl_description = "Pack islands and remain scale"
 

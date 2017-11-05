@@ -5,8 +5,8 @@ from collections import defaultdict
 from math import pi
 
 
-class IslandsAlignSort(bpy.types.Operator):
-	bl_idname = "uv.textools_IslandsAlignSort"
+class operator_islandsAlignSort(bpy.types.Operator):
+	bl_idname = "uv.textools_islands_align_sort"
 	bl_label = "Align & Sort"
 	bl_description = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
     # bl_options = {'REGISTER', 'UNDO'}

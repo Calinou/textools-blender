@@ -7,7 +7,7 @@ from math import pi
 
 
 def main(context):
-	print("Executing operator_IslandsPack main()")
+	print("Executing operator_IslandsPack main() ")
    
 	
 

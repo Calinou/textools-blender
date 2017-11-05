@@ -32,10 +32,12 @@ if "bpy" in locals():
 	imp.reload(operator_islandsAlignSort)
 	imp.reload(operator_checkerMap)
 	imp.reload(operator_islandsPack)
+	imp.reload(operator_align)
 else:
 	from . import operator_islandsAlignSort
 	from . import operator_checkerMap
 	from . import operator_islandsPack
+	from . import operator_align
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -70,11 +72,17 @@ class TexToolsPanel(bpy.types.Panel):
 		row = col.row(align=True)
 		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="-90", icon_value = getIcon("turnLeft"))
 		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="+90", icon_value = getIcon("turnRight"))
+		row = col.row(align=True)
+		row.operator(operator_align.operator_align.bl_idname, text="Align", icon_value = getIcon("turnRight"))
+
 
 		row = layout.row()
 		row.label(text="Texels")
 		col = layout.split().column(align=True)
 		col.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
+
+		row = layout.row()
+		row.label(text="Baking")
 
 
 def registerIcon(fileName):
@@ -97,6 +105,7 @@ def register():
 	bpy.utils.register_class(operator_islandsAlignSort.operator_islandsAlignSort)
 	bpy.utils.register_class(operator_checkerMap.operator_checkerMap)
 	bpy.utils.register_class(operator_islandsPack.operator_islandsPack)
+	bpy.utils.register_class(operator_align.operator_align)
 
 	#bpy.utils.register_module(__name__)
 	#handle the keymap
@@ -118,7 +127,7 @@ def unregister():
 	bpy.utils.unregister_class(operator_islandsAlignSort.operator_islandsAlignSort)
 	bpy.utils.unregister_class(operator_checkerMap.operator_checkerMap)
 	bpy.utils.unregister_class(operator_islandsPack.operator_islandsPack)
-
+	bpy.utils.unregister_class(operator_align.operator_align)
 
 	bpy.utils.unregister_module(__name__)
 

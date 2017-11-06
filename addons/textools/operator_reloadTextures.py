@@ -23,6 +23,10 @@ class operator_reloadTextures(bpy.types.Operator):
 def main(context):
 	print("Executing operator_checkerMap main()")
 
+	#Reload all File images
+	for img in bpy.data.images :
+	    if img.source == 'FILE' :
+	         img.reload()
 
 
 # if __name__ == "__main__":

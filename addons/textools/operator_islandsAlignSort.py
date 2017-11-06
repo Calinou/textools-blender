@@ -14,6 +14,9 @@ class operator_islandsAlignSort(bpy.types.Operator):
 	@classmethod
 	def poll(cls, context):
 
+		if not bpy.context.active_object:
+			return False
+
 		#Only in Edit mode
 		if bpy.context.active_object.mode != 'EDIT':
 			return False

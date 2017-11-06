@@ -33,12 +33,14 @@ if "bpy" in locals():
 	imp.reload(operator_checkerMap)
 	imp.reload(operator_islandsPack)
 	imp.reload(operator_align)
+	imp.reload(operator_reloadTextures)
+
 else:
 	from . import operator_islandsAlignSort
 	from . import operator_checkerMap
 	from . import operator_islandsPack
 	from . import operator_align
-	
+	from . import operator_reloadTextures
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -80,6 +82,8 @@ class TexToolsPanel(bpy.types.Panel):
 		row.label(text="Texels")
 		col = layout.split().column(align=True)
 		col.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
+		col.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, icon_value = getIcon("checkerMap"))
+
 
 		row = layout.row()
 		row.label(text="Baking")
@@ -106,6 +110,8 @@ def register():
 	bpy.utils.register_class(operator_checkerMap.operator_checkerMap)
 	bpy.utils.register_class(operator_islandsPack.operator_islandsPack)
 	bpy.utils.register_class(operator_align.operator_align)
+	bpy.utils.register_class(operator_reloadTextures.operator_reloadTextures)
+	
 
 	#bpy.utils.register_module(__name__)
 	#handle the keymap
@@ -128,6 +134,9 @@ def unregister():
 	bpy.utils.unregister_class(operator_checkerMap.operator_checkerMap)
 	bpy.utils.unregister_class(operator_islandsPack.operator_islandsPack)
 	bpy.utils.unregister_class(operator_align.operator_align)
+	bpy.utils.unregister_class(operator_reloadTextures.operator_reloadTextures)
+
+	
 
 	bpy.utils.unregister_module(__name__)
 

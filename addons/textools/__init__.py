@@ -82,7 +82,7 @@ class TexToolsPanel(bpy.types.Panel):
 		row.label(text="Texels")
 		col = layout.split().column(align=True)
 		col.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
-		col.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, icon_value = getIcon("checkerMap"))
+		col.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, icon_value = getIcon("reloadTextures"))
 
 
 		row = layout.row()
@@ -103,6 +103,8 @@ def register():
 	registerIcon("checkerMap.png")
 	registerIcon("turnLeft.png")
 	registerIcon("turnRight.png")
+	registerIcon("reloadTextures.png")
+	
 	
 	# Register Operators
 	bpy.utils.register_class(TexToolsPanel)

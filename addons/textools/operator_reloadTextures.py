@@ -27,15 +27,3 @@ def main(context):
 	for img in bpy.data.images :
 	    if img.source == 'FILE' :
 	         img.reload()
-
-
-# if __name__ == "__main__":
-#  	# test call
-# 	lastOperator = bpy.context.area.type;
-# 	if bpy.context.area.type != 'IMAGE_EDITOR':
-# 		bpy.context.area.type = 'IMAGE_EDITOR'
-
-# 	bpy.ops.uv.textools_reload_textures()
-
-# 	#restore context, e.g. back to code editor instead of uv editor
-# 	bpy.context.area.type = lastOperator

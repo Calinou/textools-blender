@@ -1,5 +1,6 @@
 import bpy
 import bmesh
+import operator
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
@@ -55,27 +56,64 @@ def main(context):
 	uvLayer = bm.loops.layers.uv.verify();
 	
 
-	bboxAll = getSelectionBBox()
+	boundsAll = getSelectionBBox()
 
 
 	islands = collectUVIslands()
 	sizes = {}	#https://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
 
-
+	#Rotate to minimal bounds
 	for i in range(0, len(islands)):
 		alignIslandMinimalBounds(uvLayer, islands[i])
 
 		# Collect BBox sizes
-		bbox = getSelectionBBox()
-		sizes[i] = bbox['minLength'];
+		bounds = getSelectionBBox()
+		sizes[i] = bounds['minLength'] + i*0.000001;#Make each size unique
+		print("Size: "+str(sizes[i]))
+
+
+	#Position by sorted size in row
+	sortedSizes = sorted(sizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
+	for sortedSize in sortedSizes:
+		index = sortedSize[0]
+		island = islands[index]
+		print(">> "+str(sortedSize)+" >> "+str(sortedSize[0]))
+
+		#selectFaces( island )
+
 
 	# Sort islands by minimum size
-	sortedIslands = sorted(sizes.values())
+	# sortedIslands = sorted(sizes.values())
 
-	pos = bboxAll['min'] #Vector((99999999.0,99999999.0))
-	for i in range(0, len(sortedIslands)):
-		island = islands[ sortedIslands[i] ]
-		selectFaces( island )
+	# for size in sortedIslands:
+
+
+	# print("Sizes "+str(sortedIslands))
+
+
+
+	pos = boundsAll['min'] #Vector((99999999.0,99999999.0))
+	# for i in range(0, len(sortedIslands)):
+	# 	print(">> Select "+str(i)+" sorted: "+str(len(sortedIslands))+"x, islands: "+str(len(islands))+"x")
+	# 	island = islands[ sortedIslands[i] ]
+	# 	selectFaces( island )
+
+
+
+
+	# for index, length in sizes.items():
+	#     if length == sortedIslands[0]:
+	#         print("Found shorted island "+str(index))
+	#         break
+
+
+
+
+	# index = sizes[sortedIslands[0]]
+	# print("Index smallest: "+str(index))
+
+
+
 
 	# for island in islands:
 	# 	alignIslandMinimalBounds(uvLayer, island)

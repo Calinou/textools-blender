@@ -47,7 +47,6 @@ def main(context):
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
 
-	
 	#Only in Face or Island mode
 	if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
 		bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
@@ -60,7 +59,8 @@ def main(context):
 
 
 	islands = collectUVIslands()
-	sizes = {}	#https://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
+	allSizes = {}	#https://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
+	allBounds = {}
 
 	#Rotate to minimal bounds
 	for i in range(0, len(islands)):
@@ -68,19 +68,31 @@ def main(context):
 
 		# Collect BBox sizes
 		bounds = getSelectionBBox()
-		sizes[i] = bounds['minLength'] + i*0.000001;#Make each size unique
-		print("Size: "+str(sizes[i]))
+		allSizes[i] = bounds['area'] + i*0.000001;#Make each size unique
+		allBounds[i] = bounds;
+		print("Size: "+str(allSizes[i]))
 
 
 	#Position by sorted size in row
-	sortedSizes = sorted(sizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
+	sortedSizes = sorted(allSizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
+	offset = 0.0
 	for sortedSize in sortedSizes:
 		index = sortedSize[0]
 		island = islands[index]
+		bounds = allBounds[index]
 		print(">> "+str(sortedSize)+" >> "+str(sortedSize[0]))
+		
+		#Select Island
+		bpy.ops.uv.select_all(action='DESELECT')
+		setSelectFaces(island)
+		
+		#Offset Island
+		delta = boundsAll['min'] - bounds['min'];
+		bpy.ops.transform.translate(value=(delta.x, delta.y+offset, 0))
+		offset += bounds['height']+0.01
 
-		#selectFaces( island )
 
+	#pos =  #Vector((99999999.0,99999999.0))
 
 	# Sort islands by minimum size
 	# sortedIslands = sorted(sizes.values())
@@ -92,7 +104,7 @@ def main(context):
 
 
 
-	pos = boundsAll['min'] #Vector((99999999.0,99999999.0))
+	
 	# for i in range(0, len(sortedIslands)):
 	# 	print(">> Select "+str(i)+" sorted: "+str(len(sortedIslands))+"x, islands: "+str(len(islands))+"x")
 	# 	island = islands[ sortedIslands[i] ]
@@ -122,8 +134,13 @@ def main(context):
 	# 	sizes[island] = bbox['minLength'];
 
 
-#def setSelectFaces(faces):
+def setSelectFaces(faces):
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+	uvLayer = bm.loops.layers.uv.verify();
 
+	for face in faces:
+		for loop in face.loops:
+			loop[uvLayer].select = True
 
 
 #def getSelectedFaces:
@@ -135,9 +152,7 @@ def alignIslandMinimalBounds(uvLayer, faces):
 	# Select Island
 	bpy.ops.uv.select_all(action='DESELECT')
 
-	for face in faces:
-		for loop in face.loops:
-			loop[uvLayer].select = True
+	setSelectFaces(faces)
 
 	steps = 8
 	angle = 45;	# Starting Angle, half each step
@@ -270,6 +285,7 @@ def getSelectionBBox():
 	bbox['width'] = (boundsMax - boundsMin).x
 	bbox['height'] = (boundsMax - boundsMin).y
 	bbox['center'] = boundsCenter / countFaces
+	bbox['area'] = bbox['width'] * bbox['height']
 	bbox['minLength'] = min(bbox['width'], bbox['height'])
 				
 	return bbox;

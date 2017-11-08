@@ -47,6 +47,33 @@ import bpy
 import os
 import bpy.utils.previews
 
+from bpy.props import (StringProperty,
+                       BoolProperty,
+                       IntProperty,
+                       FloatProperty,
+                       FloatVectorProperty,
+                       EnumProperty,
+                       PointerProperty,
+                       )
+
+
+
+#Vector Int Property: https://blender.stackexchange.com/questions/22855/how-to-customise-add-properties-to-existing-blender-data
+# Store in Scene for UV: https://blender.stackexchange.com/questions/35007/how-can-i-add-a-checkbox-in-the-tools-ui
+
+class TexToolsSettings(bpy.types.PropertyGroup):
+	#Width and Height
+	size = bpy.props.IntVectorProperty(size=2, default = (1024,1024))
+	#Padding
+	padding = IntProperty(
+		name = "Padding",
+		description="Texture & UV height in pixels",
+		default = 4,
+		min = 1,
+		max = 16384
+	)
+
+
 def getIcon(name):
 	return preview_icons[name].icon_id
 
@@ -59,6 +86,14 @@ class TexToolsPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		
+		# display the properties
+		layout.prop(context.scene.texToolsSettings, "size", text="Size")
+		layout.prop(context.scene.texToolsSettings, "padding", text="Padding")
+		
+        # layout.prop(mytool, "my_int", text="Integer Property")
+        # layout.prop(mytool, "my_float", text="Float Property")
+
+
 		row = layout.row()
 		row.label(text="UV Islands")
 		
@@ -96,6 +131,12 @@ def registerIcon(fileName):
 	preview_icons.load(name, os.path.join(icons_dir, fileName), 'IMAGE')
 	
 def register():
+
+	#Register settings
+	bpy.utils.register_module(__name__)
+	bpy.types.Scene.texToolsSettings = PointerProperty(type=TexToolsSettings)
+	
+
 	# Register global Icons
 	global preview_icons
 	preview_icons = bpy.utils.previews.new()
@@ -105,7 +146,7 @@ def register():
 	registerIcon("turnRight.png")
 	registerIcon("reloadTextures.png")
 	
-	
+
 	# Register Operators
 	bpy.utils.register_class(TexToolsPanel)
 	bpy.utils.register_class(operator_islandsAlignSort.operator_islandsAlignSort)
@@ -141,6 +182,7 @@ def unregister():
 	
 
 	bpy.utils.unregister_module(__name__)
+	del bpy.types.Scene.texToolsSettings
 
 
 

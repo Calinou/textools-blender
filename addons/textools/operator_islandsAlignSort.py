@@ -5,7 +5,6 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
-
 class operator_islandsAlignSort(bpy.types.Operator):
 	bl_idname = "uv.textools_islands_align_sort"
 	bl_label = "Align & Sort"
@@ -35,6 +34,7 @@ class operator_islandsAlignSort(bpy.types.Operator):
 			return False
 
 		return True
+
 
 	def execute(self, context):
 		main(context)

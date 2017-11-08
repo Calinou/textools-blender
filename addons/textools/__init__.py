@@ -63,7 +63,11 @@ from bpy.props import (StringProperty,
 
 class TexToolsSettings(bpy.types.PropertyGroup):
 	#Width and Height
-	size = bpy.props.IntVectorProperty(size=2, default = (1024,1024))
+	size = bpy.props.IntVectorProperty(
+		size=2, 
+		default = (1024,1024),
+		subtype = "XYZ"
+	)
 	#Padding
 	padding = IntProperty(
 		name = "Padding",

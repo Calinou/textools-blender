@@ -1,5 +1,7 @@
 import bpy
 
+objects = []
+
 for obj in bpy.context.selected_objects:
     if obj.type == 'MESH':
         print("Copy Mesh: "+obj.name)
@@ -15,5 +17,15 @@ for obj in bpy.context.selected_objects:
         copy.select = True
         copy.name = "merged__"
         
+        #Collapse modifiers by converting to base object
         bpy.context.scene.objects.active = copy
-        bpy.ops.object.convert()#target='MESH'
+        bpy.ops.object.convert()
+        
+        objects.append(copy)
+
+#Join Selected Copies into one object
+bpy.ops.object.select_all(action='DESELECT')
+for obj in objects:
+    obj.select = True
+
+bpy.ops.object.join()

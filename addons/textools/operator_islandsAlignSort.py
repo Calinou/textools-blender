@@ -10,6 +10,7 @@ class operator_islandsAlignSort(bpy.types.Operator):
 	bl_label = "Align & Sort"
 	bl_description = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
     # bl_options = {'REGISTER', 'UNDO'}
+	is_vertical = bpy.props.BoolProperty(description="Vertical or Horizontal orientation", default=True)
 
 	@classmethod
 	def poll(cls, context):
@@ -37,6 +38,9 @@ class operator_islandsAlignSort(bpy.types.Operator):
 
 
 	def execute(self, context):
+		
+		print("is_vertical: "+str(self.is_vertical))
+
 		main(context)
 		return {'FINISHED'}
 

@@ -45,6 +45,7 @@ else:
 # Import general modules. Important: must be placed here and not on top
 import bpy
 import os
+import math
 import bpy.utils.previews
 
 from bpy.props import (StringProperty,
@@ -102,31 +103,49 @@ class TexToolsPanel(bpy.types.Panel):
 		row.label(text="UV Islands")
 		
 		col = layout.split().column(align=True)
-		col.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort"))
-	#	col.operator(operator_islandsPack.operator_islandsPack.bl_idname, icon_value = getIcon("islandsAlignSort"))
-		
-		# col.operator(operator_checkerMap.CheckerMap.bl_idname, icon_value = getIcon("checkerMap"))
-		
-		row = layout.row()
-		row.label(text="Layout")
-		col = layout.split().column(align=True)
 		row = col.row(align=True)
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="-90", icon_value = getIcon("turnLeft"))
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="+90", icon_value = getIcon("turnRight"))
+		row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
+		row.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+
 		row = col.row(align=True)
-		row.operator(operator_align.operator_align.bl_idname, text="Align", icon_value = getIcon("turnRight"))
+		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom"))
+		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft"))
+		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight"))
+		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop"))
+		
+		row = col.row(align=True)
+		#row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort"));
+		# row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).isVertical = False;
+
+		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = True;
+		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = False;
+		
+		# print("X: "+str(x.name))
+
+
+		# row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, isVertical = True, icon_value = getIcon("islandsAlignSort"));
+		# row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).isVertical = False;
+
+
+		#row.operator(bpy.ops.transform.rotate.bl_idname, text="Right", icon_value = getIcon("turnRight"))
+		
+
+		#bpy.ops.transform.rotate(value=1.5708, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
 
 		row = layout.row()
-		row.label(text="Texels")
+		row.label(text="Textures")
 		col = layout.split().column(align=True)
 		col.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
-		col.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, icon_value = getIcon("reloadTextures"))
+		col.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
 
 
 		row = layout.row()
 		row.label(text="Baking")
 
+
+
+keymaps = []
 
 def registerIcon(fileName):
 	# global custom_icons
@@ -149,17 +168,29 @@ def register():
 	registerIcon("turnLeft.png")
 	registerIcon("turnRight.png")
 	registerIcon("reloadTextures.png")
+	registerIcon("alignBottom.png")
+	registerIcon("alignLeft.png")
+	registerIcon("alignRight.png")
+	registerIcon("alignTop.png")
 	
 
 	# Register Operators
-	bpy.utils.register_class(TexToolsPanel)
+	#bpy.utils.register_class(TexToolsPanel)
 	bpy.utils.register_class(operator_islandsAlignSort.operator_islandsAlignSort)
 	bpy.utils.register_class(operator_checkerMap.operator_checkerMap)
 	bpy.utils.register_class(operator_islandsPack.operator_islandsPack)
 	bpy.utils.register_class(operator_align.operator_align)
 	bpy.utils.register_class(operator_reloadTextures.operator_reloadTextures)
 	
+	#Key Maps
+	wm = bpy.context.window_manager
 
+	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	kmi = km.keymap_items.new(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
+	# kmi.properties.is_vertical = True
+	keymaps.append((km, kmi))
+
+	
 	#bpy.utils.register_module(__name__)
 	#handle the keymap
 #    wm = bpy.context.window_manager
@@ -188,7 +219,10 @@ def unregister():
 	bpy.utils.unregister_module(__name__)
 	del bpy.types.Scene.texToolsSettings
 
-
+	#handle the keymap
+	for km, kmi in keymaps:
+		km.keymap_items.remove(kmi)
+	keymaps.clear()
 
 #    bpy.types.IMAGE_MT_uvs.remove(menu_func_uv_squares)
 	

@@ -77,6 +77,18 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 1,
 		max = 16384
 	)
+	#Baking mode
+	#Enum help: 	https://docs.blender.org/api/blender_python_api_2_77_0/bpy.props.html
+	baking_modes = [
+		("mesh.primitive_plane_add", "Plane", '', 'MESH_PLANE', 0),
+		("mesh.primitive_cube_add", "Cube", '', 'MESH_CUBE', 1)
+	]
+	baking_mode = bpy.props.EnumProperty(
+		items=baking_modes,
+		description="Baking mode",
+		default="mesh.primitive_plane_add",
+		# update=execute_operator
+	)
 
 
 def getIcon(name):
@@ -114,9 +126,6 @@ class TexToolsPanel(bpy.types.Panel):
 		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop"))
 		
 		row = col.row(align=True)
-		#row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort"));
-		# row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).isVertical = False;
-
 		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = True;
 		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = False;
 		
@@ -143,6 +152,18 @@ class TexToolsPanel(bpy.types.Panel):
 		row = layout.row()
 		row.label(text="Baking")
 
+		row = layout.row()
+		row.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
+
+		col = layout.split().column(align=True)
+		row = layout.row()
+		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Bake");
+		
+		row = col.row(align=True)
+		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Setup Material");
+		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode");
+
+		
 
 
 keymaps = []

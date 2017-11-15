@@ -160,13 +160,11 @@ class TexToolsPanel(bpy.types.Panel):
 
 		col = layout.split().column(align=True)
 		row = layout.row()
-		row.operator(operator_bake.operator_bake.bl_idname, text = "Bake");
+		row.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");
 		
 		row = col.row(align=True)
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Setup Material");
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode");
-
-		
+		row.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Setup Material");
+		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode Model");
 
 
 keymaps = []

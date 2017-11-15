@@ -34,6 +34,7 @@ if "bpy" in locals():
 	imp.reload(operator_islandsPack)
 	imp.reload(operator_align)
 	imp.reload(operator_reloadTextures)
+	imp.reload(operator_bake)
 
 else:
 	from . import operator_islandsAlignSort
@@ -41,6 +42,7 @@ else:
 	from . import operator_islandsPack
 	from . import operator_align
 	from . import operator_reloadTextures
+	from . import operator_bake
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -157,7 +159,7 @@ class TexToolsPanel(bpy.types.Panel):
 
 		col = layout.split().column(align=True)
 		row = layout.row()
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Bake");
+		row.operator(operator_bake.operator_bake.bl_idname, text = "Bake");
 		
 		row = col.row(align=True)
 		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Setup Material");
@@ -175,12 +177,11 @@ def registerIcon(fileName):
 	preview_icons.load(name, os.path.join(icons_dir, fileName), 'IMAGE')
 	
 def register():
-
-	#Register settings
 	bpy.utils.register_module(__name__)
+	
+	#Register settings
 	bpy.types.Scene.texToolsSettings = PointerProperty(type=TexToolsSettings)
 	
-
 	# Register global Icons
 	global preview_icons
 	preview_icons = bpy.utils.previews.new()
@@ -196,20 +197,21 @@ def register():
 	
 
 	# Register Operators
-	#bpy.utils.register_class(TexToolsPanel)
-	bpy.utils.register_class(operator_islandsAlignSort.operator_islandsAlignSort)
-	bpy.utils.register_class(operator_checkerMap.operator_checkerMap)
-	bpy.utils.register_class(operator_islandsPack.operator_islandsPack)
-	bpy.utils.register_class(operator_align.operator_align)
-	bpy.utils.register_class(operator_reloadTextures.operator_reloadTextures)
+	# bpy.utils.register_class(operator_islandsAlignSort.operator_islandsAlignSort)
+	# bpy.utils.register_class(operator_checkerMap.operator_checkerMap)
+	# bpy.utils.register_class(operator_islandsPack.operator_islandsPack)
+	# bpy.utils.register_class(operator_align.operator_align)
+	# bpy.utils.register_class(operator_reloadTextures.operator_reloadTextures)
+	# bpy.utils.register_class(operator_bake.operator_bake)
 	
-	#Key Maps
-	wm = bpy.context.window_manager
 
-	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	kmi = km.keymap_items.new(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
-	# kmi.properties.is_vertical = True
-	keymaps.append((km, kmi))
+	#Key Maps
+	# wm = bpy.context.window_manager
+	# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	# kmi = km.keymap_items.new(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
+	# keymaps.append((km, kmi))
+
+
 
 	
 	#bpy.utils.register_module(__name__)
@@ -223,22 +225,24 @@ def register():
 	
 
 def unregister():
+
+	bpy.utils.unregister_module(__name__)
+
+	#Unregister Settings
+	del bpy.types.Scene.texToolsSettings
+
 	# Unregister icons
 	global preview_icons
 	bpy.utils.previews.remove(preview_icons)
 
 	#Unregister Operators
-	bpy.utils.unregister_class(TexToolsPanel)
-	bpy.utils.unregister_class(operator_islandsAlignSort.operator_islandsAlignSort)
-	bpy.utils.unregister_class(operator_checkerMap.operator_checkerMap)
-	bpy.utils.unregister_class(operator_islandsPack.operator_islandsPack)
-	bpy.utils.unregister_class(operator_align.operator_align)
-	bpy.utils.unregister_class(operator_reloadTextures.operator_reloadTextures)
+	# bpy.utils.unregister_class(operator_islandsAlignSort.operator_islandsAlignSort)
+	# bpy.utils.unregister_class(operator_checkerMap.operator_checkerMap)
+	# bpy.utils.unregister_class(operator_islandsPack.operator_islandsPack)
+	# bpy.utils.unregister_class(operator_align.operator_align)
+	# bpy.utils.unregister_class(operator_reloadTextures.operator_reloadTextures)
+	# bpy.utils.unregister_class(operator_bake.operator_bake)
 
-	
-
-	bpy.utils.unregister_module(__name__)
-	del bpy.types.Scene.texToolsSettings
 
 	#handle the keymap
 	for km, kmi in keymaps:

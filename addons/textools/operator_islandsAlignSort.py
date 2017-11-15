@@ -298,12 +298,12 @@ def getSelectionBBox():
 if __name__ == "__main__":
 	print("__main__ called from islandsAlignSort.py")
 
- 	# test call
-	lastOperator = bpy.context.area.type;
-	if bpy.context.area.type != 'IMAGE_EDITOR':
-		bpy.context.area.type = 'IMAGE_EDITOR'
+	# test call
+	# lastOperator = bpy.context.area.type;
+	# if bpy.context.area.type != 'IMAGE_EDITOR':
+	# 	bpy.context.area.type = 'IMAGE_EDITOR'
 
-	bpy.ops.uv.textools_IslandsAlignSort()
+	# bpy.ops.uv.textools_IslandsAlignSort()
 
-	#restore context, e.g. back to code editor instead of uv editor
-	bpy.context.area.type = lastOperator
+	# #restore context, e.g. back to code editor instead of uv editor
+	# bpy.context.area.type = lastOperator

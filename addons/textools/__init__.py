@@ -27,6 +27,7 @@ bl_info = {
 }
 
 # Import local modules
+# More info: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Multi-File_packages
 if "bpy" in locals():
 	import imp
 	imp.reload(operator_islandsAlignSort)
@@ -195,24 +196,11 @@ def register():
 	registerIcon("alignRight.png")
 	registerIcon("alignTop.png")
 	
-
-	# Register Operators
-	# bpy.utils.register_class(operator_islandsAlignSort.operator_islandsAlignSort)
-	# bpy.utils.register_class(operator_checkerMap.operator_checkerMap)
-	# bpy.utils.register_class(operator_islandsPack.operator_islandsPack)
-	# bpy.utils.register_class(operator_align.operator_align)
-	# bpy.utils.register_class(operator_reloadTextures.operator_reloadTextures)
-	# bpy.utils.register_class(operator_bake.operator_bake)
-	
-
 	#Key Maps
 	# wm = bpy.context.window_manager
 	# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
 	# kmi = km.keymap_items.new(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
 	# keymaps.append((km, kmi))
-
-
-
 	
 	#bpy.utils.register_module(__name__)
 	#handle the keymap
@@ -234,15 +222,6 @@ def unregister():
 	# Unregister icons
 	global preview_icons
 	bpy.utils.previews.remove(preview_icons)
-
-	#Unregister Operators
-	# bpy.utils.unregister_class(operator_islandsAlignSort.operator_islandsAlignSort)
-	# bpy.utils.unregister_class(operator_checkerMap.operator_checkerMap)
-	# bpy.utils.unregister_class(operator_islandsPack.operator_islandsPack)
-	# bpy.utils.unregister_class(operator_align.operator_align)
-	# bpy.utils.unregister_class(operator_reloadTextures.operator_reloadTextures)
-	# bpy.utils.unregister_class(operator_bake.operator_bake)
-
 
 	#handle the keymap
 	for km, kmi in keymaps:

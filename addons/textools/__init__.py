@@ -83,13 +83,16 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	#Baking mode
 	#Enum help: 	https://docs.blender.org/api/blender_python_api_2_77_0/bpy.props.html
 	baking_modes = [
-		("mesh.primitive_plane_add", "Plane", '', 'MESH_PLANE', 0),
-		("mesh.primitive_cube_add", "Cube", '', 'MESH_CUBE', 1)
+		("bake_AO", "AO", '', 'MESH_PLANE', 0),
+		("bake_cavity", "Cavity", '', 'MESH_PLANE', 0),
+		("bake_edges", "Edges", '', 'MESH_CUBE', 1),
+		("bake_worn", "Worn", '', 'MESH_CUBE', 2),
+		("bake_dust", "Dust", '', 'MESH_CUBE', 3)
 	]
 	baking_mode = bpy.props.EnumProperty(
 		items=baking_modes,
 		description="Baking mode",
-		default="mesh.primitive_plane_add",
+		default="bake_AO",
 		# update=execute_operator
 	)
 

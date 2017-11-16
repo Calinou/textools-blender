@@ -87,7 +87,9 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		("bake_cavity", "Cavity", '', 'MESH_PLANE', 0),
 		("bake_edges", "Edges", '', 'MESH_CUBE', 1),
 		("bake_worn", "Worn", '', 'MESH_CUBE', 2),
-		("bake_dust", "Dust", '', 'MESH_CUBE', 3)
+		("bake_dust", "Dust", '', 'MESH_CUBE', 3),
+		("bake_ID", "ID Map", '', 'MESH_CUBE', 4),
+		("bake_ID", "Z Gradient", '', 'MESH_CUBE', 5)
 	]
 	baking_mode = bpy.props.EnumProperty(
 		items=baking_modes,
@@ -95,6 +97,10 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default="bake_AO",
 		# update=execute_operator
 	)
+	baking_do_save = bpy.props.BoolProperty(
+		name="Save",
+    	description="Save the baked texture",
+    	default = False)
 
 
 def getIcon(name):
@@ -109,65 +115,63 @@ class TexToolsPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		
-		# display the properties
-		layout.prop(context.scene.texToolsSettings, "size", text="Size")
-		layout.prop(context.scene.texToolsSettings, "padding", text="Padding")
-		
-        # layout.prop(mytool, "my_int", text="Integer Property")
-        # layout.prop(mytool, "my_float", text="Float Property")
-
+		#---------- Settings ------------
 
 		row = layout.row()
-		row.label(text="UV Islands")
-		
-		col = layout.split().column(align=True)
-		row = col.row(align=True)
-		row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
-		row.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+		box = row.box()
+		box.label(text="Settings")
 
-		row = col.row(align=True)
-		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom"))
-		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft"))
-		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight"))
-		row.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop"))
-		
-		row = col.row(align=True)
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = True;
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = False;
-		
-		# print("X: "+str(x.name))
+		subrow = box.row(align=True)
+		subrow.prop(context.scene.texToolsSettings, "size", text="Size")
+		box.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
 
-		# row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, isVertical = True, icon_value = getIcon("islandsAlignSort"));
-		# row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).isVertical = False;
-
-
-		#row.operator(bpy.ops.transform.rotate.bl_idname, text="Right", icon_value = getIcon("turnRight"))
-		
-
-		#bpy.ops.transform.rotate(value=1.5708, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-
-
+		#---------- UV Islands ------------
 		row = layout.row()
-		row.label(text="Textures")
-		col = layout.split().column(align=True)
-		col.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
-		col.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
-
-
-		row = layout.row()
-		row.label(text="Baking")
-
-		row = layout.row()
-		row.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
-
-		col = layout.split().column(align=True)
-		row = layout.row()
-		row.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");
+		box = row.box()
+		box.label(text="UV Islands")
 		
-		row = col.row(align=True)
-		row.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Setup Material");
-		row.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode Model");
+		subrow = box.row(align=True)
+		subrow.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
+		subrow.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+
+		subrow = box.row(align=True)
+		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom"))
+		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft"))
+		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight"))
+		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop"))
+		
+		subrow = box.row(align=True)
+		subrow.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = True;
+		subrow.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = False;
+
+
+		#---------- Baking ------------
+		row = layout.row()
+		box = row.box()
+		box.label(text="Textures")
+		subrow = box.row(align=True)
+		subrow.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
+		subrow.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
+
+
+		#---------- Baking ------------
+		row = layout.row()
+		box = row.box()
+		box.label(text="Baking")
+
+		subrow = box.row(align=True)
+		subrow.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
+
+		
+		subrow = box.row(align=True)
+		subrow.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Setup Material");
+		subrow.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode Model");
+
+		subrow = box.row(align=True)
+		subrow.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");
+		subrow.prop(context.scene.texToolsSettings, "baking_do_save")
+
 
 
 keymaps = []

@@ -84,12 +84,13 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	#Enum help: 	https://docs.blender.org/api/blender_python_api_2_77_0/bpy.props.html
 	baking_modes = [
 		("bake_AO", "AO", '', 'MESH_PLANE', 0),
-		("bake_cavity", "Cavity", '', 'MESH_PLANE', 0),
+		("bake_cavity_vertex", "Cavity Vertex", '', 'MESH_PLANE', 0),
+		("bake_cavity_normal", "Cavity Normal", '', 'MESH_PLANE', 0),
 		("bake_edges", "Edges", '', 'MESH_CUBE', 1),
 		("bake_worn", "Worn", '', 'MESH_CUBE', 2),
 		("bake_dust", "Dust", '', 'MESH_CUBE', 3),
 		("bake_ID", "ID Map", '', 'MESH_CUBE', 4),
-		("bake_ID", "Z Gradient", '', 'MESH_CUBE', 5)
+		("bake_gradient_z", "Z Gradient", '', 'MESH_CUBE', 5)
 	]
 	baking_mode = bpy.props.EnumProperty(
 		items=baking_modes,
@@ -101,6 +102,9 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name="Save",
     	description="Save the baked texture",
     	default = False)
+
+	id_palette = None;#bpy.types.UILayout.template_palette()
+
 
 
 def getIcon(name):
@@ -116,62 +120,80 @@ class TexToolsPanel(bpy.types.Panel):
 		layout = self.layout
 		
 		#---------- Settings ------------
-
 		row = layout.row()
 		box = row.box()
 		box.label(text="Settings")
 
-		subrow = box.row(align=True)
-		subrow.prop(context.scene.texToolsSettings, "size", text="Size")
+		aligned = box.row(align=True)
+		aligned.prop(context.scene.texToolsSettings, "size", text="Size")
 		box.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
+		layout.separator()
 
 		#---------- UV Islands ------------
 		row = layout.row()
 		box = row.box()
 		box.label(text="UV Islands")
 		
-		subrow = box.row(align=True)
-		subrow.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
-		subrow.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+		aligned = box.row(align=True)
+		aligned.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
+		aligned.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
 
-		subrow = box.row(align=True)
-		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom"))
-		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft"))
-		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight"))
-		subrow.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop"))
+		aligned = box.row(align=True)
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom"))
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft"))
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight"))
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop"))
 		
-		subrow = box.row(align=True)
-		subrow.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = True;
-		subrow.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = False;
+		aligned = box.row(align=True)
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = True;
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, icon_value = getIcon("islandsAlignSort")).is_vertical = False;
 
+		layout.separator()
 
-		#---------- Baking ------------
+		#---------- Textures ------------
 		row = layout.row()
 		box = row.box()
 		box.label(text="Textures")
-		subrow = box.row(align=True)
-		subrow.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
-		subrow.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
+		aligned = box.column(align=True)
+		aligned.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
+		aligned.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload All", icon_value = getIcon("reloadTextures"))
 
+		layout.separator()
 
 		#---------- Baking ------------
 		row = layout.row()
 		box = row.box()
 		box.label(text="Baking")
 
-		subrow = box.row(align=True)
-		subrow.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
+		aligned = box.row(align=True)
+		#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
+		aligned.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
 
 		
-		subrow = box.row(align=True)
-		subrow.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Setup Material");
-		subrow.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode Model");
+		aligned = box.row(align=True)
+		aligned.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Setup Material");
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode Model");
 
-		subrow = box.row(align=True)
-		subrow.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");
-		subrow.prop(context.scene.texToolsSettings, "baking_do_save")
+		aligned = box.row(align=True)
+		aligned.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");
+		aligned.prop(context.scene.texToolsSettings, "baking_do_save")
+		
+		layout.separator()
 
+		#---------- ID Colors ------------
+		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists
+		#Example assign vertex colors: https://blender.stackexchange.com/questions/30841/how-to-view-vertex-colors
+		#Color Palette: https://blender.stackexchange.com/questions/73122/how-do-i-create-palette-ui-object
+
+		row = layout.row()
+		box = row.box()
+		box.label(text="ID Colors")
+		box.operator(bpy.ops.paint.sample_color.idname())
+		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
+
+		#dsadsa
+		# id_palette
 
 
 keymaps = []
@@ -243,3 +265,5 @@ def unregister():
 
 if __name__ == "__main__":
 	register()
+
+	#Setup Color palette

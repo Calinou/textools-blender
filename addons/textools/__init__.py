@@ -30,6 +30,8 @@ bl_info = {
 # More info: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Multi-File_packages
 if "bpy" in locals():
 	import imp
+	imp.reload(utilities_gui)
+
 	imp.reload(operator_islandsAlignSort)
 	imp.reload(operator_checkerMap)
 	imp.reload(operator_islandsPack)
@@ -38,6 +40,8 @@ if "bpy" in locals():
 	imp.reload(operator_bake)
 
 else:
+	from . import utilities_gui
+
 	from . import operator_islandsAlignSort
 	from . import operator_checkerMap
 	from . import operator_islandsPack
@@ -166,10 +170,22 @@ class TexToolsPanel(bpy.types.Panel):
 		box = row.box()
 		box.label(text="Baking")
 
-		aligned = box.row(align=True)
+		aligned = box.row()
 		#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
-		aligned.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
+		
+		aligned.template_icon_view(context.scene, "my_thumbnails")
 
+		# Just a way to access which one is selected
+		aligned = box.row()
+		aligned.label(text="You selected: " + bpy.context.scene.my_thumbnails)
+
+
+		# aligned.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
+
+
+
+
+		#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
 		
 		aligned = box.row(align=True)
 		aligned.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Setup Material");
@@ -192,8 +208,6 @@ class TexToolsPanel(bpy.types.Panel):
 		box.operator(bpy.ops.paint.sample_color.idname())
 		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
 
-		#dsadsa
-		# id_palette
 
 
 keymaps = []
@@ -210,6 +224,9 @@ def register():
 	#Register settings
 	bpy.types.Scene.texToolsSettings = PointerProperty(type=TexToolsSettings)
 	
+	#GUI Utilities
+	utilities_gui.register()
+
 	# Register global Icons
 	global preview_icons
 	preview_icons = bpy.utils.previews.new()
@@ -245,6 +262,9 @@ def unregister():
 
 	#Unregister Settings
 	del bpy.types.Scene.texToolsSettings
+
+	#GUI Utilities
+	utilities_gui.unregister()
 
 	# Unregister icons
 	global preview_icons

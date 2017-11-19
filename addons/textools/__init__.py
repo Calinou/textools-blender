@@ -53,6 +53,7 @@ else:
 import bpy
 import os
 import math
+import string
 import bpy.utils.previews
 
 from bpy.props import (StringProperty,
@@ -160,7 +161,7 @@ class TexToolsPanel(bpy.types.Panel):
 
 		# Just a way to access which one is selected
 		aligned = box.row()
-		aligned.label(text="Mode: " + bpy.context.scene.my_thumbnails)
+		aligned.label(text="Mode: " + str(bpy.context.scene.my_thumbnails).replace(".png",""))
 
 		#Baking mode
 		# ("bake_AO", "AO", '', 'MESH_PLANE', 0),

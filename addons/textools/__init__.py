@@ -84,24 +84,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 1,
 		max = 16384
 	)
-	#Baking mode
-	#Enum help: 	https://docs.blender.org/api/blender_python_api_2_77_0/bpy.props.html
-	baking_modes = [
-		("bake_AO", "AO", '', 'MESH_PLANE', 0),
-		("bake_cavity_vertex", "Cavity Vertex", '', 'MESH_PLANE', 0),
-		("bake_cavity_normal", "Cavity Normal", '', 'MESH_PLANE', 0),
-		("bake_edges", "Edges", '', 'MESH_CUBE', 1),
-		("bake_worn", "Worn", '', 'MESH_CUBE', 2),
-		("bake_dust", "Dust", '', 'MESH_CUBE', 3),
-		("bake_ID", "ID Map", '', 'MESH_CUBE', 4),
-		("bake_gradient_z", "Z Gradient", '', 'MESH_CUBE', 5)
-	]
-	baking_mode = bpy.props.EnumProperty(
-		items=baking_modes,
-		description="Baking mode",
-		default="bake_AO",
-		# update=execute_operator
-	)
+	
 	baking_do_save = bpy.props.BoolProperty(
 		name="Save",
     	description="Save the baked texture",
@@ -129,7 +112,7 @@ class TexToolsPanel(bpy.types.Panel):
 		box.label(text="Settings")
 
 		aligned = box.row(align=True)
-		aligned.prop(context.scene.texToolsSettings, "size", text="Size")
+		aligned.prop(context.scene.texToolsSettings, "size", text="")
 		box.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
 		layout.separator()
@@ -177,10 +160,15 @@ class TexToolsPanel(bpy.types.Panel):
 
 		# Just a way to access which one is selected
 		aligned = box.row()
-		aligned.label(text="You selected: " + bpy.context.scene.my_thumbnails)
+		aligned.label(text="Mode: " + bpy.context.scene.my_thumbnails)
 
-
-		# aligned.prop(context.scene.texToolsSettings, "baking_mode", text="Mode")
+		#Baking mode
+		# ("bake_AO", "AO", '', 'MESH_PLANE', 0),
+		# ("bake_edges", "Edges", '', 'MESH_CUBE', 1),
+		# ("bake_worn", "Worn", '', 'MESH_CUBE', 2),
+		# ("bake_dust", "Dust", '', 'MESH_CUBE', 3),
+		# ("bake_ID", "ID Map", '', 'MESH_CUBE', 4),
+		# ("bake_gradient_z", "Z Gradient", '', 'MESH_CUBE', 5)
 
 
 
@@ -188,8 +176,8 @@ class TexToolsPanel(bpy.types.Panel):
 		#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
 		
 		aligned = box.row(align=True)
-		aligned.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Setup Material");
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Explode Model");
+		aligned.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Set Material");
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Set Model");
 
 		aligned = box.row(align=True)
 		aligned.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");

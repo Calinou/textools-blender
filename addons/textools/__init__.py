@@ -21,7 +21,7 @@ bl_info = {
 	"version": (1, 0, 0),
 	"blender": (2, 71, 0),
 	"category": "UV",
-	"location": "UV Image Editor > UVs > UVs to grid of squares",
+	"location": "UV Image Editor > UVs > Misc : TexTools panel",
 	"warning": "",
 	"wiki_url": "http://renderhjs.net/textools/"
 }
@@ -73,14 +73,20 @@ from bpy.props import (StringProperty,
 class TexToolsSettings(bpy.types.PropertyGroup):
 	#Width and Height
 	size = bpy.props.IntVectorProperty(
+		name = "Size",
 		size=2, 
+		description="Texture & UV size in pixels",
 		default = (1024,1024),
 		subtype = "XYZ"
 	)
+
+
+
+
 	#Padding
 	padding = IntProperty(
 		name = "Padding",
-		description="Texture & UV height in pixels",
+		description="padding size in pixels",
 		default = 4,
 		min = 1,
 		max = 16384
@@ -88,7 +94,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	
 	baking_do_save = bpy.props.BoolProperty(
 		name="Save",
-    	description="Save the baked texture",
+    	description="Save the baked texture?",
     	default = False)
 
 	id_palette = None;#bpy.types.UILayout.template_palette()
@@ -110,11 +116,12 @@ class TexToolsPanel(bpy.types.Panel):
 		#---------- Settings ------------
 		row = layout.row()
 		box = row.box()
-		box.label(text="Settings")
+		# box.label(text="Settings")
 
-		aligned = box.row(align=True)
-		aligned.prop(context.scene.texToolsSettings, "size", text="")
-		box.prop(context.scene.texToolsSettings, "padding", text="Padding")
+		col = box.column(align=True)
+		# aligned = col.row(align=True)
+		col.prop(context.scene.texToolsSettings, "size", text="")
+		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
 		layout.separator()
 
@@ -128,10 +135,11 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
 
 		aligned = box.row(align=True)
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom"))
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft"))
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight"))
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop"))
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop")).direction = "top"
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom")).direction = "bottom"
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft")).direction = "left"
+		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight")).direction = "right"
+		
 		
 		aligned = box.row(align=True)
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSort")).is_vertical = True;
@@ -163,17 +171,7 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned = box.row()
 		aligned.label(text="Mode: " + str(bpy.context.scene.my_thumbnails).replace(".png",""))
 
-		#Baking mode
-		# ("bake_AO", "AO", '', 'MESH_PLANE', 0),
-		# ("bake_edges", "Edges", '', 'MESH_CUBE', 1),
-		# ("bake_worn", "Worn", '', 'MESH_CUBE', 2),
-		# ("bake_dust", "Dust", '', 'MESH_CUBE', 3),
-		# ("bake_ID", "ID Map", '', 'MESH_CUBE', 4),
-		# ("bake_gradient_z", "Z Gradient", '', 'MESH_CUBE', 5)
-
-
-
-
+	
 		#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
 		
 		aligned = box.row(align=True)

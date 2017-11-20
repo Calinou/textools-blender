@@ -105,6 +105,10 @@ class operator_align(bpy.types.Operator):
 		if not bpy.context.object.data.uv_layers:
 			return False 	#self.report({'WARNING'}, "Object must have more than one UV map")
 
+		#Not in Synced mode
+		if bpy.context.scene.tool_settings.use_uv_select_sync == True:
+			return False
+
 		return True
 
 

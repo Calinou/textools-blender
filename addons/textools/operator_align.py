@@ -5,17 +5,49 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
-from . import utilities_uv
+if "bpy" in locals():
+	import imp
+	imp.reload(utilities_uv)
+else:
+	from . import utilities_uv
+
 
 def align(context, direction):
 
 	print("Align: "+direction)
 
 	# Collect BBox sizes
-	bounds = utilities_uv.getSelectionBBox()
+	boundsAll = utilities_uv.getSelectionBBox()
 
-	#Collect UV islands
-	islands = utilities_uv.getSelectionIslands()
+	mode = bpy.context.scene.tool_settings.uv_select_mode
+	if mode == 'FACE' or mode == 'ISLAND':
+		print("____ Align Islands")
+		
+		#Collect UV islands
+		islands = utilities_uv.getSelectionIslands()
+
+		#Rotate to minimal bounds
+		for i in range(0, len(islands)):
+			faces = islands[i]
+
+			# Select Island
+			bpy.ops.uv.select_all(action='DESELECT')
+			#utilities_uv.setSelectedFaces(faces)
+
+			bounds = utilities_uv.getSelectionBBox()
+
+			# alignIslandMinimalBounds(uvLayer, islands[i])
+
+			# # Collect BBox sizes
+			# 
+			# allSizes[i] = bounds['area'] + i*0.000001;#Make each size unique
+			# allBounds[i] = bounds;
+			# print("Size: "+str(allSizes[i]))
+
+	elif mode == 'EDGE' or mode == 'VERTEX':
+		print("____ Align Verts")
+
+	
 
 
 	# if(direction is "top"):

@@ -45,7 +45,12 @@ def getSelectionBBox():
 	bbox['max'] = boundsMax
 	bbox['width'] = (boundsMax - boundsMin).x
 	bbox['height'] = (boundsMax - boundsMin).y
-	bbox['center'] = boundsCenter / countFaces
+	
+	if countFaces == 0:
+		bbox['center'] = boundsMin
+	else:
+		bbox['center'] = boundsCenter / countFaces
+
 	bbox['area'] = bbox['width'] * bbox['height']
 	bbox['minLength'] = min(bbox['width'], bbox['height'])
 				
@@ -53,8 +58,7 @@ def getSelectionBBox():
 
 
 def getSelectionIslands():
-	print("Get UV islands")
-	
+
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
@@ -79,7 +83,7 @@ def getSelectionIslands():
 		if isUVFaceSelected == True:
 			selectedFaces.append(face)
 			
-	print("Faces: "+str(len(selectedFaces)))
+	# print("Faces: "+str(len(selectedFaces)))
 	
 	#Collect UV islands
 	parsedFaces = []
@@ -122,6 +126,6 @@ def getSelectionIslands():
 			loop[uvLayer].select = True
 
 	
-	print("Islands: "+str(len(islands))+"x")
+	# print("Islands: "+str(len(islands))+"x")
 	return islands
 		

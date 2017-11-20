@@ -6,6 +6,15 @@ from collections import defaultdict
 from math import pi
 
 
+def getSelectedFaces:
+	faces = [];
+	for face in bm.faces:
+		if face.select:
+			faces.append(face)
+
+	return faces
+
+
 def setSelectedFaces(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
@@ -14,7 +23,7 @@ def setSelectedFaces(faces):
 		for loop in face.loops:
 			loop[uvLayer].select = True
 
-#def getSelectedFaces:
+
 
 
 def getSelectionBBox():
@@ -66,7 +75,8 @@ def getSelectionIslands():
 	#Reference B: https://github.com/c30ra/uv-align-distribute/blob/v2.2/make_island.py
 
 	#Extend selection
-	bpy.ops.uv.select_linked(extend=False)
+	if bpy.context.scene.tool_settings.use_uv_select_sync == False:
+		bpy.ops.uv.select_linked(extend=False)
  
 	#Collect selected UV faces
 	selectedFaces = [];

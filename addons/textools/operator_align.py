@@ -5,19 +5,26 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
-if "bpy" in locals():
-	import imp
-	imp.reload(utilities_uv)
-else:
-	from . import utilities_uv
+# if "bpy" in locals():
+# 	import imp
+# 	imp.reload(utilities_uv)
+# else:
+from . import utilities_uv
 
 
 def align(context, direction):
 
-	print("Align: "+direction)
+	if bpy.context.space_data.pivot_point != 'CENTER':
+		bpy.context.space_data.pivot_point = 'CENTER'
+
+	#B-Mesh
+	obj = bpy.context.active_object
+	bm = bmesh.from_edit_mesh(obj.data);
+	uvLayer = bm.loops.layers.uv.verify();
 
 	# Collect BBox sizes
 	boundsAll = utilities_uv.getSelectionBBox()
+
 
 	mode = bpy.context.scene.tool_settings.uv_select_mode
 	if mode == 'FACE' or mode == 'ISLAND':
@@ -47,8 +54,26 @@ def align(context, direction):
 	elif mode == 'EDGE' or mode == 'VERTEX':
 		print("____ Align Verts")
 
-	
+		for f in bm.faces:
+			if f.select:
+				for l in f.loops:
+					luv = l[uvLayer]
+					if luv.select:
+						# apply the location of the vertex as a UV
+						#luv.uv = l.vert.co.xy
+						# print("Idx: "+str(luv.uv))
 
+						if direction == "top":
+							luv.uv[1] = boundsAll['max'].y
+						elif direction == "bottom":
+							luv.uv[1] = boundsAll['min'].y
+						elif direction == "left":
+							luv.uv[0] = boundsAll['min'].x
+						elif direction == "right":
+							luv.uv[0] = boundsAll['max'].x
+
+
+		bmesh.update_edit_mesh(obj.data)
 
 	# if(direction is "top"):
 		#Align top

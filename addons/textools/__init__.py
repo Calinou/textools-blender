@@ -38,8 +38,8 @@ if "bpy" in locals():
 	imp.reload(operator_reloadTextures)
 	imp.reload(operator_bake)
 	imp.reload(operator_swap_uv_xyz)
+	imp.reload(operator_island_align_edge)
 	
-
 else:
 	from . import utilities_gui
 
@@ -49,6 +49,7 @@ else:
 	from . import operator_reloadTextures
 	from . import operator_bake
 	from . import operator_swap_uv_xyz
+	from . import operator_island_align_edge
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -145,7 +146,7 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned = box.row(align=True)
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSort")).is_vertical = True;
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSort")).is_vertical = False;
-
+		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align")
 
 		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("islandsAlignSort"))
 

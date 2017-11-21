@@ -6,7 +6,7 @@ from collections import defaultdict
 from math import pi
 
 
-def getSelectedFaces:
+def getSelectedFaces():
 	faces = [];
 	for face in bm.faces:
 		if face.select:

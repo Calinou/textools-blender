@@ -127,25 +127,41 @@ class TexToolsPanel(bpy.types.Panel):
 
 		layout.separator()
 
+		#---------- Transform ------------
+
+		row = layout.row()
+		box = row.box()
+		box.label(text="Trasnform")
+
+		aligned = box.row(align=True)
+		aligned.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
+		aligned.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+		
+		row = box.row(align=True)
+		col = row.column(align=True)
+		col.label(text="")
+		col.operator(operator_align.operator_align.bl_idname, text="←", icon_value = getIcon("alignLeft")).direction = "left"
+		col = row.column(align=True)
+		col.operator(operator_align.operator_align.bl_idname, text="↑", icon_value = getIcon("alignTop")).direction = "top"
+		col.operator(operator_align.operator_align.bl_idname, text="↓", icon_value = getIcon("alignBottom")).direction = "bottom"
+		col = row.column(align=True)
+		col.label(text="")
+		col.operator(operator_align.operator_align.bl_idname, text="→", icon_value = getIcon("alignRight")).direction = "right"
+
+
+
 		#---------- UV Islands ------------
 		row = layout.row()
 		box = row.box()
 		box.label(text="UV Islands")
 		
-		aligned = box.row(align=True)
-		aligned.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
-		aligned.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+		
 
-		aligned = box.row(align=True)
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignTop")).direction = "top"
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignBottom")).direction = "bottom"
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignLeft")).direction = "left"
-		aligned.operator(operator_align.operator_align.bl_idname, text=" ", icon_value = getIcon("alignRight")).direction = "right"
-		
 		
 		aligned = box.row(align=True)
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort", icon_value = getIcon("islandsAlignSort")).is_vertical = False;
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort", icon_value = getIcon("islandsAlignSort")).is_vertical = True;
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSort")).is_vertical = False;
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSort")).is_vertical = True;
+		aligned = box.row(align=True)
 		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align")
 
 		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("islandsAlignSort"))
@@ -156,9 +172,9 @@ class TexToolsPanel(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 		box.label(text="Textures")
-		aligned = box.column(align=True)
+		aligned = box.row(align=True)
 		aligned.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
-		aligned.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload All", icon_value = getIcon("reloadTextures"))
+		aligned.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
 
 		layout.separator()
 

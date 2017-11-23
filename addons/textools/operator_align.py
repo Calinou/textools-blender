@@ -70,6 +70,15 @@ def align(context, direction):
 		#Collect UV islands
 		islands = utilities_uv.getSelectionIslands()
 
+
+		if len(obj.data.uv_layers) == 0:
+			print("There is no UV channel or UV data set")
+			#  or len(obj.data.uv_layers[uvLayer]) == 0
+			return
+
+		
+
+
 		#Rotate to minimal bounds
 		for i in range(0, len(islands)):
 			faces = islands[i]
@@ -81,6 +90,18 @@ def align(context, direction):
 			bounds = utilities_uv.getSelectionBBox()
 
 			# alignIslandMinimalBounds(uvLayer, islands[i])
+
+
+			# Loops per face
+			# for face in faces:
+			# 	for vert_idx, loop_idx in zip(face.vertices, face.loop_indices):
+			# 		# print("Vert "+str(vert_idx)+", "+str(loop_idx))
+			# 		uv_coords = obj.data.uv_layers.active.data[loop_idx].uv
+
+			# 		print("Fce [%i] ; Vtx [%i]" %(face.index, vert_idx))
+			# 		print("UV? "+str(obj.data.uv_layers))
+			# 		# print(">> face idx: %i, vert idx: %i, uvs: %f, %f" % (face.index, vert_idx, uv_coords.x, uv_coords.y))
+
 
 			# # Collect BBox sizes
 			# 

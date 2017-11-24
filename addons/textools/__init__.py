@@ -131,7 +131,7 @@ class TexToolsPanel(bpy.types.Panel):
 
 		row = layout.row()
 		box = row.box()
-		box.label(text="Trasnform")
+		# box.label(text="Trasnform")
 
 		aligned = box.row(align=True)
 		aligned.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
@@ -153,11 +153,8 @@ class TexToolsPanel(bpy.types.Panel):
 		#---------- UV Islands ------------
 		row = layout.row()
 		box = row.box()
-		box.label(text="UV Islands")
-		
-		
+		# box.label(text="UV Islands")
 
-		
 		aligned = box.row(align=True)
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSort")).is_vertical = False;
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSort")).is_vertical = True;

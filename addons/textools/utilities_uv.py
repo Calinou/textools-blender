@@ -5,8 +5,32 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
+from . import settings
+
+def selectionStore():
+	# https://blender.stackexchange.com/questions/5781/how-to-list-all-selected-elements-in-python
+	print("selectionStore")
+	settings.selection_mode = bpy.context.scene.tool_settings.uv_select_mode
+
+	# https://blender.stackexchange.com/questions/3532/obtain-uv-selection-in-python
+
+	#Face selections (Loops)
+	settings.selection_loops = []
+	for index, uv_loop in enumerate(mesh.uv_layers.active.data):
+		if(uv_loop.select):
+			settings.selection_loops.append(index)
+
+	#Vertex selections
+	settings.selection_vertices = set()
+
+
+def selectionRestore():
+	print("selectionRestore")
+	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_mode
+
 
 def getSelectedFaces():
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	faces = [];
 	for face in bm.faces:
 		if face.select:
@@ -19,6 +43,7 @@ def setSelectedFaces(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 
+	bpy.ops.mesh.select_all(action='DESELECT')
 	for face in faces:
 		for loop in face.loops:
 			loop[uvLayer].select = True

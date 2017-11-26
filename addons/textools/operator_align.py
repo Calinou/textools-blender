@@ -50,6 +50,8 @@ class operator_align(bpy.types.Operator):
 
 
 def align(context, direction):
+	#Store selection
+	utilities_uv.selectionStore()
 
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
@@ -59,9 +61,12 @@ def align(context, direction):
 	bm = bmesh.from_edit_mesh(obj.data);
 	uvLayer = bm.loops.layers.uv.verify();
 
+	if len(obj.data.uv_layers) == 0:
+		print("There is no UV channel or UV data set")
+		return
+
 	# Collect BBox sizes
 	boundsAll = utilities_uv.getSelectionBBox()
-
 
 	mode = bpy.context.scene.tool_settings.uv_select_mode
 	if mode == 'FACE' or mode == 'ISLAND':
@@ -71,43 +76,9 @@ def align(context, direction):
 		islands = utilities_uv.getSelectionIslands()
 
 
-		if len(obj.data.uv_layers) == 0:
-			print("There is no UV channel or UV data set")
-			#  or len(obj.data.uv_layers[uvLayer]) == 0
-			return
-
 		
 
-
-		#Rotate to minimal bounds
-		for i in range(0, len(islands)):
-			faces = islands[i]
-
-			# Select Island
-			bpy.ops.uv.select_all(action='DESELECT')
-			#utilities_uv.setSelectedFaces(faces)
-
-			bounds = utilities_uv.getSelectionBBox()
-
-			# alignIslandMinimalBounds(uvLayer, islands[i])
-
-
-			# Loops per face
-			# for face in faces:
-			# 	for vert_idx, loop_idx in zip(face.vertices, face.loop_indices):
-			# 		# print("Vert "+str(vert_idx)+", "+str(loop_idx))
-			# 		uv_coords = obj.data.uv_layers.active.data[loop_idx].uv
-
-			# 		print("Fce [%i] ; Vtx [%i]" %(face.index, vert_idx))
-			# 		print("UV? "+str(obj.data.uv_layers))
-			# 		# print(">> face idx: %i, vert idx: %i, uvs: %f, %f" % (face.index, vert_idx, uv_coords.x, uv_coords.y))
-
-
-			# # Collect BBox sizes
-			# 
-			# allSizes[i] = bounds['area'] + i*0.000001;#Make each size unique
-			# allBounds[i] = bounds;
-			# print("Size: "+str(allSizes[i]))
+		
 
 	elif mode == 'EDGE' or mode == 'VERTEX':
 		print("____ Align Verts")
@@ -130,10 +101,8 @@ def align(context, direction):
 
 		bmesh.update_edit_mesh(obj.data)
 
-	# if(direction is "top"):
-		#Align top
-
-	
+	#Restore selection
+	utilities_uv.selectionRestore()
 
 
 

@@ -158,9 +158,9 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
 		aligned = box.row(align=True)
-		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align")
+		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align", icon_value = getIcon("islandAlignByEdge"))
 
-		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("islandsAlignSortH"))
+		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 
 		layout.separator()
 
@@ -237,9 +237,11 @@ def register():
 	registerIcon("islandsAlignSortH.png")
 	registerIcon("islandsAlignSortV.png")
 	registerIcon("checkerMap.png")
+	registerIcon("swap_uv_xyz.png")
 	registerIcon("turnLeft.png")
 	registerIcon("turnRight.png")
 	registerIcon("reloadTextures.png")
+	registerIcon("islandAlignByEdge.png")
 	registerIcon("alignBottom.png")
 	registerIcon("alignLeft.png")
 	registerIcon("alignRight.png")

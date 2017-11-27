@@ -5,53 +5,14 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
-if "bpy" in locals():
-	import imp
-	imp.reload(utilities_uv)
-else:
-	from . import utilities_uv
-
-
-class operator_align(bpy.types.Operator):
-	bl_idname = "uv.textools_align"
-	bl_label = "Align"
-	bl_description = "Align vertices, edges or shells"
-
-	direction = bpy.props.StringProperty(name="Direction", default="top")
-
-	@classmethod
-	def poll(cls, context):
-		if not bpy.context.active_object:
-			return False
-
-		#Only in Edit mode
-		if bpy.context.active_object.mode != 'EDIT':
-			return False
-
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
-			return False
-		
-		#Requires UV map
-		if not bpy.context.object.data.uv_layers:
-			return False 	#self.report({'WARNING'}, "Object must have more than one UV map")
-
-		#Not in Synced mode
-		# if bpy.context.scene.tool_settings.use_uv_select_sync == True:
-		# 	return False
-
-		return True
-
-
-	def execute(self, context):
-		
-		align(context, self.direction)
-		return {'FINISHED'}
+from . import utilities_uv
+import imp
+imp.reload(utilities_uv)
 
 
 def align(context, direction):
 	#Store selection
-	# utilities_uv.selectionStore()
+	utilities_uv.selectionStore()
 
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
@@ -89,6 +50,14 @@ def align(context, direction):
 			elif direction == "top":
 				delta = boundsAll['max'] - bounds['max']
 				bpy.ops.transform.translate(value=(0, delta.y, 0))
+			if direction == "left":
+				delta = boundsAll['min'] - bounds['min'] 
+				bpy.ops.transform.translate(value=(delta.x, 0, 0))
+			elif direction == "right":
+				delta = boundsAll['max'] - bounds['max']
+				bpy.ops.transform.translate(value=(delta.x, 0, 0))
+
+
 
 	elif mode == 'EDGE' or mode == 'VERTEX':
 		print("____ Align Verts")
@@ -112,11 +81,42 @@ def align(context, direction):
 		bmesh.update_edit_mesh(obj.data)
 
 	#Restore selection
-	# utilities_uv.selectionRestore()
+	utilities_uv.selectionRestore()
 
 
 
+class operator_align(bpy.types.Operator):
+	bl_idname = "uv.textools_align"
+	bl_label = "Align"
+	bl_description = "Align vertices, edges or shells"
+
+	direction = bpy.props.StringProperty(name="Direction", default="top")
+
+	@classmethod
+	def poll(cls, context):
+		if not bpy.context.active_object:
+			return False
+
+		#Only in Edit mode
+		if bpy.context.active_object.mode != 'EDIT':
+			return False
+
+		#Only in UV editor mode
+		if bpy.context.area.type != 'IMAGE_EDITOR':
+			return False
+		
+		#Requires UV map
+		if not bpy.context.object.data.uv_layers:
+			return False 	#self.report({'WARNING'}, "Object must have more than one UV map")
+
+		#Not in Synced mode
+		# if bpy.context.scene.tool_settings.use_uv_select_sync == True:
+		# 	return False
+
+		return True
 
 
-#if __name__ == "__main__":
- 	# test call
+	def execute(self, context):
+		
+		align(context, self.direction)
+		return {'FINISHED'}

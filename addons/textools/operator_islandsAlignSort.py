@@ -6,6 +6,9 @@ from collections import defaultdict
 from math import pi
 
 from . import utilities_uv
+import imp
+imp.reload(utilities_uv)
+
 
 class operator_islandsAlignSort(bpy.types.Operator):
 	bl_idname = "uv.textools_islands_align_sort"
@@ -50,6 +53,9 @@ class operator_islandsAlignSort(bpy.types.Operator):
 def main(context):
 	print("Executing IslandsAlignSort main")
    	
+	#Store selection
+	utilities_uv.selectionStore()
+
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
 
@@ -96,6 +102,10 @@ def main(context):
 		delta = boundsAll['min'] - bounds['min'];
 		bpy.ops.transform.translate(value=(delta.x, delta.y+offset, 0))
 		offset += bounds['height']+0.01
+
+
+	#Restore selection
+	utilities_uv.selectionRestore()
 
 
 	#pos =  #Vector((99999999.0,99999999.0))

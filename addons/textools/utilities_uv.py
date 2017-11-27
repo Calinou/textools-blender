@@ -16,9 +16,9 @@ def selectionStore():
 
 	#Face selections (Loops)
 	settings.selection_loops = []
-	for index, uv_loop in enumerate(mesh.uv_layers.active.data):
-		if(uv_loop.select):
-			settings.selection_loops.append(index)
+	# for index, uv_loop in enumerate(mesh.uv_layers.active.data):
+	# 	if(uv_loop.select):
+	# 		settings.selection_loops.append(index)
 
 	#Vertex selections
 	settings.selection_vertices = set()
@@ -27,7 +27,8 @@ def selectionStore():
 def selectionRestore():
 	print("selectionRestore")
 	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_mode
-
+	
+	# bpy.ops.mesh.select_all(action='DESELECT')
 
 def getSelectedFaces():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
@@ -42,12 +43,11 @@ def getSelectedFaces():
 def setSelectedFaces(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
-
-	bpy.ops.mesh.select_all(action='DESELECT')
 	for face in faces:
 		for loop in face.loops:
 			loop[uvLayer].select = True
 
+	print("Done selecting "+str(len(faces))+" faces")
 
 
 

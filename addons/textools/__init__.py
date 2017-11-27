@@ -82,8 +82,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		subtype = "XYZ"
 	)
 
-
-
+	
 
 	#Padding
 	padding = IntProperty(
@@ -156,12 +155,12 @@ class TexToolsPanel(bpy.types.Panel):
 		# box.label(text="UV Islands")
 
 		aligned = box.row(align=True)
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSort")).is_vertical = False;
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSort")).is_vertical = True;
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
+		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
 		aligned = box.row(align=True)
 		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align")
 
-		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("islandsAlignSort"))
+		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("islandsAlignSortH"))
 
 		layout.separator()
 
@@ -235,7 +234,8 @@ def register():
 	# Register global Icons
 	global preview_icons
 	preview_icons = bpy.utils.previews.new()
-	registerIcon("islandsAlignSort.png")
+	registerIcon("islandsAlignSortH.png")
+	registerIcon("islandsAlignSortV.png")
 	registerIcon("checkerMap.png")
 	registerIcon("turnLeft.png")
 	registerIcon("turnRight.png")

@@ -5,11 +5,11 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
-# if "bpy" in locals():
-# 	import imp
-# 	imp.reload(utilities_uv)
-# else:
-from . import utilities_uv
+if "bpy" in locals():
+	import imp
+	imp.reload(utilities_uv)
+else:
+	from . import utilities_uv
 
 
 class operator_align(bpy.types.Operator):
@@ -51,7 +51,7 @@ class operator_align(bpy.types.Operator):
 
 def align(context, direction):
 	#Store selection
-	utilities_uv.selectionStore()
+	# utilities_uv.selectionStore()
 
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
@@ -75,10 +75,20 @@ def align(context, direction):
 		#Collect UV islands
 		islands = utilities_uv.getSelectionIslands()
 
+		for island in islands:
+			
+			bpy.ops.uv.select_all(action='DESELECT')
+			utilities_uv.setSelectedFaces(island)
+			bounds = utilities_uv.getSelectionBBox()
 
-		
+			# print("Island "+str(len(island))+"x faces, delta: "+str(delta.y))
 
-		
+			if direction == "bottom":
+				delta = boundsAll['min'] - bounds['min'] 
+				bpy.ops.transform.translate(value=(0, delta.y, 0))
+			elif direction == "top":
+				delta = boundsAll['max'] - bounds['max']
+				bpy.ops.transform.translate(value=(0, delta.y, 0))
 
 	elif mode == 'EDGE' or mode == 'VERTEX':
 		print("____ Align Verts")
@@ -102,7 +112,7 @@ def align(context, direction):
 		bmesh.update_edit_mesh(obj.data)
 
 	#Restore selection
-	utilities_uv.selectionRestore()
+	# utilities_uv.selectionRestore()
 
 
 

@@ -142,12 +142,6 @@ def main(context):
 
 
 
-
-
-
-
-
-
 def alignIslandMinimalBounds(uvLayer, faces):
 	# Select Island
 	bpy.ops.uv.select_all(action='DESELECT')

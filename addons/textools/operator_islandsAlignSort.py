@@ -46,11 +46,11 @@ class operator_islandsAlignSort(bpy.types.Operator):
 		
 		print("is_vertical: "+str(self.is_vertical))
 
-		main(context)
+		main(context, self.is_vertical)
 		return {'FINISHED'}
 
 
-def main(context):
+def main(context, isVertical):
 	print("Executing IslandsAlignSort main")
    	
 	#Store selection
@@ -87,21 +87,24 @@ def main(context):
 
 	#Position by sorted size in row
 	sortedSizes = sorted(allSizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
+	sortedSizes.reverse()
 	offset = 0.0
 	for sortedSize in sortedSizes:
 		index = sortedSize[0]
 		island = islands[index]
 		bounds = allBounds[index]
-		print(">> "+str(sortedSize)+" >> "+str(sortedSize[0]))
-		
+
 		#Select Island
 		bpy.ops.uv.select_all(action='DESELECT')
 		utilities_uv.setSelectedFaces(island)
 		
 		#Offset Island
-		delta = boundsAll['min'] - bounds['min'];
-		bpy.ops.transform.translate(value=(delta.x, delta.y+offset, 0))
-		offset += bounds['height']+0.01
+		if(isVertical):
+			delta = Vector((boundsAll['min'].x - bounds['min'].x, boundsAll['max'].y - bounds['max'].y));
+			bpy.ops.transform.translate(value=(delta.x, delta.y-offset, 0))
+			offset += bounds['height']+0.01
+		else:
+			print("Horizontal")
 
 
 	#Restore selection

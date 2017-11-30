@@ -114,6 +114,10 @@ class TexToolsPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		
+
+		layout.operator("wm.console_toggle", text="Console")
+
+
 		#---------- Settings ------------
 		row = layout.row()
 		box = row.box()
@@ -127,6 +131,13 @@ class TexToolsPanel(bpy.types.Panel):
 		layout.separator()
 
 		#---------- Transform ------------
+
+
+		# boxHeader = layout.box()
+		# row = boxHeader.row();
+		layout.operator("wm.console_toggle", text="Header", icon = "TRIA_DOWN")
+		# row.label(text="Header")
+
 
 		row = layout.row()
 		box = row.box()
@@ -148,16 +159,10 @@ class TexToolsPanel(bpy.types.Panel):
 		col.operator(operator_align.operator_align.bl_idname, text="→", icon_value = getIcon("alignRight")).direction = "right"
 
 
-
-		#---------- UV Islands ------------
-		row = layout.row()
-		box = row.box()
-		# box.label(text="UV Islands")
-
 		aligned = box.row(align=True)
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
-		aligned = box.row(align=True)
+		aligned = box.row()
 		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align", icon_value = getIcon("islandAlignByEdge"))
 
 		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))

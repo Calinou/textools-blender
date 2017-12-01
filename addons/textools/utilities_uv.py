@@ -53,7 +53,7 @@ def setSelectedFaces(faces):
 		for loop in face.loops:
 			loop[uvLayer].select = True
 
-	print("Done selecting "+str(len(faces))+" faces")
+	# print("Done selecting "+str(len(faces))+" faces")
 
 
 

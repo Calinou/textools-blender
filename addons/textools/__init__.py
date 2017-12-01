@@ -110,6 +110,7 @@ class TexToolsPanel(bpy.types.Panel):
 	bl_label = "TexTools"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
+	bl_category = "TexTools"
 	
 	def draw(self, context):
 		layout = self.layout

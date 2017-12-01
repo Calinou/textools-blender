@@ -1,9 +1,11 @@
 import bpy
 import bmesh
 import operator
+import math
+
 from mathutils import Vector
 from collections import defaultdict
-from math import pi
+
 
 from . import utilities_uv
 import imp
@@ -74,6 +76,10 @@ def main(context, isVertical):
 	allSizes = {}	#https://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
 	allBounds = {}
 
+	print("Islands: "+str(len(islands))+"x")
+
+	bpy.context.window_manager.progress_begin(0, len(islands))
+
 	#Rotate to minimal bounds
 	for i in range(0, len(islands)):
 		alignIslandMinimalBounds(uvLayer, islands[i])
@@ -82,7 +88,11 @@ def main(context, isVertical):
 		bounds = utilities_uv.getSelectionBBox()
 		allSizes[i] = bounds['area'] + i*0.000001;#Make each size unique
 		allBounds[i] = bounds;
-		print("Size: "+str(allSizes[i]))
+		print("Rotate compact:  "+str(allSizes[i]))
+
+		bpy.context.window_manager.progress_update(i)
+
+	bpy.context.window_manager.progress_end()
 
 
 	#Position by sorted size in row
@@ -103,12 +113,25 @@ def main(context, isVertical):
 			delta = Vector((boundsAll['min'].x - bounds['min'].x, boundsAll['max'].y - bounds['max'].y));
 			bpy.ops.transform.translate(value=(delta.x, delta.y-offset, 0))
 			offset += bounds['height']+0.01
-		else:
-			print("Horizontal")
+	# 	else:
+	# 		print("Horizontal")
 
 
-	#Restore selection
-	utilities_uv.selectionRestore()
+	# #Restore selection
+	# utilities_uv.selectionRestore()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	#pos =  #Vector((99999999.0,99999999.0))
@@ -158,7 +181,6 @@ def main(context, isVertical):
 def alignIslandMinimalBounds(uvLayer, faces):
 	# Select Island
 	bpy.ops.uv.select_all(action='DESELECT')
-
 	utilities_uv.setSelectedFaces(faces)
 
 	steps = 8
@@ -170,6 +192,15 @@ def alignIslandMinimalBounds(uvLayer, faces):
 		# Rotate right
 		bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(0, 0, 1))
 		bbox = utilities_uv.getSelectionBBox()
+
+		if i == 0:
+			sizeA = bboxPrevious['width'] * bboxPrevious['height']
+			sizeB = bbox['width'] * bbox['height']
+			if abs(bbox['width'] - bbox['height']) <= 0.0001 and sizeA < sizeB:
+				# print("Already squared")
+				bpy.ops.transform.rotate(value=(-angle * pi / 180), axis=(0, 0, 1))
+				break;
+
 
 		if bbox['minLength'] < bboxPrevious['minLength']:
 			bboxPrevious = bbox;	# Success

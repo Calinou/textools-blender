@@ -52,7 +52,6 @@ def swap(context):
 
 	for face in bm.faces:
 		# indexFace = face.index;
-
 		for loop in face.loops:
 			# if loop[uvLayer].select is True:
 			uv = loop[uvLayer].uv
@@ -74,6 +73,51 @@ def swap(context):
 	bpy.ops.transform.resize(value=(1, 1, 0), constraint_axis=(False, False, True), constraint_orientation='GLOBAL', proportional='DISABLED')
 
 	print("Box? "+str(box))
+
+
+
+
+	#SHape Keys: How to set: https://blender.stackexchange.com/questions/15593/how-to-change-shapekey-vertex-position-through-python
+
+
+
+
+	#### simple uv > co
+	# import bpy
+
+	# print("######### Script Starting #########")
+
+	# bpy.ops.object.duplicate(linked=False, mode='TRANSLATION')
+	# print("Duplicated the object")
+
+	# me = bpy.context.object.data
+	# uv_layer = me.uv_layers.active.data
+
+	# bpy.ops.object.shape_key_add(from_mix=True)
+	# print("Added Base shapekey")
+
+	# for poly in me.polygons:
+	#     for loop_index in poly.loop_indices:
+	#         i = me.loops[loop_index].vertex_index
+	#         co = uv_layer[loop_index].uv
+	#         me.vertices[i].co[0] = co[0] * 2    ## To resize result of UV mesh,
+	#         me.vertices[i].co[1] = co[1] * 2    ## change the multiplied ammount
+	#         me.vertices[i].co[2] = 0
+	# print("Flattened Based on UV")
+
+	# bpy.ops.object.shape_key_add(from_mix=False)
+	# print("Added Morphed shapekey")
+
+	# print("######### Script Complete #########")
+
+
+
+
+
+
+
+
+
 
 
 

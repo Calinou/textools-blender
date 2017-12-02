@@ -1,6 +1,7 @@
 import bpy
 import bmesh
 import operator
+import math
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
@@ -52,13 +53,32 @@ def main(context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 	
+	# > bmesh.from_edit_mesh(bpy.context.active_object.data).verts[0].select
+	
+	selectedVerts = []
+
 	for face in bm.faces:
 		if face.select:
+			del selectedVerts[:]#Clear List
 			for loop in face.loops:
 				if loop[uvLayer].select:
+					selectedVerts.append(loop[uvLayer].uv)
 					print("Vert selected "+str(face.index))
+
+			if len(selectedVerts) >= 2:
+				print("Selected edge "+str(selectedVerts[0]))
+				break;
 			# break;
-		
+	
+	if len(selectedVerts) >= 2:
+		diff = selectedVerts[1] - selectedVerts[0]
+		angle = math.atan2(diff.y, diff.x)
+		print("edges: "+str(diff)+" = "+str(angle * 180 / math.pi))
+
+
+		# angle = math.atan2
+
+
 		# isUVFaceSelected = True;
 		# for loop in face.loops:
 		# 	if loop[uvLayer].select is False:

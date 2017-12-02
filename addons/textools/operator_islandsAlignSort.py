@@ -117,8 +117,8 @@ def main(context, isVertical):
 	# 		print("Horizontal")
 
 
-	# #Restore selection
-	# utilities_uv.selectionRestore()
+	#Restore selection
+	utilities_uv.selectionRestore()
 
 
 

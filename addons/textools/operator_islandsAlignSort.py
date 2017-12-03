@@ -86,7 +86,7 @@ def main(context, isVertical):
 
 		# Collect BBox sizes
 		bounds = utilities_uv.getSelectionBBox()
-		allSizes[i] = bounds['area'] + i*0.000001;#Make each size unique
+		allSizes[i] = max(bounds['width'], bounds['height']) + i*0.000001;#Make each size unique
 		allBounds[i] = bounds;
 		print("Rotate compact:  "+str(allSizes[i]))
 
@@ -190,7 +190,7 @@ def alignIslandMinimalBounds(uvLayer, faces):
 
 	for i in range(0, steps):
 		# Rotate right
-		bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(0, 0, 1))
+		bpy.ops.transform.rotate(value=(angle * math.pi / 180), axis=(0, 0, 1))
 		bbox = utilities_uv.getSelectionBBox()
 
 		if i == 0:
@@ -198,7 +198,7 @@ def alignIslandMinimalBounds(uvLayer, faces):
 			sizeB = bbox['width'] * bbox['height']
 			if abs(bbox['width'] - bbox['height']) <= 0.0001 and sizeA < sizeB:
 				# print("Already squared")
-				bpy.ops.transform.rotate(value=(-angle * pi / 180), axis=(0, 0, 1))
+				bpy.ops.transform.rotate(value=(-angle * math.pi / 180), axis=(0, 0, 1))
 				break;
 
 
@@ -206,18 +206,18 @@ def alignIslandMinimalBounds(uvLayer, faces):
 			bboxPrevious = bbox;	# Success
 		else:
 			# Rotate Left
-			bpy.ops.transform.rotate(value=(-angle*2 * pi / 180), axis=(0, 0, 1))
+			bpy.ops.transform.rotate(value=(-angle*2 * math.pi / 180), axis=(0, 0, 1))
 			bbox = utilities_uv.getSelectionBBox()
 			if bbox['minLength'] < bboxPrevious['minLength']:
 				bboxPrevious = bbox;	# Success
 			else:
 				# Restore angle of this iteration
-				bpy.ops.transform.rotate(value=(angle * pi / 180), axis=(0, 0, 1))
+				bpy.ops.transform.rotate(value=(angle * math.pi / 180), axis=(0, 0, 1))
 
 		angle = angle / 2
 
 	if bboxPrevious['width'] < bboxPrevious['height']:
-		bpy.ops.transform.rotate(value=(90 * pi / 180), axis=(0, 0, 1))
+		bpy.ops.transform.rotate(value=(90 * math.pi / 180), axis=(0, 0, 1))
 
 
 

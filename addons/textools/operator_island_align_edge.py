@@ -72,9 +72,18 @@ def main(context):
 	
 	if len(selectedVerts) >= 2:
 		diff = selectedVerts[1] - selectedVerts[0]
-		angle = math.atan2(diff.y, diff.x)
+		angle = math.atan2(diff.y, diff.x)%(math.pi/2)
 		print("edges: "+str(diff)+" = "+str(angle * 180 / math.pi))
 
+		bpy.ops.uv.select_linked(extend=False)
+
+		bpy.context.space_data.pivot_point = 'CURSOR'
+		bpy.ops.uv.cursor_set(location=selectedVerts[0] + diff/2)
+
+		if angle >= (math.pi/4):
+			angle = angle - (math.pi/2)
+
+		bpy.ops.transform.rotate(value=angle, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')
 
 		# angle = math.atan2
 

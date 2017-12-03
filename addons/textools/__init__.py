@@ -164,7 +164,7 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
 		aligned = box.row()
-		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align", icon_value = getIcon("islandAlignByEdge"))
+		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align Edge", icon_value = getIcon("islandAlignByEdge"))
 
 		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 

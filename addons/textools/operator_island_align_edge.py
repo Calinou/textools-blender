@@ -50,8 +50,8 @@ def main(context):
    	#Store selection
 	utilities_uv.selectionStore()
 
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+	uvLayer = bm.loops.layers.uv.verify()
 	
 	# > bmesh.from_edit_mesh(bpy.context.active_object.data).verts[0].select
 	

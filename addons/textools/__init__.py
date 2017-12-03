@@ -39,6 +39,7 @@ if "bpy" in locals():
 	imp.reload(operator_bake)
 	imp.reload(operator_swap_uv_xyz)
 	imp.reload(operator_island_align_edge)
+	imp.reload(operator_symmetry)
 	
 else:
 	from . import utilities_gui
@@ -50,6 +51,7 @@ else:
 	from . import operator_bake
 	from . import operator_swap_uv_xyz
 	from . import operator_island_align_edge
+	from . import operator_symmetry
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -116,7 +118,7 @@ class TexToolsPanel(bpy.types.Panel):
 		layout = self.layout
 		
 
-		layout.operator("wm.console_toggle", text="Console")
+		layout.operator("wm.console_toggle", text="Debug Console")
 
 
 		#---------- Settings ------------
@@ -136,17 +138,25 @@ class TexToolsPanel(bpy.types.Panel):
 
 		# boxHeader = layout.box()
 		# row = boxHeader.row();
-		layout.operator("wm.console_toggle", text="Header", icon = "TRIA_DOWN")
-		# row.label(text="Header")
+		# layout.operator("wm.console_toggle", text="Header", icon = "TRIA_DOWN")
+		layout.label(text="Layout")
 
 
-		row = layout.row()
-		box = row.box()
+		# row = layout.row()
+		# box = row.box()
 		# box.label(text="Trasnform")
 
-		aligned = box.row(align=True)
-		aligned.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
-		aligned.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+		box = layout.box()
+
+
+		col = box.column(align=True)
+		row = col.row(align=True)
+		row.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align Edge", icon_value = getIcon("islandAlignByEdge"))
+
+		row = col.row(align=True)
+		row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
+		row.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
+		
 		
 		row = box.row(align=True)
 		col = row.column(align=True)
@@ -164,26 +174,28 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
 		aligned = box.row()
-		aligned.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align Edge", icon_value = getIcon("islandAlignByEdge"))
+		
+		aligned.operator(operator_symmetry.operator_symmetry.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
 
-		layout.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 
+		
 		layout.separator()
 
 		#---------- Textures ------------
+		layout.label(text="Textures")
 		row = layout.row()
 		box = row.box()
-		box.label(text="Textures")
-		aligned = box.row(align=True)
+		aligned = box.column(align=True)
 		aligned.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
 		aligned.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
+		aligned.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 
 		layout.separator()
 
 		#---------- Baking ------------
+		layout.label(text="Baking")
 		row = layout.row()
 		box = row.box()
-		box.label(text="Baking")
 
 		aligned = box.row()
 		#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
@@ -252,6 +264,7 @@ def register():
 	registerIcon("alignLeft.png")
 	registerIcon("alignRight.png")
 	registerIcon("alignTop.png")
+	registerIcon("mirror.png")
 	
 	#Key Maps
 	# wm = bpy.context.window_manager

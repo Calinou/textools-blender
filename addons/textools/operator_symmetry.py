@@ -84,7 +84,7 @@ def main(context):
 		bpy.ops.mesh.select_all(action='SELECT')
 
 
-		bpy.context.scene.tool_settings.uv_select_mode = "VERTEX"
+		bpy.context.scene.tool_settings.uv_select_mode = "EDGE"
 		bpy.ops.uv.select_all(action='DESELECT')
 		
 

@@ -53,14 +53,44 @@ def main(context):
 	if bpy.context.scene.tool_settings.uv_select_mode == 'FACE':
 		print( "1.) Get Face edge bounds selection")
 
+		# Get selected UV faces
+		selected_faces = []
 		for face in bm.faces:
 			if face.select:
-				
-
+				# Are all UV faces selected?
 				countSelected = 0
 				for loop in face.loops:
 					if loop[uvLayer].select:
 						countSelected+=1
 						# print("Vert selected "+str(face.index))
 				if countSelected == len(face.loops):
-					print("Face selected, UV?")
+					selected_faces.append(face)
+
+		# Select faces
+		bpy.ops.mesh.select_all(action='DESELECT')
+		for face in selected_faces:
+			face.select = True
+
+		# Get Face Bounds
+		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+		bpy.ops.mesh.region_to_loop()
+
+		selected_verts = [v for v in bm.verts if v.select]
+
+		print("verts "+str(len(selected_verts)))
+
+		# https://blender.stackexchange.com/questions/53709/bmesh-how-to-map-vertex-based-uv-coordinates-to-loops
+		
+		bpy.ops.mesh.select_all(action='SELECT')
+
+
+		bpy.context.scene.tool_settings.uv_select_mode = "VERTEX"
+		bpy.ops.uv.select_all(action='DESELECT')
+		
+
+		for face in bm.faces:
+			for vert, loop in zip(face.verts, face.loops):
+				if vert in selected_verts:
+					print("Yes "+str(vert.index))
+					loop[uvLayer].select = True
+				# loop[uv_layer].uv = get_uvs(vert.index, face.index,...)

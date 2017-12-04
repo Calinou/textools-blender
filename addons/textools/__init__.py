@@ -40,6 +40,7 @@ if "bpy" in locals():
 	imp.reload(operator_swap_uv_xyz)
 	imp.reload(operator_island_align_edge)
 	imp.reload(operator_symmetry)
+	imp.reload(operator_setup_split_uv)
 	
 else:
 	from . import utilities_gui
@@ -52,6 +53,7 @@ else:
 	from . import operator_swap_uv_xyz
 	from . import operator_island_align_edge
 	from . import operator_symmetry
+	from . import operator_setup_split_uv
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -189,6 +191,12 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
 		aligned.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
 		aligned.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
+		
+		aligned.separator()
+		aligned.operator(operator_setup_split_uv.operator_setup_split_uv.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+
+
+
 
 		layout.separator()
 
@@ -265,6 +273,7 @@ def register():
 	registerIcon("alignRight.png")
 	registerIcon("alignTop.png")
 	registerIcon("mirror.png")
+	registerIcon("setup_split_uv.png")
 	
 	#Key Maps
 	# wm = bpy.context.window_manager

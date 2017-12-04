@@ -19,6 +19,9 @@ class operator_island_align_edge(bpy.types.Operator):
 		if not bpy.context.active_object:
 			return False
 
+		if not bpy.context.active_object.type != 'MESH':
+			return False
+
 		#Only in Edit mode
 		if bpy.context.active_object.mode != 'EDIT':
 			return False

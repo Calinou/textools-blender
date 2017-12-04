@@ -18,7 +18,7 @@ class operator_swap_uv_xyz(bpy.types.Operator):
 	def poll(cls, context):
 		if not bpy.context.active_object:
 			return False
-
+		
 		if bpy.context.active_object.type != 'MESH':
 			return False
 

@@ -41,6 +41,7 @@ if "bpy" in locals():
 	imp.reload(operator_island_align_edge)
 	imp.reload(operator_symmetry)
 	imp.reload(operator_setup_split_uv)
+	imp.reload(operatyor_faces_iron)
 	
 else:
 	from . import utilities_gui
@@ -54,6 +55,7 @@ else:
 	from . import operator_island_align_edge
 	from . import operator_symmetry
 	from . import operator_setup_split_uv
+	from . import operatyor_faces_iron
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -138,6 +140,9 @@ class TexToolsPanel(bpy.types.Panel):
 		#---------- Transform ------------
 
 
+
+
+
 		# boxHeader = layout.box()
 		# row = boxHeader.row();
 		# layout.operator("wm.console_toggle", text="Header", icon = "TRIA_DOWN")
@@ -148,9 +153,15 @@ class TexToolsPanel(bpy.types.Panel):
 		# box = row.box()
 		# box.label(text="Trasnform")
 
+
+
+
 		box = layout.box()
 
+		box.operator(operator_setup_split_uv.operator_setup_split_uv.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 
+		# box.separator()
+		
 		col = box.column(align=True)
 		row = col.row(align=True)
 		row.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align Edge", icon_value = getIcon("islandAlignByEdge"))
@@ -175,9 +186,11 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned = box.row(align=True)
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
 		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
-		aligned = box.row()
 		
-		aligned.operator(operator_symmetry.operator_symmetry.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
+		aligned = box.row(align=True)
+		col = aligned.column(align=True)
+		col.operator(operator_symmetry.operator_symmetry.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
+		col.operator(operatyor_faces_iron.operatyor_faces_iron.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
 
 
 		
@@ -192,11 +205,8 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
 		aligned.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 		
-		aligned.separator()
-		aligned.operator(operator_setup_split_uv.operator_setup_split_uv.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
-
-
-
+	
+		
 
 		layout.separator()
 
@@ -274,6 +284,8 @@ def register():
 	registerIcon("alignTop.png")
 	registerIcon("mirror.png")
 	registerIcon("setup_split_uv.png")
+	registerIcon("faces_iron.png")
+	
 	
 	#Key Maps
 	# wm = bpy.context.window_manager

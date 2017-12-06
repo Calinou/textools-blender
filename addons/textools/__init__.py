@@ -31,6 +31,8 @@ bl_info = {
 if "bpy" in locals():
 	import imp
 	imp.reload(utilities_gui)
+	imp.reload(settings)
+	
 
 	imp.reload(operator_islandsAlignSort)
 	imp.reload(operator_checkerMap)
@@ -45,6 +47,7 @@ if "bpy" in locals():
 	
 else:
 	from . import utilities_gui
+	from . import settings
 
 	from . import operator_islandsAlignSort
 	from . import operator_checkerMap
@@ -175,12 +178,17 @@ class TexToolsPanel(bpy.types.Panel):
 		col = row.column(align=True)
 		col.label(text="")
 		col.operator(operator_align.operator_align.bl_idname, text="←", icon_value = getIcon("alignLeft")).direction = "left"
+
 		col = row.column(align=True)
 		col.operator(operator_align.operator_align.bl_idname, text="↑", icon_value = getIcon("alignTop")).direction = "top"
 		col.operator(operator_align.operator_align.bl_idname, text="↓", icon_value = getIcon("alignBottom")).direction = "bottom"
+
 		col = row.column(align=True)
 		col.label(text="")
 		col.operator(operator_align.operator_align.bl_idname, text="→", icon_value = getIcon("alignRight")).direction = "right"
+
+
+
 
 
 		aligned = box.row(align=True)
@@ -219,10 +227,11 @@ class TexToolsPanel(bpy.types.Panel):
 		#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
 		
 		aligned.template_icon_view(context.scene, "my_thumbnails")
+		settings.bake_mode = str(bpy.context.scene.my_thumbnails).replace(".png","")
 
 		# Just a way to access which one is selected
 		aligned = box.row()
-		aligned.label(text="Mode: " + str(bpy.context.scene.my_thumbnails).replace(".png",""))
+		aligned.label(text="Mode: " +settings.bake_mode )
 
 	
 		#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
@@ -233,8 +242,8 @@ class TexToolsPanel(bpy.types.Panel):
 
 		aligned = box.row(align=True)
 		aligned.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");
-		aligned.prop(context.scene.texToolsSettings, "baking_do_save")
-		
+		aligned.prop(context.scene.texToolsSettings, "baking_do_save"
+)		
 		layout.separator()
 
 		#---------- ID Colors ------------

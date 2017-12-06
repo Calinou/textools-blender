@@ -5,6 +5,8 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
+from . import settings
+
 # Get last-loaded material, such as ~.002.
 def _getAppendedMaterial(material_name):
     # Get material name list.
@@ -73,4 +75,4 @@ def execute_setup_material(context):
 
 def execute_render(context):
 	print("Executing operator_bake_render main()")
-	print("Mode: "+str(context.scene.texToolsSettings.baking_mode))
+	print("Mode: "+str(settings.bake_mode))

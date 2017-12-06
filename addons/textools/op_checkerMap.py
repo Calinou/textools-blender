@@ -5,7 +5,7 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
-class operator_checkerMap(bpy.types.Operator):
+class op(bpy.types.Operator):
 	"""UV Operator description"""
 	bl_idname = "uv.textools_checker_map"
 	bl_label = "Checker Map"
@@ -53,15 +53,3 @@ def main(context):
 			for space in area.spaces: # iterate through spaces in current VIEW_3D area
 				if space.type == 'VIEW_3D': # check if space is a 3D view
 					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
-
-
-if __name__ == "__main__":
- 	# test call
-	lastOperator = bpy.context.area.type;
-	if bpy.context.area.type != 'IMAGE_EDITOR':
-		bpy.context.area.type = 'IMAGE_EDITOR'
-
-	bpy.ops.uv.textools_checker_map()
-
-	#restore context, e.g. back to code editor instead of uv editor
-	bpy.context.area.type = lastOperator

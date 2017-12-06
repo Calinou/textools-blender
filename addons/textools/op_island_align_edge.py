@@ -8,7 +8,7 @@ from math import pi
 
 from . import utilities_uv
 
-class operator_island_align_edge(bpy.types.Operator):
+class op(bpy.types.Operator):
 	bl_idname = "uv.textools_island_align_edge"
 	bl_label = "Align Island by Edge"
 	bl_description = "Align the island by selected edge"

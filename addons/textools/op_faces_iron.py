@@ -7,7 +7,7 @@ from math import pi
 
 from . import utilities_uv
 
-class operatyor_faces_iron(bpy.types.Operator):
+class op(bpy.types.Operator):
 	"""UV Operator description"""
 	bl_idname = "uv.textools_faces_iron"
 	bl_label = "Iron"

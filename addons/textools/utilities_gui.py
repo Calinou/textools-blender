@@ -4,6 +4,48 @@ import bpy.utils.previews
 
 import os
 
+
+
+class op_help(bpy.types.Operator):
+    bl_idname = "help.bool_tool"
+    bl_label = "Help"
+    bl_description = "Tool Help - click to read some basic information"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label("To use:")
+        layout.label("Select two or more objects,")
+        layout.label("choose one option from the panel")
+        layout.label("or from the Ctrl + Shift + B menu")
+
+        layout.label("Auto Boolean:")
+        layout.label("Apply Boolean operation directly.")
+
+        layout.label("Brush Boolean:")
+        layout.label("Create a Boolean brush setup.")
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_popup(self, width=220)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # UI
 class PreviewsExamplePanel(bpy.types.Panel):
     bl_label = "Previews Example Panel"

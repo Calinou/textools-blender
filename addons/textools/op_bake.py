@@ -39,7 +39,7 @@ def getMaterial(materialType):
 	#return None; #bpy.data.images[name];
 
 
-class operator_bake_setup_material(bpy.types.Operator):
+class op_setup_material(bpy.types.Operator):
 	bl_idname = "uv.textools_bake_setup_material"
 	bl_label = "Setup Material"
 	bl_description = "Setup Bake materials"
@@ -52,7 +52,7 @@ class operator_bake_setup_material(bpy.types.Operator):
 		execute_setup_material(context)
 		return {'FINISHED'}
 
-class operator_bake_render(bpy.types.Operator):
+class op_bake(bpy.types.Operator):
 	bl_idname = "uv.textools_bake"
 	bl_label = "Bake"
 	bl_description = "Bake selected objects"

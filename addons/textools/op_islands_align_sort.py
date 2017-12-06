@@ -12,7 +12,7 @@ import imp
 imp.reload(utilities_uv)
 
 
-class operator_islandsAlignSort(bpy.types.Operator):
+class op(bpy.types.Operator):
 	bl_idname = "uv.textools_islands_align_sort"
 	bl_label = "Align & Sort"
 	bl_description = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
@@ -221,18 +221,3 @@ def alignIslandMinimalBounds(uvLayer, faces):
 
 	if bboxPrevious['width'] < bboxPrevious['height']:
 		bpy.ops.transform.rotate(value=(90 * math.pi / 180), axis=(0, 0, 1))
-
-
-
-if __name__ == "__main__":
-	print("__main__ called from islandsAlignSort.py")
-
-	# test call
-	# lastOperator = bpy.context.area.type;
-	# if bpy.context.area.type != 'IMAGE_EDITOR':
-	# 	bpy.context.area.type = 'IMAGE_EDITOR'
-
-	# bpy.ops.uv.textools_IslandsAlignSort()
-
-	# #restore context, e.g. back to code editor instead of uv editor
-	# bpy.context.area.type = lastOperator

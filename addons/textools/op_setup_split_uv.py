@@ -7,7 +7,7 @@ from collections import defaultdict
 
 from . import utilities_uv
 
-class operator_setup_split_uv(bpy.types.Operator):
+class op(bpy.types.Operator):
 	bl_idname = "uv.textools_setup_split_uv"
 	bl_label = "Split"
 	bl_description = "Unwrap model by sharp edges of topology"

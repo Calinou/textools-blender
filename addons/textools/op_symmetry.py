@@ -7,8 +7,7 @@ from math import pi
 
 from . import utilities_uv
 
-class operator_symmetry(bpy.types.Operator):
-	"""UV Operator description"""
+class op(bpy.types.Operator):
 	bl_idname = "uv.textools_symmetry"
 	bl_label = "Symmetry"
 	bl_description = "Mirrors selected faces to other half or averages based on selected edge center"

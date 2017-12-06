@@ -34,31 +34,31 @@ if "bpy" in locals():
 	imp.reload(settings)
 	
 
-	imp.reload(operator_islandsAlignSort)
-	imp.reload(operator_checkerMap)
-	imp.reload(operator_align)
-	imp.reload(operator_reloadTextures)
-	imp.reload(operator_bake)
-	imp.reload(operator_swap_uv_xyz)
-	imp.reload(operator_island_align_edge)
-	imp.reload(operator_symmetry)
-	imp.reload(operator_setup_split_uv)
-	imp.reload(operatyor_faces_iron)
+	imp.reload(op_islands_align_sort)
+	imp.reload(op_checkerMap)
+	imp.reload(op_align)
+	imp.reload(op_reloadTextures)
+	imp.reload(op_bake)
+	imp.reload(op_swap_uv_xyz)
+	imp.reload(op_island_align_edge)
+	imp.reload(op_symmetry)
+	imp.reload(op_setup_split_uv)
+	imp.reload(op_faces_iron)
 	
 else:
 	from . import utilities_gui
 	from . import settings
 
-	from . import operator_islandsAlignSort
-	from . import operator_checkerMap
-	from . import operator_align
-	from . import operator_reloadTextures
-	from . import operator_bake
-	from . import operator_swap_uv_xyz
-	from . import operator_island_align_edge
-	from . import operator_symmetry
-	from . import operator_setup_split_uv
-	from . import operatyor_faces_iron
+	from . import op_islands_align_sort
+	from . import op_checkerMap
+	from . import op_align
+	from . import op_reloadTextures
+	from . import op_bake
+	from . import op_swap_uv_xyz
+	from . import op_island_align_edge
+	from . import op_symmetry
+	from . import op_setup_split_uv
+	from . import op_faces_iron
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -161,13 +161,13 @@ class TexToolsPanel(bpy.types.Panel):
 
 		box = layout.box()
 
-		box.operator(operator_setup_split_uv.operator_setup_split_uv.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+		box.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 
 		# box.separator()
 		
 		col = box.column(align=True)
 		row = col.row(align=True)
-		row.operator(operator_island_align_edge.operator_island_align_edge.bl_idname, text="Align Edge", icon_value = getIcon("islandAlignByEdge"))
+		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = getIcon("islandAlignByEdge"))
 
 		row = col.row(align=True)
 		row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
@@ -177,28 +177,28 @@ class TexToolsPanel(bpy.types.Panel):
 		row = box.row(align=True)
 		col = row.column(align=True)
 		col.label(text="")
-		col.operator(operator_align.operator_align.bl_idname, text="←", icon_value = getIcon("alignLeft")).direction = "left"
+		col.operator(op_align.op.bl_idname, text="←", icon_value = getIcon("alignLeft")).direction = "left"
 
 		col = row.column(align=True)
-		col.operator(operator_align.operator_align.bl_idname, text="↑", icon_value = getIcon("alignTop")).direction = "top"
-		col.operator(operator_align.operator_align.bl_idname, text="↓", icon_value = getIcon("alignBottom")).direction = "bottom"
+		col.operator(op_align.op.bl_idname, text="↑", icon_value = getIcon("alignTop")).direction = "top"
+		col.operator(op_align.op.bl_idname, text="↓", icon_value = getIcon("alignBottom")).direction = "bottom"
 
 		col = row.column(align=True)
 		col.label(text="")
-		col.operator(operator_align.operator_align.bl_idname, text="→", icon_value = getIcon("alignRight")).direction = "right"
+		col.operator(op_align.op.bl_idname, text="→", icon_value = getIcon("alignRight")).direction = "right"
 
 
 
 
 
 		aligned = box.row(align=True)
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
+		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
+		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
 		
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
-		col.operator(operator_symmetry.operator_symmetry.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
-		col.operator(operatyor_faces_iron.operatyor_faces_iron.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
+		col.operator(op_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
+		col.operator(op_faces_iron.op.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
 
 
 		
@@ -209,9 +209,9 @@ class TexToolsPanel(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 		aligned = box.column(align=True)
-		aligned.operator(operator_checkerMap.operator_checkerMap.bl_idname, icon_value = getIcon("checkerMap"))
-		aligned.operator(operator_reloadTextures.operator_reloadTextures.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
-		aligned.operator(operator_swap_uv_xyz.operator_swap_uv_xyz.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
+		aligned.operator(op_checkerMap.op.bl_idname, icon_value = getIcon("checkerMap"))
+		aligned.operator(op_reloadTextures.op.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
+		aligned.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 		
 	
 		
@@ -237,11 +237,11 @@ class TexToolsPanel(bpy.types.Panel):
 		#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
 		
 		aligned = box.row(align=True)
-		aligned.operator(operator_bake.operator_bake_setup_material.bl_idname, text = "Set Material");
-		aligned.operator(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, text = "Set Model");
+		aligned.operator(op_bake.op_setup_material.bl_idname, text = "Set Material");
+		aligned.operator(op_bake.op_setup_material.bl_idname, text = "Set Model");
 
 		aligned = box.row(align=True)
-		aligned.operator(operator_bake.operator_bake_render.bl_idname, text = "Bake");
+		aligned.operator(op_bake.op_bake.bl_idname, text = "Bake");
 		aligned.prop(context.scene.texToolsSettings, "baking_do_save"
 )		
 		layout.separator()
@@ -299,7 +299,7 @@ def register():
 	#Key Maps
 	# wm = bpy.context.window_manager
 	# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	# kmi = km.keymap_items.new(operator_islandsAlignSort.operator_islandsAlignSort.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
+	# kmi = km.keymap_items.new(op_islands_align_sort.op.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
 	# keymaps.append((km, kmi))
 	
 	#bpy.utils.register_module(__name__)

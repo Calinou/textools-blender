@@ -8,7 +8,7 @@ from math import pi
 from . import utilities_uv
 
 
-class operator_swap_uv_xyz(bpy.types.Operator):
+class op(bpy.types.Operator):
 	bl_idname = "uv.textools_swap_uv_xyz"
 	bl_label = "Swap UV 2 XYZ"
 	bl_description = "Swap UV to XYZ coordinates"
@@ -177,7 +177,3 @@ def swap(context):
 
 
 	# bmesh.update_edit_mesh(obj.data)
-
-
-#if __name__ == "__main__":
- 	# test call

@@ -157,7 +157,8 @@ def main(context):
 		bpy.ops.uv.select_all(action='DESELECT')
 		for face in selected_faces:
 			for loop in face.loops:
-				loop[uvLayer].select = True
+				if loop.vert not in verts_middle:
+					loop[uvLayer].select = True
 
 
 		# bpy.ops.mesh.select_all(action='DESELECT')

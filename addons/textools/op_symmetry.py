@@ -33,6 +33,9 @@ class op(bpy.types.Operator):
 		if bpy.context.scene.tool_settings.uv_select_mode != 'EDGE' and bpy.context.scene.tool_settings.uv_select_mode != 'FACE':
 		 	return False
 
+		# if bpy.context.scene.tool_settings.use_uv_select_sync:
+		# 	return False
+
 		return True
 
 	def execute(self, context):
@@ -79,6 +82,38 @@ def alignToCenterLine():
 	bpy.ops.transform.rotate(value=average_angle, axis=(0, 0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')
 
 
+def extend_half_selection(verts_middle, verts_half):
+	
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+	uvLayer = bm.loops.layers.uv.verify()
+
+	# Limit iteration loops
+	max_loops_extend = 200
+
+	for i in range(0, max_loops_extend):
+		# Select initial half selection
+		bpy.ops.uv.select_all(action='DESELECT')
+		for face in bm.faces:
+			if face.select:
+				for loop in face.loops:
+					if loop.vert in verts_half:
+						loop[uvLayer].select = True
+
+		# Extend selection				
+		bpy.ops.uv.select_more()
+
+		count_added = 0
+		for face in bm.faces:
+			if face.select:
+				for loop in face.loops:
+					if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uvLayer].select:
+						verts_half.append(loop.vert)
+						count_added+=1
+
+		if count_added == 0:
+			# Break loop, now new items to add
+			break;
+
 
 def main(context):
 	print("Executing operator_symmetry")
@@ -90,8 +125,59 @@ def main(context):
 	uvLayer = bm.loops.layers.uv.verify()
 
 	if bpy.context.scene.tool_settings.uv_select_mode == 'EDGE':
-		# 1.) Align UV shell
+
+
+		# 1.) Collect left and right side verts
+		verts_middle = [];
+		
+
+		for face in bm.faces:
+			if face.select:
+				for loop in face.loops:
+					if loop[uvLayer].select and loop.vert not in verts_middle:
+						verts_middle.append(loop.vert)
+					
+		# 2.) Align UV shell
 		alignToCenterLine()
+
+
+		# 3.) Restore UV vert selection
+		x_middle = 0
+		bpy.ops.uv.select_all(action='DESELECT')
+		for face in bm.faces:
+			if face.select:
+				for loop in face.loops:
+					if loop.vert in verts_middle:
+						loop[uvLayer].select = True
+						x_middle = loop[uvLayer].uv.x;
+
+		# Extend selection
+		bpy.ops.uv.select_more()
+
+		verts_A = [];
+		verts_B = [];
+		for face in bm.faces:
+			if face.select:
+				for loop in face.loops:
+					if loop[uvLayer].select and loop.vert not in verts_middle:
+						if loop[uvLayer].uv.x <= x_middle:
+							# Left
+							if loop.vert not in verts_A:
+								verts_A.append(loop.vert)
+
+						elif loop[uvLayer].uv.x > x_middle:
+							# Right
+							if loop.vert not in verts_B:
+								verts_B.append(loop.vert)
+
+		extend_half_selection(verts_middle, verts_A)
+		extend_half_selection(verts_middle, verts_B)
+
+		print("Left, Right: "+str(len(verts_A))+" | "+str(len(verts_B)))
+
+		# 4.) Mirror Verts
+		mirror_verts(verts_middle, verts_A, verts_B, False)
+
 
 
 	if bpy.context.scene.tool_settings.uv_select_mode == 'FACE':
@@ -108,6 +194,20 @@ def main(context):
 						# print("Vert selected "+str(face.index))
 				if countSelected == len(face.loops):
 					selected_faces.append(face)
+
+
+		# if bpy.context.scene.tool_settings.use_uv_select_sync == False:
+
+		bpy.ops.uv.select_linked(extend=False)
+		verts_all = []
+		for face in bm.faces:
+			if face.select:
+				for loop in face.loops:
+					if(loop.vert not in verts_all):
+						verts_all.append(loop.vert)
+
+		print("Verts shell: "+str(len(verts_all)))
+
 
 		bpy.ops.mesh.select_all(action='DESELECT')
 		for face in selected_faces:
@@ -153,66 +253,29 @@ def main(context):
 		# 5.) Align UV shell
 		alignToCenterLine()
 
-		# 6.) Restore UV face selection
+		# 7.) Collect left and right side verts
+		verts_A = [];
+		verts_B = [];
+
 		bpy.ops.uv.select_all(action='DESELECT')
 		for face in selected_faces:
 			for loop in face.loops:
-				if loop.vert not in verts_middle:
-					loop[uvLayer].select = True
+				if loop.vert not in verts_middle and loop.vert not in verts_A:
+					verts_A.append(loop.vert)
 
+		for vert in verts_all:
+			if vert not in verts_middle and vert not in verts_A and vert not in verts_B:
+				verts_B.append(vert)
 
-		# bpy.ops.mesh.select_all(action='DESELECT')
-		# for edge in edges_middle:
-		# 	edge.select = True
-
-		# 5.) Convert to UV selection
-
-		
-
-'''
-
-
-		#Select all and get outer edges
-		bpy.ops.mesh.select_all(action='SELECT')
-		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
-		bpy.ops.mesh.region_to_loop()
-
-
-'''
+		# 8.) Mirror Verts
+		mirror_verts(verts_middle, verts_A, verts_B, True)
 
 
 
+def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
+	print("Mirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, A to B? "+str(isAToB))
 
 
-
-
-'''
-
-		# Get selected UV faces
-		selected_faces = []
-		for face in bm.faces:
-			if face.select:
-				# Are all UV faces selected?
-				countSelected = 0
-				for loop in face.loops:
-					if loop[uvLayer].select:
-						countSelected+=1
-						# print("Vert selected "+str(face.index))
-				if countSelected == len(face.loops):
-					selected_faces.append(face)
-
-		# Select faces
-		bpy.ops.mesh.select_all(action='DESELECT')
-		for face in selected_faces:
-			face.select = True
-
-		# Get Face Bounds
-		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
-		bpy.ops.mesh.region_to_loop()
-
-		selected_edges = [e for e in bm.edges if e.select]
-		print("edges "+str(len(selected_edges)))		
-'''
 
 
 

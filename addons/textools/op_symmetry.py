@@ -43,77 +43,6 @@ class op(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-def alignToCenterLine():
-	print("align to center line")
-
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
-	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
-
-	# 1.) Get average edges rotation + center
-	average_angle = 0
-	average_center = Vector((0,0))
-	average_count = 0
-	for face in bm.faces:
-		if face.select:
-			verts = []
-			for loop in face.loops:
-				if loop[uvLayer].select:
-					verts.append(loop[uvLayer].uv)
-
-			if len(verts) == 2:
-				diff = verts[1] - verts[0]
-				angle = math.atan2(diff.y, diff.x)%(math.pi)
-				average_center += verts[0] + diff/2
-				average_angle += angle
-				average_count+=1
-
-	if average_count >0:
-		average_angle/=average_count
-		average_center/=average_count
-
-	average_angle-= math.pi/2 #Rotate -90 degrees so aligned horizontally
-
-	# 2.) Rotate UV Shell around edge
-	bpy.context.space_data.pivot_point = 'CURSOR'
-	bpy.ops.uv.cursor_set(location=average_center)
-
-	bpy.ops.uv.select_linked(extend=False)
-	bpy.ops.transform.rotate(value=average_angle, axis=(0, 0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')
-
-
-def extend_half_selection(verts_middle, verts_half):
-	
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
-
-	# Limit iteration loops
-	max_loops_extend = 200
-
-	for i in range(0, max_loops_extend):
-		# Select initial half selection
-		bpy.ops.uv.select_all(action='DESELECT')
-		for face in bm.faces:
-			if face.select:
-				for loop in face.loops:
-					if loop.vert in verts_half:
-						loop[uvLayer].select = True
-
-		# Extend selection				
-		bpy.ops.uv.select_more()
-
-		count_added = 0
-		for face in bm.faces:
-			if face.select:
-				for loop in face.loops:
-					if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uvLayer].select:
-						verts_half.append(loop.vert)
-						count_added+=1
-
-		if count_added == 0:
-			# Break loop, now new items to add
-			break;
-
 
 def main(context):
 	print("Executing operator_symmetry")
@@ -275,29 +204,96 @@ def main(context):
 def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	print("Mirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, A to B? "+str(isAToB))
 
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+	uvLayer = bm.loops.layers.uv.verify()
+
+	#Get Center Line
+	x_middle = 0
+	
+	for face in bm.faces:
+		if face.select:
+			for loop in face.loops:
+				if loop.vert in verts_middle:
+					x_middle = loop[uvLayer].uv.x;
+					break;
+
+	print("Middle: "+str(x_middle))
 
 
 
 
 
-'''
-		selected_verts = [v for v in bm.verts if v.select]
-
-		print("verts "+str(len(selected_verts)))
-
-		# https://blender.stackexchange.com/questions/53709/bmesh-how-to-map-vertex-based-uv-coordinates-to-loops
-		
-		bpy.ops.mesh.select_all(action='SELECT')
 
 
-		bpy.context.scene.tool_settings.uv_select_mode = "EDGE"
+
+
+def alignToCenterLine():
+	print("align to center line")
+
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+	uvLayer = bm.loops.layers.uv.verify()
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+
+	# 1.) Get average edges rotation + center
+	average_angle = 0
+	average_center = Vector((0,0))
+	average_count = 0
+	for face in bm.faces:
+		if face.select:
+			verts = []
+			for loop in face.loops:
+				if loop[uvLayer].select:
+					verts.append(loop[uvLayer].uv)
+
+			if len(verts) == 2:
+				diff = verts[1] - verts[0]
+				angle = math.atan2(diff.y, diff.x)%(math.pi)
+				average_center += verts[0] + diff/2
+				average_angle += angle
+				average_count+=1
+
+	if average_count >0:
+		average_angle/=average_count
+		average_center/=average_count
+
+	average_angle-= math.pi/2 #Rotate -90 degrees so aligned horizontally
+
+	# 2.) Rotate UV Shell around edge
+	bpy.context.space_data.pivot_point = 'CURSOR'
+	bpy.ops.uv.cursor_set(location=average_center)
+
+	bpy.ops.uv.select_linked(extend=False)
+	bpy.ops.transform.rotate(value=average_angle, axis=(0, 0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')
+
+
+
+def extend_half_selection(verts_middle, verts_half):
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+	uvLayer = bm.loops.layers.uv.verify()
+
+	# Limit iteration loops
+	max_loops_extend = 200
+
+	for i in range(0, max_loops_extend):
+		# Select initial half selection
 		bpy.ops.uv.select_all(action='DESELECT')
-		
-
 		for face in bm.faces:
-			for vert, loop in zip(face.verts, face.loops):
-				if vert in selected_verts:
-					print("Yes "+str(vert.index))
-					loop[uvLayer].select = True
-				# loop[uv_layer].uv = get_uvs(vert.index, face.index,...)
-'''
+			if face.select:
+				for loop in face.loops:
+					if loop.vert in verts_half:
+						loop[uvLayer].select = True
+
+		# Extend selection				
+		bpy.ops.uv.select_more()
+
+		count_added = 0
+		for face in bm.faces:
+			if face.select:
+				for loop in face.loops:
+					if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uvLayer].select:
+						verts_half.append(loop.vert)
+						count_added+=1
+
+		if count_added == 0:
+			# Break loop, now new items to add
+			break;

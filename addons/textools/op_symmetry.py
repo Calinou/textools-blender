@@ -206,23 +206,89 @@ def main(context):
 def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	print("Mirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, A to B? "+str(isAToB))
 
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
-	#Get Center Line
+
+
+	# 1.) Get Center Line
 	x_middle = 0
-	
 	for face in bm.faces:
 		if face.select:
 			for loop in face.loops:
 				if loop.vert in verts_middle:
 					x_middle = loop[uvLayer].uv.x;
 					break;
-
-	# Map UV coordinates to verts
-
+		if x_middle != 0:
+			break;
 
 	print("Middle: "+str(x_middle))
+
+	# 2.) Get Vert -> UV dictionary
+	vert_to_UV = dict()
+	for face in bm.faces:
+		if face.select:
+			for loop in face.loops:
+				if loop.vert not in vert_to_UV:
+					vert_to_UV[loop.vert] = loop[uvLayer].uv
+
+
+	# 3.) Grow layer by layer
+	verts_processed = []
+	layer_A = []
+	layer_B = []
+
+	# Starting values for layer skin
+	layer_A.extend(verts_middle)
+	layer_B.extend(verts_middle)
+	verts_processed.extend(verts_middle)
+
+	def extend_and_sort():
+		print("Extend sort: ")
+		for i in range(0, len(layer_A)):
+			# Select outer layer @ i
+			bpy.ops.mesh.select_all(action='DESELECT')
+			layer_A[i].select = True
+			layer_B[i].select = True
+
+			#extend selection
+			bpy.ops.mesh.select_more()
+			for vert in verts_processed:
+				vert.select = False
+
+			#extract extended verts into A and B
+			extended_A = [vert for vert in bm.verts if (vert.select and vert in verts_A)]
+			extended_B = [vert for vert in bm.verts if (vert.select and vert in verts_B)]
+
+			#sort distance towards layer_A[i] and B and match by distance
+
+
+			print("step "+str(i)+". AB: "+str(len(extended_A))+":"+str(len(extended_B)))
+			
+	
+	
+	extend_and_sort()
+	
+
+
+
+'''
+	# Sort sorting
+	for vert in verts_middle:
+		bpy.ops.mesh.select_all(action='DESELECT')
+		vert.select = True
+		bpy.ops.mesh.select_more()
+
+		verts_extended = []
+		for v in bm.verts:
+			if v.select and v not in verts_middle:
+				verts_extended.append(v)
+
+		print("Ext: "+str(len(verts_extended))+"x")
+'''
+	
 
 
 

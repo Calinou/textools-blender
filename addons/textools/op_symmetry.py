@@ -7,6 +7,8 @@ from collections import defaultdict
 
 from . import utilities_uv
 
+
+
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_symmetry"
 	bl_label = "Symmetry"
@@ -216,6 +218,9 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				if loop.vert in verts_middle:
 					x_middle = loop[uvLayer].uv.x;
 					break;
+
+	# Map UV coordinates to verts
+
 
 	print("Middle: "+str(x_middle))
 

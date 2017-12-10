@@ -263,10 +263,27 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 			extended_B = [vert for vert in bm.verts if (vert.select and vert in verts_B)]
 
 			#sort distance towards layer_A[i] and B and match by distance
+			print("v "+str(i)+". AB: "+str(len(extended_A))+" : "+str(len(extended_B)))
+			if len(extended_A) == len(extended_B) and len(extended_A) > 0:
+				count = len(extended_A)
+				lengthsA = []
+				lengthsB = []
+				for j in range(0, count):
+					dA = (extended_A[j].co - layer_A[i].co).length
+					lengthsA.append(dA)
+					dB = (extended_B[j].co - layer_B[i].co).length
+					lengthsB.append(dB)
+					# print("   > "+str(j)+": "+str(dA)+" : "+str(dB))
 
-
-			print("step "+str(i)+". AB: "+str(len(extended_A))+":"+str(len(extended_B)))
-			
+				for j in range(0, count):
+					# find closest match for each
+					print("   > "+str(j)+": ")
+					for k in range(0,count):
+						diff_A = abs(lengthsA[j] - lengthsB[k])
+						diff_B = abs(lengthsB[j] - lengthsA[k])
+						
+						print("   Ch: "+str(diff_A)+" --> "+str(lengthsA[j])+" : "+str(lengthsB[k]))
+					
 	
 	
 	extend_and_sort()

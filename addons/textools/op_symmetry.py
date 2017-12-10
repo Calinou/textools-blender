@@ -213,7 +213,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 
 
-	# 1.) Get Center Line
+	# 1.) Get Center X
 	x_middle = 0
 	for face in bm.faces:
 		if face.select:

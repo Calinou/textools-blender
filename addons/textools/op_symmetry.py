@@ -47,7 +47,7 @@ class op(bpy.types.Operator):
 
 
 def main(context):
-	print("Executing operator_symmetry")
+	print("--------------------------- Executing operator_symmetry")
 
 	#Store selection
 	utilities_uv.selectionStore()
@@ -102,7 +102,7 @@ def main(context):
 						x_middle = loop[uvLayer].uv.x;
 
 
-		print("Middle "+str(len(verts_middle))+", x: "+str(x_middle))
+		print("Middle "+str(len(verts_middle))+"x, x pos: "+str(x_middle))
 
 		# Extend selection
 		bpy.ops.uv.select_more()
@@ -123,24 +123,60 @@ def main(context):
 							if loop.vert not in verts_B:
 								verts_B.append(loop.vert)
 
-		extend_half_selection(verts_middle, verts_A)
-		extend_half_selection(verts_middle, verts_B)
-
 		verts_double = [vert for vert in verts_island if (vert in verts_A and vert in verts_B)]
-		# verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert not in verts_processed and vert not in verts_border)]
-			# 
-		print("Sides: L:"+str(len(verts_A))+" | R:"+str(len(verts_B))+"   double: "+str(len(verts_double))+"x")
-		if len(verts_double) > 0:
-			print("TODO: sort out double verts by UV -x space")
 
 
+# temp temp temp temp
+		print("Temp  double: "+str(len(verts_double))+"x")
 		bpy.ops.mesh.select_all(action='DESELECT')
 		for vert in verts_A:
 			vert.select = True
 
+		return
+
+		def extend_half_selection(verts_middle, verts_half, verts_other):
+			# Select initial half selection
+			bpy.ops.uv.select_all(action='DESELECT')
+			for face in bm.faces:
+				if face.select:
+					for loop in face.loops:
+						if loop.vert in verts_half:
+							loop[uvLayer].select = True
+
+			# Extend selection				
+			bpy.ops.uv.select_more()
+
+			count_added = 0
+			for face in bm.faces:
+				if face.select:
+					for loop in face.loops:
+						if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uvLayer].select:
+							if loop.vert in verts_other:
+								..
+							else:
+								verts_half.append(loop.vert)
+								count_added+=1
+
+			if count_added == 0:
+				# Break loop, now new items to add
+				break;fgdsfdsfsfds
+
+
+		# Limit iteration loops
+		max_loops_extend = 200
+		for i in range(0, max_loops_extend):
+			extend_half_selection(verts_middle, verts_A, verts_B)
+			extend_half_selection(verts_middle, verts_B, verts_A)
+
+		
+		# verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert not in verts_processed and vert not in verts_border)]
+			# 
+		print("Sides: L:"+str(len(verts_A))+" | R:"+str(len(verts_B)))
+		if len(verts_double) > 0:
+			print("TODO: sort out "+str(len(verts_double))+" double verts by UV -x space")
 
 		# 4.) Mirror Verts
-		# mirror_verts(verts_middle, verts_A, verts_B, False)
+		mirror_verts(verts_middle, verts_A, verts_B, False)
 
 
 
@@ -241,6 +277,7 @@ def main(context):
 
 
 def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
+
 	print("Mirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, A to B? "+str(isAToB))
 
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
@@ -248,6 +285,14 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
+
+
+
+	bpy.ops.mesh.select_all(action='DESELECT')
+	for vert in verts_middle:
+		vert.select = True
+
+	return
 
 
 	# 1.) Get Center X
@@ -459,33 +504,3 @@ def alignToCenterLine():
 
 
 
-def extend_half_selection(verts_middle, verts_half):
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
-
-	# Limit iteration loops
-	max_loops_extend = 200
-
-	for i in range(0, max_loops_extend):
-		# Select initial half selection
-		bpy.ops.uv.select_all(action='DESELECT')
-		for face in bm.faces:
-			if face.select:
-				for loop in face.loops:
-					if loop.vert in verts_half:
-						loop[uvLayer].select = True
-
-		# Extend selection				
-		bpy.ops.uv.select_more()
-
-		count_added = 0
-		for face in bm.faces:
-			if face.select:
-				for loop in face.loops:
-					if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uvLayer].select:
-						verts_half.append(loop.vert)
-						count_added+=1
-
-		if count_added == 0:
-			# Break loop, now new items to add
-			break;

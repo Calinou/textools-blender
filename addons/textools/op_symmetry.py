@@ -60,7 +60,6 @@ def main(context):
 
 		# 1.) Collect left and right side verts
 		verts_middle = [];
-		
 
 		for face in bm.faces:
 			if face.select:
@@ -70,6 +69,22 @@ def main(context):
 					
 		# 2.) Align UV shell
 		alignToCenterLine()
+
+		# Convert to Vert selection and extend edge loop in 3D space
+		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+		bpy.ops.mesh.select_all(action='DESELECT')
+		for vert in verts_middle:
+			vert.select = True
+
+		bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='EDGE')
+		bpy.ops.mesh.loop_multi_select(ring=False)
+		for vert in bm.verts:
+			if vert.select and vert not in verts_middle:
+				print("Append extra vert to symmetry line from xyz edge loop")
+				verts_middle.append(vert)
+
+		# Select UV shell Again
+		bpy.ops.mesh.select_linked(delimit={'UV'})
 
 
 		# 3.) Restore UV vert selection
@@ -81,6 +96,9 @@ def main(context):
 					if loop.vert in verts_middle:
 						loop[uvLayer].select = True
 						x_middle = loop[uvLayer].uv.x;
+
+
+		print("Middle "+str(len(verts_middle))+", x: "+str(x_middle))
 
 		# Extend selection
 		bpy.ops.uv.select_more()
@@ -106,8 +124,14 @@ def main(context):
 
 		print("Left, Right: "+str(len(verts_A))+" | "+str(len(verts_B)))
 
+
+		bpy.ops.mesh.select_all(action='DESELECT')
+		for vert in verts_A:
+			vert.select = True
+
+
 		# 4.) Mirror Verts
-		mirror_verts(verts_middle, verts_A, verts_B, False)
+		# mirror_verts(verts_middle, verts_A, verts_B, False)
 
 
 
@@ -203,6 +227,10 @@ def main(context):
 
 
 
+
+
+
+
 def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	print("Mirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, A to B? "+str(isAToB))
 
@@ -235,58 +263,125 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 					vert_to_UV[loop.vert] = loop[uvLayer].uv
 
 
+
 	# 3.) Grow layer by layer
-	verts_processed = []
-	layer_A = []
-	layer_B = []
+	verts_processed = []	
+
+	def select_extend_filter(verts_border, verts_mask):
+		print("something")
+		connected_verts = []
+		for i in range(0, len(verts_border)):
+			 # Collect connected edge verts
+			verts_connected_edges = []
+			for edge in verts_border[i].link_edges:
+				if(edge.verts[0] not in verts_connected_edges):
+					verts_connected_edges.append(edge.verts[0])
+				if(edge.verts[1] not in verts_connected_edges):
+					verts_connected_edges.append(edge.verts[1])
+
+			# Select vert on border
+			bpy.ops.mesh.select_all(action='DESELECT')
+			verts_border[i].select = True
+
+			# Extend selection
+			bpy.ops.mesh.select_more()
+
+			# Filter selected verts against mask, connected edges, processed and border
+			verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert not in verts_processed and vert not in verts_border)]
+			
+
+			print("v "+str(i)+". extended: "+str(len(verts_extended)))
+
+
+
+			
+			connected_verts.append( [] )
+
+			# Sort by distance
+			for vert in verts_extended:
+				d = (verts_border[i].co - vert.co).length
+				print("   "+str(i)+". d: "+str(d))
+
+
+			if len(verts_extended) == 3:
+				bpy.ops.mesh.select_all(action='DESELECT')
+				for vert in verts_extended:
+					vert.select = True
+
+				#Position by sorted size in row
+	# sortedSizes = sorted(allSizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
+	# sortedSizes.reverse()
+	# offset = 0.0
+	# for sortedSize in sortedSizes:
+	# 	index = sortedSize[0]
+
+
+
+		return connected_verts
+			# 	v.select = True;
+			# 	print("    e: "+str(len(v.link_edges)))
+
+
+
+
+	
+	# active_A = []
+	# active_B = []
 
 	# Starting values for layer skin
-	layer_A.extend(verts_middle)
-	layer_B.extend(verts_middle)
-	verts_processed.extend(verts_middle)
+	# active_A.extend(verts_middle)
+	# active_B.extend(verts_middle)
+	# verts_processed.extend(verts_middle)
 
-	def extend_and_sort():
-		print("Extend sort: ")
-		for i in range(0, len(layer_A)):
-			# Select outer layer @ i
-			bpy.ops.mesh.select_all(action='DESELECT')
-			layer_A[i].select = True
-			layer_B[i].select = True
 
-			#extend selection
-			bpy.ops.mesh.select_more()
-			for vert in verts_processed:
-				vert.select = False
+	select_extend_filter(verts_middle, verts_A)
+	select_extend_filter(verts_middle, verts_B)
+	
 
-			#extract extended verts into A and B
-			extended_A = [vert for vert in bm.verts if (vert.select and vert in verts_A)]
-			extended_B = [vert for vert in bm.verts if (vert.select and vert in verts_B)]
 
-			#sort distance towards layer_A[i] and B and match by distance
-			print("v "+str(i)+". AB: "+str(len(extended_A))+" : "+str(len(extended_B)))
-			if len(extended_A) == len(extended_B) and len(extended_A) > 0:
-				count = len(extended_A)
-				lengthsA = []
-				lengthsB = []
-				for j in range(0, count):
-					dA = (extended_A[j].co - layer_A[i].co).length
-					lengthsA.append(dA)
-					dB = (extended_B[j].co - layer_B[i].co).length
-					lengthsB.append(dB)
-					# print("   > "+str(j)+": "+str(dA)+" : "+str(dB))
 
-				for j in range(0, count):
-					# find closest match for each
-					print("   > "+str(j)+": ")
-					for k in range(0,count):
-						diff_A = abs(lengthsA[j] - lengthsB[k])
-						diff_B = abs(lengthsB[j] - lengthsA[k])
+	# def extend_and_sort():
+	# 	print("Extend sort: ")
+	# 	for i in range(0, len(active_A)):
+	# 		# Select outer layer @ i
+	# 		bpy.ops.mesh.select_all(action='DESELECT')
+	# 		active_A[i].select = True
+	# 		active_B[i].select = True
+
+	# 		#extend selection
+	# 		bpy.ops.mesh.select_more()
+	# 		for vert in verts_processed:
+	# 			vert.select = False
+
+	# 		#extract extended verts into A and B
+	# 		extended_A = [vert for vert in bm.verts if (vert.select and vert in verts_A)]
+	# 		extended_B = [vert for vert in bm.verts if (vert.select and vert in verts_B)]
+
+	# 		#sort distance towards active_A[i] and B and match by distance
+	# 		print("v "+str(i)+". AB: "+str(len(extended_A))+" : "+str(len(extended_B)))
+	# 		if len(extended_A) == len(extended_B) and len(extended_A) > 0:
+	# 			count = len(extended_A)
+	# 			lengthsA = []
+	# 			lengthsB = []
+	# 			for j in range(0, count):
+	# 				dA = (extended_A[j].co - active_A[i].co).length
+	# 				lengthsA.append(dA)
+	# 				dB = (extended_B[j].co - active_B[i].co).length
+	# 				lengthsB.append(dB)
+	# 				# print("   > "+str(j)+": "+str(dA)+" : "+str(dB))
+
+	# 			for j in range(0, count):
+	# 				# find closest match for each
+	# 				print("   > "+str(j)+": ")
+	# 				for k in range(0,count):
+	# 					diff_A = abs(lengthsA[j] - lengthsB[k])
+	# 					diff_B = abs(lengthsB[j] - lengthsA[k])
 						
-						print("   Ch: "+str(diff_A)+" --> "+str(lengthsA[j])+" : "+str(lengthsB[k]))
+	# 					print("   Ch: "+str(diff_A)+" --> "+str(lengthsA[j])+" : "+str(lengthsB[k]))
 					
 	
 	
-	extend_and_sort()
+	# extend_and_sort()
 	
 
 

@@ -85,6 +85,10 @@ def main(context):
 
 		# Select UV shell Again
 		bpy.ops.mesh.select_linked(delimit={'UV'})
+		verts_island = []
+		for vert in bm.verts:
+			if vert.select:
+				verts_island.append(vert)
 
 
 		# 3.) Restore UV vert selection
@@ -119,10 +123,15 @@ def main(context):
 							if loop.vert not in verts_B:
 								verts_B.append(loop.vert)
 
-		extend_half_selection(x_middle, verts_middle, verts_A)
-		extend_half_selection(x_middle, verts_middle, verts_B)
+		extend_half_selection(verts_middle, verts_A)
+		extend_half_selection(verts_middle, verts_B)
 
-		print("Left, Right: "+str(len(verts_A))+" | "+str(len(verts_B)))
+		verts_double = [vert for vert in verts_island if (vert in verts_A and vert in verts_B)]
+		# verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert not in verts_processed and vert not in verts_border)]
+			# 
+		print("Sides: L:"+str(len(verts_A))+" | R:"+str(len(verts_B))+"   double: "+str(len(verts_double))+"x")
+		if len(verts_double) > 0:
+			print("TODO: sort out double verts by UV -x space")
 
 
 		bpy.ops.mesh.select_all(action='DESELECT')
@@ -450,7 +459,7 @@ def alignToCenterLine():
 
 
 
-def extend_half_selection(x_middle, verts_middle, verts_half):
+def extend_half_selection(verts_middle, verts_half):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 

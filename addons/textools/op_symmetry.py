@@ -119,8 +119,8 @@ def main(context):
 							if loop.vert not in verts_B:
 								verts_B.append(loop.vert)
 
-		extend_half_selection(verts_middle, verts_A)
-		extend_half_selection(verts_middle, verts_B)
+		extend_half_selection(x_middle, verts_middle, verts_A)
+		extend_half_selection(x_middle, verts_middle, verts_B)
 
 		print("Left, Right: "+str(len(verts_A))+" | "+str(len(verts_B)))
 
@@ -450,7 +450,7 @@ def alignToCenterLine():
 
 
 
-def extend_half_selection(verts_middle, verts_half):
+def extend_half_selection(x_middle, verts_middle, verts_half):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 

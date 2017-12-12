@@ -106,7 +106,6 @@ def main(context):
 
 		# Extend selection
 		bpy.ops.uv.select_more()
-
 		verts_A = [];
 		verts_B = [];
 		for face in bm.faces:
@@ -123,16 +122,19 @@ def main(context):
 							if loop.vert not in verts_B:
 								verts_B.append(loop.vert)
 
-		verts_double = [vert for vert in verts_island if (vert in verts_A and vert in verts_B)]
+		
 
+		
+		def remove_doubles():
+			verts_double = [vert for vert in verts_island if (vert in verts_A and vert in verts_B)]
 
-# temp temp temp temp
-		print("Temp  double: "+str(len(verts_double))+"x")
-		bpy.ops.mesh.select_all(action='DESELECT')
-		for vert in verts_A:
-			vert.select = True
-
-		return
+			# print("Temp  double: "+str(len(verts_double))+"x")
+			if len(verts_double) > 0:
+				print("TODO: Remove doubles "+str(len(verts_double)))
+				for vert in verts_double:
+					verts_A.remove(vert)
+					verts_B.remove(vert)
+					verts_middle.append(vert)
 
 		def extend_half_selection(verts_middle, verts_half, verts_other):
 			# Select initial half selection
@@ -146,38 +148,44 @@ def main(context):
 			# Extend selection				
 			bpy.ops.uv.select_more()
 
-			count_added = 0
+			# count_added = 0
 			for face in bm.faces:
 				if face.select:
 					for loop in face.loops:
 						if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uvLayer].select:
-							if loop.vert in verts_other:
-								..
-							else:
-								verts_half.append(loop.vert)
-								count_added+=1
+							verts_half.append(loop.vert)
 
-			if count_added == 0:
-				# Break loop, now new items to add
-				break;fgdsfdsfsfds
 
+		remove_doubles()
 
 		# Limit iteration loops
 		max_loops_extend = 200
 		for i in range(0, max_loops_extend):
+			print("Now extend selection A / B")
+			count_hash = str(len(verts_A))+"_"+str(len(verts_B));
 			extend_half_selection(verts_middle, verts_A, verts_B)
 			extend_half_selection(verts_middle, verts_B, verts_A)
+			remove_doubles()
+
+			count_hash_new = str(len(verts_A))+"_"+str(len(verts_B));
+			if count_hash_new == count_hash:
+				print("Break loop, same as previous loop")
+				break;
+
+
+		# TEMP: SELECT VERTS_A
+		# bpy.ops.mesh.select_all(action='DESELECT')
+		# for vert in verts_A:
+		# 	vert.select = True
+
 
 		
 		# verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert not in verts_processed and vert not in verts_border)]
 			# 
 		print("Sides: L:"+str(len(verts_A))+" | R:"+str(len(verts_B)))
-		if len(verts_double) > 0:
-			print("TODO: sort out "+str(len(verts_double))+" double verts by UV -x space")
 
 		# 4.) Mirror Verts
 		mirror_verts(verts_middle, verts_A, verts_B, False)
-
 
 
 	if bpy.context.scene.tool_settings.uv_select_mode == 'FACE':

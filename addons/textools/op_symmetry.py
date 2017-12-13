@@ -374,13 +374,15 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 
 	
-	# active_A = []
-	# active_B = []
+	border_A = []
+	border_B = []
+	border_A.extend(verts_middle)
+	border_B.extend(verts_middle)
 	# verts_processed = []	
 
 	for i in range(0, 1):
-		connected_A = select_extend_filter(verts_middle, verts_A)
-		connected_B = select_extend_filter(verts_middle, verts_B)
+		connected_A = select_extend_filter(border_A, verts_A)
+		connected_B = select_extend_filter(border_B, verts_B)
 
 		print("Map pairs: "+str(len(connected_A))+"x")
 
@@ -392,7 +394,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				for k in range(0, len(connected_A[j])):
 					print("		Map {} -> {}".format( connected_A[j][k].index, connected_B[j][k].index ))
 			else:
-				print("Warning: Inconsistent mappings")
+				print("Warning: Inconsistent grow mappings from {} : {}".format(border_A[j].index, border_B[j].index ))
 
 	# def extend_and_sort():
 	# 	print("Extend sort: ")

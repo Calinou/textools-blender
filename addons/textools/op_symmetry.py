@@ -288,42 +288,49 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 	print("Mirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, A to B? "+str(isAToB))
 
-	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
 
-
-
-	bpy.ops.mesh.select_all(action='DESELECT')
+	# Get verts_island
+	verts_island = []
 	for vert in verts_middle:
+		verts_island.append(vert)
+	for vert in verts_A:
+		verts_island.append(vert)
+	for vert in verts_B:
+		verts_island.append(vert)
+
+	# Select Island as Faces
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+	bpy.ops.mesh.select_all(action='DESELECT')
+	for vert in verts_island:
 		vert.select = True
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=True, type='FACE')
 
-	return
-
-
-	# 1.) Get Center X
-	x_middle = 0
+	# Collect Librarys of verts / UV
+	verts_to_uv = {}
+	uv_to_vert = {}
 	for face in bm.faces:
 		if face.select:
 			for loop in face.loops:
-				if loop.vert in verts_middle:
-					x_middle = loop[uvLayer].uv.x;
-					break;
-		if x_middle != 0:
-			break;
+				uv = loop[uvLayer]
+				# print("UV "+str(uv))
+				if loop.vert not in verts_to_uv:
+					verts_to_uv[loop.vert] = uv;
+				if uv not in uv_to_vert:
+					uv_to_vert[ uv ] = loop.vert;
 
+	# Get Center X
+	x_middle = verts_to_uv[ verts_middle[0] ].uv.x;
+	
+
+
+	print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))
 	print("Middle: "+str(x_middle))
 
-	# 2.) Get Vert -> UV dictionary
-	vert_to_UV = dict()
-	for face in bm.faces:
-		if face.select:
-			for loop in face.loops:
-				if loop.vert not in vert_to_UV:
-					vert_to_UV[loop.vert] = loop[uvLayer].uv
-
+	return
 
 
 	# 3.) Grow layer by layer

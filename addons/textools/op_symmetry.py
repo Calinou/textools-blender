@@ -2,6 +2,7 @@ import bpy
 import os
 import bmesh
 import math
+import operator
 from mathutils import Vector
 from collections import defaultdict
 
@@ -31,6 +32,11 @@ class op(bpy.types.Operator):
 		#Requires UV map
 		if not bpy.context.object.data.uv_layers:
 			return False
+
+
+		if bpy.context.scene.tool_settings.use_uv_select_sync:
+			return False
+
 
 		if bpy.context.scene.tool_settings.uv_select_mode != 'EDGE' and bpy.context.scene.tool_settings.uv_select_mode != 'FACE':
 		 	return False
@@ -172,17 +178,7 @@ def main(context):
 				print("Break loop, same as previous loop")
 				break;
 
-
-		# TEMP: SELECT VERTS_A
-		# bpy.ops.mesh.select_all(action='DESELECT')
-		# for vert in verts_A:
-		# 	vert.select = True
-
-
-		
-		# verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert not in verts_processed and vert not in verts_border)]
-			# 
-		print("Sides: L:"+str(len(verts_A))+" | R:"+str(len(verts_B)))
+		print("Edge, Sides: L:"+str(len(verts_A))+" | R:"+str(len(verts_B)))
 
 		# 4.) Mirror Verts
 		mirror_verts(verts_middle, verts_A, verts_B, False)
@@ -286,7 +282,7 @@ def main(context):
 
 def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
-	print("Mirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, A to B? "+str(isAToB))
+	print("----\nMirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, 	A to B? "+str(isAToB))
 
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
@@ -328,16 +324,14 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 
 	print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))
-	print("Middle: "+str(x_middle))
-
-	return
-
+	print("	x: "+"{0:.2f}".format(x_middle))
+	print("")
 
 	# 3.) Grow layer by layer
-	verts_processed = []	
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
 
 	def select_extend_filter(verts_border, verts_mask):
-		print("something")
+		print("Extend Side ")
 		connected_verts = []
 		for i in range(0, len(verts_border)):
 			 # Collect connected edge verts
@@ -356,58 +350,49 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 			bpy.ops.mesh.select_more()
 
 			# Filter selected verts against mask, connected edges, processed and border
-			verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert not in verts_processed and vert not in verts_border)]
+			verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert and vert not in verts_border)]
 			
 
-			print("v "+str(i)+". extended: "+str(len(verts_extended)))
+			print("	"+str(i)+". idx: "+str(verts_border[i].index)+"; ext: "+str(len(verts_extended))+"x")
 
-
-
-			
 			connected_verts.append( [] )
 
 			# Sort by distance
+			verts_distance = {}
 			for vert in verts_extended:
-				d = (verts_border[i].co - vert.co).length
-				print("   "+str(i)+". d: "+str(d))
+				verts_distance[vert] = (verts_border[i].co - vert.co).length
+				# print("		"+str(i)+". d: "+str(d))
 
-
-			if len(verts_extended) == 3:
-				bpy.ops.mesh.select_all(action='DESELECT')
-				for vert in verts_extended:
-					vert.select = True
-
-				#Position by sorted size in row
-	# sortedSizes = sorted(allSizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
-	# sortedSizes.reverse()
-	# offset = 0.0
-	# for sortedSize in sortedSizes:
-	# 	index = sortedSize[0]
-
-
+			for item in sorted(verts_distance.items(), key=operator.itemgetter(1)):
+				connected_verts[i].append( item[0] )
+				# print("		idx{} | dist: {}".format(vert.index, verts_distance[vert]))
+			# for key, value in sorted(verts_distance.iteritems(), key=lambda (k,v): (v,k)):
+				
 
 		return connected_verts
-			# 	v.select = True;
-			# 	print("    e: "+str(len(v.link_edges)))
-
 
 
 
 	
 	# active_A = []
 	# active_B = []
+	# verts_processed = []	
 
-	# Starting values for layer skin
-	# active_A.extend(verts_middle)
-	# active_B.extend(verts_middle)
-	# verts_processed.extend(verts_middle)
+	for i in range(0, 1):
+		connected_A = select_extend_filter(verts_middle, verts_A)
+		connected_B = select_extend_filter(verts_middle, verts_B)
 
+		print("Map pairs: "+str(len(connected_A))+"x")
 
-	select_extend_filter(verts_middle, verts_A)
-	select_extend_filter(verts_middle, verts_B)
-	
+		count = min(len(connected_A), len(connected_B))
+		for j in range(0, count):
+			# print("Check A/B "+str(len(connected_A[j]))+" | "+str(len(connected_B[j])))
 
-
+			if len(connected_A[j]) == len(connected_B[j]):
+				for k in range(0, len(connected_A[j])):
+					print("		Map {} -> {}".format( connected_A[j][k].index, connected_B[j][k].index ))
+			else:
+				print("Warning: Inconsistent mappings")
 
 	# def extend_and_sort():
 	# 	print("Extend sort: ")

@@ -312,20 +312,25 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		if face.select:
 			for loop in face.loops:
 				uv = loop[uvLayer]
-				# print("UV "+str(uv))
+				
 				if loop.vert not in verts_to_uv:
-					verts_to_uv[loop.vert] = uv;
+					verts_to_uv[loop.vert] = [uv];
+				else:
+					verts_to_uv[loop.vert].append(uv)
+
 				if uv not in uv_to_vert:
 					uv_to_vert[ uv ] = loop.vert;
 
 	# Get Center X
-	x_middle = verts_to_uv[ verts_middle[0] ].uv.x;
+	x_middle = verts_to_uv[ verts_middle[0] ][0].uv.x;
 	
 
 
 	print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))
 	print("	x: "+"{0:.2f}".format(x_middle))
 	print("")
+
+
 
 	# 3.) Grow layer by layer
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
@@ -387,84 +392,25 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		print("Map pairs: "+str(len(connected_A))+"x")
 
 		count = min(len(connected_A), len(connected_B))
+		count = 1
 		for j in range(0, count):
-			# print("Check A/B "+str(len(connected_A[j]))+" | "+str(len(connected_B[j])))
-
 			if len(connected_A[j]) == len(connected_B[j]):
 				for k in range(0, len(connected_A[j])):
-					print("		Map {} -> {}".format( connected_A[j][k].index, connected_B[j][k].index ))
-			else:
-				print("Warning: Inconsistent grow mappings from {} : {}".format(border_A[j].index, border_B[j].index ))
-
-	# def extend_and_sort():
-	# 	print("Extend sort: ")
-	# 	for i in range(0, len(active_A)):
-	# 		# Select outer layer @ i
-	# 		bpy.ops.mesh.select_all(action='DESELECT')
-	# 		active_A[i].select = True
-	# 		active_B[i].select = True
-
-	# 		#extend selection
-	# 		bpy.ops.mesh.select_more()
-	# 		for vert in verts_processed:
-	# 			vert.select = False
-
-	# 		#extract extended verts into A and B
-	# 		extended_A = [vert for vert in bm.verts if (vert.select and vert in verts_A)]
-	# 		extended_B = [vert for vert in bm.verts if (vert.select and vert in verts_B)]
-
-	# 		#sort distance towards active_A[i] and B and match by distance
-	# 		print("v "+str(i)+". AB: "+str(len(extended_A))+" : "+str(len(extended_B)))
-	# 		if len(extended_A) == len(extended_B) and len(extended_A) > 0:
-	# 			count = len(extended_A)
-	# 			lengthsA = []
-	# 			lengthsB = []
-	# 			for j in range(0, count):
-	# 				dA = (extended_A[j].co - active_A[i].co).length
-	# 				lengthsA.append(dA)
-	# 				dB = (extended_B[j].co - active_B[i].co).length
-	# 				lengthsB.append(dB)
-	# 				# print("   > "+str(j)+": "+str(dA)+" : "+str(dB))
-
-	# 			for j in range(0, count):
-	# 				# find closest match for each
-	# 				print("   > "+str(j)+": ")
-	# 				for k in range(0,count):
-	# 					diff_A = abs(lengthsA[j] - lengthsB[k])
-	# 					diff_B = abs(lengthsB[j] - lengthsA[k])
-						
-	# 					print("   Ch: "+str(diff_A)+" --> "+str(lengthsA[j])+" : "+str(lengthsB[k]))
+					# mapVert(connected_A[j][k], connected_B[j][k])
+					vA = connected_A[j][k];
+					vB = connected_B[j][k];
 					
+					print("		Map {} -> {}".format( vA.index, vB.index ))
+					
+					# for uv in verts_to_uv[ vA ]:
+					# uv = verts_to_uv[ vA ].uv.copy();
+					# uv.x = x_middle - (uv.x - x_middle)
+					# verts_to_uv[ vB ].uv = uv;
+
+			else:
+				print("Warning: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
+
 	
-	
-	# extend_and_sort()
-	
-
-
-
-'''
-	# Sort sorting
-	for vert in verts_middle:
-		bpy.ops.mesh.select_all(action='DESELECT')
-		vert.select = True
-		bpy.ops.mesh.select_more()
-
-		verts_extended = []
-		for v in bm.verts:
-			if v.select and v not in verts_middle:
-				verts_extended.append(v)
-
-		print("Ext: "+str(len(verts_extended))+"x")
-'''
-	
-
-
-
-
-
-
-
-
 
 def alignToCenterLine():
 	print("align to center line")

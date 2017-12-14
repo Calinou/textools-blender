@@ -308,6 +308,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	# Collect Librarys of verts / UV
 	verts_to_uv = {}
 	uv_to_vert = {}
+	uv_to_face = {}
 	for face in bm.faces:
 		if face.select:
 			for loop in face.loops:
@@ -320,6 +321,8 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 				if uv not in uv_to_vert:
 					uv_to_vert[ uv ] = loop.vert;
+				if uv not in uv_to_face:
+					uv_to_face[ uv ] = face;
 
 	# Get Center X
 	x_middle = verts_to_uv[ verts_middle[0] ][0].uv.x;
@@ -328,8 +331,10 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	# 3.) Grow layer by layer
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
 
+	verts_processed = []
+
 	def select_extend_filter(verts_border, verts_mask):
-		print("Extend Side ")
+		# print("Extend A/B")
 		connected_verts = []
 		for i in range(0, len(verts_border)):
 			 # Collect connected edge verts
@@ -343,15 +348,16 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 			# Select vert on border
 			bpy.ops.mesh.select_all(action='DESELECT')
 			verts_border[i].select = True
+			
 
 			# Extend selection
 			bpy.ops.mesh.select_more()
 
 			# Filter selected verts against mask, connected edges, processed and border
-			verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert and vert not in verts_border)]
+			verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in verts_mask and vert and vert not in verts_border and vert not in verts_processed)]
 			
 
-			print("	"+str(i)+". idx: "+str(verts_border[i].index)+"; ext: "+str(len(verts_extended))+"x")
+			# print("    "+str(i)+". scan: "+str(verts_border[i].index)+"; ext: "+str(len(verts_extended))+"x")
 
 			connected_verts.append( [] )
 
@@ -365,45 +371,73 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				connected_verts[i].append( item[0] )
 				# print("		idx{} | dist: {}".format(vert.index, verts_distance[vert]))
 			# for key, value in sorted(verts_distance.iteritems(), key=lambda (k,v): (v,k)):
-				
+			
+			if verts_border[i] not in verts_processed:
+				verts_processed.append(verts_border[i])
 
 		return connected_verts
 
 
 
 	
-	border_A = []
-	border_B = []
-	border_A.extend(verts_middle)
-	border_B.extend(verts_middle)
-	# verts_processed = []	
+	border_A = [vert for vert in verts_middle]
+	border_B = [vert for vert in verts_middle]
+	
 
-	for i in range(0, 1):
+	for i in range(0, 200):
+
+		if len(border_A) != len(border_B) or len(border_A) == 0:
+			print("Abort: non compatible border A/B: {}x {}x ".format(len(border_A), len(border_B)))
+			break;
+
 		connected_A = select_extend_filter(border_A, verts_A)
 		connected_B = select_extend_filter(border_B, verts_B)
 
-		print("Map pairs: "+str(len(connected_A))+"x")
+		# print("Map pairs: {}x : {}x".format(len(connected_A), len(connected_B)))
+
+		border_A.clear()
+		border_B.clear()
+
+
 
 		count = min(len(connected_A), len(connected_B))
-		count = 1 #Temp override
+		# count = 1 #Temp override
 		for j in range(0, count):
 			if len(connected_A[j]) == len(connected_B[j]):
 				for k in range(0, len(connected_A[j])):
-					# mapVert(connected_A[j][k], connected_B[j][k])
 					vA = connected_A[j][k];
 					vB = connected_B[j][k];
+					uvsA = verts_to_uv[vA];
+					uvsB = verts_to_uv[vB];
 					
-					print("		Map {} -> {}".format( vA.index, vB.index ))
+					uv_facesA = [uv_to_face[uv] for uv in uvsA] 
+					uv_facesB = [uv_to_face[uv] for uv in uvsB] 
+
+
+
+					print("    Map {0} -> {1}  | UVs {2}x, {3}x  | Fcs {4}x, {5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_facesA), len(uv_facesB) ))
+					# print("A: "+str(uvsA[0]))
+
 					
-					# for uv in verts_to_uv[ vA ]:
+
+					pos = verts_to_uv[ vA ][0].uv.copy();
+					pos.x = x_middle - (pos.x - x_middle) #Mirror
+
+					for uv in verts_to_uv[ vB ]:
+						uv.uv = pos;
+
 					# uv = verts_to_uv[ vA ].uv.copy();
 					# uv.x = x_middle - (uv.x - x_middle)
 					# verts_to_uv[ vB ].uv = uv;
 
+					# Done processing, add to border arrays
+					border_A.append(vA)
+					border_B.append(vB)
+
 			else:
 				print("Warning: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
 
-
+		# print("New Border pairs: {}x : {}x".format(len(border_A), len(border_B)))
 
 	# print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))
 	# print("	x: "+"{0:.2f}".format(x_middle))

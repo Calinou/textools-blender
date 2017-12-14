@@ -325,13 +325,6 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	x_middle = verts_to_uv[ verts_middle[0] ][0].uv.x;
 	
 
-
-	print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))
-	print("	x: "+"{0:.2f}".format(x_middle))
-	print("")
-
-
-
 	# 3.) Grow layer by layer
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
 
@@ -392,7 +385,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		print("Map pairs: "+str(len(connected_A))+"x")
 
 		count = min(len(connected_A), len(connected_B))
-		count = 1
+		count = 1 #Temp override
 		for j in range(0, count):
 			if len(connected_A[j]) == len(connected_B[j]):
 				for k in range(0, len(connected_A[j])):
@@ -409,6 +402,69 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 			else:
 				print("Warning: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
+
+
+
+	# print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))
+	# print("	x: "+"{0:.2f}".format(x_middle))
+	# print("")
+
+	# def extend_side(uvs_border, verts_mask):
+	# 	print("	Extend UV's {}".format(len(uvs_border)))
+
+	# 	bpy.context.scene.tool_settings.uv_select_mode = 'VERTEX'
+
+	# 	extended = []
+
+	# 	for uv in uvs_border:
+	# 		vert = uv_to_vert[uv]
+	# 		# print("{}".format(uv.uv))
+	# 		bpy.ops.uv.select_all(action='DESELECT')
+	# 		uv.select = True
+	# 		bpy.ops.uv.select_more()
+			
+	# 		# Get extended UV's that are not part of the vert and selected
+	# 		uvs_extended = [uv for uv in uv_to_vert.keys() if (uv.select and uv_to_vert[uv] != vert )]#and uv_to_vert[uv] in verts_mask
+	# 		extended.append( uvs_extended )
+
+	# 		# verts_extended = [vert for ]
+	# 		# print("		Extended: {}".format(len(uvs_extended)))
+
+	# 		# debug select
+	# 		# bpy.ops.uv.select_all(action='DESELECT')
+	# 		# for x in uvs_extended:
+	# 		# 	x.select = True
+
+	# 	return extended;
+
+	# uvs_processed = []
+	# uvs_border_A = [uv for vert in verts_middle for uv in verts_to_uv[vert] ]
+	# uvs_border_B = [uv for vert in verts_middle for uv in verts_to_uv[vert] ]
+
+
+	# for i in range(0, 1):
+	# 	# uvs_border = 
+		
+	# 	if len(uvs_border_A) != len(uvs_border_B):
+	# 		print("Error: border A and B wrong count {} : {}".format(len(uvs_border_A), len(uvs_border_B)))
+	# 	else:
+	# 		print("Extend A, verts: {}, uvs: {}".format(len(verts_middle), len(uvs_border_A)))
+
+	# 		extended_A = extend_side( uvs_border_A, verts_A)
+	# 		# extended_B = extend_side( uvs_border_B, verts_B)
+
+	# 		# print("	Merge")
+	# 		# if len(extended_A) != len(extended_B):
+	# 		# 	print("Error: extended A and B wrong count {} : {}".format(len(extended_A), len(extended_B)))
+	# 		# else:
+	# 		# 	count = min(len(extended_A), len(extended_B))
+
+				
+	# 		# 	for i in range(0, count):
+	# 		# 		print("	{}. step Extended: {} : {}".format(i, len(extended_A[i]), len(extended_B[i])))
+
+
+
 
 	
 

@@ -37,13 +37,17 @@ if "bpy" in locals():
 	imp.reload(op_islands_align_sort)
 	imp.reload(op_checkerMap)
 	imp.reload(op_align)
-	imp.reload(op_reloadTextures)
+	imp.reload(op_textures_reload)
 	imp.reload(op_bake)
 	imp.reload(op_swap_uv_xyz)
 	imp.reload(op_island_align_edge)
+	imp.reload(op_islands_select_identical)
+	imp.reload(op_islands_select_overlap)
 	imp.reload(op_symmetry)
 	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
+	
+	
 	
 else:
 	from . import utilities_gui
@@ -52,13 +56,16 @@ else:
 	from . import op_islands_align_sort
 	from . import op_checkerMap
 	from . import op_align
-	from . import op_reloadTextures
+	from . import op_textures_reload
 	from . import op_bake
 	from . import op_swap_uv_xyz
 	from . import op_island_align_edge
+	from . import op_islands_select_identical
+	from . import op_islands_select_overlap
 	from . import op_symmetry
 	from . import op_setup_split_uv
 	from . import op_faces_iron
+	
 
 # Import general modules. Important: must be placed here and not on top
 import bpy
@@ -125,7 +132,7 @@ class TexToolsPanel(bpy.types.Panel):
 		layout = self.layout
 		
 
-		layout.operator("wm.console_toggle", text="Debug Console")
+		layout.operator("wm.console_toggle", text="Debug Console", icon="CONSOLE")
 
 
 		#---------- Settings ------------
@@ -167,7 +174,7 @@ class TexToolsPanel(bpy.types.Panel):
 		
 		col = box.column(align=True)
 		row = col.row(align=True)
-		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = getIcon("islandAlignByEdge"))
+		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = getIcon("island_align_edge"))
 
 		row = col.row(align=True)
 		row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
@@ -192,14 +199,24 @@ class TexToolsPanel(bpy.types.Panel):
 
 
 		aligned = box.row(align=True)
-		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = getIcon("islandsAlignSortH")).is_vertical = False;
-		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = getIcon("islandsAlignSortV")).is_vertical = True;
+		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = getIcon("islands_align_sort_h")).is_vertical = False;
+		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = getIcon("islands_align_sort_v")).is_vertical = True;
 		
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
 		col.operator(op_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
 		col.operator(op_faces_iron.op.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
 
+		layout.separator()
+
+		#---------- Selection ------------
+		layout.label(text="Selection")
+		row = layout.row()
+		box = row.box()
+		aligned = box.column(align=True)
+		aligned.operator(op_islands_select_identical.op.bl_idname, text="Same", icon_value = getIcon("islands_select_identical"))
+		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
+		
 
 		
 		layout.separator()
@@ -210,7 +227,7 @@ class TexToolsPanel(bpy.types.Panel):
 		box = row.box()
 		aligned = box.column(align=True)
 		aligned.operator(op_checkerMap.op.bl_idname, icon_value = getIcon("checkerMap"))
-		aligned.operator(op_reloadTextures.op.bl_idname, text="Reload", icon_value = getIcon("reloadTextures"))
+		aligned.operator(op_textures_reload.op.bl_idname, text="Reload", icon_value = getIcon("textures_reload"))
 		aligned.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 		
 	
@@ -279,14 +296,14 @@ def register():
 	# Register global Icons
 	global preview_icons
 	preview_icons = bpy.utils.previews.new()
-	registerIcon("islandsAlignSortH.png")
-	registerIcon("islandsAlignSortV.png")
+	registerIcon("islands_align_sort_h.png")
+	registerIcon("islands_align_sort_v.png")
 	registerIcon("checkerMap.png")
 	registerIcon("swap_uv_xyz.png")
 	registerIcon("turnLeft.png")
 	registerIcon("turnRight.png")
-	registerIcon("reloadTextures.png")
-	registerIcon("islandAlignByEdge.png")
+	registerIcon("textures_reload.png")
+	registerIcon("island_align_edge.png")
 	registerIcon("alignBottom.png")
 	registerIcon("alignLeft.png")
 	registerIcon("alignRight.png")
@@ -294,8 +311,11 @@ def register():
 	registerIcon("mirror.png")
 	registerIcon("setup_split_uv.png")
 	registerIcon("faces_iron.png")
-	
-	
+
+	registerIcon("islands_select_identical.png")
+	registerIcon("islands_select_overlapping.png")
+	registerIcon("explode.png")
+
 	#Key Maps
 	# wm = bpy.context.window_manager
 	# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')

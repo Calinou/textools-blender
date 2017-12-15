@@ -365,19 +365,34 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 			verts_distance = {}
 			for vert in verts_extended:
 				verts_distance[vert] = (verts_border[i].co - vert.co).length
-				# print("		"+str(i)+". d: "+str(d))
 
 			for item in sorted(verts_distance.items(), key=operator.itemgetter(1)):
 				connected_verts[i].append( item[0] )
-				# print("		idx{} | dist: {}".format(vert.index, verts_distance[vert]))
-			# for key, value in sorted(verts_distance.iteritems(), key=lambda (k,v): (v,k)):
-			
+
 			if verts_border[i] not in verts_processed:
 				verts_processed.append(verts_border[i])
 
 		return connected_verts
 
-
+	# find UV vert blobs , see which ones are same spot
+	def collect_uv_groups(uvs):
+		groups = []
+		for uv in uvs:
+			if len(groups) == 0:
+				groups.append([uv])
+			else:
+				isMerged = False
+				for group in groups:
+					d = (uv.uv - group[0].uv).length
+					if d <= 0.0000001:
+						#Merge
+						group.append(uv)
+						isMerged = True;
+						break;
+				if not isMerged:
+					#New Group
+					groups.append([uv])
+		return groups
 
 	
 	border_A = [vert for vert in verts_middle]
@@ -398,45 +413,77 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		border_A.clear()
 		border_B.clear()
 
-
-
 		count = min(len(connected_A), len(connected_B))
 		# count = 1 #Temp override
 		for j in range(0, count):
-			if len(connected_A[j]) == len(connected_B[j]):
-				for k in range(0, len(connected_A[j])):
-					vA = connected_A[j][k];
-					vB = connected_B[j][k];
-					uvsA = verts_to_uv[vA];
-					uvsB = verts_to_uv[vB];
-					
-					uv_facesA = [uv_to_face[uv] for uv in uvsA] 
-					uv_facesB = [uv_to_face[uv] for uv in uvsB] 
+			if len(connected_A[j]) != len(connected_B[j]):
+				print("Error: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
+				continue
+
+			for k in range(0, len(connected_A[j])):
+				# Vertex A and B
+				vA = connected_A[j][k];
+				vB = connected_B[j][k];
+
+				uvsA = verts_to_uv[vA];
+				uvsB = verts_to_uv[vB];
+
+				uv_groups_A = collect_uv_groups(uvsA)
+				uv_groups_B = collect_uv_groups(uvsB)
+
+				if len(uv_groups_A) != len(uv_groups_B):
+					print("Error: Inconsistent vertex UV group pairs at vertex {} : {}".format(vA.index, vB.index))
+					continue
+
+				print("    Map {0} -> {1}  | UVs {2}x, {3}x | UV Groups {4}x {5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) ))
+
+
+				# TODO: Now map groups to each other
+				uv_avg_A = Vector([0,0])
+				uv_avg_B = Vector([0,0])
+				for m in range(0, len(uv_groups_A)):
+					print("    . ")
+					uv_avg_A+= uv_groups_A[m][0].uv;
+					uv_avg_B+= uv_groups_B[m][0].uv;
+
+				uv_avg_A/=len(uv_groups_A)
+				uv_avg_B/=len(uv_groups_B)
+
+				print("avg: {} : {}".format(uv_avg_A, uv_avg_B))
+		
+				# if More than 1 UV related face: Sort by faces Mirror first
+				# uv_facesA_distances = {}
+				# uv_facesB_distances = {}
+				# for face in uv_facesA:
+				# 	uv_facesA_distances[face] = (face.calc_center_median() - vA.co).length
+				# for face in uv_facesB:
+				# 	uv_facesB_distances[face] = (face.calc_center_median() - vB.co).length
+				# uv_facesA = [item[0] for item in sorted(uv_facesA_distances.items(), key=operator.itemgetter(1))]
+				# uv_facesB = [item[0] for item in sorted(uv_facesB_distances.items(), key=operator.itemgetter(1))]
+				
+				# print("Sorted A: to idx: "+str(vA.index)+" "+', '.join(str(face.index) for face in uv_facesA))
+
+
+					# for face in bm.faces:
+					# 	if face.select:
+					# 		for loop in face.loops:
+					# 			if loop[uvLayer].select and loop.vert not in verts_middle:
+					# 				if loop[uvLayer].uv.x <= x_middle:
 
 
 
-					print("    Map {0} -> {1}  | UVs {2}x, {3}x  | Fcs {4}x, {5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_facesA), len(uv_facesB) ))
-					# print("A: "+str(uvsA[0]))
+				# pos = verts_to_uv[ vA ][0].uv.copy();
+				# pos.x = x_middle - (pos.x - x_middle) #Mirror
 
-					
+				# for uv in verts_to_uv[ vB ]:
+				# 	uv.uv = pos;
 
-					pos = verts_to_uv[ vA ][0].uv.copy();
-					pos.x = x_middle - (pos.x - x_middle) #Mirror
 
-					for uv in verts_to_uv[ vB ]:
-						uv.uv = pos;
+				# Done processing, add to border arrays
+				border_A.append(vA)
+				border_B.append(vB)
 
-					# uv = verts_to_uv[ vA ].uv.copy();
-					# uv.x = x_middle - (uv.x - x_middle)
-					# verts_to_uv[ vB ].uv = uv;
-
-					# Done processing, add to border arrays
-					border_A.append(vA)
-					border_B.append(vB)
-
-			else:
-				print("Warning: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
-
+			
 		# print("New Border pairs: {}x : {}x".format(len(border_A), len(border_B)))
 
 	# print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))

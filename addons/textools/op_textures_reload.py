@@ -6,7 +6,7 @@ from collections import defaultdict
 from math import pi
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_reload_textures"
+	bl_idname = "uv.textools_textures_reload"
 	bl_label = "Reload Textures"
 	bl_description = "Reload all textures"
 

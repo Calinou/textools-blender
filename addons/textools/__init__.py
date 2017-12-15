@@ -43,6 +43,7 @@ if "bpy" in locals():
 	imp.reload(op_island_align_edge)
 	imp.reload(op_islands_select_identical)
 	imp.reload(op_islands_select_overlap)
+	imp.reload(op_islands_select_outline)
 	imp.reload(op_island_symmetry)
 	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
@@ -62,6 +63,7 @@ else:
 	from . import op_island_align_edge
 	from . import op_islands_select_identical
 	from . import op_islands_select_overlap
+	from . import op_islands_select_outline
 	from . import op_island_symmetry
 	from . import op_setup_split_uv
 	from . import op_faces_iron
@@ -150,8 +152,9 @@ class TexToolsPanel(bpy.types.Panel):
 		#---------- Transform ------------
 
 
-
-
+		layout.separator()
+		layout.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+		layout.separator()
 
 		# boxHeader = layout.box()
 		# row = boxHeader.row();
@@ -168,8 +171,7 @@ class TexToolsPanel(bpy.types.Panel):
 
 		box = layout.box()
 
-		box.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
-
+		
 		# box.separator()
 		
 		col = box.column(align=True)
@@ -214,8 +216,9 @@ class TexToolsPanel(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 		aligned = box.column(align=True)
-		aligned.operator(op_islands_select_identical.op.bl_idname, text="Same Isld.", icon_value = getIcon("islands_select_identical"))
-		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap Isld.", icon_value = getIcon("islands_select_overlapping"))
+		aligned.operator(op_islands_select_identical.op.bl_idname, text="Identical I.", icon_value = getIcon("islands_select_identical"))
+		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap I.", icon_value = getIcon("islands_select_overlapping"))
+		aligned.operator(op_islands_select_outline.op.bl_idname, text="I. Outline")
 		
 
 		
@@ -228,7 +231,9 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned = box.column(align=True)
 		aligned.operator(op_checkerMap.op.bl_idname, icon_value = getIcon("checkerMap"))
 		aligned.operator(op_textures_reload.op.bl_idname, text="Reload", icon_value = getIcon("textures_reload"))
-		aligned.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
+
+
+		layout.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
 		
 	
 		

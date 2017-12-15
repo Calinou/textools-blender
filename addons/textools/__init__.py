@@ -43,7 +43,7 @@ if "bpy" in locals():
 	imp.reload(op_island_align_edge)
 	imp.reload(op_islands_select_identical)
 	imp.reload(op_islands_select_overlap)
-	imp.reload(op_symmetry)
+	imp.reload(op_island_symmetry)
 	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
 	
@@ -62,7 +62,7 @@ else:
 	from . import op_island_align_edge
 	from . import op_islands_select_identical
 	from . import op_islands_select_overlap
-	from . import op_symmetry
+	from . import op_island_symmetry
 	from . import op_setup_split_uv
 	from . import op_faces_iron
 	
@@ -137,15 +137,15 @@ class TexToolsPanel(bpy.types.Panel):
 
 		#---------- Settings ------------
 		row = layout.row()
-		box = row.box()
+		# box = row.box()
 		# box.label(text="Settings")
 
-		col = box.column(align=True)
+		col = row.column(align=True)
 		# aligned = col.row(align=True)
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
-		layout.separator()
+		# layout.separator()
 
 		#---------- Transform ------------
 
@@ -204,22 +204,22 @@ class TexToolsPanel(bpy.types.Panel):
 		
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
-		col.operator(op_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
+		col.operator(op_island_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
 		col.operator(op_faces_iron.op.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
 
-		layout.separator()
+		# layout.separator()
 
 		#---------- Selection ------------
-		layout.label(text="Selection")
+		layout.label(text="Select")
 		row = layout.row()
 		box = row.box()
 		aligned = box.column(align=True)
-		aligned.operator(op_islands_select_identical.op.bl_idname, text="Same", icon_value = getIcon("islands_select_identical"))
-		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
+		aligned.operator(op_islands_select_identical.op.bl_idname, text="Same Isld.", icon_value = getIcon("islands_select_identical"))
+		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap Isld.", icon_value = getIcon("islands_select_overlapping"))
 		
 
 		
-		layout.separator()
+		# layout.separator()
 
 		#---------- Textures ------------
 		layout.label(text="Textures")

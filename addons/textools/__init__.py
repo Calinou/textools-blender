@@ -322,6 +322,10 @@ def register():
 	# kmi = km.keymap_items.new(op_islands_align_sort.op.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
 	# keymaps.append((km, kmi))
 	
+	# km = kc.keymaps.new('Frames', space_type='EMPTY', region_type='WINDOW', modal=False)
+	# kmi = km.keymap_items.new('screen.frame_offset', 'UP_ARROW', 'PRESS', shift=True)
+	# kmi.properties.delta = 10
+
 	#bpy.utils.register_module(__name__)
 	#handle the keymap
 #    wm = bpy.context.window_manager

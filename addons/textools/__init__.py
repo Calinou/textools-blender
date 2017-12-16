@@ -45,6 +45,7 @@ if "bpy" in locals():
 	imp.reload(op_islands_select_overlap)
 	imp.reload(op_islands_select_outline)
 	imp.reload(op_island_symmetry)
+	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
 	
@@ -65,6 +66,7 @@ else:
 	from . import op_islands_select_overlap
 	from . import op_islands_select_outline
 	from . import op_island_symmetry
+	from . import op_island_relax_straighten_edges
 	from . import op_setup_split_uv
 	from . import op_faces_iron
 	
@@ -177,6 +179,7 @@ class TexToolsPanel(bpy.types.Panel):
 		col = box.column(align=True)
 		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = getIcon("island_align_edge"))
+		col.operator(op_island_relax_straighten_edges.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
 
 		row = col.row(align=True)
 		row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
@@ -208,6 +211,7 @@ class TexToolsPanel(bpy.types.Panel):
 		col = aligned.column(align=True)
 		col.operator(op_island_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
 		col.operator(op_faces_iron.op.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
+		
 
 		# layout.separator()
 
@@ -215,10 +219,11 @@ class TexToolsPanel(bpy.types.Panel):
 		layout.label(text="Select")
 		row = layout.row()
 		box = row.box()
-		aligned = box.column(align=True)
-		aligned.operator(op_islands_select_identical.op.bl_idname, text="Identical I.", icon_value = getIcon("islands_select_identical"))
-		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap I.", icon_value = getIcon("islands_select_overlapping"))
-		aligned.operator(op_islands_select_outline.op.bl_idname, text="I. Outline")
+		aligned = box.row(align=True)
+		aligned.operator(op_islands_select_identical.op.bl_idname, text="Same", icon_value = getIcon("islands_select_identical"))
+		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
+		aligned = box.row(align=True)
+		aligned.operator(op_islands_select_outline.op.bl_idname, text="Outlines")
 		
 
 		
@@ -309,6 +314,7 @@ def register():
 	registerIcon("turnRight.png")
 	registerIcon("textures_reload.png")
 	registerIcon("island_align_edge.png")
+	registerIcon("island_relax_straighten_edges.png")
 	registerIcon("alignBottom.png")
 	registerIcon("alignLeft.png")
 	registerIcon("alignRight.png")

@@ -35,7 +35,7 @@ class op(bpy.types.Operator):
 			return False
 
 		#UV Edge mode
-		if bpy.context.scene.tool_settings.uv_select_mode != 'EDGE':
+		if bpy.context.scene.tool_settings.uv_select_mode != 'EDGE' and bpy.context.scene.tool_settings.uv_select_mode != 'VERTEX':
 		 	return False
 
 		return True

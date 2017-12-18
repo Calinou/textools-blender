@@ -149,33 +149,17 @@ class TexToolsPanel(bpy.types.Panel):
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
-		# layout.separator()
 
 		#---------- Transform ------------
-
-
 		layout.separator()
 		layout.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 		layout.separator()
 
-		# boxHeader = layout.box()
-		# row = boxHeader.row();
-		# layout.operator("wm.console_toggle", text="Header", icon = "TRIA_DOWN")
+
+		#---------- Layout ------------
 		layout.label(text="Layout")
 
-
-		# row = layout.row()
-		# box = row.box()
-		# box.label(text="Trasnform")
-
-
-
-
 		box = layout.box()
-
-		
-		# box.separator()
-		
 		col = box.column(align=True)
 		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = getIcon("island_align_edge"))
@@ -200,9 +184,6 @@ class TexToolsPanel(bpy.types.Panel):
 		col.operator(op_align.op.bl_idname, text="→", icon_value = getIcon("alignRight")).direction = "right"
 
 
-
-
-
 		aligned = box.row(align=True)
 		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = getIcon("islands_align_sort_h")).is_vertical = False;
 		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = getIcon("islands_align_sort_v")).is_vertical = True;
@@ -213,34 +194,28 @@ class TexToolsPanel(bpy.types.Panel):
 		col.operator(op_faces_iron.op.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
 		
 
-		# layout.separator()
-
 		#---------- Selection ------------
 		layout.label(text="Select")
 		row = layout.row()
 		box = row.box()
-		aligned = box.row(align=True)
-		aligned.operator(op_islands_select_identical.op.bl_idname, text="Same", icon_value = getIcon("islands_select_identical"))
-		aligned.operator(op_islands_select_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
-		aligned = box.row(align=True)
-		aligned.operator(op_islands_select_outline.op.bl_idname, text="Outlines")
+		col = box.column(align=True)
+		row = col.row(align=True)
+		row.operator(op_islands_select_identical.op.bl_idname, text="Similar", icon_value = getIcon("islands_select_identical"))
+		row.operator(op_islands_select_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
+		# aligned = box.row(align=True)
+		col.operator(op_islands_select_outline.op.bl_idname, text="UV Outlines")
 		
-
-		
-		# layout.separator()
 
 		#---------- Textures ------------
 		layout.label(text="Textures")
 		row = layout.row()
 		box = row.box()
 		aligned = box.column(align=True)
-		aligned.operator(op_checkerMap.op.bl_idname, icon_value = getIcon("checkerMap"))
+		aligned.operator(op_checkerMap.op.bl_idname, text ="Checker", icon_value = getIcon("checkerMap"))
 		aligned.operator(op_textures_reload.op.bl_idname, text="Reload", icon_value = getIcon("textures_reload"))
 
 
 		layout.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
-		
-	
 		
 
 		layout.separator()
@@ -269,8 +244,7 @@ class TexToolsPanel(bpy.types.Panel):
 
 		aligned = box.row(align=True)
 		aligned.operator(op_bake.op_bake.bl_idname, text = "Bake");
-		aligned.prop(context.scene.texToolsSettings, "baking_do_save"
-)		
+		aligned.prop(context.scene.texToolsSettings, "baking_do_save")		
 		layout.separator()
 
 		#---------- ID Colors ------------
@@ -376,5 +350,3 @@ def unregister():
 
 if __name__ == "__main__":
 	register()
-
-	#Setup Color palette

@@ -43,4 +43,6 @@ class op(bpy.types.Operator):
 def swap(context):
 	print("Execute op_islands_select_outline")
 
+	# https://developer.blender.org/D2865
+
 	

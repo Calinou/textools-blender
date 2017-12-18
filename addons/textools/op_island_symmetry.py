@@ -437,20 +437,29 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 				print("    Map {0} -> {1}  | UVs {2}x, {3}x | UV Groups {4}x {5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) ))
 
+				if len(uv_groups_A) > 1:
+					# For each group
+					for g in range(0, len(uv_groups_A)):
+						uv_A = uv_groups_A[g][0].uv.copy()
+						uv_B = uv_groups_B[g][0].uv.copy()
 
-				# TODO: Now map groups to each other
-				uv_avg_A = Vector([0,0])
-				uv_avg_B = Vector([0,0])
-				for m in range(0, len(uv_groups_A)):
-					print("    . ")
-					uv_avg_A+= uv_groups_A[m][0].uv;
-					uv_avg_B+= uv_groups_B[m][0].uv;
+						uv_A.x = (uv_A.x - x_middle);
+						uv_B.x = (uv_B.x - x_middle);
+						print("    .  Compare G {} : {} {}".format(g, uv_A, uv_B))
 
-				uv_avg_A/=len(uv_groups_A)
-				uv_avg_B/=len(uv_groups_B)
+					# TODO: Now map groups to each other
+					# uv_avg_A = Vector([0,0])
+					# uv_avg_B = Vector([0,0])
+					# for m in range(0, len(uv_groups_A)):
+					# 	print("        . ")
+					# 	uv_avg_A+= uv_groups_A[m][0].uv;
+					# 	uv_avg_B+= uv_groups_B[m][0].uv;
 
-				print("avg: {} : {}".format(uv_avg_A, uv_avg_B))
-		
+					# uv_avg_A/=len(uv_groups_A)
+					# uv_avg_B/=len(uv_groups_B)
+
+					# print("        avg: {} : {}".format(uv_avg_A, uv_avg_B))
+			
 				# if More than 1 UV related face: Sort by faces Mirror first
 				# uv_facesA_distances = {}
 				# uv_facesB_distances = {}

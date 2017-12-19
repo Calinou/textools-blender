@@ -9,7 +9,7 @@ from . import utilities_uv
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_islands_select_identical"
+	bl_idname = "uv.textools_select_islands_select"
 	bl_label = "Select identical"
 	bl_description = "Select identical islands with similar topology"
 
@@ -46,7 +46,7 @@ class op(bpy.types.Operator):
 
 
 def swap(self, context):
-	print("Execute op_islands_select_identical")
+	print("Execute op_select_islands_identical")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()

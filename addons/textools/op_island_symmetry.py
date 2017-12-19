@@ -274,7 +274,8 @@ def main(context):
 		# 8.) Mirror Verts
 		mirror_verts(verts_middle, verts_A, verts_B, True)
 
-
+	#Restore selection
+	utilities_uv.selectionRestore()
 
 
 
@@ -282,7 +283,7 @@ def main(context):
 
 def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
-	print("----\nMirror: "+str(len(verts_middle))+"x | L:"+str(len(verts_A))+"x | R:"+str(len(verts_B))+"x, 	A to B? "+str(isAToB))
+	print("____________________\nMirror: C:"+str(len(verts_middle))+" ; verts: "+str(len(verts_A))+"|"+str(len(verts_B))+"x, 	A to B? "+str(isAToB))
 
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
@@ -401,6 +402,9 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 	for i in range(0, 200):
 
+		if len(border_A) == 0:
+			print("Finished scanning at {} growth iterations".format(i))
+			break;
 		if len(border_A) != len(border_B) or len(border_A) == 0:
 			print("Abort: non compatible border A/B: {}x {}x ".format(len(border_A), len(border_B)))
 			break;
@@ -408,7 +412,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		connected_A = select_extend_filter(border_A, verts_A)
 		connected_B = select_extend_filter(border_B, verts_B)
 
-		# print("Map pairs: {}x : {}x".format(len(connected_A), len(connected_B)))
+		print("Map pairs: {}|{}".format(len(connected_A), len(connected_B)))
 
 		border_A.clear()
 		border_B.clear()
@@ -417,7 +421,8 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		# count = 1 #Temp override
 		for j in range(0, count):
 			if len(connected_A[j]) != len(connected_B[j]):
-				print("Error: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
+				# print("Error: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
+				print("Error: Inconsistent grow mappings from {}  {}x | {}x".format(j, len(connected_A[j]), len(connected_B[j]) ))
 				continue
 
 			for k in range(0, len(connected_A[j])):
@@ -435,7 +440,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 					print("Error: Inconsistent vertex UV group pairs at vertex {} : {}".format(vA.index, vB.index))
 					continue
 
-				print("    Map {0} -> {1}  | UVs {2}x, {3}x | UV Groups {4}x {5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) ))
+				print("    Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) ))
 
 				if len(uv_groups_A) > 1:
 					# For each group
@@ -445,7 +450,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 						uv_A.x = (uv_A.x - x_middle);
 						uv_B.x = (uv_B.x - x_middle);
-						print("    .  Compare G {} : {} {}".format(g, uv_A, uv_B))
+						print("    .   [{}] : {:.2f}, {:.2f} | {:.2f}, {:.2f}".format(g, uv_A.x, uv_A.y, uv_B.x, uv_B.y))
 
 					# TODO: Now map groups to each other
 					# uv_avg_A = Vector([0,0])
@@ -460,101 +465,9 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 					# print("        avg: {} : {}".format(uv_avg_A, uv_avg_B))
 			
-				# if More than 1 UV related face: Sort by faces Mirror first
-				# uv_facesA_distances = {}
-				# uv_facesB_distances = {}
-				# for face in uv_facesA:
-				# 	uv_facesA_distances[face] = (face.calc_center_median() - vA.co).length
-				# for face in uv_facesB:
-				# 	uv_facesB_distances[face] = (face.calc_center_median() - vB.co).length
-				# uv_facesA = [item[0] for item in sorted(uv_facesA_distances.items(), key=operator.itemgetter(1))]
-				# uv_facesB = [item[0] for item in sorted(uv_facesB_distances.items(), key=operator.itemgetter(1))]
-				
-				# print("Sorted A: to idx: "+str(vA.index)+" "+', '.join(str(face.index) for face in uv_facesA))
-
-
-					# for face in bm.faces:
-					# 	if face.select:
-					# 		for loop in face.loops:
-					# 			if loop[uvLayer].select and loop.vert not in verts_middle:
-					# 				if loop[uvLayer].uv.x <= x_middle:
-
-
-
-				# pos = verts_to_uv[ vA ][0].uv.copy();
-				# pos.x = x_middle - (pos.x - x_middle) #Mirror
-
-				# for uv in verts_to_uv[ vB ]:
-				# 	uv.uv = pos;
-
-
 				# Done processing, add to border arrays
 				border_A.append(vA)
 				border_B.append(vB)
-
-			
-		# print("New Border pairs: {}x : {}x".format(len(border_A), len(border_B)))
-
-	# print("Verts Island: {}, UV's: {}, verts: {}".format( len(verts_island), len(uv_to_vert), len(verts_to_uv) ))
-	# print("	x: "+"{0:.2f}".format(x_middle))
-	# print("")
-
-	# def extend_side(uvs_border, verts_mask):
-	# 	print("	Extend UV's {}".format(len(uvs_border)))
-
-	# 	bpy.context.scene.tool_settings.uv_select_mode = 'VERTEX'
-
-	# 	extended = []
-
-	# 	for uv in uvs_border:
-	# 		vert = uv_to_vert[uv]
-	# 		# print("{}".format(uv.uv))
-	# 		bpy.ops.uv.select_all(action='DESELECT')
-	# 		uv.select = True
-	# 		bpy.ops.uv.select_more()
-			
-	# 		# Get extended UV's that are not part of the vert and selected
-	# 		uvs_extended = [uv for uv in uv_to_vert.keys() if (uv.select and uv_to_vert[uv] != vert )]#and uv_to_vert[uv] in verts_mask
-	# 		extended.append( uvs_extended )
-
-	# 		# verts_extended = [vert for ]
-	# 		# print("		Extended: {}".format(len(uvs_extended)))
-
-	# 		# debug select
-	# 		# bpy.ops.uv.select_all(action='DESELECT')
-	# 		# for x in uvs_extended:
-	# 		# 	x.select = True
-
-	# 	return extended;
-
-	# uvs_processed = []
-	# uvs_border_A = [uv for vert in verts_middle for uv in verts_to_uv[vert] ]
-	# uvs_border_B = [uv for vert in verts_middle for uv in verts_to_uv[vert] ]
-
-
-	# for i in range(0, 1):
-	# 	# uvs_border = 
-		
-	# 	if len(uvs_border_A) != len(uvs_border_B):
-	# 		print("Error: border A and B wrong count {} : {}".format(len(uvs_border_A), len(uvs_border_B)))
-	# 	else:
-	# 		print("Extend A, verts: {}, uvs: {}".format(len(verts_middle), len(uvs_border_A)))
-
-	# 		extended_A = extend_side( uvs_border_A, verts_A)
-	# 		# extended_B = extend_side( uvs_border_B, verts_B)
-
-	# 		# print("	Merge")
-	# 		# if len(extended_A) != len(extended_B):
-	# 		# 	print("Error: extended A and B wrong count {} : {}".format(len(extended_A), len(extended_B)))
-	# 		# else:
-	# 		# 	count = min(len(extended_A), len(extended_B))
-
-				
-	# 		# 	for i in range(0, count):
-	# 		# 		print("	{}. step Extended: {} : {}".format(i, len(extended_A[i]), len(extended_B[i])))
-
-
-
 
 	
 

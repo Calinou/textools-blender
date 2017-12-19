@@ -50,7 +50,7 @@ class op(bpy.types.Operator):
 def main(context):
 	print("Executing operator_island_align_edge")
    	
-   	#Store selection
+	#Store selection
 	utilities_uv.selectionStore()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)

@@ -13,27 +13,44 @@ def selectionStore():
 
 	# https://blender.stackexchange.com/questions/5781/how-to-list-all-selected-elements-in-python
 	print("selectionStore")
-	settings.selection_mode = bpy.context.scene.tool_settings.uv_select_mode
-	settings.selection_pivot = bpy.context.space_data.pivot_point
+	settings.selection_uv_mode = bpy.context.scene.tool_settings.uv_select_mode
+	settings.selection_uv_pivot = bpy.context.space_data.pivot_point
 	# https://blender.stackexchange.com/questions/3532/obtain-uv-selection-in-python
 
+	#VERT Selection
+	settings.selection_mode = tuple(bpy.context.scene.tool_settings.mesh_select_mode)
+	settings.selection_verts = []
+	for vert in bm.verts:
+		if vert.select:
+			settings.selection_verts.append(vert)
+
 	#Face selections (Loops)
-	settings.selection_loops = []
+	settings.selection_uv_loops = []
 	for face in bm.faces:
 		for loop in face.loops:
 			if loop[uvLayer].select:
-				settings.selection_loops.append(loop[uvLayer])
+				settings.selection_uv_loops.append(loop[uvLayer])
 
 
 def selectionRestore():
+
 	print("selectionRestore")
-	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_mode
-	bpy.context.space_data.pivot_point = settings.selection_pivot
+	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_uv_mode
+	bpy.context.space_data.pivot_point = settings.selection_uv_pivot
 	
-	#Face Selections (Loops)
+	#VERT Selection
+	bpy.context.scene.tool_settings.mesh_select_mode = settings.selection_mode
+	bpy.ops.mesh.select_all(action='SELECT')
+	# for vert in settings.selection_verts:
+	# 	if vert:
+	# 		vert.select = True
+
+	#UV Face-UV Selections (Loops)
 	bpy.ops.uv.select_all(action='DESELECT')
-	for loop in settings.selection_loops:
+	for loop in settings.selection_uv_loops:
 		loop.select = True
+
+	bpy.context.scene.update()
 
 
 def getSelectedFaces():

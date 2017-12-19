@@ -442,15 +442,32 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 				print("    Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) ))
 
-				if len(uv_groups_A) > 1:
+				if len(uv_groups_A) > 0:
 					# For each group
+					sortA = {}
+					sortB = {}
 					for g in range(0, len(uv_groups_A)):
 						uv_A = uv_groups_A[g][0].uv.copy()
 						uv_B = uv_groups_B[g][0].uv.copy()
 
-						uv_A.x = (uv_A.x - x_middle);
-						uv_B.x = (uv_B.x - x_middle);
-						print("    .   [{}] : {:.2f}, {:.2f} | {:.2f}, {:.2f}".format(g, uv_A.x, uv_A.y, uv_B.x, uv_B.y))
+						# localize X values (from symmetry line)
+						uv_A.x = (uv_A.x - x_middle)
+						uv_B.x = (uv_B.x - x_middle)
+
+						sortA[g] = abs(uv_A.x) + uv_A.y*2.0
+						sortB[g] = abs(uv_B.x) + uv_B.y*2.0
+						# print("    .   [{}] : {:.2f}, {:.2f} | {:.2f}, {:.2f}".format(g, uv_A.x, uv_A.y, uv_B.x, uv_B.y))
+						print("    .   [{}] : {:.2f} | {:.2f}".format(g, sortA[g], sortB[g]))
+
+					# Sort sortA by value
+					sortedA = sorted(sortA.items(), key=operator.itemgetter(1))
+					sortedB = sorted(sortB.items(), key=operator.itemgetter(1))
+					
+					print("Sorted: '"+str(sortedA)+"'")
+					print("Sorted: '"+str(sortedB)+"'")
+
+					# for item in sorted(verts_distance.items(), key=operator.itemgetter(1)):
+					# 	connected_verts[i].append( item[0] )
 
 					# TODO: Now map groups to each other
 					# uv_avg_A = Vector([0,0])

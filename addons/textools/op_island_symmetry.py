@@ -15,6 +15,8 @@ class op(bpy.types.Operator):
 	bl_label = "Symmetry"
 	bl_description = "Mirrors selected faces to other half or averages based on selected edge center"
 
+	is_stack = bpy.props.BoolProperty(description="Stack the halves on top of each other?", default=False)
+
 	@classmethod
 	def poll(cls, context):
 
@@ -463,8 +465,21 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 					sortedA = sorted(sortA.items(), key=operator.itemgetter(1))
 					sortedB = sorted(sortB.items(), key=operator.itemgetter(1))
 					
-					print("Sorted: '"+str(sortedA)+"'")
-					print("Sorted: '"+str(sortedB)+"'")
+					for g in range(0, len(uv_groups_A)):
+						# sortedA[g]
+						idxA = sortedA[g][0]
+						idxB = sortedB[g][0]
+
+						print("Map uv_groups_A {} -> ".format(idxA, idxB))
+						for uv in uv_groups_B[idxB]:
+							pos = uv_groups_A[idxA][0].uv.copy()
+							# Flip cooreindate
+							pos.x = x_middle - (pos.x-x_middle)
+							uv.uv = pos
+						
+
+					# print("Sorted: '"+str(sortedA)+"'")
+					# print("Sorted: '"+str(sortedB)+"'")
 
 					# for item in sorted(verts_distance.items(), key=operator.itemgetter(1)):
 					# 	connected_verts[i].append( item[0] )

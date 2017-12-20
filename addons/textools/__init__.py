@@ -190,7 +190,10 @@ class TexToolsPanel(bpy.types.Panel):
 		
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
-		col.operator(op_island_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror"))
+		row = col.row(align=True)
+		row.operator(op_island_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
+		row.operator(op_island_symmetry.op.bl_idname, text="M. Stack", icon_value = getIcon("mirror")).is_stack = True;
+		
 		col.operator(op_faces_iron.op.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
 		
 
@@ -296,17 +299,71 @@ def register():
 	registerIcon("mirror.png")
 	registerIcon("setup_split_uv.png")
 	registerIcon("faces_iron.png")
-
 	registerIcon("islands_select_identical.png")
 	registerIcon("islands_select_overlapping.png")
 	registerIcon("explode.png")
 
 	#Key Maps
-	# wm = bpy.context.window_manager
-	# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	# kmi = km.keymap_items.new(op_islands_align_sort.op.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
-	# keymaps.append((km, kmi))
+	wm = bpy.context.window_manager
+
+	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	kmi = km.keymap_items.new(op_islands_align_sort.op.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
+	keymaps.append((km, kmi))
+
+	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', alt=True)
+	kmi.properties.direction = "up"
+	keymaps.append((km, kmi))
+
+	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	kmi = km.keymap_items.new(op_align.op.bl_idname, 'DOWN_ARROW', 'PRESS', alt=True)
+	kmi.properties.direction = "down"
+	keymaps.append((km, kmi))
+
+	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	kmi = km.keymap_items.new(op_align.op.bl_idname, 'LEFT_ARROW', 'PRESS', alt=True)
+	kmi.properties.direction = "left"
+	keymaps.append((km, kmi))
+
+	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	kmi = km.keymap_items.new(op_align.op.bl_idname, 'RIGHT_ARROW', 'PRESS', alt=True)
+	kmi.properties.direction = "right"
+	keymaps.append((km, kmi))
+
+
+
 	
+	# wm = bpy.context.window_manager
+	# if wm.keyconfigs.addon is not None:
+
+	# print("Register keyboard bindings")
+
+	# km = wm.keyconfigs.addon.keymaps.new(name='Align Up', space_type='IMAGE_EDITOR')
+	# kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', shift=True)
+	# kmi = km.keymap_items.new(op_align.op.bl_idname, 'M', 'PRESS', alt=True)
+	# kmi.properties.direction = "up"
+	# keymaps.append((km, kmi))
+    
+	# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='IMAGE_EDITOR')
+	# kmi = km.keymap_items.new(op_align.op.bl_idname, 'V', 'PRESS', ctrl=True, shift=True)
+	# kmi.properties.direction = "up"
+	# keymaps.append((km, kmi))
+
+	# print("Keymaps: "+str(kmi))
+
+
+	    # km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	    # kmi = km.keymap_items.new(RipFaces.bl_idname, 'V', 'PRESS', alt=True)
+	    # keymaps.append((km, kmi))
+	    
+	    # km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	    # kmi = km.keymap_items.new(JoinFaces.bl_idname, 'V', 'PRESS', alt=True, shift=True)
+	    # keymaps.append((km, kmi))
+
+
+
+
+
 	# km = kc.keymaps.new('Frames', space_type='EMPTY', region_type='WINDOW', modal=False)
 	# kmi = km.keymap_items.new('screen.frame_offset', 'UP_ARROW', 'PRESS', shift=True)
 	# kmi.properties.delta = 10
@@ -317,7 +374,7 @@ def register():
 	
 #    km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
 #    kmi = km.keymap_items.new(UvSquaresByShape.bl_idname, 'E', 'PRESS', alt=True)
-#    addon_keymaps.append((km, kmi))
+#    keymaps.append((km, kmi))
 	
 	
 
@@ -340,13 +397,6 @@ def unregister():
 		km.keymap_items.remove(kmi)
 	keymaps.clear()
 
-#    bpy.types.IMAGE_MT_uvs.remove(menu_func_uv_squares)
-	
-	# handle the keymap
-#    for km, kmi in addon_keymaps:
-#        km.keymap_items.remove(kmi)
-	# clear the list
-#    addon_keymaps.clear()
 
 if __name__ == "__main__":
 	register()

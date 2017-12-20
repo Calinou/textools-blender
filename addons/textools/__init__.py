@@ -310,6 +310,17 @@ def register():
 	kmi = km.keymap_items.new(op_islands_align_sort.op.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=True)
 	keymaps.append((km, kmi))
 
+	# https://github.com/RayMairlot/UV-Rotate-Shortcuts/blob/master/UV%20Rotate.py
+	# km = wm.keyconfigs.addon.keymaps.new(name='Image', space_type='IMAGE_EDITOR')
+ #    kmi = km.keymap_items.new("uv.rotate_selection_left", 'R', 'PRESS', ctrl=True, shift=True)
+ #    keymaps.append((km, kmi))
+
+ #    km = wm.keyconfigs.addon.keymaps.new(name='Image', space_type='IMAGE_EDITOR')
+ #    kmi = km.keymap_items.new("uv.rotate_selection_right", 'R', 'PRESS', shift=True)
+ #    keymaps.append((km, kmi))
+
+
+
 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', alt=True)
 	kmi.properties.direction = "up"

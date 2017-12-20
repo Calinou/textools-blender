@@ -33,7 +33,6 @@ if "bpy" in locals():
 	imp.reload(utilities_gui)
 	imp.reload(settings)
 	
-
 	imp.reload(op_islands_align_sort)
 	imp.reload(op_checkerMap)
 	imp.reload(op_align)
@@ -319,16 +318,29 @@ def register():
  #    kmi = km.keymap_items.new("uv.rotate_selection_right", 'R', 'PRESS', shift=True)
  #    keymaps.append((km, kmi))
 
+			# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+			# kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', alt=True, ctrl=True, shift=True)
+			# kmi.properties.direction = "top"
+			# keymaps.append((km, kmi))
 
+			# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+			# kmi = km.keymap_items.new(op_align.op.bl_idname, 'DOWN_ARROW', 'PRESS', alt=True, ctrl=True, shift=True)
+			# kmi.properties.direction = "bottom"
+			# keymaps.append((km, kmi))
+
+			# km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+			# kmi = km.keymap_items.new(op_align.op.bl_idname, 'LEFT_ARROW', 'PRESS', alt=True, ctrl=True, shift=True)
+			# kmi.properties.direction = "left"
+			# keymaps.append((km, kmi))
 
 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', alt=True)
-	kmi.properties.direction = "up"
+	kmi.properties.direction = "top"
 	keymaps.append((km, kmi))
 
 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'DOWN_ARROW', 'PRESS', alt=True)
-	kmi.properties.direction = "down"
+	kmi.properties.direction = "bottom"
 	keymaps.append((km, kmi))
 
 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
@@ -341,7 +353,10 @@ def register():
 	kmi.properties.direction = "right"
 	keymaps.append((km, kmi))
 
-
+	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	kmi = km.keymap_items.new(op_island_symmetry.op.bl_idname, 'M', 'PRESS', alt=True)
+	kmi.properties.is_stack = False
+	keymaps.append((km, kmi))
 
 	
 	# wm = bpy.context.window_manager

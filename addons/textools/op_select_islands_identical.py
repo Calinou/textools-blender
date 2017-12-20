@@ -9,7 +9,7 @@ from . import utilities_uv
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_select_islands_select"
+	bl_idname = "uv.textools_select_islands_identical"
 	bl_label = "Select identical"
 	bl_description = "Select identical islands with similar topology"
 

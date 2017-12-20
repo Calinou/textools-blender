@@ -56,7 +56,8 @@ def align(context, direction):
 			elif direction == "right":
 				delta = boundsAll['max'] - bounds['max']
 				bpy.ops.transform.translate(value=(delta.x, 0, 0))
-
+			else:
+				print("Unkown direction: "+str(direction))
 
 
 	elif mode == 'EDGE' or mode == 'VERTEX':

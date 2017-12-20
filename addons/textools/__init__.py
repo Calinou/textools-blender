@@ -217,10 +217,10 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator(op_textures_reload.op.bl_idname, text="Reload", icon_value = getIcon("textures_reload"))
 
 
+		'''
 		layout.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
-		
-
 		layout.separator()
+
 
 		#---------- Baking ------------
 		layout.label(text="Baking")
@@ -259,7 +259,7 @@ class TexToolsPanel(bpy.types.Panel):
 		box.label(text="ID Colors")
 		box.operator(bpy.ops.paint.sample_color.idname())
 		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
-
+		'''
 
 
 keymaps = []

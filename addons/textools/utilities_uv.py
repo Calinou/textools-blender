@@ -54,7 +54,7 @@ def selectionRestore():
 	bpy.context.scene.update()
 
 
-def getSelectedFaces():
+def getfaces_selected():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	faces = [];
 	for face in bm.faces:
@@ -64,7 +64,7 @@ def getSelectedFaces():
 	return faces
 
 
-def setSelectedFaces(faces):
+def setfaces_selected(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 	for face in faces:
@@ -118,11 +118,10 @@ def getSelectionBBox():
 def getSelectionIslands():
 	time_A = time.time()
 
-'''
-Islands: 1x, 0.00 seconds
-Islands: 208x, 0.95 seconds
-Islands: 104x
-'''
+
+	# Islands: 1x, 0.00 seconds
+	# Islands: 208x, 0.95 seconds
+	# Islands: 104x
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
@@ -135,61 +134,40 @@ Islands: 104x
 		bpy.ops.uv.select_linked(extend=False)
  
 	#Collect selected UV faces
-	selectedFaces = [];
+	faces_selected = [];
 	for face in bm.faces:
-		if face.select == False:
-			continue
+		if face.select and face.loops[0][uvLayer].select:
+			faces_selected.append(face)
 		
-		isUVFaceSelected = True;
-		for loop in face.loops:
-			if loop[uvLayer].select is False:
-				isUVFaceSelected = False;
-				continue
-				
-		if isUVFaceSelected == True:
-			selectedFaces.append(face)
-			
-	# print("Faces: "+str(len(selectedFaces)))
-	
 	#Collect UV islands
-	parsedFaces = []
+	faces_parsed = []
 	islands = []
 
-	for face in selectedFaces:
+	for face in faces_selected:
 		#Skip if already processed
-		if face in parsedFaces:
+		if face in faces_parsed:
 			continue;
 		
 		#Select single face
 		bpy.ops.uv.select_all(action='DESELECT')
-		for loop in face.loops:
-			loop[uvLayer].select = True;
+		face.loops[0][uvLayer].select = True;
 		bpy.ops.uv.select_linked(extend=False)#Extend selection
 		
 		#Collect faces
 		islandFaces = [];
-		for faceAll in bm.faces:
-			if faceAll.select == False or faceAll in parsedFaces:
-				continue
-			isUVFaceSelected = True;
-			for loop in faceAll.loops:
-				if loop[uvLayer].select is False:
-					isUVFaceSelected = False;
-					continue
-					
-			if isUVFaceSelected == True:
-				islandFaces.append(faceAll)
-				#Add to parsed list, to skip next time
-				if faceAll not in parsedFaces:
-					parsedFaces.append(faceAll)
+		for faceAll in faces_selected:
+			if faceAll.select and faceAll not in faces_parsed:
+				if faceAll.loops[0][uvLayer].select:
+					islandFaces.append(faceAll)
+					faces_parsed.append(faceAll)#Add to parsed list, to skip next time
 					
 		#Assign Faces to island
 		islands.append(islandFaces)
 	
 	#Restore selection
-	for face in selectedFaces:
-		for loop in face.loops:
-			loop[uvLayer].select = True
+	# for face in faces_selected:
+	# 	for loop in face.loops:
+	# 		loop[uvLayer].select = True
 
 	
 	print("Islands: {}x, {:.4f} seconds".format(len(islands), time.time() - time_A))

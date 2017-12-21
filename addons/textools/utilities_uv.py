@@ -118,11 +118,6 @@ def getSelectionBBox():
 def getSelectionIslands():
 	time_A = time.time()
 
-
-	# Islands: 1x, 0.00 seconds
-	# Islands: 208x, 0.95 seconds
-	# Islands: 104x
-
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
@@ -140,29 +135,29 @@ def getSelectionIslands():
 			faces_selected.append(face)
 		
 	#Collect UV islands
-	faces_parsed = []
+	# faces_parsed = []
+	faces_unparsed = faces_selected.copy()
 	islands = []
 
 	for face in faces_selected:
-		#Skip if already processed
-		if face in faces_parsed:
-			continue;
-		
-		#Select single face
-		bpy.ops.uv.select_all(action='DESELECT')
-		face.loops[0][uvLayer].select = True;
-		bpy.ops.uv.select_linked(extend=False)#Extend selection
-		
-		#Collect faces
-		islandFaces = [];
-		for faceAll in faces_selected:
-			if faceAll.select and faceAll not in faces_parsed:
-				if faceAll.loops[0][uvLayer].select:
+		if face in faces_unparsed:
+
+			#Select single face
+			bpy.ops.uv.select_all(action='DESELECT')
+			face.loops[0][uvLayer].select = True;
+			bpy.ops.uv.select_linked(extend=False)#Extend selection
+			
+			#Collect faces
+			islandFaces = [face];
+			for faceAll in faces_unparsed:
+				if faceAll != face and faceAll.select and faceAll.loops[0][uvLayer].select:
 					islandFaces.append(faceAll)
-					faces_parsed.append(faceAll)#Add to parsed list, to skip next time
-					
-		#Assign Faces to island
-		islands.append(islandFaces)
+			
+			for faceAll in islandFaces:
+				faces_unparsed.remove(faceAll)
+
+			#Assign Faces to island
+			islands.append(islandFaces)
 	
 	#Restore selection
 	# for face in faces_selected:

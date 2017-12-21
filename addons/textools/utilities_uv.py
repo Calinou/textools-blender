@@ -1,6 +1,7 @@
 import bpy
 import bmesh
 import operator
+import time
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
@@ -115,6 +116,13 @@ def getSelectionBBox():
 
 
 def getSelectionIslands():
+	time_A = time.time()
+
+'''
+Islands: 1x, 0.00 seconds
+Islands: 208x, 0.95 seconds
+Islands: 104x
+'''
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
@@ -184,6 +192,6 @@ def getSelectionIslands():
 			loop[uvLayer].select = True
 
 	
-	# print("Islands: "+str(len(islands))+"x")
+	print("Islands: {}x, {:.4f} seconds".format(len(islands), time.time() - time_A))
 	return islands
 		

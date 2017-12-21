@@ -7,7 +7,7 @@ from math import pi
 
 class op(bpy.types.Operator):
 	"""UV Operator description"""
-	bl_idname = "uv.textools_checker_map"
+	bl_idname = "uv.textools_texture_checker"
 	bl_label = "Checker Map"
 	bl_description = "Add a checker map to the selected model and UV view"
 
@@ -21,7 +21,6 @@ class op(bpy.types.Operator):
 
 
 def main(context):
-	print("Executing operator_checkerMap main()")
 
 	idImage = "TT_checkerMap"
 	image = None

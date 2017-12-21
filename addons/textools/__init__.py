@@ -34,7 +34,7 @@ if "bpy" in locals():
 	imp.reload(settings)
 	
 	imp.reload(op_islands_align_sort)
-	imp.reload(op_checkerMap)
+	imp.reload(op_texture_checker)
 	imp.reload(op_align)
 	imp.reload(op_textures_reload)
 	imp.reload(op_bake)
@@ -55,7 +55,7 @@ else:
 	from . import settings
 
 	from . import op_islands_align_sort
-	from . import op_checkerMap
+	from . import op_texture_checker
 	from . import op_align
 	from . import op_textures_reload
 	from . import op_bake
@@ -213,7 +213,7 @@ class TexToolsPanel(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 		aligned = box.column(align=True)
-		aligned.operator(op_checkerMap.op.bl_idname, text ="Checker", icon_value = getIcon("checkerMap"))
+		aligned.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = getIcon("checkerMap"))
 		aligned.operator(op_textures_reload.op.bl_idname, text="Reload", icon_value = getIcon("textures_reload"))
 
 

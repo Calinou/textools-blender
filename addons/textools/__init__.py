@@ -41,8 +41,8 @@ if "bpy" in locals():
 	imp.reload(op_swap_uv_xyz)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_select_islands_identical)
-	imp.reload(op_islands_select_overlap)
-	imp.reload(op_islands_select_outline)
+	imp.reload(op_select_islands_overlap)
+	imp.reload(op_select_islands_outline)
 	imp.reload(op_island_symmetry)
 	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_setup_split_uv)
@@ -62,8 +62,8 @@ else:
 	from . import op_swap_uv_xyz
 	from . import op_island_align_edge
 	from . import op_select_islands_identical
-	from . import op_islands_select_overlap
-	from . import op_islands_select_outline
+	from . import op_select_islands_overlap
+	from . import op_select_islands_outline
 	from . import op_island_symmetry
 	from . import op_island_relax_straighten_edges
 	from . import op_setup_split_uv
@@ -203,9 +203,9 @@ class TexToolsPanel(bpy.types.Panel):
 		col = box.column(align=True)
 		row = col.row(align=True)
 		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = getIcon("islands_select_identical"))
-		row.operator(op_islands_select_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
+		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
 		# aligned = box.row(align=True)
-		col.operator(op_islands_select_outline.op.bl_idname, text="UV Outlines")
+		col.operator(op_select_islands_outline.op.bl_idname, text="UV Outlines")
 		
 
 		#---------- Textures ------------

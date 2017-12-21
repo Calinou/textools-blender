@@ -9,7 +9,7 @@ from . import utilities_uv
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_islands_select_overlap"
+	bl_idname = "uv.textools_select_islands_outline"
 	bl_label = "Select Overlap"
 	bl_description = "Select overlapping islands"
 
@@ -45,7 +45,6 @@ class op(bpy.types.Operator):
 
 
 def select_outline(context):
-	print("Execute op_islands_select_outline")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();

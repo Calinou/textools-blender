@@ -11,7 +11,7 @@ from . import utilities_uv
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_select_islands_identical"
 	bl_label = "Select identical"
-	bl_description = "Select identical islands with similar topology"
+	bl_description = "Select identical UV islands with similar topology"
 
 
 	@classmethod
@@ -39,14 +39,11 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-		
 		swap(self, context)
-
 		return {'FINISHED'}
 
 
 def swap(self, context):
-	print("Execute op_select_islands_identical")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
@@ -86,6 +83,10 @@ class Island_stats:
 	countFaces = 0
 	countVerts = 0
 	faces = []
+	area = 0
+	countLinkedEdges = 0
+	countLinkedFaces = 0
+	
 
 	def __init__(self, faces):
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
@@ -96,14 +97,28 @@ class Island_stats:
 		verts = []
 		for face in faces:
 			self.countFaces+=1
+			self.area+=face.calc_area()
+
 			for loop in face.loops:
 				if loop.vert not in verts:
 					verts.append(loop.vert)
 					self.countVerts+=1
-
+					self.countLinkedEdges+= len(loop.vert.link_edges)
+					self.countLinkedFaces+= len(loop.vert.link_faces)
+		
 	def isEqual(self, other):
 		if self.countVerts != other.countVerts:
 			return False
 		if self.countFaces != other.countFaces:
 			return False
+
+		if self.countLinkedEdges != other.countLinkedEdges:
+			return False
+		if self.countLinkedFaces != other.countLinkedFaces:
+			return False
+
+		# area needs to be 90%+ identical
+		if min(self.area, other.area)/max(self.area, other.area) < 0.7:
+			return False
+
 		return True

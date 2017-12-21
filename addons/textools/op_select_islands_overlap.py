@@ -9,7 +9,7 @@ from . import utilities_uv
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_islands_select_outline"
+	bl_idname = "uv.textools_select_islands_overlap"
 	bl_label = "Select outline"
 	bl_description = "Select UV islands outline"
 
@@ -41,7 +41,7 @@ class op(bpy.types.Operator):
 
 
 def swap(context):
-	print("Execute op_islands_select_outline")
+	print("Execute op_select_islands_overlap")
 
 	# https://developer.blender.org/D2865
 

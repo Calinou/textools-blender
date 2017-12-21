@@ -50,7 +50,7 @@ def align(context, direction):
 			elif direction == "top":
 				delta = boundsAll['max'] - bounds['max']
 				bpy.ops.transform.translate(value=(0, delta.y, 0))
-			if direction == "left":
+			elif direction == "left":
 				delta = boundsAll['min'] - bounds['min'] 
 				bpy.ops.transform.translate(value=(delta.x, 0, 0))
 			elif direction == "right":

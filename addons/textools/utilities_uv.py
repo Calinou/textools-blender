@@ -54,7 +54,7 @@ def selectionRestore():
 	bpy.context.scene.update()
 
 
-def getfaces_selected():
+def getSelectedFaces():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	faces = [];
 	for face in bm.faces:
@@ -64,14 +64,12 @@ def getfaces_selected():
 	return faces
 
 
-def setfaces_selected(faces):
+def setSelectedFaces(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 	for face in faces:
 		for loop in face.loops:
 			loop[uvLayer].select = True
-
-	# print("Done selecting "+str(len(faces))+" faces")
 
 
 
@@ -159,7 +157,7 @@ def getSelectionIslands():
 			#Assign Faces to island
 			islands.append(islandFaces)
 	
-	#Restore selection
+	#Restore selection 
 	# for face in faces_selected:
 	# 	for loop in face.loops:
 	# 		loop[uvLayer].select = True

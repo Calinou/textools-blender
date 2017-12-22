@@ -137,14 +137,10 @@ class TexToolsPanel(bpy.types.Panel):
 
 		layout.operator("wm.console_toggle", text="Debug Console", icon="CONSOLE")
 
-
+		'''
 		#---------- Settings ------------
 		row = layout.row()
-		# box = row.box()
-		# box.label(text="Settings")
-
 		col = row.column(align=True)
-		# aligned = col.row(align=True)
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
@@ -153,7 +149,7 @@ class TexToolsPanel(bpy.types.Panel):
 		layout.separator()
 		layout.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 		layout.separator()
-
+		'''
 
 		#---------- Layout ------------
 		layout.label(text="Layout")

@@ -44,11 +44,11 @@ class op(bpy.types.Operator):
 
 	def execute(self, context):
 		
-		swap(context)
+		selectOverlap(context)
 		return {'FINISHED'}
 
 
-def swap(context):
+def selectOverlap(context):
 	print("Execute op_select_islands_overlap")
 
 	# https://developer.blender.org/D2865
@@ -60,18 +60,21 @@ def swap(context):
 	bpy.ops.uv.select_all(action='SELECT')
 
 	islands_all = utilities_uv.getSelectionIslands()
-	count = range(0,len(islands_all))
+	count = len(islands_all)
 
 	islands_bounds = []
-	for i in count:
+	for i in range(0,count):
 		islands_bounds.append( Island_bounds(islands_all[i]) )
 	
-
+	groups = []
 	for i in range(0,count):
 		for j in range(i, count):
 			if j > i:
 				A = islands_bounds[i]
 				B = islands_bounds[j]
+
+				if A.isEqual(B):
+					print("Matched: {} | {}".format(i,j))
 
 
 
@@ -79,6 +82,8 @@ def swap(context):
 class Island_bounds:
 	faces = []
 	center = Vector([0,0])
+	min = Vector([0,0])
+	max = Vector([0,0])
 
 	def __init__(self, faces):
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
@@ -94,11 +99,21 @@ class Island_bounds:
 
 		bounds = utilities_uv.getSelectionBBox()
 		self.center = bounds['center']
+		self.min = bounds['min']
+		self.max = bounds['max']
 
-		print("Get bounds "+str(self.center))
+		# print("Get bounds "+str(self.center))
 
+	def isInside(pos, min, max):
+		if pos.x >= min.x and pos.x <= max.x:
+			if pos.y >= min.y and pos.y <= max.x:
+				return True
+		return False
 		
 	def isEqual(self, other):
 		
+		# Center is inside other bounds
+		if self.isInside(self.center, other.min, other.max):
+			return True
 
-		return True
+		return False

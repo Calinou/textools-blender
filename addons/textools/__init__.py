@@ -187,9 +187,9 @@ class TexToolsPanel(bpy.types.Panel):
 		col = aligned.column(align=True)
 		row = col.row(align=True)
 		row.operator(op_island_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
-		row.operator(op_island_symmetry.op.bl_idname, text="M. Stack", icon_value = getIcon("mirror")).is_stack = True;
+		row.operator(op_island_symmetry.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
 		
-		col.operator(op_faces_iron.op.bl_idname, text="Iron", icon_value = getIcon("faces_iron"))
+		col.operator(op_faces_iron.op.bl_idname, text="Iron Faces", icon_value = getIcon("faces_iron"))
 		
 
 		#---------- Selection ------------

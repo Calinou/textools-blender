@@ -48,6 +48,7 @@ class op(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+
 def selectOverlap(context):
 	print("Execute op_select_islands_overlap")
 
@@ -68,13 +69,23 @@ def selectOverlap(context):
 	
 	groups = []
 	for i in range(0,count):
-		for j in range(i, count):
-			if j > i:
-				A = islands_bounds[i]
-				B = islands_bounds[j]
+		if len(groups) == 0:
+			groups.append([ islands_all[i] ])
+		else:
+			isFound = False
+			for j in range(i, count):
+				if j > i:
+					A = islands_bounds[i]
+					B = islands_bounds[j]
+					if A.isEqual(B):
+						print("Matched: {} | {}".format(i,j))
+						isFound = True
+						break
 
-				if A.isEqual(B):
-					print("Matched: {} | {}".format(i,j))
+			if not isFound:
+				print("..")
+
+	print("Groups: "+str(len(groups)))
 
 
 
@@ -104,7 +115,7 @@ class Island_bounds:
 
 		# print("Get bounds "+str(self.center))
 
-	def isInside(pos, min, max):
+	def isInside(self, pos, min, max):
 		if pos.x >= min.x and pos.x <= max.x:
 			if pos.y >= min.y and pos.y <= max.x:
 				return True

@@ -67,23 +67,29 @@ def selectOverlap(context):
 	for i in range(0,count):
 		islands_bounds.append( Island_bounds(islands_all[i]) )
 	
-	groups = []
-	for i in range(0,count):
-		if len(groups) == 0:
-			groups.append([ islands_all[i] ])
-		else:
-			isFound = False
-			for j in range(i, count):
-				if j > i:
-					A = islands_bounds[i]
-					B = islands_bounds[j]
-					if A.isEqual(B):
-						print("Matched: {} | {}".format(i,j))
-						isFound = True
-						break
 
-			if not isFound:
-				print("..")
+	groups = []
+	unmatched = []
+
+	
+
+	
+	# for i in range(0,count):
+	# 	if len(groups) == 0:
+	# 		groups.append([ islands_all[i] ])
+	# 	else:
+	# 		isFound = False
+	# 		for j in range(i, count):
+	# 			if j > i:
+	# 				A = islands_bounds[i]
+	# 				B = islands_bounds[j]
+	# 				if A.isEqual(B):
+	# 					print("Matched: {} | {}".format(i,j))
+	# 					isFound = True
+	# 					break
+
+	# 		if not isFound:
+	# 			print("..")
 
 	print("Groups: "+str(len(groups)))
 

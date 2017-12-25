@@ -61,7 +61,7 @@ def selectOverlap(context):
 	bpy.ops.uv.select_all(action='SELECT')
 
 	islands_all = utilities_uv.getSelectionIslands()
-	count = len(islands_all)
+	# count = len(islands_all)
 
 	islands_bounds = []
 	for i in range(0,count):
@@ -69,11 +69,16 @@ def selectOverlap(context):
 	
 
 	groups = []
-	unmatched = []
+	unmatched = islands_bounds.copy()
 
-	
+	for islandA in islands_bounds:
 
-	
+		for islandB in unmatched:
+			if islandA != islandB:
+
+
+
+
 	# for i in range(0,count):
 	# 	if len(groups) == 0:
 	# 		groups.append([ islands_all[i] ])

@@ -64,18 +64,36 @@ def selectOverlap(context):
 	# count = len(islands_all)
 
 	islands_bounds = []
-	for i in range(0,count):
-		islands_bounds.append( Island_bounds(islands_all[i]) )
+	for island in islands_all:
+		islands_bounds.append( Island_bounds( island ) )
 	
 
 	groups = []
 	unmatched = islands_bounds.copy()
 
 	for islandA in islands_bounds:
+		if islandA in unmatched:
 
-		for islandB in unmatched:
-			if islandA != islandB:
+			group = [islandA]
+			for islandB in unmatched:
+				if islandA != islandB and islandA.isEqual(islandB):
+					group.append(islandB)
 
+			for item in group:
+				unmatched.remove(item)
+
+			groups.append(group)
+
+			print("Group {}x, groups: {}, unmatched: {}x".format(len(group), len(groups), len(unmatched)))
+		# groups.append(  )
+
+
+	bpy.ops.uv.select_all(action='DESELECT')
+	for group in groups:
+		if len(group) > 1:
+			for i in range(1, len(group)):
+			# for island in group:
+				utilities_uv.setSelectedFaces( group[i].faces )
 
 
 

@@ -12,7 +12,7 @@ imp.reload(utilities_uv)
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_select_islands_overlap"
 	bl_label = "Select outline"
-	bl_description = "Select UV islands outline"
+	bl_description = "Select all overlapping UV islands"
 
 
 	@classmethod
@@ -84,7 +84,7 @@ def selectOverlap(context):
 
 			groups.append(group)
 
-			print("Group {}x, groups: {}, unmatched: {}x".format(len(group), len(groups), len(unmatched)))
+			print("Group: {} islands, unmatched: {}x".format(len(group), len(unmatched)))
 		# groups.append(  )
 
 
@@ -92,7 +92,6 @@ def selectOverlap(context):
 	for group in groups:
 		if len(group) > 1:
 			for i in range(1, len(group)):
-			# for island in group:
 				utilities_uv.setSelectedFaces( group[i].faces )
 
 
@@ -145,13 +144,14 @@ class Island_bounds:
 		# print("Get bounds "+str(self.center))
 
 	def isInside(self, pos, min, max):
+
 		if pos.x >= min.x and pos.x <= max.x:
-			if pos.y >= min.y and pos.y <= max.x:
+			if pos.y >= min.y and pos.y <= max.y:
 				return True
 		return False
 		
 	def isEqual(self, other):
-		
+
 		# Center is inside other bounds
 		if self.isInside(self.center, other.min, other.max):
 			return True

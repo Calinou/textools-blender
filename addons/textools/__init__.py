@@ -45,6 +45,7 @@ if "bpy" in locals():
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_island_symmetry)
 	imp.reload(op_island_relax_straighten_edges)
+	imp.reload(op_island_straighten_edge_loops)
 	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
 	
@@ -66,6 +67,7 @@ else:
 	from . import op_select_islands_outline
 	from . import op_island_symmetry
 	from . import op_island_relax_straighten_edges
+	from . import op_island_straighten_edge_loops
 	from . import op_setup_split_uv
 	from . import op_faces_iron
 	
@@ -136,6 +138,12 @@ class TexToolsPanel(bpy.types.Panel):
 		
 
 		layout.operator("wm.console_toggle", text="Debug Console", icon="CONSOLE")
+
+		col = layout.column(align=True)
+		col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+		col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
+		col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
+		
 
 		'''
 		#---------- Settings ------------

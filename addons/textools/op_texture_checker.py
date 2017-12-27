@@ -26,6 +26,9 @@ class op(bpy.types.Operator):
 def main(context):
 
 	name = get_texture()
+
+	print("Name --> '"+name+"'")
+
 	if name == "":
 		set_texture("TT_checkermap_A")
 
@@ -35,7 +38,7 @@ def main(context):
 	elif name == "TT_checkermap_B":
 		print("Destroy material and remove")
 
-	print("Name "+name)
+
 
 
 def get_texture():
@@ -59,24 +62,30 @@ def get_texture():
 def set_texture(name):
 	print("set_texture")
 	# idImage = "TT_checkerMap"
-	image = None
+	
 
 	#Get Image
+	image = None
 	if bpy.data.images.get(name) is not None:
-		#Already exists
   		image = bpy.data.images[name];
 	else:
 		#Load image
 		pathTexture = icons_dir = os.path.join(os.path.dirname(__file__), "resources/{}.png".format(name))
 		image = bpy.ops.image.open(filepath=pathTexture, relative_path=False)
-		#Rename
 		bpy.data.images["{}.png".format(name)].name = name #remove extension in name
+		image = bpy.data.images[name];
 	
+
 	#Assign image variable
-	image = bpy.data.images[name];
+	# 
 
 	# bpy.context.object.active_material.use_shadeless = True
-	mat = bpy.data.materials.new(material_name)
+	mat = None
+	if bpy.data.materials.get(material_name) is not None:
+		mat = bpy.data.materials[material_name]
+	else:
+		mat = bpy.data.materials.new(material_name)
+
 	mat.diffuse_color = (0.5,0.5,0.5)
 	mat.diffuse_shader = 'LAMBERT' 
 	mat.diffuse_intensity = 1.0 
@@ -87,7 +96,13 @@ def set_texture(name):
 	mat.ambient = 1
 	mat.use_shadeless = True
 
+
 	imageTexture = bpy.data.textures.new('Diffuse', type = 'IMAGE')
+	# if bpy.data.textures.get(material_name) is not None:
+	# 	imageTexture = bpy.data.textures[material_name]
+	# else:
+	# 	imageTexture = bpy.data.textures.new('Diffuse', type = 'IMAGE')
+
 	imageTexture.image = image
 
 	# Add texture slot for color texture

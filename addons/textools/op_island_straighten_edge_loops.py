@@ -51,6 +51,10 @@ class op(bpy.types.Operator):
 def straighten_edges(edges):
 	print("straighten "+str(len(edges))+"x")
 
+	# Need more than 1 edge to continue
+	# if len(edges) > 1:
+		# Find average edge as origin
+
 
 def get_edge_groups(edges):
 	print("Get edge groups, edges {}x".format(len(edges))+"x")
@@ -69,11 +73,19 @@ def get_edge_groups(edges):
 			edge.select = True
 			bpy.ops.mesh.loop_multi_select(ring=False)
 
+			group = [edge]
 			for e in bm.edges:
 				if e.select and e in unmatched:
 					unmatched.remove(e)
+					group.append(edge)
+
+			print("Edge Group: "+str(len(group)))
 					
-	return []
+	return [edges]
+
+
+
+
 
 
 def main(context):
@@ -113,6 +125,10 @@ def main(context):
 
 	# Get edge groups
 	groups = get_edge_groups(edges)
+
+	for edges in groups:
+		straighten_edges(edges)
+
 
 	#Restore selection
 	utilities_uv.selectionRestore()

@@ -133,6 +133,11 @@ class TexToolsPanel(bpy.types.Panel):
 	bl_region_type = 'TOOLS'
 	bl_category = "TexTools"
 	
+	def draw_header(self, _):
+		layout = self.layout
+		layout.label(text="", icon_value=getIcon("logo"))
+
+
 	def draw(self, context):
 		layout = self.layout
 		
@@ -209,7 +214,7 @@ class TexToolsPanel(bpy.types.Panel):
 		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = getIcon("islands_select_identical"))
 		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
 		# aligned = box.row(align=True)
-		col.operator(op_select_islands_outline.op.bl_idname, text="UV Outlines")
+		col.operator(op_select_islands_outline.op.bl_idname, text="Island Bounds", icon_value = getIcon("op_select_islands_outline"))
 		
 
 		#---------- Textures ------------
@@ -286,6 +291,7 @@ def register():
 	# Register global Icons
 	global preview_icons
 	preview_icons = bpy.utils.previews.new()
+	registerIcon("logo.png")
 	registerIcon("islands_align_sort_h.png")
 	registerIcon("islands_align_sort_v.png")
 	registerIcon("checkerMap.png")
@@ -295,6 +301,7 @@ def register():
 	registerIcon("textures_reload.png")
 	registerIcon("island_align_edge.png")
 	registerIcon("island_relax_straighten_edges.png")
+	registerIcon("op_select_islands_outline.png")
 	registerIcon("alignBottom.png")
 	registerIcon("alignLeft.png")
 	registerIcon("alignRight.png")

@@ -16,14 +16,14 @@
 
 bl_info = {
 	"name": "TexTools",
-	"description": "UV and texture Tools for Blender. Based on ideas of the original TexTools for 3dsMax.",
+	"description": "UV and texture Tools for Blender. Based on ideas of the original TexTools for 3dsMax. See the documentation ",
 	"author": "renderhjs",
-	"version": (1, 0, 0),
-	"blender": (2, 71, 0),
+	"version": (0, 3, 0),
+	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > Misc : TexTools panel",
-	"warning": "",
-	"wiki_url": "http://renderhjs.net/textools/"
+	"warning": "Early release, expect bugs and missing features.",
+	"wiki_url": "https://bitbucket.org/renderhjs/textools-blender"
 }
 
 # Import local modules
@@ -142,12 +142,11 @@ class TexToolsPanel(bpy.types.Panel):
 		layout = self.layout
 		
 
-		layout.operator("wm.console_toggle", text="Debug Console", icon="CONSOLE")
-
-		col = layout.column(align=True)
-		col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
-		col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
-		col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
+		layout.operator("wm.console_toggle", text="Open Console", icon="CONSOLE")
+		# col = layout.column(align=True)
+		# col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+		# col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
+		# col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
 		
 
 		'''
@@ -200,7 +199,7 @@ class TexToolsPanel(bpy.types.Panel):
 		col = aligned.column(align=True)
 		row = col.row(align=True)
 		row.operator(op_island_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
-		row.operator(op_island_symmetry.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
+		# row.operator(op_island_symmetry.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
 		
 		col.operator(op_faces_iron.op.bl_idname, text="Iron Faces", icon_value = getIcon("faces_iron"))
 		

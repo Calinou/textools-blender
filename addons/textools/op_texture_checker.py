@@ -7,6 +7,7 @@ from math import pi
 
 
 material_name = "TT_checkerMap_material"
+texture_name = "TT_checkerMap_texture"
 
 class op(bpy.types.Operator):
 	"""UV Operator description"""
@@ -36,7 +37,8 @@ def main(context):
 		set_texture("TT_checkermap_B")
 
 	elif name == "TT_checkermap_B":
-		print("Destroy material and remove")
+		set_texture("TT_checkermap_A")
+		# print("Destroy material and remove")
 
 
 
@@ -48,11 +50,14 @@ def get_texture():
 		print("Mat {}".format(material.name))
 		if material_name in material.name:
 			# Found material with matching name
-
+			print("A: "+material.name)
 			for tex_slot in material.texture_slots:
 				if tex_slot is not None:
+					print("B: "+tex_slot.name)
 					if tex_slot.texture is not None:
+						print("C: "+tex_slot.texture.name)
 						if tex_slot.texture.image is not None:
+							print("D: "+tex_slot.texture.image.name);
 							return tex_slot.texture.image.name;
 	# Default return
 	return ""
@@ -97,16 +102,20 @@ def set_texture(name):
 	mat.use_shadeless = True
 
 
-	imageTexture = bpy.data.textures.new('Diffuse', type = 'IMAGE')
-	# if bpy.data.textures.get(material_name) is not None:
-	# 	imageTexture = bpy.data.textures[material_name]
-	# else:
-	# 	imageTexture = bpy.data.textures.new('Diffuse', type = 'IMAGE')
-
+	imageTexture = None
+	if bpy.data.textures.get(texture_name) is not None:
+		imageTexture = bpy.data.textures.get(texture_name)
+	else:
+		imageTexture = bpy.data.textures.new(texture_name, type = 'IMAGE')
 	imageTexture.image = image
 
 	# Add texture slot for color texture
-	mtex = mat.texture_slots.add()
+	mtex = None
+	if len(mat.texture_slots) == 0 or mat.texture_slots[0] is None:
+		mtex = mat.texture_slots.add()
+	else:
+		mtex = mat.texture_slots[0]
+
 	mtex.texture = imageTexture
 	mtex.texture_coords = 'UV'
 	mtex.use_map_color_diffuse = True 

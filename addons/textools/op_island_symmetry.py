@@ -378,7 +378,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	# 	print("V {} = UV: {}x".format(vert.index, len(uvs)))
 
 
-
+	groups_processed = []
 
 	def select_extend_filter(groups_border, groups_mask):
 		# print("Extend A/B")
@@ -391,55 +391,29 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				uv.select = True
 			bpy.ops.uv.select_more()
 
+			# Collect extended
+			uv_extended = [uv for group_mask in groups_mask for uv in group_mask if uv.select]
+			groups_extended = []
+			for uv in uv_extended:
+				if uv_to_group[uv] not in groups_extended:
+					groups_extended.append( uv_to_group[uv] )
 
-			uv_extended = [uv for group_mask in groups_mask for uv in group_mask if (uv.select)]
-			groups_extended = 
-			# for g in groups_mask:
-
-			print("Select: {}x, extended {}x".format(len(group), len(uv_extended)))
-
+			# Sort by distance
+			groups_distance = {}
+			for i in range(0, len(groups_extended)):
+				sub_group = groups_extended[i]
+				groups_distance[i] = (group[0].uv - sub_group[0].uv).length
+			
+			# Append to connected groups
+			connected_groups.append( [item[0] for item in sorted(groups_distance.items(), key=operator.itemgetter(1)) ] )
+			
+			if group not in groups_processed:
+				groups_processed.append( group )
 
 			bpy.ops.uv.select_all(action='DESELECT')
 			for uv in uv_extended:
 				uv.select = True
 
-
-			'''
-			 # Collect connected edge verts
-			verts_connected_edges = []
-			for edge in groups_border[i].link_edges:
-				if(edge.verts[0] not in verts_connected_edges):
-					verts_connected_edges.append(edge.verts[0])
-				if(edge.verts[1] not in verts_connected_edges):
-					verts_connected_edges.append(edge.verts[1])
-
-			# Select vert on border
-			bpy.ops.mesh.select_all(action='DESELECT')
-			groups_border[i].select = True
-			
-
-			# Extend selection
-			bpy.ops.mesh.select_more()
-
-			# Filter selected verts against mask, connected edges, processed and border
-			verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in groups_mask and vert and vert not in verts_border and vert not in groups_processed)]
-			
-
-			# print("    "+str(i)+". scan: "+str(verts_border[i].index)+"; ext: "+str(len(verts_extended))+"x")
-
-			connected_groups.append( [] )
-
-			# Sort by distance
-			verts_distance = {}
-			for vert in verts_extended:
-				verts_distance[vert] = (groups_border[i].co - vert.co).length
-
-			for item in sorted(verts_distance.items(), key=operator.itemgetter(1)):
-				connected_groups[i].append( item[0] )
-
-			if groups_border[i] not in verts_processed:
-				verts_processed.append(groups_border[i])
-			'''
 
 		return connected_groups
 
@@ -447,38 +421,47 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 
 
-	groups_processed = []
+	
 	mask_A = [vert_to_group[vert] for vert in verts_A]
 	mask_B = [vert_to_group[vert] for vert in verts_B]
+	
 	border_A = [vert_to_group[vert] for vert in verts_middle]
 	border_B = [vert_to_group[vert] for vert in verts_middle]
 	
-	for step in range(0, 200):
+	for step in range(0, 2):
+
+		if len(border_A) == 0:
+			print("Finished scanning at {} growth iterations".format(i))
+			break;
+		if len(border_A) != len(border_B) or len(border_A) == 0:
+			print("Abort: non compatible border A/B: {}x {}x ".format(len(border_A), len(border_B)))
+			break;
 
 		print("border A: {}x B: {}x".format(len(border_A), len(border_B)))
 		
+		# Collect connected pairs for each side
 		connected_A = select_extend_filter(border_A, mask_A)
 		connected_B = select_extend_filter(border_B, mask_B)
 
 		print("Map pairs: {}|{}".format(len(connected_A), len(connected_B)))
 
-		return
-		# if len(border_A) == 0:
-		# 	print("Finished scanning at {} growth iterations".format(i))
-		# 	break;
-		# if len(border_A) != len(border_B) or len(border_A) == 0:
-		# 	print("Abort: non compatible border A/B: {}x {}x ".format(len(border_A), len(border_B)))
-		# 	break;
+		border_A.clear()
+		border_B.clear()
 
-		# connected_A = select_extend_filter(border_A, verts_A)
-		# connected_B = select_extend_filter(border_B, verts_B)
+		# Traverse through pairs
+		for i in range(0, min(len(connected_A), len(connected_B)) ):
+			if len(connected_A[i]) != len(connected_B[i]):
+				print("Error: Inconsistent grow mappings from {}  {}x | {}x".format(j, len(connected_A[j]), len(connected_B[j]) ))
+				continue
 
-		# print("Map pairs: {}|{}".format(len(connected_A), len(connected_B)))
+			for j in range(0, len(connected_A[i])):
+				# Vertex A and B
+				groupA = connected_A[i][j];
+				groupB = connected_B[i][j];
 
-		# border_A.clear()
-		# border_B.clear()
 
-		# count = min(len(connected_A), len(connected_B))
+
+
 		# for j in range(0, count):
 		# 	if len(connected_A[j]) != len(connected_B[j]):
 		# 		# print("Error: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))

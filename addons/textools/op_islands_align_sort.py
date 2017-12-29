@@ -116,8 +116,8 @@ def main(context, isVertical):
 			delta = Vector((boundsAll['min'].x - bounds['min'].x, boundsAll['max'].y - bounds['max'].y));
 			bpy.ops.transform.translate(value=(delta.x, delta.y-offset, 0))
 			offset += bounds['height']+0.01
-	# 	else:
-	# 		print("Horizontal")
+		else:
+			print("Horizontal")
 
 
 	#Restore selection

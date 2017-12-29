@@ -41,25 +41,28 @@ def main(context):
 		# print("Destroy material and remove")
 
 
+def get_material():
+
+
+
+	return None
 
 
 def get_texture():
 	print("get_texture")
 
-	for material in bpy.data.materials:
-		print("Mat {}".format(material.name))
-		if material_name in material.name:
-			# Found material with matching name
-			print("A: "+material.name)
-			for tex_slot in material.texture_slots:
-				if tex_slot is not None:
-					print("B: "+tex_slot.name)
-					if tex_slot.texture is not None:
-						print("C: "+tex_slot.texture.name)
-						if tex_slot.texture.image is not None:
-							print("D: "+tex_slot.texture.image.name);
-							return tex_slot.texture.image.name;
-	# Default return
+	if len(bpy.context.object.material_slots) == 0:
+		return ""
+	else:
+		for slot in bpy.context.object.material_slots:
+			if slot.material is not None:
+				if material_name in slot.material.name:
+					for tex_slot in slot.material.texture_slots:
+						if tex_slot is not None:
+							if tex_slot.texture is not None:
+								if tex_slot.texture.image is not None:
+									return tex_slot.texture.image.name;
+
 	return ""
 
 

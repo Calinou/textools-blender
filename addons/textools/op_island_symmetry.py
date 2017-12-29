@@ -5,6 +5,7 @@ import math
 import operator
 from mathutils import Vector
 from collections import defaultdict
+from itertools import chain # 'flattens' collection of iterables
 
 from . import utilities_uv
 
@@ -278,7 +279,7 @@ def main(context):
 		mirror_verts(verts_middle, verts_A, verts_B, True)
 
 	#Restore selection
-	utilities_uv.selectionRestore()
+	# utilities_uv.selectionRestore()
 
 
 
@@ -310,32 +311,246 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=True, type='FACE')
 
 	# Collect Librarys of verts / UV
-	verts_to_uv = {}
+	vert_to_uv = {}
 	uv_to_vert = {}
 	uv_to_face = {}
+	# UV clusters / groups (within 0.000001 distance)
+	uv_groups = []
+	uv_to_group = {}
+	vert_to_group = {}
+
 	for face in bm.faces:
 		if face.select:
 			for loop in face.loops:
+				vert = loop.vert
 				uv = loop[uvLayer]
 				
-				if loop.vert not in verts_to_uv:
-					verts_to_uv[loop.vert] = [uv];
+				# vert_to_uv
+				if vert not in vert_to_uv:
+					vert_to_uv[vert] = [uv];
 				else:
-					verts_to_uv[loop.vert].append(uv)
+					vert_to_uv[vert].append(uv)
 
+				# uv_to_vert
 				if uv not in uv_to_vert:
-					uv_to_vert[ uv ] = loop.vert;
+					uv_to_vert[ uv ] = vert;
 				if uv not in uv_to_face:
 					uv_to_face[ uv ] = face;
 
+				# uv_groups
+				isMerged = False
+				for group in uv_groups:
+					d = (uv.uv - group[0].uv).length
+					if d <= 0.0000001:
+						#Merge
+						group.append(uv)
+						uv_to_group[uv] = group
+						if vert not in vert_to_group:
+							vert_to_group[vert] = group
+						isMerged = True;
+						break;
+				if not isMerged:
+					#New Group
+					uv_groups.append([uv])
+					uv_to_group[uv] = uv_groups[-1]
+					if vert not in vert_to_group:
+							vert_to_group[vert] = uv_groups[-1]
+
 	# Get Center X
-	x_middle = verts_to_uv[ verts_middle[0] ][0].uv.x;
+	x_middle = vert_to_uv[ verts_middle[0] ][0].uv.x;
 	
 
 	# 3.) Grow layer by layer
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+	bpy.context.scene.tool_settings.uv_select_mode = 'VERTEX'
 
-	verts_processed = []
+	# 
+
+
+
+	# GET UV Vert clusters
+
+	# for group in uv_groups:
+	# 	vert = uv_to_vert[ group[0] ]
+	# 	print("Cluster [{}], {}x uvs".format(vert.index, len(group) ))
+
+	# for vert, uvs in vert_to_uv.items():
+	# 	print("V {} = UV: {}x".format(vert.index, len(uvs)))
+
+
+
+
+	def select_extend_filter(groups_border, groups_mask):
+		# print("Extend A/B")
+		connected_groups = []
+		for group in groups_border:
+
+			# Select and Extend selection
+			bpy.ops.uv.select_all(action='DESELECT')
+			for uv in group:
+				uv.select = True
+			bpy.ops.uv.select_more()
+
+
+			uv_extended = [uv for group_mask in groups_mask for uv in group_mask if (uv.select)]
+			groups_extended = 
+			# for g in groups_mask:
+
+			print("Select: {}x, extended {}x".format(len(group), len(uv_extended)))
+
+
+			bpy.ops.uv.select_all(action='DESELECT')
+			for uv in uv_extended:
+				uv.select = True
+
+
+			'''
+			 # Collect connected edge verts
+			verts_connected_edges = []
+			for edge in groups_border[i].link_edges:
+				if(edge.verts[0] not in verts_connected_edges):
+					verts_connected_edges.append(edge.verts[0])
+				if(edge.verts[1] not in verts_connected_edges):
+					verts_connected_edges.append(edge.verts[1])
+
+			# Select vert on border
+			bpy.ops.mesh.select_all(action='DESELECT')
+			groups_border[i].select = True
+			
+
+			# Extend selection
+			bpy.ops.mesh.select_more()
+
+			# Filter selected verts against mask, connected edges, processed and border
+			verts_extended = [vert for vert in bm.verts if (vert.select and vert in verts_connected_edges and vert in groups_mask and vert and vert not in verts_border and vert not in groups_processed)]
+			
+
+			# print("    "+str(i)+". scan: "+str(verts_border[i].index)+"; ext: "+str(len(verts_extended))+"x")
+
+			connected_groups.append( [] )
+
+			# Sort by distance
+			verts_distance = {}
+			for vert in verts_extended:
+				verts_distance[vert] = (groups_border[i].co - vert.co).length
+
+			for item in sorted(verts_distance.items(), key=operator.itemgetter(1)):
+				connected_groups[i].append( item[0] )
+
+			if groups_border[i] not in verts_processed:
+				verts_processed.append(groups_border[i])
+			'''
+
+		return connected_groups
+
+
+
+
+
+	groups_processed = []
+	mask_A = [vert_to_group[vert] for vert in verts_A]
+	mask_B = [vert_to_group[vert] for vert in verts_B]
+	border_A = [vert_to_group[vert] for vert in verts_middle]
+	border_B = [vert_to_group[vert] for vert in verts_middle]
+	
+	for step in range(0, 200):
+
+		print("border A: {}x B: {}x".format(len(border_A), len(border_B)))
+		
+		connected_A = select_extend_filter(border_A, mask_A)
+		connected_B = select_extend_filter(border_B, mask_B)
+
+		print("Map pairs: {}|{}".format(len(connected_A), len(connected_B)))
+
+		return
+		# if len(border_A) == 0:
+		# 	print("Finished scanning at {} growth iterations".format(i))
+		# 	break;
+		# if len(border_A) != len(border_B) or len(border_A) == 0:
+		# 	print("Abort: non compatible border A/B: {}x {}x ".format(len(border_A), len(border_B)))
+		# 	break;
+
+		# connected_A = select_extend_filter(border_A, verts_A)
+		# connected_B = select_extend_filter(border_B, verts_B)
+
+		# print("Map pairs: {}|{}".format(len(connected_A), len(connected_B)))
+
+		# border_A.clear()
+		# border_B.clear()
+
+		# count = min(len(connected_A), len(connected_B))
+		# for j in range(0, count):
+		# 	if len(connected_A[j]) != len(connected_B[j]):
+		# 		# print("Error: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
+		# 		print("Error: Inconsistent grow mappings from {}  {}x | {}x".format(j, len(connected_A[j]), len(connected_B[j]) ))
+		# 		continue
+
+		# 	for k in range(0, len(connected_A[j])):
+		# 		# Vertex A and B
+		# 		vA = connected_A[j][k];
+		# 		vB = connected_B[j][k];
+
+		# 		uvsA = vert_to_uv[vA];
+		# 		uvsB = vert_to_uv[vB];
+
+		# 		uv_groups_A = collect_uv_groups(uvsA)
+		# 		uv_groups_B = collect_uv_groups(uvsB)
+
+		# 		if len(uv_groups_A) != len(uv_groups_B):
+		# 			print("Error: Inconsistent vertex UV group pairs at vertex {} : {}".format(vA.index, vB.index))
+		# 			continue
+
+
+		# 		message= "...Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}x|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) )
+		# 		if len(uv_groups_A) > 1:
+		# 			message = ">> "+message
+		# 		print(message)
+
+
+
+		# 		if len(uv_groups_A) > 0:
+		# 			# For each group
+
+
+					
+		# 			sortA = {}
+		# 			sortB = {}
+		# 			for g in range(0, len(uv_groups_A)):
+		# 				uv_A = uv_groups_A[g][0].uv.copy()
+		# 				uv_B = uv_groups_B[g][0].uv.copy()
+
+		# 				# localize X values (from symmetry line)
+		# 				uv_A.x = (uv_A.x - x_middle)
+		# 				uv_B.x = (uv_B.x - x_middle)
+
+		# 				sortA[g] = abs(uv_A.x) + uv_A.y*2.0
+		# 				sortB[g] = abs(uv_B.x) + uv_B.y*2.0
+		# 				# print("    .   [{}] : {:.2f}, {:.2f} | {:.2f}, {:.2f}".format(g, uv_A.x, uv_A.y, uv_B.x, uv_B.y))
+		# 				print("    .   [{}] : {:.2f} | {:.2f}".format(g, sortA[g], sortB[g]))
+
+		# 			# Sort sortA by value
+		# 			sortedA = sorted(sortA.items(), key=operator.itemgetter(1))
+		# 			sortedB = sorted(sortB.items(), key=operator.itemgetter(1))
+					
+		# 			for g in range(0, len(uv_groups_A)):
+		# 				# sortedA[g]
+		# 				idxA = sortedA[g][0]
+		# 				idxB = sortedB[g][0]
+
+		# 				print("Map uv_groups_A {} -> ".format(idxA, idxB))
+		# 				for uv in uv_groups_B[idxB]:
+		# 					pos = uv_groups_A[idxA][0].uv.copy()
+		# 					# Flip cooreindate
+		# 					pos.x = x_middle - (pos.x-x_middle)
+		# 					uv.uv = pos
+
+		# 		border_A.append(vA)
+		# 		border_B.append(vB)
+
+
+
+
+	'''
 
 	def select_extend_filter(verts_border, verts_mask):
 		# print("Extend A/B")
@@ -421,7 +636,6 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		border_B.clear()
 
 		count = min(len(connected_A), len(connected_B))
-		# count = 1 #Temp override
 		for j in range(0, count):
 			if len(connected_A[j]) != len(connected_B[j]):
 				# print("Error: Inconsistent grow mappings from {}:{}x | {}:{}x".format(border_A[j].index,len(connected_A[j]), border_B[j].index, len(connected_B[j]) ))
@@ -433,8 +647,8 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				vA = connected_A[j][k];
 				vB = connected_B[j][k];
 
-				uvsA = verts_to_uv[vA];
-				uvsB = verts_to_uv[vB];
+				uvsA = vert_to_uv[vA];
+				uvsB = vert_to_uv[vB];
 
 				uv_groups_A = collect_uv_groups(uvsA)
 				uv_groups_B = collect_uv_groups(uvsB)
@@ -443,10 +657,19 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 					print("Error: Inconsistent vertex UV group pairs at vertex {} : {}".format(vA.index, vB.index))
 					continue
 
-				print("    Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) ))
+
+				message= "...Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}x|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) )
+				if len(uv_groups_A) > 1:
+					message = ">> "+message
+				print(message)
+
+
 
 				if len(uv_groups_A) > 0:
 					# For each group
+
+
+					
 					sortA = {}
 					sortB = {}
 					for g in range(0, len(uv_groups_A)):
@@ -478,7 +701,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 							pos.x = x_middle - (pos.x-x_middle)
 							uv.uv = pos
 						
-
+				
 					# print("Sorted: '"+str(sortedA)+"'")
 					# print("Sorted: '"+str(sortedB)+"'")
 
@@ -502,7 +725,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				border_A.append(vA)
 				border_B.append(vB)
 
-	
+	'''
 
 def alignToCenterLine():
 	print("align to center line")

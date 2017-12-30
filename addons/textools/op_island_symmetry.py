@@ -315,9 +315,9 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	uv_to_vert = {}
 	uv_to_face = {}
 	# UV clusters / groups (within 0.000001 distance)
-	uv_groups = []
-	uv_to_group = {}
-	vert_to_group = {}
+	clusters = []
+	uv_to_clusters = {}
+	vert_to_clusters = {}
 
 	for face in bm.faces:
 		if face.select:
@@ -337,24 +337,24 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				if uv not in uv_to_face:
 					uv_to_face[ uv ] = face;
 
-				# uv_groups
+				# clusters
 				isMerged = False
-				for group in uv_groups:
-					d = (uv.uv - group[0].uv).length
+				for cluster in clusters:
+					d = (uv.uv - cluster.uvs[0].uv).length
 					if d <= 0.0000001:
 						#Merge
-						group.append(uv)
-						uv_to_group[uv] = group
-						if vert not in vert_to_group:
-							vert_to_group[vert] = group
+						cluster.append(uv)
+						uv_to_clusters[uv] = cluster
+						if vert not in vert_to_clusters:
+							vert_to_clusters[vert] = cluster
 						isMerged = True;
 						break;
 				if not isMerged:
 					#New Group
-					uv_groups.append([uv])
-					uv_to_group[uv] = uv_groups[-1]
-					if vert not in vert_to_group:
-							vert_to_group[vert] = uv_groups[-1]
+					clusters.append( UVCluster(vert, [uv]) )
+					uv_to_clusters[uv] = clusters[-1]
+					if vert not in vert_to_clusters:
+							vert_to_clusters[vert] = clusters[-1]
 
 	# Get Center X
 	x_middle = vert_to_uv[ verts_middle[0] ][0].uv.x;
@@ -364,71 +364,67 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
 	bpy.context.scene.tool_settings.uv_select_mode = 'VERTEX'
 
-	# 
 
+	clusters_processed = []
 
-
-	# GET UV Vert clusters
-
-	# for group in uv_groups:
-	# 	vert = uv_to_vert[ group[0] ]
-	# 	print("Cluster [{}], {}x uvs".format(vert.index, len(group) ))
-
-	# for vert, uvs in vert_to_uv.items():
-	# 	print("V {} = UV: {}x".format(vert.index, len(uvs)))
-
-
-	groups_processed = []
-
-	def select_extend_filter(groups_border, groups_mask):
+	def select_extend_filter(clusters_border, clusters_mask):
 		# print("Extend A/B")
-		connected_groups = []
-		for group in groups_border:
+		connected_clusters = []
+		for cluster in clusters_border:
 
 			# Select and Extend selection
 			bpy.ops.uv.select_all(action='DESELECT')
-			for uv in group:
+			for uv in cluster.uvs:
 				uv.select = True
 			bpy.ops.uv.select_more()
 
 			# Collect extended
-			uv_extended = [uv for group_mask in groups_mask for uv in group_mask if uv.select]
-			groups_extended = []
+			uv_extended = [uv for clusterMask in clusters_mask for uv in clusterMask.uvs if (uv.select and clusterMask not in clusters_processed)]
+			clusters_extended = []
 			for uv in uv_extended:
-				if uv_to_group[uv] not in groups_extended:
-					groups_extended.append( uv_to_group[uv] )
+				if uv_to_clusters[uv] not in clusters_extended:
+					clusters_extended.append( uv_to_clusters[uv] )
 
 			# Sort by distance
 			groups_distance = {}
-			for i in range(0, len(groups_extended)):
-				sub_group = groups_extended[i]
-				groups_distance[i] = (group[0].uv - sub_group[0].uv).length
+			for i in range(0, len(clusters_extended)):
+				sub_group = clusters_extended[i]
+				groups_distance[i] = (cluster.uvs[0].uv - sub_group.uvs[0].uv).length
 			
-			# Append to connected groups
-			connected_groups.append( [item[0] for item in sorted(groups_distance.items(), key=operator.itemgetter(1)) ] )
+			# Append to connected clusters
+			array = []
+			for item in sorted(groups_distance.items(), key=operator.itemgetter(1)):
+				key = item[0]
+				clust = clusters_extended[key]
+				array.append( clust )
+				if clust not in clusters_processed:
+					clusters_processed.append(clust)
+
+			connected_clusters.append( array )
 			
-			if group not in groups_processed:
-				groups_processed.append( group )
+			if cluster not in clusters_processed:
+				clusters_processed.append( cluster )
+
 
 			bpy.ops.uv.select_all(action='DESELECT')
 			for uv in uv_extended:
 				uv.select = True
 
 
-		return connected_groups
+		return connected_clusters
 
 
 
 
 
 	
-	mask_A = [vert_to_group[vert] for vert in verts_A]
-	mask_B = [vert_to_group[vert] for vert in verts_B]
+	mask_A = [vert_to_clusters[vert] for vert in verts_A]
+	mask_B = [vert_to_clusters[vert] for vert in verts_B]
+
+	border_A = list([vert_to_clusters[vert] for vert in verts_middle])
+	border_B = list([vert_to_clusters[vert] for vert in verts_middle])
 	
-	border_A = [vert_to_group[vert] for vert in verts_middle]
-	border_B = [vert_to_group[vert] for vert in verts_middle]
-	
-	for step in range(0, 2):
+	for step in range(0, 8):
 
 		if len(border_A) == 0:
 			print("Finished scanning at {} growth iterations".format(i))
@@ -437,28 +433,54 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 			print("Abort: non compatible border A/B: {}x {}x ".format(len(border_A), len(border_B)))
 			break;
 
-		print("border A: {}x B: {}x".format(len(border_A), len(border_B)))
+		print("Step{}, border {}x|{}x, processed: {}x".format(step, len(border_A), len(border_B), len(clusters_processed)))
 		
 		# Collect connected pairs for each side
 		connected_A = select_extend_filter(border_A, mask_A)
 		connected_B = select_extend_filter(border_B, mask_B)
 
-		print("Map pairs: {}|{}".format(len(connected_A), len(connected_B)))
+		print("  Connected: {}x|{}x".format(len(connected_A), len(connected_B)))
 
 		border_A.clear()
 		border_B.clear()
 
 		# Traverse through pairs
 		for i in range(0, min(len(connected_A), len(connected_B)) ):
-			if len(connected_A[i]) != len(connected_B[i]):
-				print("Error: Inconsistent grow mappings from {}  {}x | {}x".format(j, len(connected_A[j]), len(connected_B[j]) ))
+			if len(connected_A[i]) == 0:
 				continue
+			if len(connected_A[i]) != len(connected_B[i]):
+				print(".    Error: Inconsistent grow mappings from {}  {}x | {}x".format(i, len(connected_A[i]), len(connected_B[i]) ))
+				continue
+			
+			print(".    Map {}|{} = {}x|{}x".format(connected_A[i][0].vertex.index, connected_B[i][0].vertex.index, len(connected_A[i]), len(connected_B[i]) ) )
+			if True:#isAToB:
+				# Copy A side to B
+				for cluster in connected_B[i]:
+					for uv in cluster.uvs:
+						pos = connected_A[i][0].uvs[0].uv.copy()
+						pos.x = x_middle - (pos.x-x_middle)# Flip cooreindate
+						uv.uv = pos
+			
+			# border_A[i] = uv_to_clusters[ connected_A[i][0] ] 
+			# border_B[i] = uv_to_clusters[ connected_B[i][0] ] 
+			for j in range(len(connected_A[i])):
+				border_A.append( connected_A[i][j] )
+				border_B.append( connected_B[i][j] )
 
-			for j in range(0, len(connected_A[i])):
-				# Vertex A and B
-				groupA = connected_A[i][j];
-				groupB = connected_B[i][j];
 
+
+			# for uv in clusters_B[idxB]:
+		# 					pos = clusters_A[idxA][0].uv.copy()
+		# 					# Flip cooreindate
+		# 					pos.x = x_middle - (pos.x-x_middle)
+		# 					uv.uv = pos
+
+			# for j in range(0, len(connected_A[i])):
+			# 	# Group A and B
+			# 	groupA = connected_A[i][j];
+			# 	groupB = connected_B[i][j];
+			# 	# vertexA = [vert_to_clusters[key] for key in vert_to_clusters if vert_to_clusters[key] == groupA]
+			# 	print("...map {} -> {}".format(groupA, groupB))
 
 
 
@@ -476,31 +498,29 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		# 		uvsA = vert_to_uv[vA];
 		# 		uvsB = vert_to_uv[vB];
 
-		# 		uv_groups_A = collect_uv_groups(uvsA)
-		# 		uv_groups_B = collect_uv_groups(uvsB)
+		# 		clusters_A = collect_clusters(uvsA)
+		# 		clusters_B = collect_clusters(uvsB)
 
-		# 		if len(uv_groups_A) != len(uv_groups_B):
+		# 		if len(clusters_A) != len(clusters_B):
 		# 			print("Error: Inconsistent vertex UV group pairs at vertex {} : {}".format(vA.index, vB.index))
 		# 			continue
 
 
-		# 		message= "...Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}x|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) )
-		# 		if len(uv_groups_A) > 1:
+		# 		message= "...Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}x|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(clusters_A), len(clusters_B) )
+		# 		if len(clusters_A) > 1:
 		# 			message = ">> "+message
 		# 		print(message)
 
 
 
-		# 		if len(uv_groups_A) > 0:
+		# 		if len(clusters_A) > 0:
 		# 			# For each group
 
-
-					
 		# 			sortA = {}
 		# 			sortB = {}
-		# 			for g in range(0, len(uv_groups_A)):
-		# 				uv_A = uv_groups_A[g][0].uv.copy()
-		# 				uv_B = uv_groups_B[g][0].uv.copy()
+		# 			for g in range(0, len(clusters_A)):
+		# 				uv_A = clusters_A[g][0].uv.copy()
+		# 				uv_B = clusters_B[g][0].uv.copy()
 
 		# 				# localize X values (from symmetry line)
 		# 				uv_A.x = (uv_A.x - x_middle)
@@ -515,14 +535,14 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		# 			sortedA = sorted(sortA.items(), key=operator.itemgetter(1))
 		# 			sortedB = sorted(sortB.items(), key=operator.itemgetter(1))
 					
-		# 			for g in range(0, len(uv_groups_A)):
+		# 			for g in range(0, len(clusters_A)):
 		# 				# sortedA[g]
 		# 				idxA = sortedA[g][0]
 		# 				idxB = sortedB[g][0]
 
-		# 				print("Map uv_groups_A {} -> ".format(idxA, idxB))
-		# 				for uv in uv_groups_B[idxB]:
-		# 					pos = uv_groups_A[idxA][0].uv.copy()
+		# 				print("Map clusters_A {} -> ".format(idxA, idxB))
+		# 				for uv in clusters_B[idxB]:
+		# 					pos = clusters_A[idxA][0].uv.copy()
 		# 					# Flip cooreindate
 		# 					pos.x = x_middle - (pos.x-x_middle)
 		# 					uv.uv = pos
@@ -577,7 +597,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		return connected_verts
 
 	# find UV vert blobs , see which ones are same spot
-	def collect_uv_groups(uvs):
+	def collect_clusters(uvs):
 		groups = []
 		for uv in uvs:
 			if len(groups) == 0:
@@ -633,31 +653,31 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 				uvsA = vert_to_uv[vA];
 				uvsB = vert_to_uv[vB];
 
-				uv_groups_A = collect_uv_groups(uvsA)
-				uv_groups_B = collect_uv_groups(uvsB)
+				clusters_A = collect_clusters(uvsA)
+				clusters_B = collect_clusters(uvsB)
 
-				if len(uv_groups_A) != len(uv_groups_B):
+				if len(clusters_A) != len(clusters_B):
 					print("Error: Inconsistent vertex UV group pairs at vertex {} : {}".format(vA.index, vB.index))
 					continue
 
 
-				message= "...Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}x|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(uv_groups_A), len(uv_groups_B) )
-				if len(uv_groups_A) > 1:
+				message= "...Map {0} -> {1}  = UVs {2}|{3}x | UV-Groups {4}x|{5}x".format( vA.index, vB.index, len(uvsA), len(uvsB), len(clusters_A), len(clusters_B) )
+				if len(clusters_A) > 1:
 					message = ">> "+message
 				print(message)
 
 
 
-				if len(uv_groups_A) > 0:
+				if len(clusters_A) > 0:
 					# For each group
 
 
 					
 					sortA = {}
 					sortB = {}
-					for g in range(0, len(uv_groups_A)):
-						uv_A = uv_groups_A[g][0].uv.copy()
-						uv_B = uv_groups_B[g][0].uv.copy()
+					for g in range(0, len(clusters_A)):
+						uv_A = clusters_A[g][0].uv.copy()
+						uv_B = clusters_B[g][0].uv.copy()
 
 						# localize X values (from symmetry line)
 						uv_A.x = (uv_A.x - x_middle)
@@ -672,14 +692,14 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 					sortedA = sorted(sortA.items(), key=operator.itemgetter(1))
 					sortedB = sorted(sortB.items(), key=operator.itemgetter(1))
 					
-					for g in range(0, len(uv_groups_A)):
+					for g in range(0, len(clusters_A)):
 						# sortedA[g]
 						idxA = sortedA[g][0]
 						idxB = sortedB[g][0]
 
-						print("Map uv_groups_A {} -> ".format(idxA, idxB))
-						for uv in uv_groups_B[idxB]:
-							pos = uv_groups_A[idxA][0].uv.copy()
+						print("Map clusters_A {} -> ".format(idxA, idxB))
+						for uv in clusters_B[idxB]:
+							pos = clusters_A[idxA][0].uv.copy()
 							# Flip cooreindate
 							pos.x = x_middle - (pos.x-x_middle)
 							uv.uv = pos
@@ -694,13 +714,13 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 					# TODO: Now map groups to each other
 					# uv_avg_A = Vector([0,0])
 					# uv_avg_B = Vector([0,0])
-					# for m in range(0, len(uv_groups_A)):
+					# for m in range(0, len(clusters_A)):
 					# 	print("        . ")
-					# 	uv_avg_A+= uv_groups_A[m][0].uv;
-					# 	uv_avg_B+= uv_groups_B[m][0].uv;
+					# 	uv_avg_A+= clusters_A[m][0].uv;
+					# 	uv_avg_B+= clusters_B[m][0].uv;
 
-					# uv_avg_A/=len(uv_groups_A)
-					# uv_avg_B/=len(uv_groups_B)
+					# uv_avg_A/=len(clusters_A)
+					# uv_avg_B/=len(clusters_B)
 
 					# print("        avg: {} : {}".format(uv_avg_A, uv_avg_B))
 			
@@ -750,3 +770,13 @@ def alignToCenterLine():
 
 
 
+class UVCluster:
+	uvs = []
+	vertex = None
+	
+	def __init__(self, vertex, uvs):
+		self.vertex = vertex
+		self.uvs = uvs
+	
+	def append(self, uv):
+		self.uvs.append(uv)

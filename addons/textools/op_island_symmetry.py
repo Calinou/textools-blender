@@ -287,7 +287,7 @@ def main(context):
 
 def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
-	print("____________________\nMirror: C:"+str(len(verts_middle))+" ; verts: "+str(len(verts_A))+"|"+str(len(verts_B))+"x, 	A to B? "+str(isAToB))
+	print("--------------------------------\nMirror: C:"+str(len(verts_middle))+" ; verts: "+str(len(verts_A))+"|"+str(len(verts_B))+"x, 	A to B? "+str(isAToB))
 
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
@@ -427,13 +427,13 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	for step in range(0, 8):
 
 		if len(border_A) == 0:
-			print("Finished scanning at {} growth iterations".format(i))
+			print("{}.: Finished scanning with no growth iterations".format(step))
 			break;
 		if len(border_A) != len(border_B) or len(border_A) == 0:
 			print("Abort: non compatible border A/B: {}x {}x ".format(len(border_A), len(border_B)))
 			break;
 
-		print("Step{}, border {}x|{}x, processed: {}x".format(step, len(border_A), len(border_B), len(clusters_processed)))
+		print("{}.: border {}x|{}x, processed: {}x".format(step, len(border_A), len(border_B), len(clusters_processed)))
 		
 		# Collect connected pairs for each side
 		connected_A = select_extend_filter(border_A, mask_A)
@@ -451,8 +451,15 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 			if len(connected_A[i]) != len(connected_B[i]):
 				print(".    Error: Inconsistent grow mappings from {}  {}x | {}x".format(i, len(connected_A[i]), len(connected_B[i]) ))
 				continue
-			
-			print(".    Map {}|{} = {}x|{}x".format(connected_A[i][0].vertex.index, connected_B[i][0].vertex.index, len(connected_A[i]), len(connected_B[i]) ) )
+
+			indexA = [cluster.vertex.index for cluster in connected_A[i] ]
+			indexB = [cluster.vertex.index for cluster in connected_B[i] ]
+			indexA = str(indexA).replace("[","").replace("]","").replace(" ","")
+			indexB = str(indexB).replace("[","").replace("]","").replace(" ","")
+			print(".    Map {}|{} = {}x|{}x".format(indexA, indexB, len(connected_A[i]), len(connected_B[i]) ) )
+
+
+
 			if True:#isAToB:
 				# Copy A side to B
 				for cluster in connected_B[i]:
@@ -552,7 +559,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 
 
-
+	print("--------------------------------")
 	'''
 
 	def select_extend_filter(verts_border, verts_mask):

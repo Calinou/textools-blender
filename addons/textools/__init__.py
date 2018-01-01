@@ -158,7 +158,9 @@ class TexToolsPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		
-		# layout.operator(op_debug.bl_idname, icon="CONSOLE")
+		if bpy.app.debug:
+			layout.operator(op_debug.bl_idname, icon="CONSOLE")
+			
 		# col = layout.column(align=True)
 		# col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 		# col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))

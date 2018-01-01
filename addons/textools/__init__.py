@@ -43,7 +43,7 @@ if "bpy" in locals():
 	imp.reload(op_select_islands_identical)
 	imp.reload(op_select_islands_overlap)
 	imp.reload(op_select_islands_outline)
-	imp.reload(op_island_symmetry)
+	imp.reload(op_island_mirror)
 	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_island_straighten_edge_loops)
 	imp.reload(op_island_rotate_90)
@@ -66,7 +66,7 @@ else:
 	from . import op_select_islands_identical
 	from . import op_select_islands_overlap
 	from . import op_select_islands_outline
-	from . import op_island_symmetry
+	from . import op_island_mirror
 	from . import op_island_relax_straighten_edges
 	from . import op_island_straighten_edge_loops
 	from . import op_island_rotate_90
@@ -158,8 +158,7 @@ class TexToolsPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		
-
-		layout.operator(op_debug.bl_idname, icon="CONSOLE")
+		# layout.operator(op_debug.bl_idname, icon="CONSOLE")
 		# col = layout.column(align=True)
 		# col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 		# col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
@@ -187,11 +186,11 @@ class TexToolsPanel(bpy.types.Panel):
 		col = box.column(align=True)
 		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = getIcon("island_align_edge"))
-		col.operator(op_island_relax_straighten_edges.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
+		# col.operator(op_island_relax_straighten_edges.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
 
 		row = col.row(align=True)
-		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = getIcon("turnLeft")).angle = -math.pi / 2
-		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = getIcon("turnRight")).angle = math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = getIcon("island_rotate_90_left")).angle = -math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = getIcon("island_rotate_90_right")).angle = math.pi / 2
 
 		
 		row = box.row(align=True)
@@ -215,8 +214,8 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
 		row = col.row(align=True)
-		row.operator(op_island_symmetry.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
-		# row.operator(op_island_symmetry.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
+		# row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
+		# row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
 		
 		col.operator(op_faces_iron.op.bl_idname, text="Iron Faces", icon_value = getIcon("faces_iron"))
 		
@@ -312,8 +311,8 @@ def register():
 	registerIcon("islands_align_sort_v.png")
 	registerIcon("checkerMap.png")
 	registerIcon("swap_uv_xyz.png")
-	registerIcon("turnLeft.png")
-	registerIcon("turnRight.png")
+	registerIcon("island_rotate_90_left.png")
+	registerIcon("island_rotate_90_right.png")
 	registerIcon("textures_reload.png")
 	registerIcon("island_align_edge.png")
 	registerIcon("island_relax_straighten_edges.png")
@@ -355,7 +354,7 @@ def register():
 		keymaps.append((km, kmi))
 
 		km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-		kmi = km.keymap_items.new(op_island_symmetry.op.bl_idname, 'M', 'PRESS', alt=True)
+		kmi = km.keymap_items.new(op_island_mirror.op.bl_idname, 'M', 'PRESS', alt=True)
 		kmi.properties.is_stack = False
 		keymaps.append((km, kmi))
 

@@ -31,6 +31,7 @@ bl_info = {
 if "bpy" in locals():
 	import imp
 	imp.reload(utilities_gui)
+	imp.reload(utilities_bake)
 	imp.reload(settings)
 	
 	imp.reload(op_islands_align_sort)
@@ -54,6 +55,7 @@ if "bpy" in locals():
 	
 else:
 	from . import utilities_gui
+	from . import utilities_bake
 	from . import settings
 
 	from . import op_islands_align_sort
@@ -181,17 +183,14 @@ class TexToolsPanel(bpy.types.Panel):
 
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
-		
+
 		if bpy.app.debug_value != 0:
 			layout.alert = True
-			col = layout.column(align=True)
-			col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
-			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
-
-			#---------- Transform ------------
-			layout.separator()
-			layout.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
-			layout.separator()
+			row = layout.row(align=True)
+			row.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
+			row.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
+			row.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+			
 			layout.alert = False
 
 		#---------- Layout ------------
@@ -261,49 +260,64 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned.operator(op_textures_reload.op.bl_idname, text="Reload", icon_value = getIcon("textures_reload"))
 
 
-		'''
-		layout.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
-		layout.separator()
+		if bpy.app.debug_value != 0:
+			layout.alert = True
 
+			#---------- Baking ------------
+			layout.label(text="Baking")
+			row = layout.row()
+			box = row.box()
 
-		#---------- Baking ------------
-		layout.label(text="Baking")
-		row = layout.row()
-		box = row.box()
+			col = box.column(align=True)
+			#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
+			
+			col.template_icon_view(context.scene, "my_thumbnails")
+			settings.bake_mode = str(bpy.context.scene.my_thumbnails).replace(".png","")
 
-		aligned = box.row()
-		#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
+			# Just a way to access which one is selected
+			col.label(text="Mode: " +settings.bake_mode )
+
 		
-		aligned.template_icon_view(context.scene, "my_thumbnails")
-		settings.bake_mode = str(bpy.context.scene.my_thumbnails).replace(".png","")
+			#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
+			
+			
+			# layout.separator()
 
-		# Just a way to access which one is selected
-		aligned = box.row()
-		aligned.label(text="Mode: " +settings.bake_mode )
+			sets = utilities_bake.get_bake_pairs()
+			for set in sets:
+				row = col.row(align=True)
+				row.label(text=set.name )
 
-	
-		#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
-		
-		aligned = box.row(align=True)
-		aligned.operator(op_bake.op_setup_material.bl_idname, text = "Set Material");
-		aligned.operator(op_bake.op_setup_material.bl_idname, text = "Set Model");
+				row.label(text="l:{}".format(len(set.objects_low)))
 
-		aligned = box.row(align=True)
-		aligned.operator(op_bake.op_bake.bl_idname, text = "Bake");
-		aligned.prop(context.scene.texToolsSettings, "baking_do_save")		
-		layout.separator()
+				if len(set.objects_high) > 0:
+					row.label(text="h:{}".format(len(set.objects_high)))
+				else:
+					row.label(text="")
+
+				if len(set.objects_cage) > 0:
+					row.label(text="c:{}".format(len(set.objects_cage)))
+				else:
+					row.label(text="")
+
+			row = col.row(align=True)
+			row.operator(op_bake.op_bake.bl_idname, text = "Bake {}x".format(len(sets)));
+			# row.prop(context.scene.texToolsSettings, "baking_do_save")		
+
+
+			layout.alert = False
 
 		#---------- ID Colors ------------
 		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists
 		#Example assign vertex colors: https://blender.stackexchange.com/questions/30841/how-to-view-vertex-colors
 		#Color Palette: https://blender.stackexchange.com/questions/73122/how-do-i-create-palette-ui-object
 
-		row = layout.row()
-		box = row.box()
-		box.label(text="ID Colors")
-		box.operator(bpy.ops.paint.sample_color.idname())
+		# row = layout.row()
+		# box = row.box()
+		# box.label(text="ID Colors")
+		# box.operator(bpy.ops.paint.sample_color.idname())
 		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
-		'''
+		
 
 
 keymaps = []

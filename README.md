@@ -14,7 +14,7 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 
 ## Installation ##
 
-1. **Download** [Blender TexTools 0.3.0.zip](https://...)
+1. **Download** [Blender TexTools 0.3.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.3.0.zip)
 2. In Blender from the **File** menu open **User Preferences** ![](http://renderhjs.net/textools/blender/img/installation_open_preferences.png) 
 3. Go to the **Add-ons** tab ![](http://renderhjs.net/textools/blender/img/installation_addons.png).
 4. Hit **Install Addon-on from File...** ![](http://renderhjs.net/textools/blender/img/installation_install_addon_from_file.png) and Select the zip file.

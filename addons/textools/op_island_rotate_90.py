@@ -43,11 +43,11 @@ class op(bpy.types.Operator):
 
 	def execute(self, context):
 
-		main(context)
+		main(context, self.angle)
 		return {'FINISHED'}
 
 
-def main(context):
+def main(context, angle):
 	
 	#Store selection
 	utilities_uv.selectionStore()
@@ -55,10 +55,22 @@ def main(context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 	
-	# bpy.ops.transform.rotate(-math.pi / 2)
-	# row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
-	# row.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
-		
+	bpy.ops.uv.select_linked(extend=False)
+
+	#Bounds
+	bounds_initial = utilities_uv.getSelectionBBox()
+	bpy.ops.transform.rotate(value=angle, axis=(-0, -0, -1), constraint_axis=(False, False, False), proportional='DISABLED')
+
+	#Align rotation to top left|right
+	bounds_post = utilities_uv.getSelectionBBox()
+	dy = bounds_post['max'].y - bounds_initial['max'].y
+	dx = 0
+	if angle > 0:
+		dx = bounds_post['max'].x - bounds_initial['max'].x
+	else:
+		dx = bounds_post['min'].x - bounds_initial['min'].x
+	bpy.ops.transform.translate(value=(-dx, -dy, 0), constraint_axis=(False, False, False), proportional='DISABLED')
+
 
 	#Restore selection
 	utilities_uv.selectionRestore()

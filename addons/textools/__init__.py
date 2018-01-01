@@ -191,7 +191,7 @@ class TexToolsPanel(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = getIcon("turnLeft")).angle = -math.pi / 2
-		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = getIcon("turnLeft")).angle = math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = getIcon("turnRight")).angle = math.pi / 2
 
 		
 		row = box.row(align=True)

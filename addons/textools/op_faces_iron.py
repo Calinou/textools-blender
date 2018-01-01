@@ -58,19 +58,19 @@ def main(context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
-	if bpy.context.scene.tool_settings.uv_select_mode == 'FACE':
-		bpy.ops.mesh.mark_seam(clear=True)
+	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
+	bpy.ops.mesh.mark_seam(clear=True)
 
 
-		selected_faces = [f for f in bm.faces if f.select]
+	selected_faces = [f for f in bm.faces if f.select]
 
-		# Hard edges to seams
-		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
-		bpy.ops.mesh.region_to_loop()
-		bpy.ops.mesh.mark_seam(clear=False)
+	# Hard edges to seams
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+	bpy.ops.mesh.region_to_loop()
+	bpy.ops.mesh.mark_seam(clear=False)
 
-		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
-		for face in selected_faces:
-			face.select = True
-			
-		bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.0226216)
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+	for face in selected_faces:
+		face.select = True
+		
+	bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.0226216)

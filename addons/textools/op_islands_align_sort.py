@@ -127,63 +127,6 @@ def main(context, isVertical):
 	utilities_uv.selectionRestore()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-	#pos =  #Vector((99999999.0,99999999.0))
-
-	# Sort islands by minimum size
-	# sortedIslands = sorted(sizes.values())
-
-	# for size in sortedIslands:
-
-
-	# print("Sizes "+str(sortedIslands))
-
-
-
-	
-	# for i in range(0, len(sortedIslands)):
-	# 	print(">> Select "+str(i)+" sorted: "+str(len(sortedIslands))+"x, islands: "+str(len(islands))+"x")
-	# 	island = islands[ sortedIslands[i] ]
-	# 	selectFaces( island )
-
-
-
-
-	# for index, length in sizes.items():
-	#     if length == sortedIslands[0]:
-	#         print("Found shorted island "+str(index))
-	#         break
-
-
-
-
-	# index = sizes[sortedIslands[0]]
-	# print("Index smallest: "+str(index))
-
-
-
-
-	# for island in islands:
-	# 	alignIslandMinimalBounds(uvLayer, island)
-		
-	# 	bbox = utilities.getSelectionBBox()
-	# 	sizes[island] = bbox['minLength'];
-
-
-
-
 def alignIslandMinimalBounds(uvLayer, faces):
 	# Select Island
 	bpy.ops.uv.select_all(action='DESELECT')

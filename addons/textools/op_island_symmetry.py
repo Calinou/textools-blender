@@ -466,7 +466,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 					for uv in cluster.uvs:
 						pos = connected_A[i][0].uvs[0].uv.copy()
 						pos.x = x_middle - (pos.x-x_middle)# Flip cooreindate
-						uv.uv = pos
+						# uv.uv = pos
 			
 			# border_A[i] = uv_to_clusters[ connected_A[i][0] ] 
 			# border_B[i] = uv_to_clusters[ connected_B[i][0] ] 

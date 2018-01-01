@@ -20,10 +20,16 @@ def selectionStore():
 
 	#VERT Selection
 	settings.selection_mode = tuple(bpy.context.scene.tool_settings.mesh_select_mode)
-	settings.selection_verts = []
+	settings.selection_vert_indexies = []
 	for vert in bm.verts:
 		if vert.select:
-			settings.selection_verts.append(vert)
+			settings.selection_vert_indexies.append(vert.index)
+
+	settings.selection_face_indexies = []
+	for face in bm.faces:
+		if face.select:
+			settings.selection_face_indexies.append(face.index)
+
 
 	#Face selections (Loops)
 	settings.selection_uv_loops = []
@@ -34,17 +40,31 @@ def selectionStore():
 
 
 def selectionRestore():
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+	uvLayer = bm.loops.layers.uv.verify();
 
 	print("selectionRestore")
 	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_uv_mode
 	bpy.context.space_data.pivot_point = settings.selection_uv_pivot
 	
+
+	bpy.ops.mesh.select_all(action='DESELECT')
 	#VERT Selection
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+	for index in settings.selection_vert_indexies:
+		if index < len(bm.verts):
+			# print("Select: "+str(bm.verts[index]))
+			bm.verts[index].select = True
+
+	#FACE selection
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+	for index in settings.selection_face_indexies:
+		if index < len(bm.faces):
+			# print("Select: "+str(bm.verts[index]))
+			bm.faces[index].select = True
+
 	bpy.context.scene.tool_settings.mesh_select_mode = settings.selection_mode
-	bpy.ops.mesh.select_all(action='SELECT')
-	# for vert in settings.selection_verts:
-	# 	if vert:
-	# 		vert.select = True
+
 
 	#UV Face-UV Selections (Loops)
 	bpy.ops.uv.select_all(action='DESELECT')

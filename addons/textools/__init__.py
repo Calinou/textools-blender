@@ -46,6 +46,7 @@ if "bpy" in locals():
 	imp.reload(op_island_symmetry)
 	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_island_straighten_edge_loops)
+	imp.reload(op_island_rotate_90)
 	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
 	
@@ -68,6 +69,7 @@ else:
 	from . import op_island_symmetry
 	from . import op_island_relax_straighten_edges
 	from . import op_island_straighten_edge_loops
+	from . import op_island_rotate_90
 	from . import op_setup_split_uv
 	from . import op_faces_iron
 	
@@ -88,7 +90,22 @@ from bpy.props import (StringProperty,
                        PointerProperty,
                        )
 
+class op_debug(bpy.types.Operator):
+	bl_idname = "uv.textools_debug"
+	bl_label = "Debug"
+	bl_description = "Open console and enable dbug mode"
 
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		# Toggle Console (Windows only)
+		bpy.ops.wm.console_toggle()
+		# Debug Vertex indexies
+		bpy.app.debug = True
+		bpy.context.object.data.show_extra_indices = True
+		return {'FINISHED'}
 
 #Vector Int Property: https://blender.stackexchange.com/questions/22855/how-to-customise-add-properties-to-existing-blender-data
 # Store in Scene for UV: https://blender.stackexchange.com/questions/35007/how-can-i-add-a-checkbox-in-the-tools-ui
@@ -142,7 +159,7 @@ class TexToolsPanel(bpy.types.Panel):
 		layout = self.layout
 		
 
-		layout.operator("wm.console_toggle", text="Open Console", icon="CONSOLE")
+		layout.operator(op_debug.bl_idname, icon="CONSOLE")
 		# col = layout.column(align=True)
 		# col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 		# col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
@@ -173,15 +190,15 @@ class TexToolsPanel(bpy.types.Panel):
 		col.operator(op_island_relax_straighten_edges.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
 
 		row = col.row(align=True)
-		row.operator("transform.rotate", text="-90°", icon_value = getIcon("turnLeft")).value = -math.pi / 2
-		row.operator("transform.rotate", text="+90°", icon_value = getIcon("turnRight")).value = math.pi / 2
-		
+		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = getIcon("turnLeft")).angle = -math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = getIcon("turnLeft")).angle = math.pi / 2
+
 		
 		row = box.row(align=True)
 		col = row.column(align=True)
 		col.label(text="")
 		col.operator(op_align.op.bl_idname, text="←", icon_value = getIcon("alignLeft")).direction = "left"
-
+		
 		col = row.column(align=True)
 		col.operator(op_align.op.bl_idname, text="↑", icon_value = getIcon("alignTop")).direction = "top"
 		col.operator(op_align.op.bl_idname, text="↓", icon_value = getIcon("alignBottom")).direction = "bottom"

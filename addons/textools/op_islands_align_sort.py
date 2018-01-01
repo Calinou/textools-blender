@@ -18,6 +18,7 @@ class op(bpy.types.Operator):
 	bl_description = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
     # bl_options = {'REGISTER', 'UNDO'}
 	is_vertical = bpy.props.BoolProperty(description="Vertical or Horizontal orientation", default=True)
+	padding = bpy.props.FloatProperty(description="Padding between UV islands", default=0.05)
 
 	@classmethod
 	def poll(cls, context):
@@ -48,15 +49,12 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-		
-		print("is_vertical: "+str(self.is_vertical))
-
-		main(context, self.is_vertical)
+		main(context, self.is_vertical, self.padding)
 		return {'FINISHED'}
 
 
-def main(context, isVertical):
-	print("Executing IslandsAlignSort main")
+def main(context, isVertical, padding):
+	print("Executing IslandsAlignSort main {}".format(padding))
    	
 	#Store selection
 	utilities_uv.selectionStore()
@@ -115,12 +113,12 @@ def main(context, isVertical):
 		if(isVertical):
 			delta = Vector((boundsAll['min'].x - bounds['min'].x, boundsAll['max'].y - bounds['max'].y));
 			bpy.ops.transform.translate(value=(delta.x, delta.y-offset, 0))
-			offset += bounds['height']+0.01
+			offset += bounds['height']+padding
 		else:
 			print("Horizontal")
 			delta = Vector((boundsAll['min'].x - bounds['min'].x, boundsAll['max'].y - bounds['max'].y));
 			bpy.ops.transform.translate(value=(delta.x+offset, delta.y, 0))
-			offset += bounds['width']+0.01
+			offset += bounds['width']+padding
 
 
 	#Restore selection

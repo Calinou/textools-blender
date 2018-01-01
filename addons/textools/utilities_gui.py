@@ -6,6 +6,11 @@ import os
 
 preview_collections = {}
 
+def get_padding():
+    size_min = min(bpy.context.scene.texToolsSettings.size[0],bpy.context.scene.texToolsSettings.size[1])
+    return bpy.context.scene.texToolsSettings.padding / size_min
+
+
 def generate_previews():
     # We are accessing all of the information that we generated in the register function below
     pcoll = preview_collections["thumbnail_previews"]

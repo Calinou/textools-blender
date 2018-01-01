@@ -105,10 +105,17 @@ class op_debug(bpy.types.Operator):
 		# Debug Vertex indexies
 		bpy.app.debug = True
 		bpy.context.object.data.show_extra_indices = True
+		bpy.app.debug_value = 1 #Set to Non '0
 		return {'FINISHED'}
 
-#Vector Int Property: https://blender.stackexchange.com/questions/22855/how-to-customise-add-properties-to-existing-blender-data
-# Store in Scene for UV: https://blender.stackexchange.com/questions/35007/how-can-i-add-a-checkbox-in-the-tools-ui
+
+def on_size_dropdown_select(self, context):
+	size = int(bpy.context.scene.texToolsSettings.size_dropdown)
+
+	bpy.context.scene.texToolsSettings.size[0] = size;
+	bpy.context.scene.texToolsSettings.size[1] = size;
+	bpy.context.scene.texToolsSettings.padding = 8
+
 
 class TexToolsSettings(bpy.types.PropertyGroup):
 	#Width and Height
@@ -120,7 +127,13 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		subtype = "XYZ"
 	)
 
-	
+	size_dropdown = bpy.props.EnumProperty(items= [('64', '64', ''), 
+													('128', '128', ''), 
+													('256', '256', ''), 
+													('512', '512', ''), 
+													('1024', '1024', ''), 
+													('2048', '2048', ''), 
+													('4096', '4096', '')], name = "Size", update = on_size_dropdown_select, default = '1024')
 
 	#Padding
 	padding = IntProperty(
@@ -158,31 +171,31 @@ class TexToolsPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		
-		if bpy.app.debug:
+		if bpy.app.debug or bpy.app.debug_value != 0:
 			layout.operator(op_debug.bl_idname, icon="CONSOLE")
-			
-		# col = layout.column(align=True)
-		# col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
-		# col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
-		# col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
 		
-
-		'''
 		#---------- Settings ------------
 		row = layout.row()
 		col = row.column(align=True)
+		col.prop(context.scene.texToolsSettings, "size_dropdown", text="Size")
+
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
+		
+		if bpy.app.debug_value != 0:
+			layout.alert = True
+			col = layout.column(align=True)
+			col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
+			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
 
-
-		#---------- Transform ------------
-		layout.separator()
-		layout.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
-		layout.separator()
-		'''
+			#---------- Transform ------------
+			layout.separator()
+			layout.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+			layout.separator()
+			layout.alert = False
 
 		#---------- Layout ------------
-		layout.label(text="Layout")
+		# layout.label(text="Layout")
 
 		box = layout.box()
 		col = box.column(align=True)
@@ -210,9 +223,14 @@ class TexToolsPanel(bpy.types.Panel):
 
 
 		aligned = box.row(align=True)
-		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = getIcon("islands_align_sort_h")).is_vertical = False;
-		aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = getIcon("islands_align_sort_v")).is_vertical = True;
+		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = getIcon("islands_align_sort_h"))
+		op.is_vertical = False;
+		op.padding = utilities_gui.get_padding()
 		
+		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = getIcon("islands_align_sort_v"))
+		op.is_vertical = True;
+		op.padding = utilities_gui.get_padding()
+
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
 		row = col.row(align=True)
@@ -300,7 +318,8 @@ def register():
 	bpy.utils.register_module(__name__)
 	
 	#Register settings
-	bpy.types.Scene.texToolsSettings = PointerProperty(type=TexToolsSettings)
+	# bpy.utils.register_class(TexToolsSettings)
+	bpy.types.Scene.texToolsSettings = bpy.props.PointerProperty(type=TexToolsSettings)
 	
 	#GUI Utilities
 	utilities_gui.register()

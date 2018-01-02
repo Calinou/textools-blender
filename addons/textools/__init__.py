@@ -159,7 +159,6 @@ def getIcon(name):
 	return preview_icons[name].icon_id
 
 class TexToolsPanel(bpy.types.Panel):
-#    """TexTools Panel"""
 	bl_label = "TexTools"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'

@@ -60,10 +60,13 @@ class op_bake(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if not bpy.context.active_object:
+			return False
+
 		return True
 
 	def execute(self, context):
-		execute_render(context)
+		execute_render(self, context)
 		return {'FINISHED'}
 
 
@@ -74,10 +77,29 @@ def execute_setup_material(context):
 	material = getMaterial("something")
 
 
-def execute_render(context):
-	sets = utilities_bake.get_bake_pairs()
+def execute_render(self, context):
+	if bpy.context.object.mode != 'OBJECT':
+		bpy.ops.object.mode_set(mode='OBJECT')
 
+	sets = utilities_bake.get_bake_pairs()
+	bpy.ops.object.select_all(action='DESELECT')
+	
 	print("________________________________\nBake {} sets @{}".format(len(sets), settings.bake_mode))
 
 	for set in sets:
+		# Requires 1+ low poly objects
+		if len(set.objects_low) == 0:
+			self.report({'ERROR_INVALID_INPUT'}, "No low poly object selected for {}".format(set.name) )
+			return
+
+		# if len(set.objects_high) == 0:
+		# 	# Assign material to lowpoly
+		# 	print("")
+		# else:
+		# 	# Assign material to highpoly
+		# 	print("")
+
+		# Check for UV maps
+		# if len(set.objects_low.data.uv_layers) == 0:
+
 		print("Bake {}".format(set.name))

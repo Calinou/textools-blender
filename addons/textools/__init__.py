@@ -191,6 +191,10 @@ class TexToolsPanel(bpy.types.Panel):
 			row.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
 			row.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
 			
+			row = layout.row(align=True)
+			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
+			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
+		
 			layout.alert = False
 
 		#---------- Layout ------------
@@ -233,8 +237,6 @@ class TexToolsPanel(bpy.types.Panel):
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
 		row = col.row(align=True)
-		# row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
-		# row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
 		
 		col.operator(op_faces_iron.op.bl_idname, text="Iron Faces", icon_value = getIcon("faces_iron"))
 		
@@ -286,9 +288,12 @@ class TexToolsPanel(bpy.types.Panel):
 			sets = utilities_bake.get_bake_pairs()
 			for set in sets:
 				row = col.row(align=True)
-				row.label(text=set.name )
+				row.label(text="'{}'".format(set.name) )
 
-				row.label(text="l:{}".format(len(set.objects_low)))
+				if len(set.objects_low) > 0:
+					row.label(text="l:{}".format(len(set.objects_low)))
+				else:
+					row.label(text="")
 
 				if len(set.objects_high) > 0:
 					row.label(text="h:{}".format(len(set.objects_high)))

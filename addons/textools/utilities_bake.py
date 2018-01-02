@@ -8,56 +8,117 @@ from math import pi
 
 from . import settings
 
-def get_bake_pairs():
-	keywords_low = ["low","lowpoly"]
-	keywords_high = ["high","highpoly"]
-	keywords_cage = ["cage"]
 
+keywords_low = ["low","lowpoly","l"]
+keywords_high = ["high","highpoly","h"]
+keywords_cage = ["cage","c"]
+
+split_chars = ['_','.','-']
+
+
+def get_bake_name(obj):
+	name = obj.name.lower()
 	
+	split = name
+	for char in split_chars:
+		split = split.replace(char,' ')
+	strings = split.split(' ')
 
+	keys = keywords_cage+keywords_high+keywords_low
+
+
+	for string in strings:
+		for key in keys:
+			if string == key:
+				name = name.replace(key, '')
+
+	return name.strip()
+
+
+def get_bake_type(obj):
+	typ = ''
+
+	# Detect by subdevision modifier
+	if obj.modifiers:
+		for modifier in obj.modifiers:
+			if modifier.type == 'SUBSURF':
+				typ = 'high'
+				break
+
+	# Detect by name pattern
+	if typ == '':
+
+		split = obj.name
+		for char in split_chars:
+			split = split.replace(char,' ')
+		strings = split.split(' ')
+
+		for string in strings:
+			if typ == '':
+				for key in keywords_cage:
+					if key == string:
+						typ = 'cage'
+						break
+			if typ == '':
+				for key in keywords_low:
+					if key == string:
+						typ = 'low'
+						break
+			if typ == '':
+				for key in keywords_high:
+					if key == string:
+						typ = 'high'
+						break
+
+	# if nothing was detected, assume its low
+	if typ == '':
+		typ = 'low'
+
+	return typ
+
+
+def get_bake_pairs():
 	filtered = {}
 	for obj in bpy.context.selected_objects:
 		if obj.type == 'MESH':
-			# Detect type
-			obj_type = ''
-			name = obj.name.lower()
-			
-			# check type
-			for key in keywords_cage:
-				if key in name:
-					obj_type = 'cage'
-
-			if obj_type == '':
-				for key in keywords_low:
-					if key in name:
-						obj_type = 'low'
-
-			if obj_type == '':
-				for key in keywords_high:
-					if key in name:
-						obj_type = 'high'
-
-			if obj_type == '':
-				obj_type == 'low'
-
-			filtered[obj] = obj_type
+			filtered[obj] = get_bake_type(obj)
 	
-	# sets = []
-	low = []
-	high = []
-	cage = []
+	groups = []
+	# Group by names
 	for key in filtered:
-		if filtered[key] == 'low':
-			low.append(key)
-		elif filtered[key] == 'high':
-			high.append(key)
-		elif filtered[key] == 'cage':
-			cage.append(key)
+		name = get_bake_name(key)
 
-	if len(filtered) == 0:
-		return []
-	else:
-		return [BakeSet("test", low, cage, high )]
+		if len(groups)==0:
+			groups.append([key])
+		else:
+			isFound = False
+			for group in groups:
+				groupName = get_bake_name(group[0])
+				if name == groupName:
+					group.append(key)
+					isFound = True
+					break
+
+			if not isFound:
+				groups.append([key])
+
+	bake_sets = []
+	for group in groups:
+		low = []
+		high = []
+		cage = []
+		for obj in group:
+			if filtered[obj] == 'low':
+				low.append(obj)
+			elif filtered[obj] == 'high':
+				high.append(obj)
+			elif filtered[obj] == 'cage':
+				cage.append(obj)
+
+		name = get_bake_name(group[0])
+		bake_sets.append(BakeSet(name, low, cage, high))
+
+	return bake_sets
 
 
 class BakeSet:
@@ -70,6 +131,3 @@ class BakeSet:
 		self.objects_cage = objects_cage
 		self.objects_high = objects_high
 		self.name = name
-	
-	def append(self, uv):
-		self.uvs.append(uv)

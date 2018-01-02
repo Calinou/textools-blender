@@ -6,6 +6,7 @@ from collections import defaultdict
 from math import pi
 
 from . import settings
+from . import utilities_bake
 
 # Get last-loaded material, such as ~.002.
 def _getAppendedMaterial(material_name):
@@ -74,5 +75,9 @@ def execute_setup_material(context):
 
 
 def execute_render(context):
-	print("Executing operator_bake_render main()")
-	print("Mode: "+str(settings.bake_mode))
+	sets = utilities_bake.get_bake_pairs()
+
+	print("________________________________\nBake {} sets @{}".format(len(sets), settings.bake_mode))
+
+	for set in sets:
+		print("Bake {}".format(set.name))

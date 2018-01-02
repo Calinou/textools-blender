@@ -286,6 +286,10 @@ class TexToolsPanel(bpy.types.Panel):
 			# layout.separator()
 
 			sets = utilities_bake.get_bake_pairs()
+
+			row = col.row(align=True)
+			row.operator(op_bake.op_bake.bl_idname, text = "Bake {}x".format(len(sets)));
+			
 			for set in sets:
 				row = col.row(align=True)
 				row.label(text="'{}'".format(set.name) )
@@ -305,8 +309,7 @@ class TexToolsPanel(bpy.types.Panel):
 				else:
 					row.label(text="")
 
-			row = col.row(align=True)
-			row.operator(op_bake.op_bake.bl_idname, text = "Bake {}x".format(len(sets)));
+			
 			# row.prop(context.scene.texToolsSettings, "baking_do_save")		
 
 

@@ -179,11 +179,12 @@ def setup_material(obj, mode, material):
 	if material is None:
 		return
 
+	# Assign Vertex Colors
 	if mode == 'worn' or mode == 'cavity' or mode == 'dust':
-		# Setup vertex dirt colors
-		bpy.ops.paint.vertex_color_dirt()
+		setup_vertex_color_dirty(obj)
+
 	elif mode == 'id':
-		setup_vertex_color_per_element(obj)
+		setup_vertex_color_ids(obj)
 	
 	# Assign material
 	if len(obj.data.materials) == 0:
@@ -207,14 +208,35 @@ def get_material(mode):
 
 
 
-def setup_vertex_color_per_element(obj):
-	bpy.ops.object.select_all(action='DESELECT')
 
+def setup_vertex_color_dirty(obj):
+	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True
+
+	bpy.ops.object.mode_set(mode='EDIT')
+
+	# Fill white then, 
+	bm = bmesh.from_edit_mesh(obj.data)
+	colorLayer = bm.loops.layers.color.verify()
+
+	color = (1, 1, 1)
+	for face in bm.faces:
+		for loop in face.loops:
+				loop[colorLayer] = color
+	obj.data.update()
+
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.paint.vertex_color_dirt()
+
+
+def setup_vertex_color_ids(obj):
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+
 	bpy.ops.object.mode_set(mode='EDIT')
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
 
-	obj = bpy.context.active_object
 	bm = bmesh.from_edit_mesh(obj.data)
 	colorLayer = bm.loops.layers.color.verify()
 
@@ -240,12 +262,11 @@ def setup_vertex_color_per_element(obj):
 	# Color each group
 	for i in range(0,len(groups)):
 		color = Color()
-		color.hsv = ( i / (len(groups)-1) ), 1.0, 1
+		color.hsv = ( i / (len(groups)) ), 1.0, 1
 
 		for face in groups[i]:
 			for loop in face.loops:
 				loop[colorLayer] = color
-
 	obj.data.update()
 
 	# Back to object mode

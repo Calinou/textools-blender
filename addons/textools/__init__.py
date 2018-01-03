@@ -148,8 +148,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	
 	samples = bpy.props.FloatProperty(
 		name = "Samples",
-		description = "Cycles samples for Baking",
-		default = 8,
+		description = "Samples in Cycles for Baking. The higher the less noise. Default: 64",
+		default = 64,
 		min = 1,
 		max = 4000
 	)
@@ -264,69 +264,44 @@ class TexToolsPanel(bpy.types.Panel):
 		layout.label(text="Textures")
 		row = layout.row()
 		box = row.box()
-		aligned = box.column(align=True)
-		aligned.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = getIcon("checkerMap"))
-		aligned.operator(op_textures_reload.op.bl_idname, text="Reload", icon_value = getIcon("textures_reload"))
+		col = box.column(align=True)
+		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = getIcon("checkerMap"))
+		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = getIcon("textures_reload"))
 
+		#----------- Baking -------------
+		col = box.column(align=True)
+		sets = utilities_bake.get_bake_pairs()
+		col.template_icon_view(context.scene, "TT_bake_mode")
+		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
 
-		if bpy.app.debug_value != 0:
-			layout.alert = True
+		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon = 'RENDER_STILL');
+		col.prop(context.scene.texToolsSettings, "samples")
+	
+	
+		for set in sets:
+			row = col.row(align=True)
+			row.label(text="'{}'".format(set.name) )
 
-			#---------- Baking ------------
-			layout.label(text="Baking")
-			row = layout.row()
-			box = row.box()
+			if len(set.objects_low) > 0:
+				row.label(text="l:{}".format(len(set.objects_low)))
+			else:
+				row.label(text="")
 
-			sets = utilities_bake.get_bake_pairs()
+			if len(set.objects_high) > 0:
+				row.label(text="h:{}".format(len(set.objects_high)))
+			else:
+				row.label(text="")
 
-
-			col = box.column()
-			col.operator(op_bake.op_bake.bl_idname, text = "Bake");
-			col.separator()
-			#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
-			
-			col.template_icon_view(context.scene, "TT_bake_mode")
-			settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
-
-			# Just a way to access which one is selected
-			col.label(text="Mode: " +settings.bake_mode )
+			if len(set.objects_cage) > 0:
+				row.label(text="c:{}".format(len(set.objects_cage)))
+			else:
+				row.label(text="")
 
 		
-			#Thumbnail grid view: https://blender.stackexchange.com/questions/47504/script-custom-previews-in-a-menu
-			
-			
-			# layout.separator()
-
-			
-			
-			
-			col.prop(context.scene.texToolsSettings, "samples")#, text=""
-		
-		
-			for set in sets:
-				row = col.row(align=True)
-				row.label(text="'{}'".format(set.name) )
-
-				if len(set.objects_low) > 0:
-					row.label(text="l:{}".format(len(set.objects_low)))
-				else:
-					row.label(text="")
-
-				if len(set.objects_high) > 0:
-					row.label(text="h:{}".format(len(set.objects_high)))
-				else:
-					row.label(text="")
-
-				if len(set.objects_cage) > 0:
-					row.label(text="c:{}".format(len(set.objects_cage)))
-				else:
-					row.label(text="")
-
-			
-			# row.prop(context.scene.texToolsSettings, "baking_do_save")		
+		# row.prop(context.scene.texToolsSettings, "baking_do_save")		
 
 
-			layout.alert = False
+		layout.alert = False
 
 		#---------- ID Colors ------------
 		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists
@@ -382,7 +357,9 @@ def register():
 	registerIcon("faces_iron.png")
 	registerIcon("islands_select_identical.png")
 	registerIcon("islands_select_overlapping.png")
+	registerIcon("op_bake.png")
 	registerIcon("explode.png")
+	
 
 	#Key Maps
 	wm = bpy.context.window_manager

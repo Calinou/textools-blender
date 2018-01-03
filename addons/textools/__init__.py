@@ -277,7 +277,12 @@ class TexToolsPanel(bpy.types.Panel):
 			row = layout.row()
 			box = row.box()
 
-			col = box.column(align=True)
+			sets = utilities_bake.get_bake_pairs()
+
+
+			col = box.column()
+			col.operator(op_bake.op_bake.bl_idname, text = "Bake");
+			col.separator()
 			#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
 			
 			col.template_icon_view(context.scene, "TT_bake_mode")
@@ -292,10 +297,9 @@ class TexToolsPanel(bpy.types.Panel):
 			
 			# layout.separator()
 
-			sets = utilities_bake.get_bake_pairs()
-
-			row = col.row(align=True)
-			row.operator(op_bake.op_bake.bl_idname, text = "Bake {}x".format(len(sets)));
+			
+			
+			
 			col.prop(context.scene.texToolsSettings, "samples")#, text=""
 		
 		

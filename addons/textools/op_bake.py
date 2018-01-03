@@ -4,6 +4,8 @@ import bmesh
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
+from random import random
+from mathutils import Color
 
 from . import settings
 from . import utilities_bake
@@ -31,6 +33,7 @@ class op_setup_material(bpy.types.Operator):
 	def execute(self, context):
 		execute_setup_material(context)
 		return {'FINISHED'}
+
 
 
 def execute_setup_material(context):
@@ -99,10 +102,15 @@ def execute_render(self, context, mode, width, height, samples):
 				print("ERROR: NO UV MAP FOUND FOR {} ".format(obj.name))
 				return
 
-		# Assign materials
+		# Assign Material
 		material = get_material(mode)
 		if len(set.objects_high) == 0:
 			# Assign material to lowpoly
+			if material == None:
+				# Create empty material to bake into image's node
+				material = bpy.data.materials.new(name="bakemat")
+				material.use_nodes = True
+			
 			for obj in set.objects_low:
 				setup_material(obj, mode, material)
 		else:
@@ -147,6 +155,7 @@ def execute_render(self, context, mode, width, height, samples):
 		# image.save()
 
 
+
 def cycles_bake(mode, samples, isMulti):
 	# Set samples
 	if mode == 'ao' or mode == 'normal':
@@ -165,6 +174,7 @@ def cycles_bake(mode, samples, isMulti):
 		bpy.ops.object.bake(type='EMIT', use_clear=True, use_selected_to_active=isMulti)
 
 
+
 def setup_material(obj, mode, material):
 	if material is None:
 		return
@@ -172,6 +182,8 @@ def setup_material(obj, mode, material):
 	if mode == 'worn' or mode == 'cavity' or mode == 'dust':
 		# Setup vertex dirt colors
 		bpy.ops.paint.vertex_color_dirt()
+	elif mode == 'id':
+		setup_vertex_color_per_element(obj)
 	
 	# Assign material
 	if len(obj.data.materials) == 0:
@@ -192,3 +204,49 @@ def get_material(mode):
 		bpy.ops.wm.append(filename=name_material, directory=path, link=False, autoselect=False)
 
 	return bpy.data.materials.get(name_material)
+
+
+
+def setup_vertex_color_per_element(obj):
+	bpy.ops.object.select_all(action='DESELECT')
+
+	obj.select = True
+	bpy.ops.object.mode_set(mode='EDIT')
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+
+	obj = bpy.context.active_object
+	bm = bmesh.from_edit_mesh(obj.data)
+	colorLayer = bm.loops.layers.color.verify()
+
+	
+
+	print("Edit vcolors")
+
+	# Collect elements
+	processed = set([])
+	groups = []
+	for face in bm.faces:
+
+		if face not in processed:
+			bpy.ops.mesh.select_all(action='DESELECT')
+			face.select = True
+			bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+			linked = [face for face in bm.faces if face.select]
+
+			for link in linked:
+				processed.add(link)
+			groups.append(linked)
+
+	# Color each group
+	for i in range(0,len(groups)):
+		color = Color()
+		color.hsv = ( i / (len(groups)-1) ), 1.0, 1
+
+		for face in groups[i]:
+			for loop in face.loops:
+				loop[colorLayer] = color
+
+	obj.data.update()
+
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='OBJECT')

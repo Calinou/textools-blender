@@ -47,7 +47,7 @@ def register():
     
     # This is an EnumProperty to hold all of the images
     # You really can save it anywhere in bpy.types.*  Just make sure the location makes sense
-    bpy.types.Scene.my_thumbnails = EnumProperty(
+    bpy.types.Scene.TT_bake_mode = EnumProperty(
         items=generate_previews(),
         )
     
@@ -57,7 +57,7 @@ def unregister():
         bpy.utils.previews.remove(pcoll)
     preview_collections.clear()
     
-    del bpy.types.Scene.my_thumbnails
+    del bpy.types.Scene.TT_bake_mode
    
 if __name__ == "__main__":
     register()

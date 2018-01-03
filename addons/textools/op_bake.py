@@ -16,14 +16,7 @@ from . import utilities_bake
 #     material_names.sort()
 #     return material_names[-1]
 
-def getMaterial(name):
-	path = os.path.join(os.path.dirname(__file__), "resources/materials.blend")+"\\Material\\"
 
-	if bpy.data.materials.get(name) is None:
-		print("Material not yet loaded: "+name)
-		bpy.ops.wm.append(filename=name, directory=path, link=False, autoselect=False)
-
-	return bpy.data.materials.get(name)
 
 
 class op_setup_material(bpy.types.Operator):
@@ -43,7 +36,7 @@ class op_setup_material(bpy.types.Operator):
 def execute_setup_material(context):
 	print("Executing operator_bake_render main()")
 	print("Mode: "+str(context.scene.texToolsSettings.baking_mode))
-	material = getMaterial("something")
+
 
 
 class op_bake(bpy.types.Operator):
@@ -59,45 +52,42 @@ class op_bake(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
-		execute_render(self, context, settings.bake_mode)
+		utilities_bake.store_bake_settings()
+		execute_render(
+			self, context, settings.bake_mode, 
+			bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1], 
+			bpy.context.scene.texToolsSettings.samples
+		)
+		# utilities_bake.restore_bake_settings()
 		return {'FINISHED'}
 
 
 
 
-def setup_material(obj, mode):
-
-	if mode == 'bake_normal' or mode == 'bake_ao':
-		# No material setup requires
-		return
-
-	if mode == 'bake_worn' or mode == 'bake_cavity' or mode == 'bake_dust':
-		# Setup vertex dirt colors
-		bpy.ops.paint.vertex_color_dirt()
-	
-	# Assign material
-	material = getMaterial(mode)
-	if len(obj.data.materials) == 0:
-		obj.data.materials.append(material)
-	else:
-		obj.data.materials[0] = material
 
 
-def execute_render(self, context, mode):
 
+def execute_render(self, context, mode, width, height, samples):
+
+	# Setup
 	if bpy.context.scene.render.engine != 'CYCLES':
 		bpy.context.scene.render.engine = 'CYCLES'
+	bpy.context.scene.cycles.samples = samples
 
 	if bpy.context.object.mode != 'OBJECT':
 		bpy.ops.object.mode_set(mode='OBJECT')
 
-	sets = utilities_bake.get_bake_pairs()
-	bpy.ops.object.select_all(action='DESELECT')
 	
+
+
+	sets = utilities_bake.get_bake_pairs()
+
 	print("________________________________\nBake {}x '{}'".format(len(sets), mode))
 
-
 	for set in sets:
+		name = "{}_{}".format(set.name, mode)
+		path = bpy.path.abspath("//{}.tga".format(name))
+
 		# Requires 1+ low poly objects
 		if len(set.objects_low) == 0:
 			self.report({'ERROR_INVALID_INPUT'}, "No low poly object selected for {}".format(set.name) )
@@ -106,32 +96,96 @@ def execute_render(self, context, mode):
 		# Check for UV maps
 		for obj in set.objects_low:
 			if len(obj.data.uv_layers) == 0:
-				print("NO UV MAP FOUND FOR {} ".format(obj.name))
+				print("ERROR: NO UV MAP FOUND FOR {} ".format(obj.name))
 				return
 
-
-
 		# Assign materials
+		material = get_material(mode)
 		if len(set.objects_high) == 0:
 			# Assign material to lowpoly
 			for obj in set.objects_low:
-				setup_material(obj, mode)
+				setup_material(obj, mode, material)
 		else:
 			# Assign material to highpoly
 			for obj in set.objects_high:
-				setup_material(obj, mode)
+				setup_material(obj, mode, material)
 
 		# BRM BakeUI: https://github.com/leukbaars/BRM-BakeUI/blob/master/BRM_BakeUI.py
 
-		#create bake image and material
-		image = bpy.data.images.new("BakeImage", width=256, height=256) #context.scene.bakeWidth
 
-		# Setup active node for baking
-		tree = set.objects_low[0].data.materials[0].node_tree
-		node = tree.nodes.new("ShaderNodeTexImage")
-		node.select = True
-		node.image = image
-		tree.nodes.active = node
+		# Setup Material
+		image = bpy.data.images.new(name, width=width, height=height) #context.scene.bakeWidth
+		image.file_format = 'TARGA'
+		image.filepath_raw = path
 
-		
-		print("Bake {}".format(set.name))
+		if material is None:
+			print("ERROR, need spare material to setup active image texture to bake!!!")
+		else:
+			tree = set.objects_low[0].data.materials[0].node_tree
+			node = tree.nodes.new("ShaderNodeTexImage")
+			node.select = True
+			node.image = image
+			node.name = "TT_bake_image"
+			tree.nodes.active = node
+
+
+		print("Bake {} = {}".format(set.name, name))
+
+		for obj_low in set.objects_low:
+			# Select Objects (High first, then current low)
+			bpy.ops.object.select_all(action='DESELECT')
+			for obj_high in set.objects_high:
+				obj_high.select = True
+			obj_low.select = True
+			bpy.context.scene.objects.active = obj_low
+
+			print("Now bake '{}'".format(path))
+			cycles_bake(mode, samples)
+			
+
+		# 
+		# image.save()
+
+
+def cycles_bake(mode, samples):
+
+	bpy.context.scene.cycles.samples = 1
+	bpy.context.scene.render.bake.use_pass_direct = False
+	bpy.context.scene.render.bake.use_pass_indirect = False
+	bpy.context.scene.render.bake.use_pass_color = True
+
+
+	bpy.ops.object.bake(type='NORMAL', use_clear=True, use_selected_to_active=True, normal_space='OBJECT')
+	bpy.ops.object.bake(type='AO', use_clear=True, use_selected_to_active=True)
+	bpy.ops.object.bake(type='DIFFUSE', use_clear=True, use_selected_to_active=True)
+
+
+
+
+def setup_material(obj, mode, material):
+	if material is None:
+		return
+
+	if mode == 'worn' or mode == 'cavity' or mode == 'dust':
+		# Setup vertex dirt colors
+		bpy.ops.paint.vertex_color_dirt()
+	
+	# Assign material
+	if len(obj.data.materials) == 0:
+		obj.data.materials.append(material)
+	else:
+		obj.data.materials[0] = material
+
+
+
+def get_material(mode):
+	if mode == 'normal' or mode == 'ao':
+		return None # No material setup requires
+
+	name_material = "bake_{}".format(mode)
+	path = os.path.join(os.path.dirname(__file__), "resources/materials.blend")+"\\Material\\"
+	if bpy.data.materials.get(name_material) is None:
+		print("Material not yet loaded: "+mode)
+		bpy.ops.wm.append(filename=name_material, directory=path, link=False, autoselect=False)
+
+	return bpy.data.materials.get(name_material)

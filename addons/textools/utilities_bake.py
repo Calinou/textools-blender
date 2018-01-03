@@ -16,6 +16,19 @@ keywords_cage = ["cage","c"]
 split_chars = ['_','.','-']
 
 
+def store_bake_settings():
+	print("store_bake_settings")
+	settings.bake_render_engine = bpy.context.scene.render.engine
+
+
+def restore_bake_settings():
+	print("restore_bake_settings")
+
+	if settings.bake_render_engine is not '':
+		bpy.context.scene.render.engine = settings.bake_render_engine
+
+
+
 def get_bake_name(obj):
 	name = obj.name.lower()
 	
@@ -25,7 +38,6 @@ def get_bake_name(obj):
 	strings = split.split(' ')
 
 	keys = keywords_cage+keywords_high+keywords_low
-
 
 	for string in strings:
 		for key in keys:

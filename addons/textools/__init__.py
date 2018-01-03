@@ -130,22 +130,30 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	)
 
 	size_dropdown = bpy.props.EnumProperty(items= [('64', '64', ''), 
-													('128', '128', ''), 
-													('256', '256', ''), 
-													('512', '512', ''), 
-													('1024', '1024', ''), 
-													('2048', '2048', ''), 
-													('4096', '4096', '')], name = "Size", update = on_size_dropdown_select, default = '1024')
+		('128', '128', ''), 
+		('256', '256', ''), 
+		('512', '512', ''), 
+		('1024', '1024', ''), 
+		('2048', '2048', ''), 
+		('4096', '4096', '')], name = "Size", update = on_size_dropdown_select, default = '1024')
 
 	#Padding
-	padding = IntProperty(
+	padding = bpy.props.IntProperty(
 		name = "Padding",
 		description="padding size in pixels",
 		default = 4,
 		min = 1,
-		max = 16384
+		max = 256
 	)
 	
+	samples = bpy.props.FloatProperty(
+		name = "Samples",
+		description = "Cycles samples for Baking",
+		default = 8,
+		min = 1,
+		max = 4000
+	)
+
 	baking_do_save = bpy.props.BoolProperty(
 		name="Save",
     	description="Save the baked texture?",
@@ -272,8 +280,8 @@ class TexToolsPanel(bpy.types.Panel):
 			col = box.column(align=True)
 			#Alternative VectorBool? https://blender.stackexchange.com/questions/14312/how-can-i-present-an-array-of-booleans-in-a-panel
 			
-			col.template_icon_view(context.scene, "my_thumbnails")
-			settings.bake_mode = str(bpy.context.scene.my_thumbnails).replace(".png","")
+			col.template_icon_view(context.scene, "TT_bake_mode")
+			settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
 
 			# Just a way to access which one is selected
 			col.label(text="Mode: " +settings.bake_mode )
@@ -288,7 +296,9 @@ class TexToolsPanel(bpy.types.Panel):
 
 			row = col.row(align=True)
 			row.operator(op_bake.op_bake.bl_idname, text = "Bake {}x".format(len(sets)));
-			
+			col.prop(context.scene.texToolsSettings, "samples")#, text=""
+		
+		
 			for set in sets:
 				row = col.row(align=True)
 				row.label(text="'{}'".format(set.name) )

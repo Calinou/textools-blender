@@ -140,26 +140,29 @@ def execute_render(self, context, mode, width, height, samples):
 			bpy.context.scene.objects.active = obj_low
 
 			print("Now bake '{}'".format(path))
-			cycles_bake(mode, samples)
+			cycles_bake(mode, samples, len(set.objects_high) > 0)
 			
 
 		# 
 		# image.save()
 
 
-def cycles_bake(mode, samples):
+def cycles_bake(mode, samples, isMulti):
+	# Set samples
+	if mode == 'ao' or mode == 'normal':
+		bpy.context.scene.cycles.samples = samples
+	else:
+		bpy.context.scene.cycles.samples = 1
 
-	bpy.context.scene.cycles.samples = 1
-	bpy.context.scene.render.bake.use_pass_direct = False
-	bpy.context.scene.render.bake.use_pass_indirect = False
-	bpy.context.scene.render.bake.use_pass_color = True
-
-
-	bpy.ops.object.bake(type='NORMAL', use_clear=True, use_selected_to_active=True, normal_space='OBJECT')
-	bpy.ops.object.bake(type='AO', use_clear=True, use_selected_to_active=True)
-	bpy.ops.object.bake(type='DIFFUSE', use_clear=True, use_selected_to_active=True)
-
-
+	# bpy.context.scene.render.bake.use_pass_direct = False
+	# bpy.context.scene.render.bake.use_pass_indirect = False
+	# bpy.context.scene.render.bake.use_pass_color = True
+	if mode == 'ao':
+		bpy.ops.object.bake(type='AO', use_clear=True, use_selected_to_active=isMulti)
+	elif mode == 'normal':
+		bpy.ops.object.bake(type='NORMAL', use_clear=True, normal_space='OBJECT', use_selected_to_active=isMulti)
+	else:
+		bpy.ops.object.bake(type='EMIT', use_clear=True, use_selected_to_active=isMulti)
 
 
 def setup_material(obj, mode, material):

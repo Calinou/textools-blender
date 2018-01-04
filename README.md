@@ -4,11 +4,13 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 
 ![](http://renderhjs.net/textools/blender/img/screenshot_version_0.3.0.png)
 
+
 ## Additional links ##
+* PayPal [Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6) for those that like doing that
 * [Git repository](https://bitbucket.org/renderhjs/textools-blender) on BitBucket
 * [3dsMax version](http://renderhjs.net/textools/) of TexTools
-* Blenderartist [discussion](https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender)
-* personal website [discussion](renderhjs.net)
+* Blenderartist [discussion thread](https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender)
+* Personal website [renderhjs.net](http://www.renderhjs.net/) all written in haxe ;)
 
 ---
 
@@ -24,6 +26,14 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 ---
 
 # Manual #
+
+
+
+## Texture Size ##
+![](http://renderhjs.net/textools/blender/img/screenshot_texture_settings.png)
+
+Used to set the texture size for baking but also the padding size for UV operations when spacing UV islands. Use the dropdown menu to quickly assign common square texture sizes. All units are in pixels.
+
 
 ## Layout ##
 
@@ -101,6 +111,32 @@ Assigns a checker map to the selected object or cycles through 2 checker maps. W
 Reload all textures in the current blend file
 
 
+## Bake ##
+![](http://renderhjs.net/textools/blender/img/op_bake.png)
+
+Baking in TexTools is **suuuper** easy, just select your objects and press Bake. A realtime set list shows you what will be baked and how many objects are part of each.
+
+![](http://renderhjs.net/textools/blender/img/bake_sets_preview.png)
+
+
+#### Type of objects
+TexTools automatically groups your scene selection into sets to bake. Objects with common name prefixes are grouped into a set. Objects can be of 3 different object types:
+* ![](http://renderhjs.net/textools/blender/img/bake_obj_low.png) **Low poly** objects: when their name used the keyword 'low', 'lowpoly' or 'l' 
+* ![](http://renderhjs.net/textools/blender/img/bake_obj_high.png) **High poly** objects: when they contain a **Subdevision Surface** modifier or when their name used the keyword 'high', 'highpoly' or 'h' 
+* ![](http://renderhjs.net/textools/blender/img/bake_obj_cage.png) **Cage objects**:when their name used the keyword 'cage' or 'c' . Use this for custom projection cages.
+
+#### Force Single
+Enable this when you want all selected objects to be baked into a single texture. This is great for multi part objects or exploded bake setups.
+
+
+#### Baking modes
+* **'AO'** Ambient Occlusion pass, use the 'Samples' value below to adjust the amount of samples
+* **'Cavity'** Convex and Concarve render pass using vertex color and cycles pointiness for a refined result
+* **'Dust'** Uses pointiness shader and top facing areas for brighter values. Great for aging materials
+* **'GradientZ'** World space Z axis as gradient mask
+* **'ID'** World space Z axis as gradient mask
+* **'Normal'** Normal map in tangent space
+
 ---
 
 # Developer notes #
@@ -111,10 +147,6 @@ Reload all textures in the current blend file
 3. In the **'Add-ons' ** tab enable TexTools
 
 ## Enable debug features ##
-1.) Press Ctrl + Alt + D for the debug value panel
-2.) Set the value other than '0'
-
-* [Git repository](https://bitbucket.org/renderhjs/textools-blender) on BitBucket
-* [3dsMax version](http://renderhjs.net/textools/) of TexTools
-* Blenderartist [discussion](https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender)
-* personal website [discussion](renderhjs.net)
+1. Press Ctrl + Alt + D for the debug value panel
+2. Set the value other than '0'
+3. Protoype tools should be shown in red in the interface

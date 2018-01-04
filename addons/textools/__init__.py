@@ -100,7 +100,18 @@ class SomeAddonPrefs(bpy.types.AddonPreferences):
 	# here you specify how they are drawn
 	def draw(self, context):
 		layout = self.layout
-		layout.label(text="Additional description of help")
+
+		layout.label(text="Additional Links")
+
+		row = layout.row()
+		split = row.split(percentage=0.33)
+		
+		c = split.column()
+		c.operator("wm.url_open", text="Donate", icon='HELP').url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"
+		c = split.column()
+		c.operator("wm.url_open", text="GIT Source", icon='WORDWRAP_ON').url = "https://bitbucket.org/renderhjs/textools-blender/src"
+		c = split.column()
+		c.operator("wm.url_open", text="BlederArtist BBS", icon='BLENDER').url = "https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender"
 
 
 

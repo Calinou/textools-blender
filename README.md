@@ -125,6 +125,7 @@ Baking in TexTools is **suuuper** easy, just select your objects and press Bake.
 
 #### Type of objects
 TexTools automatically groups your scene selection into sets to bake. Objects with common name prefixes are grouped into a set. Objects can be of 3 different object types:
+
 * ![](http://renderhjs.net/textools/blender/img/bake_obj_low.png) **Low poly** objects: when their name used the keyword 'low', 'lowpoly' or 'l' 
 * ![](http://renderhjs.net/textools/blender/img/bake_obj_high.png) **High poly** objects: when they contain a **Subdevision Surface** modifier or when their name used the keyword 'high', 'highpoly' or 'h' 
 * ![](http://renderhjs.net/textools/blender/img/bake_obj_cage.png) **Cage objects**:when their name used the keyword 'cage' or 'c' . Use this for custom projection cages.

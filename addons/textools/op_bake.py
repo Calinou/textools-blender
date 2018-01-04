@@ -159,7 +159,7 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 			obj_low.select = True
 			bpy.context.scene.objects.active = obj_low
 
-			cycles_bake(mode, max(width,height), samples, ray_distance, len(set.objects_high) > 0, obj_cage)
+			cycles_bake(mode, samples, ray_distance, len(set.objects_high) > 0, obj_cage)
 
 		# for obj_low in set.objects_low:
 		# 	# Select Objects (High first, then current low)
@@ -178,7 +178,7 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 
 
 
-def cycles_bake(mode, size_max, samples, ray_distance, isMulti, obj_cage):
+def cycles_bake(mode, samples, ray_distance, isMulti, obj_cage):
 	# Set samples
 	if mode == 'ao' or mode == 'normal':
 		bpy.context.scene.cycles.samples = samples
@@ -186,7 +186,10 @@ def cycles_bake(mode, size_max, samples, ray_distance, isMulti, obj_cage):
 		bpy.context.scene.cycles.samples = 1
 
 	# Bake margin to texture size to fully bleed out
-	bpy.context.scene.render.bake.margin = size_max
+	if mode == 'id':
+		bpy.context.scene.render.bake.margin = bpy.context.scene.texToolsSettings.padding
+	else:
+		bpy.context.scene.render.bake.margin = max(bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1])
 
 	# Bake Type
 	bake_type = 'EMIT'

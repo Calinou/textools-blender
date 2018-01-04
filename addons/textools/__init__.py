@@ -279,30 +279,58 @@ class TexToolsPanel(bpy.types.Panel):
 		sets = utilities_bake.get_bake_pairs()
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
-
+		col.separator()
 		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon = 'RENDER_STILL');
 		col.prop(context.scene.texToolsSettings, "samples")
 		col.prop(context.scene.texToolsSettings, "ray_distance")
 		
-	
-		for set in sets:
-			row = col.row(align=True)
-			row.label(text="'{}'".format(set.name) )
 
+		row = box.row(align=True)
+		split = row.split(percentage=0.4)
+		c = split.column()
+		for set in sets:
+			c.label(text=set.name)
+
+		c = split.column()
+		for set in sets:
+			r = c.row(align=True)
 			if len(set.objects_low) > 0:
-				row.label(text="l:{}".format(len(set.objects_low)))
+				r.label(text="{}".format(len(set.objects_low)), icon_value = getIcon("bake_obj_low"))
 			else:
-				row.label(text="")
+				r.label(text="")
 
 			if len(set.objects_high) > 0:
-				row.label(text="h:{}".format(len(set.objects_high)))
+				r.label(text="{}".format(len(set.objects_high)), icon_value = getIcon("bake_obj_high"))
 			else:
-				row.label(text="")
+				r.label(text="")
 
 			if len(set.objects_cage) > 0:
-				row.label(text="c:{}".format(len(set.objects_cage)))
+				r.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
 			else:
-				row.label(text="")
+				r.label(text="")
+
+		# box = col.box()
+		# for set in sets:
+		# 	row = box.row(align=True)
+		# 	row.label(text="{}".format(set.name) )
+
+		# 	# box_icons = row.box()
+		# 	# row = box_icons.row(align=True)
+		# 	# row.alignment = 'LEFT'
+		# 	if len(set.objects_low) > 0:
+		# 		row.label(text="{}".format(len(set.objects_low)), icon_value = getIcon("bake_obj_low"))
+		# 	else:
+		# 		row.label(text="")
+
+		# 	if len(set.objects_high) > 0:
+		# 		row.label(text="{}".format(len(set.objects_high)), icon_value = getIcon("bake_obj_high"))
+		# 	else:
+		# 		row.label(text="")
+
+		# 	if len(set.objects_cage) > 0:
+		# 		row.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
+		# 	else:
+		# 		row.label(text="")
 
 		
 		# row.prop(context.scene.texToolsSettings, "baking_do_save")		
@@ -365,6 +393,9 @@ def register():
 	registerIcon("islands_select_identical.png")
 	registerIcon("islands_select_overlapping.png")
 	registerIcon("op_bake.png")
+	registerIcon("bake_obj_low.png")
+	registerIcon("bake_obj_high.png")
+	registerIcon("bake_obj_cage.png")
 	registerIcon("explode.png")
 	
 

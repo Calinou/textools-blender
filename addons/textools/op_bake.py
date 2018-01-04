@@ -94,13 +94,13 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 
 		# Requires 1+ low poly objects
 		if len(set.objects_low) == 0:
-			self.report({'ERROR_INVALID_INPUT'}, "No low poly object selected for {}".format(set.name) )
+			self.report({'ERROR_INVALID_INPUT'}, "No low poly object as part of the '{}' set".format(set.name) )
 			return
 
 		# Check for UV maps
 		for obj in set.objects_low:
 			if len(obj.data.uv_layers) == 0:
-				print("ERROR: NO UV MAP FOUND FOR {} ".format(obj.name))
+				self.report({'ERROR_INVALID_INPUT'}, "No UV map available for '{}'".format(obj.name))
 				return
 
 		# Assign Material

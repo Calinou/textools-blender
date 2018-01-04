@@ -135,7 +135,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('512', '512', ''), 
 		('1024', '1024', ''), 
 		('2048', '2048', ''), 
-		('4096', '4096', '')], name = "Size", update = on_size_dropdown_select, default = '1024')
+		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024')
 
 	#Padding
 	padding = bpy.props.IntProperty(
@@ -277,12 +277,19 @@ class TexToolsPanel(bpy.types.Panel):
 		#----------- Baking -------------
 		col = box.column(align=True)
 		sets = utilities_bake.get_bake_pairs()
+
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
 		col.separator()
 		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon = 'RENDER_STILL');
-		col.prop(context.scene.texToolsSettings, "samples")
-		col.prop(context.scene.texToolsSettings, "ray_distance")
+
+		# Optional Parameters
+		for set in sets:
+			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
+				col.prop(context.scene.texToolsSettings, "ray_distance")
+				break		
+		if settings.bake_mode == 'ao':
+			col.prop(context.scene.texToolsSettings, "samples")
 		
 
 		row = box.row(align=True)
@@ -308,33 +315,6 @@ class TexToolsPanel(bpy.types.Panel):
 				r.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
 			else:
 				r.label(text="")
-
-		# box = col.box()
-		# for set in sets:
-		# 	row = box.row(align=True)
-		# 	row.label(text="{}".format(set.name) )
-
-		# 	# box_icons = row.box()
-		# 	# row = box_icons.row(align=True)
-		# 	# row.alignment = 'LEFT'
-		# 	if len(set.objects_low) > 0:
-		# 		row.label(text="{}".format(len(set.objects_low)), icon_value = getIcon("bake_obj_low"))
-		# 	else:
-		# 		row.label(text="")
-
-		# 	if len(set.objects_high) > 0:
-		# 		row.label(text="{}".format(len(set.objects_high)), icon_value = getIcon("bake_obj_high"))
-		# 	else:
-		# 		row.label(text="")
-
-		# 	if len(set.objects_cage) > 0:
-		# 		row.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
-		# 	else:
-		# 		row.label(text="")
-
-		
-		# row.prop(context.scene.texToolsSettings, "baking_do_save")		
-
 
 		layout.alert = False
 

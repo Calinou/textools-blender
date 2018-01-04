@@ -5,6 +5,10 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 ![](http://renderhjs.net/textools/blender/img/screenshot_version_0.3.0.png)
 
 
+## Download ##
+* [Blender TexTools 0.6.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.6.0.zip)
+* [Blender TexTools 0.3.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.3.0.zip)
+
 ## Additional links ##
 * PayPal [Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6) for those that like doing that
 * [Git repository](https://bitbucket.org/renderhjs/textools-blender) on BitBucket
@@ -16,7 +20,7 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 
 ## Installation ##
 
-1. **Download** [Blender TexTools 0.3.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.3.0.zip)
+1. Download TexTools for Blender
 2. In Blender from the **File** menu open **User Preferences** ![](http://renderhjs.net/textools/blender/img/installation_open_preferences.png) 
 3. Go to the **Add-ons** tab ![](http://renderhjs.net/textools/blender/img/installation_addons.png).
 4. Hit **Install Addon-on from File...** ![](http://renderhjs.net/textools/blender/img/installation_install_addon_from_file.png) and Select the zip file.
@@ -150,3 +154,6 @@ Enable this when you want all selected objects to be baked into a single texture
 1. Press Ctrl + Alt + D for the debug value panel
 2. Set the value other than '0'
 3. Protoype tools should be shown in red in the interface
+
+![](http://renderhjs.net/textools/blender/img/screenshot_debug_menu.png)
+

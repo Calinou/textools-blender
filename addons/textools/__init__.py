@@ -18,7 +18,7 @@ bl_info = {
 	"name": "TexTools",
 	"description": "UV and texture Tools for Blender. Based on ideas of the original TexTools for 3dsMax. See the documentation ",
 	"author": "renderhjs",
-	"version": (0, 3, 0),
+	"version": (0, 6, 0),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > Misc : TexTools panel",
@@ -153,7 +153,13 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 1,
 		max = 4000
 	)
-
+	ray_distance = bpy.props.FloatProperty(
+		name = "Ray Dist.",
+		description = "Ray distance when baking. When using cage used as extrude distance",
+		default = 0.01,
+		min = 0.000,
+		max = 100.00
+	)
 	baking_do_save = bpy.props.BoolProperty(
 		name="Save",
     	description="Save the baked texture?",
@@ -276,7 +282,8 @@ class TexToolsPanel(bpy.types.Panel):
 
 		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon = 'RENDER_STILL');
 		col.prop(context.scene.texToolsSettings, "samples")
-	
+		col.prop(context.scene.texToolsSettings, "ray_distance")
+		
 	
 		for set in sets:
 			row = col.row(align=True)

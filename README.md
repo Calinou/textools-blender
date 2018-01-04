@@ -99,3 +99,22 @@ Assigns a checker map to the selected object or cycles through 2 checker maps. W
 ![](http://renderhjs.net/textools/blender/img/op_textures_reload.png)
 
 Reload all textures in the current blend file
+
+
+---
+
+# Developer notes #
+
+## Using GIT source version in Blender ##
+1. Goto user preferences (Ctrl + Alt + U)
+2. In the **'File'** tab set the 'Scripts' path to '{GIT Path}\' so that blender will pick up 'addons' folder
+3. In the **'Add-ons' ** tab enable TexTools
+
+## Enable debug features ##
+1.) Press Ctrl + Alt + D for the debug value panel
+2.) Set the value other than '0'
+
+* [Git repository](https://bitbucket.org/renderhjs/textools-blender) on BitBucket
+* [3dsMax version](http://renderhjs.net/textools/) of TexTools
+* Blenderartist [discussion](https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender)
+* personal website [discussion](renderhjs.net)

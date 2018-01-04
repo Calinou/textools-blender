@@ -59,8 +59,8 @@ class op_bake(bpy.types.Operator):
 		execute_render(
 			self, context, settings.bake_mode, 
 			bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1], 
-			bpy.context.scene.texToolsSettings.samples,
-			bpy.context.scene.texToolsSettings.ray_distance
+			bpy.context.scene.texToolsSettings.bake_samples,
+			bpy.context.scene.texToolsSettings.bake_ray_distance
 		)
 		# utilities_bake.restore_bake_settings()
 		return {'FINISHED'}
@@ -186,7 +186,7 @@ def cycles_bake(mode, samples, ray_distance, isMulti, obj_cage):
 		bpy.context.scene.cycles.samples = 1
 
 	# Bake margin to texture size to fully bleed out
-	if mode == 'id':
+	if mode == 'id' or bpy.context.scene.texToolsSettings.bake_force_single:
 		bpy.context.scene.render.bake.margin = bpy.context.scene.texToolsSettings.padding
 	else:
 		bpy.context.scene.render.bake.margin = max(bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1])
@@ -200,9 +200,9 @@ def cycles_bake(mode, samples, ray_distance, isMulti, obj_cage):
 
 	# Bake with Cage?
 	if obj_cage is None:
-		bpy.ops.object.bake(type=bake_type, use_clear=True, cage_extrusion=ray_distance, use_selected_to_active=isMulti, normal_space='OBJECT')
+		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_selected_to_active=isMulti, normal_space='OBJECT')
 	else:
-		bpy.ops.object.bake(type=bake_type, use_clear=True, cage_extrusion=ray_distance, use_cage=True, cage_object=obj_cage.name, use_selected_to_active=isMulti, normal_space='OBJECT')
+		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_cage=True, cage_object=obj_cage.name, use_selected_to_active=isMulti, normal_space='OBJECT')
 
 
 

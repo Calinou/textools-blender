@@ -16,12 +16,12 @@
 
 bl_info = {
 	"name": "TexTools",
-	"description": "UV and texture Tools for Blender. Based on ideas of the original TexTools for 3dsMax. See the documentation ",
+	"description": "UV and texture Tools for Blender, based on ideas of the original TexTools for 3dsMax.",
 	"author": "renderhjs",
 	"version": (0, 6, 0),
 	"blender": (2, 79, 0),
 	"category": "UV",
-	"location": "UV Image Editor > UVs > Misc : TexTools panel",
+	"location": "UV Image Editor > UVs > TexTools panel",
 	"warning": "Early release, expect bugs and missing features.",
 	"wiki_url": "https://bitbucket.org/renderhjs/textools-blender"
 }
@@ -50,8 +50,7 @@ if "bpy" in locals():
 	imp.reload(op_island_rotate_90)
 	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
-	
-	
+
 	
 else:
 	from . import utilities_gui
@@ -84,13 +83,27 @@ import string
 import bpy.utils.previews
 
 from bpy.props import (StringProperty,
-                       BoolProperty,
-                       IntProperty,
-                       FloatProperty,
-                       FloatVectorProperty,
-                       EnumProperty,
-                       PointerProperty,
-                       )
+					   BoolProperty,
+					   IntProperty,
+					   FloatProperty,
+					   FloatVectorProperty,
+					   EnumProperty,
+					   PointerProperty,
+					   )
+
+
+class SomeAddonPrefs(bpy.types.AddonPreferences):
+	bl_idname = __name__
+	# here you define the addons customizable props
+	some_prop = bpy.props.FloatProperty(default=1.0)
+
+	# here you specify how they are drawn
+	def draw(self, context):
+		layout = self.layout
+		layout.label(text="Additional description of help")
+
+
+
 
 class op_debug(bpy.types.Operator):
 	bl_idname = "uv.textools_debug"
@@ -146,24 +159,30 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		max = 256
 	)
 	
-	samples = bpy.props.FloatProperty(
+	bake_samples = bpy.props.FloatProperty(
 		name = "Samples",
 		description = "Samples in Cycles for Baking. The higher the less noise. Default: 64",
 		default = 64,
 		min = 1,
 		max = 4000
 	)
-	ray_distance = bpy.props.FloatProperty(
+	bake_ray_distance = bpy.props.FloatProperty(
 		name = "Ray Dist.",
 		description = "Ray distance when baking. When using cage used as extrude distance",
 		default = 0.01,
 		min = 0.000,
 		max = 100.00
 	)
-	baking_do_save = bpy.props.BoolProperty(
+	bake_force_single = bpy.props.BoolProperty(
+		name="Force Single",
+		description="Force a single texture bake accross all selected objects",
+		default = False
+	)
+
+	bake_do_save = bpy.props.BoolProperty(
 		name="Save",
-    	description="Save the baked texture?",
-    	default = False)
+		description="Save the baked texture?",
+		default = False)
 
 	id_palette = None;#bpy.types.UILayout.template_palette()
 
@@ -171,6 +190,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 
 def getIcon(name):
 	return preview_icons[name].icon_id
+
+		
 
 class TexToolsPanel(bpy.types.Panel):
 	bl_label = "TexTools"
@@ -275,21 +296,30 @@ class TexToolsPanel(bpy.types.Panel):
 		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = getIcon("textures_reload"))
 
 		#----------- Baking -------------
+		layout.separator()
+
+		row = layout.row()
+		box = row.box()
 		col = box.column(align=True)
+
 		sets = utilities_bake.get_bake_pairs()
 
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
 		col.separator()
-		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon = 'RENDER_STILL');
+		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon_value = getIcon('op_bake'));
+
+		
 
 		# Optional Parameters
+		col.prop(context.scene.texToolsSettings, "bake_force_single")
+
 		for set in sets:
 			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
-				col.prop(context.scene.texToolsSettings, "ray_distance")
+				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
 				break		
 		if settings.bake_mode == 'ao':
-			col.prop(context.scene.texToolsSettings, "samples")
+			col.prop(context.scene.texToolsSettings, "bake_samples")
 		
 
 		row = box.row(align=True)

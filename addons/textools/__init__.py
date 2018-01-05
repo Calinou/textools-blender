@@ -126,10 +126,8 @@ class op_debug(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
-		# Toggle Console (Windows only)
-		bpy.ops.wm.console_toggle()
-		# Debug Vertex indexies
-		bpy.app.debug = True
+		bpy.ops.wm.console_toggle()# Toggle Console (Windows only)
+		bpy.app.debug = True# Debug Vertex indexies
 		bpy.context.object.data.show_extra_indices = True
 		bpy.app.debug_value = 1 #Set to Non '0
 		return {'FINISHED'}
@@ -159,7 +157,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('512', '512', ''), 
 		('1024', '1024', ''), 
 		('2048', '2048', ''), 
-		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024')
+		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024'
+	)
 
 	#Padding
 	padding = bpy.props.IntProperty(
@@ -188,6 +187,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name="Force Single",
 		description="Force a single texture bake accross all selected objects",
 		default = False
+	)
+	bake_sampling = bpy.props.EnumProperty(items= 
+		[('1', 'None', 'No Anti Aliasing (Fast)'), 
+		('2', '2x', 'Render 2x and downsample'), 
+		('4', '4x', 'Render 2x and downsample')], name = "AA", default = '1'
 	)
 
 	bake_do_save = bpy.props.BoolProperty(
@@ -225,7 +229,7 @@ class TexToolsPanel(bpy.types.Panel):
 		row = layout.row()
 		col = row.column(align=True)
 		col.prop(context.scene.texToolsSettings, "size_dropdown", text="Size")
-
+		
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
@@ -318,13 +322,12 @@ class TexToolsPanel(bpy.types.Panel):
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
 		col.separator()
-		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon_value = getIcon('op_bake'));
-
-		
+		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon_value = getIcon("op_bake"));
+		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =getIcon("bake_anti_alias"))
 
 		# Optional Parameters
 		col.prop(context.scene.texToolsSettings, "bake_force_single")
-
+		
 		for set in sets:
 			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
 				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
@@ -417,6 +420,7 @@ def register():
 	registerIcon("bake_obj_low.png")
 	registerIcon("bake_obj_high.png")
 	registerIcon("bake_obj_cage.png")
+	registerIcon("bake_anti_alias.png")
 	registerIcon("explode.png")
 	
 

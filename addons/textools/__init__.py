@@ -39,6 +39,7 @@ if "bpy" in locals():
 	imp.reload(op_align)
 	imp.reload(op_textures_reload)
 	imp.reload(op_bake)
+	imp.reload(op_bake_explode)
 	imp.reload(op_swap_uv_xyz)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_select_islands_identical)
@@ -62,6 +63,7 @@ else:
 	from . import op_align
 	from . import op_textures_reload
 	from . import op_bake
+	from . import op_bake_explode
 	from . import op_swap_uv_xyz
 	from . import op_island_align_edge
 	from . import op_select_islands_identical
@@ -322,11 +324,12 @@ class TexToolsPanel(bpy.types.Panel):
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
 		col.separator()
-		col.operator(op_bake.op_bake.bl_idname, text = "Bake", icon_value = getIcon("op_bake"));
+		col.operator(op_bake.op.bl_idname, text = "Bake", icon_value = getIcon("op_bake"));
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =getIcon("bake_anti_alias"))
 
 		# Optional Parameters
 		col.prop(context.scene.texToolsSettings, "bake_force_single")
+		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake"));
 		
 		for set in sets:
 			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
@@ -360,8 +363,8 @@ class TexToolsPanel(bpy.types.Panel):
 			else:
 				r.label(text="")
 
-		layout.alert = False
-
+		# .alert = False
+		
 		#---------- ID Colors ------------
 		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists
 		#Example assign vertex colors: https://blender.stackexchange.com/questions/30841/how-to-view-vertex-colors

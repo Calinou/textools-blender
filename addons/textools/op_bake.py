@@ -42,7 +42,7 @@ def execute_setup_material(context):
 
 
 
-class op_bake(bpy.types.Operator):
+class op(bpy.types.Operator):
 	bl_idname = "uv.textools_bake"
 	bl_label = "Bake"
 	bl_description = "Bake selected objects"

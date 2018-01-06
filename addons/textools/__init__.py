@@ -338,6 +338,7 @@ class TexToolsPanel(bpy.types.Panel):
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =getIcon("bake_anti_alias"))
 		
 		row = col.row(align=True)
+		row.active = len(settings.sets) > 0
 		row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single")
 		if len(settings.sets) > 0 and bpy.context.scene.texToolsSettings.bake_force_single:
 			row.label(text="'{}'".format(settings.sets[0].name))
@@ -350,10 +351,10 @@ class TexToolsPanel(bpy.types.Panel):
 		# Bake Mode
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
-		col.separator()
 		
-		
+
 		# Optional Parameters
+		col.separator()
 		for set in settings.sets:
 			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
 				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
@@ -395,10 +396,11 @@ class TexToolsPanel(bpy.types.Panel):
 			else:
 				r.label(text="")
 		
-		# box.separator()
+		# Freeze Selection
+		row = box.row()
+		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
 		icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
-		box.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
-
+		row.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
 
 		if bpy.app.debug_value != 0:
 			box.alert = True

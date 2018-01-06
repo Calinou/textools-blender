@@ -10,16 +10,6 @@ from mathutils import Color
 from . import settings
 from . import utilities_bake
 
-# Get last-loaded material, such as ~.002.
-# def _getAppendedMaterial(material_name):
-#     # Get material name list.
-#     material_names = [m.name for m in bpy.data.materials if material_name in m.name]
-#     # Return last material in the sorted order.
-#     material_names.sort()
-#     return material_names[-1]
-
-
-
 
 class op_setup_material(bpy.types.Operator):
 	bl_idname = "uv.textools_bake_setup_material"
@@ -49,7 +39,7 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if len(bpy.context.selected_objects) == 0:
+		if len(settings.sets) == 0:
 			return False
 
 		return True

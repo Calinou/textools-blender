@@ -6,15 +6,21 @@ from collections import defaultdict
 from math import pi
 
 
-material_name = "TT_checkerMap_material"
-texture_name = "TT_checkerMap_texture"
+name_material = "TT_checkerMap_material"
+name_texture = "TT_checkerMap_texture"
+name_node = "TT_checkerMap_node"
+
+names_checkermap = [
+	"TT_checkermap_A", 
+	"TT_checkermap_B"
+]
 
 class op(bpy.types.Operator):
 	"""UV Operator description"""
 	bl_idname = "uv.textools_texture_checker"
 	bl_label = "Checker Map"
 	bl_description = "Add a checker map to the selected model and UV view"
-	# bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {'REGISTER', 'UNDO'}
 	
 	@classmethod
 	def poll(cls, context):
@@ -30,23 +36,86 @@ class op(bpy.types.Operator):
 
 def main(context):
 
-	# name = get_texture()
+	if bpy.context.scene.render.engine != 'CYCLES':
+		bpy.context.scene.render.engine = 'CYCLES'
+
+	
+	#Change View mode to TEXTURED
+	for area in bpy.context.screen.areas: # iterate through areas in current screen
+		if area.type == 'VIEW_3D':
+			for space in area.spaces: # iterate through spaces in current VIEW_3D area
+				if space.type == 'VIEW_3D': # check if space is a 3D view
+					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
+					space.show_textured_shadeless = True
+
+
+
+
+	# Setup Material
+	material = None
+	if name_material in bpy.data.materials:
+		material = bpy.data.materials[name_material]
+	else:
+		material = bpy.data.materials.new(name_material)
+		material.use_nodes = True
+
+	if material == None:
+		return
+
+	# Assign material
+	if len(bpy.context.object.data.materials) > 0:
+		bpy.context.object.data.materials[0] = material
+	else:
+		bpy.context.object.data.materials.append(material)
+
+
+	# Setup Node
+	tree = material.node_tree
+	node = None
+	if name_node in tree.nodes:
+		node = tree.nodes[name_node]
+	else:
+		node = tree.nodes.new("ShaderNodeTexImage")
+	node.name = name_node
+	node.select = True
+	tree.nodes.active = node
+
+	
+	# Setup Image
+	if node.image == None:
+		node.image = get_image( names_checkermap[0] )
+
+	else:
+		print("Current image? {}".format(node.image.name))
+		if node.image.name not in names_checkermap:
+			node.image = get_image( names_checkermap[0] )
+		else:
+			# Cycle to next image
+			index = (names_checkermap.index(node.image.name)+ 1) % len(names_checkermap)
+			node.image = get_image( names_checkermap[index] )
 
 	
 
-	materials = bpy.context.object.data.materials
-	print("Checkermap, materials {}x".format(len(materials)))
-
-	if len(materials) > 0:
-		print("Yes materials")
 
 
 
 
 
 
+def get_image(name):
 
-
+	#Get Image
+	image = None
+	if bpy.data.images.get(name) is not None:
+  		image = bpy.data.images[name];
+	else:
+		#Load image
+		pathTexture = icons_dir = os.path.join(os.path.dirname(__file__), "resources/{}.png".format(name))
+		image = bpy.ops.image.open(filepath=pathTexture, relative_path=False)
+		bpy.data.images["{}.png".format(name)].name = name #remove extension in name
+		image = bpy.data.images[name];
+	
+	return image
 
 
 
@@ -89,7 +158,7 @@ def main(context):
 # 	else:
 # 		for slot in bpy.context.object.material_slots:
 # 			if slot.material is not None:
-# 				if material_name in slot.material.name:
+# 				if name_material in slot.material.name:
 # 					for tex_slot in slot.material.texture_slots:
 # 						if tex_slot is not None:
 # 							if tex_slot.texture is not None:
@@ -121,10 +190,10 @@ def set_texture(name):
 
 	# bpy.context.object.active_material.use_shadeless = True
 	mat = None
-	if bpy.data.materials.get(material_name) is not None:
-		mat = bpy.data.materials[material_name]
+	if bpy.data.materials.get(name_material) is not None:
+		mat = bpy.data.materials[name_material]
 	else:
-		mat = bpy.data.materials.new(material_name)
+		mat = bpy.data.materials.new(name_material)
 
 	mat.diffuse_color = (0.5,0.5,0.5)
 	mat.diffuse_shader = 'LAMBERT' 
@@ -138,10 +207,10 @@ def set_texture(name):
 
 
 	imageTexture = None
-	if bpy.data.textures.get(texture_name) is not None:
-		imageTexture = bpy.data.textures.get(texture_name)
+	if bpy.data.textures.get(name_texture) is not None:
+		imageTexture = bpy.data.textures.get(name_texture)
 	else:
-		imageTexture = bpy.data.textures.new(texture_name, type = 'IMAGE')
+		imageTexture = bpy.data.textures.new(name_texture, type = 'IMAGE')
 	imageTexture.image = image
 
 	# Add texture slot for color texture
@@ -169,12 +238,7 @@ def set_texture(name):
 
 		obj.active_material = mat
 
-	#Change View mode to TEXTURED
-	for area in bpy.context.screen.areas: # iterate through areas in current screen
-		if area.type == 'VIEW_3D':
-			for space in area.spaces: # iterate through spaces in current VIEW_3D area
-				if space.type == 'VIEW_3D': # check if space is a 3D view
-					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
+	
 
 '''
 

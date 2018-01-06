@@ -149,10 +149,15 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 			print("ERROR, need spare material to setup active image texture to bake!!!")
 		else:
 			tree = set.objects_low[0].data.materials[0].node_tree
-			node = tree.nodes.new("ShaderNodeTexImage")
+
+			node = None
+			if "checkermap" in tree.nodes:
+				node = tree.nodes["checkermap"]
+			else:
+				node = tree.nodes.new("ShaderNodeTexImage")
+			node.name = "checkermap"
 			node.select = True
 			node.image = image
-			node.name = "TT_bake_image"
 			tree.nodes.active = node
 
 

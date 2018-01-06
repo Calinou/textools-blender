@@ -32,19 +32,26 @@ def restore_bake_settings():
 def get_bake_name(obj):
 	name = obj.name.lower()
 	
+	# Split by ' ','_','.' etc.
 	split = name
 	for char in split_chars:
 		split = split.replace(char,' ')
 	strings = split.split(' ')
 
+	# Remove all keys from name
 	keys = keywords_cage+keywords_high+keywords_low
-
+	new_strings = []
 	for string in strings:
+		is_found = False
 		for key in keys:
 			if string == key:
-				name = name.replace(key, '')
+				is_found = True
+				break
+		if not is_found:
+			new_strings.append(string)
 
-	return name.strip()
+	return "_".join(new_strings)
+
 
 
 def get_bake_type(obj):

@@ -73,8 +73,8 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		bpy.context.scene.render.engine = 'CYCLES'
 	bpy.context.scene.cycles.samples = samples
 
-	if bpy.context.object not in bpy.context.selected_objects:
-		bpy.context.object = bpy.context.selected_objects[0]
+	if bpy.context.scene.objects.active not in bpy.context.selected_objects:
+		bpy.context.scene.objects.active = bpy.context.selected_objects[0]
 
 	if bpy.context.object.mode != 'OBJECT':
 		bpy.ops.object.mode_set(mode='OBJECT')

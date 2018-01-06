@@ -195,6 +195,12 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('2', '2x', 'Render 2x and downsample'), 
 		('4', '4x', 'Render 2x and downsample')], name = "AA", default = '1'
 	)
+	bake_freeze_selection = bpy.props.BoolProperty(
+		name="Freeze Selection",
+		description="When frozen baking sets are not updated",
+		default = False
+	)
+
 
 	bake_do_save = bpy.props.BoolProperty(
 		name="Save",
@@ -208,7 +214,6 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 def getIcon(name):
 	return preview_icons[name].icon_id
 
-		
 
 class TexToolsPanel(bpy.types.Panel):
 	bl_label = "TexTools"
@@ -319,21 +324,23 @@ class TexToolsPanel(bpy.types.Panel):
 		box = row.box()
 		col = box.column(align=True)
 
-		sets = utilities_bake.get_bake_pairs()
+		if not bpy.context.scene.texToolsSettings.bake_freeze_selection:
+			# Update sets
+			settings.sets = utilities_bake.get_bake_pairs()
 
 		# Bake Button, Samples, Single option
 		count = 0
-		if bpy.context.scene.texToolsSettings.bake_force_single and len(sets) > 0:
+		if bpy.context.scene.texToolsSettings.bake_force_single and len(settings.sets) > 0:
 			count = 1
 		else:
-			count = len(sets)
+			count = len(settings.sets)
 		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = getIcon("op_bake"));
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =getIcon("bake_anti_alias"))
 		
 		row = col.row(align=True)
 		row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single")
-		if len(sets) > 0 and bpy.context.scene.texToolsSettings.bake_force_single:
-			row.label(text="'{}'".format(sets[0].name))
+		if len(settings.sets) > 0 and bpy.context.scene.texToolsSettings.bake_force_single:
+			row.label(text="'{}'".format(settings.sets[0].name))
 		else:
 			row.label(text="")
 
@@ -347,7 +354,7 @@ class TexToolsPanel(bpy.types.Panel):
 		
 		
 		# Optional Parameters
-		for set in sets:
+		for set in settings.sets:
 			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
 				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
 				break		
@@ -356,23 +363,21 @@ class TexToolsPanel(bpy.types.Panel):
 			col.prop(context.scene.texToolsSettings, "bake_samples")
 		
 
-		
-
 
 		# List bake sets
-		row = box.row(align=True)
+		row = box.row()
 		split = row.split(percentage=0.4)
 		c = split.column()
 
-		for s in range(0, len(sets)):
-			set = sets[s]
+		for s in range(0, len(settings.sets)):
+			set = settings.sets[s]
 			r = c.row()
 			r.active = not (bpy.context.scene.texToolsSettings.bake_force_single and s > 0)
 			r.label(text=set.name)
 
 
 		c = split.column()
-		for set in sets:
+		for set in settings.sets:
 			r = c.row(align=True)
 
 			if len(set.objects_low) > 0:
@@ -390,12 +395,18 @@ class TexToolsPanel(bpy.types.Panel):
 			else:
 				r.label(text="")
 		
-			
+		# box.separator()
+		icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
+		box.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
 
 
-		box.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
+		if bpy.app.debug_value != 0:
+			box.alert = True
+			box.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
 		
-		# .alert = False
+		
+
+		# 
 		
 		#---------- ID Colors ------------
 		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists

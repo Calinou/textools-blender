@@ -24,6 +24,6 @@ class op(bpy.types.Operator):
 		return {'FINISHED'}
 
 def explode():
-	sets = utilities_bake.get_bake_pairs()
+	sets = settings.sets
 	for set in sets:
 		print("Explode '{}'".format(set.name))

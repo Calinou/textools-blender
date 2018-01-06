@@ -12,3 +12,4 @@ selection_face_indexies = []
 
 bake_mode = 'UNDEFINED'
 bake_render_engine = ''
+bake_sets = []

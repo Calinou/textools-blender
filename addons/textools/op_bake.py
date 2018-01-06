@@ -83,12 +83,15 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		bpy.context.scene.render.engine = 'CYCLES'
 	bpy.context.scene.cycles.samples = samples
 
+	if bpy.context.object not in bpy.context.selected_objects:
+		bpy.context.object = bpy.context.selected_objects[0]
+
 	if bpy.context.object.mode != 'OBJECT':
 		bpy.ops.object.mode_set(mode='OBJECT')
 
 	
 	# Get the baking sets / pairs
-	sets = utilities_bake.get_bake_pairs()
+	sets = settings.sets
 
 	print("________________________________\nBake {}x '{}' at {} x {}".format(len(sets), mode, width, height))
 
@@ -224,14 +227,10 @@ def cycles_bake(mode, samples, ray_distance, isMulti, obj_cage):
 	else:
 		bpy.context.scene.cycles.samples = 1
 
-	# Bake margin to texture size to fully bleed out
-	if mode == 'id' or bpy.context.scene.texToolsSettings.bake_force_single:
-		bpy.context.scene.render.bake.margin = bpy.context.scene.texToolsSettings.padding
-	else:
-		bpy.context.scene.render.bake.margin = max(bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1])
+	bpy.context.scene.render.bake.margin = bpy.context.scene.texToolsSettings.padding
 
 	# Bake Type
-	bake_type = 'EMIT'
+	bake_type = 'EMIT' #DEFAULT
 	if mode == 'ao':
 		bake_type = 'AO'
 	elif mode == 'normal':
@@ -263,7 +262,6 @@ def assign_material(obj, material):
 		obj.data.materials.append(material)
 	else:
 		obj.data.materials[0] = material
-
 
 
 

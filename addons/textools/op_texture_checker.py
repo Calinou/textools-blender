@@ -14,10 +14,13 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_texture_checker"
 	bl_label = "Checker Map"
 	bl_description = "Add a checker map to the selected model and UV view"
-	bl_options = {'REGISTER', 'UNDO'}
+	# bl_options = {'REGISTER', 'UNDO'}
 	
 	@classmethod
 	def poll(cls, context):
+		if bpy.context.object == None:
+			return False
+
 		return True
 
 	def execute(self, context):
@@ -27,47 +30,75 @@ class op(bpy.types.Operator):
 
 def main(context):
 
-	name = get_texture()
+	# name = get_texture()
 
-	print("Name --> '"+name+"'")
+	
 
-	if name == "":
-		set_texture("TT_checkermap_A")
+	materials = bpy.context.object.data.materials
+	print("Checkermap, materials {}x".format(len(materials)))
 
-	elif name == "TT_checkermap_A":
-		set_texture("TT_checkermap_B")
+	if len(materials) > 0:
+		print("Yes materials")
 
-	elif name == "TT_checkermap_B":
-		set_texture("TT_checkermap_A")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	# if name == "":
+	# 	set_texture("TT_checkermap_A")
+
+	# elif name == "TT_checkermap_A":
+	# 	set_texture("TT_checkermap_B")
+
+	# elif name == "TT_checkermap_B":
+		# set_texture("TT_checkermap_A")
 		# print("Destroy material and remove")
 
 
-def get_material():
 
 
 
-	return None
 
 
-def get_texture():
-	print("get_texture")
 
-	if len(bpy.context.object.material_slots) == 0:
-		return ""
-	else:
-		for slot in bpy.context.object.material_slots:
-			if slot.material is not None:
-				if material_name in slot.material.name:
-					for tex_slot in slot.material.texture_slots:
-						if tex_slot is not None:
-							if tex_slot.texture is not None:
-								if tex_slot.texture.image is not None:
-									return tex_slot.texture.image.name;
 
+# def get_material():
+	# return None
+
+
+# def get_texture():
+# 	print("get_texture")
+
+# 	if len(bpy.context.object.material_slots) == 0:
+# 		return ""
+# 	else:
+# 		for slot in bpy.context.object.material_slots:
+# 			if slot.material is not None:
+# 				if material_name in slot.material.name:
+# 					for tex_slot in slot.material.texture_slots:
+# 						if tex_slot is not None:
+# 							if tex_slot.texture is not None:
+# 								if tex_slot.texture.image is not None:
+# 									return tex_slot.texture.image.name;
 	return ""
 
 
-
+'''
 def set_texture(name):
 	print("set_texture")
 	# idImage = "TT_checkerMap"
@@ -145,5 +176,5 @@ def set_texture(name):
 				if space.type == 'VIEW_3D': # check if space is a 3D view
 					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
 
-
+'''
 

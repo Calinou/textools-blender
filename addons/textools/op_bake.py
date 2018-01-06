@@ -114,8 +114,13 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		# Assign Material(s))
 		material = get_material(mode)
 
-		material_empty = bpy.data.materials.new(name="bakemat")
+		material_empty = None
+		if "TT_bake_node" in bpy.data.materials:
+			material_empty = material_empty = bpy.data.materials["TT_bake_node"]
+		else:
+			material_empty = bpy.data.materials.new(name="TT_bake_node")
 		material_empty.use_nodes = True
+
 
 		if len(set.objects_high) == 0:
 			# Assign material to lowpoly

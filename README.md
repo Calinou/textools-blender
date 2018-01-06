@@ -140,7 +140,7 @@ Anti Aliasing level, choose from: None, 2x and 4x. When you enable Anti Aliasing
 
 
 #### Single
-With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. This is great for multi part objects or exploded bake setups.
+With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. It uses the name or ID from the first item in the bake set list. This is great for multi part objects or exploded bake setups.
 
 
 #### Lock Selection

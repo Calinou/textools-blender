@@ -18,7 +18,7 @@ bl_info = {
 	"name": "TexTools",
 	"description": "UV and texture Tools for Blender, based on ideas of the original TexTools for 3dsMax.",
 	"author": "renderhjs",
-	"version": (0, 6, 0),
+	"version": (0, 7, 0),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
@@ -186,7 +186,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		max = 100.00
 	)
 	bake_force_single = bpy.props.BoolProperty(
-		name="Force Single",
+		name="Single Texture",
 		description="Force a single texture bake accross all selected objects",
 		default = False
 	)
@@ -321,33 +321,60 @@ class TexToolsPanel(bpy.types.Panel):
 
 		sets = utilities_bake.get_bake_pairs()
 
+		# Bake Button, Samples, Single option
+		count = 0
+		if bpy.context.scene.texToolsSettings.bake_force_single and len(sets) > 0:
+			count = 1
+		else:
+			count = len(sets)
+		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = getIcon("op_bake"));
+		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =getIcon("bake_anti_alias"))
+		
+		row = col.row(align=True)
+		row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single")
+		if len(sets) > 0 and bpy.context.scene.texToolsSettings.bake_force_single:
+			row.label(text="'{}'".format(sets[0].name))
+		else:
+			row.label(text="")
+
+		col.separator()
+
+
+		# Bake Mode
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
 		col.separator()
-		col.operator(op_bake.op.bl_idname, text = "Bake", icon_value = getIcon("op_bake"));
-		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =getIcon("bake_anti_alias"))
-
-		# Optional Parameters
-		col.prop(context.scene.texToolsSettings, "bake_force_single")
-		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake"));
 		
+		
+		# Optional Parameters
 		for set in sets:
 			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
 				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
 				break		
+		
 		if settings.bake_mode == 'ao':
 			col.prop(context.scene.texToolsSettings, "bake_samples")
 		
 
+		
+
+
+		# List bake sets
 		row = box.row(align=True)
 		split = row.split(percentage=0.4)
 		c = split.column()
-		for set in sets:
-			c.label(text=set.name)
+
+		for s in range(0, len(sets)):
+			set = sets[s]
+			r = c.row()
+			r.active = not (bpy.context.scene.texToolsSettings.bake_force_single and s > 0)
+			r.label(text=set.name)
+
 
 		c = split.column()
 		for set in sets:
 			r = c.row(align=True)
+
 			if len(set.objects_low) > 0:
 				r.label(text="{}".format(len(set.objects_low)), icon_value = getIcon("bake_obj_low"))
 			else:
@@ -362,7 +389,12 @@ class TexToolsPanel(bpy.types.Panel):
 				r.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
 			else:
 				r.label(text="")
+		
+			
 
+
+		box.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
+		
 		# .alert = False
 		
 		#---------- ID Colors ------------
@@ -420,6 +452,7 @@ def register():
 	registerIcon("islands_select_identical.png")
 	registerIcon("islands_select_overlapping.png")
 	registerIcon("op_bake.png")
+	registerIcon("op_bake_explode.png")
 	registerIcon("bake_obj_low.png")
 	registerIcon("bake_obj_high.png")
 	registerIcon("bake_obj_cage.png")

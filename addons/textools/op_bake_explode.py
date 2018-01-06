@@ -8,8 +8,8 @@ from math import pi
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_bake_explode"
-	bl_label = "Swap UV 2 XYZ"
-	bl_description = "Swap UV to XYZ coordinates"
+	bl_label = "Explode"
+	bl_description = "Explode selected bake pairs with animation keyframes"
 
 
 	@classmethod
@@ -23,3 +23,7 @@ class op(bpy.types.Operator):
 		# swap(context)
 		return {'FINISHED'}
 
+def explode():
+	sets = utilities_bake.get_bake_pairs()
+	for set in sets:
+		print("Explode '{}'".format(set.name))

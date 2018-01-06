@@ -56,9 +56,18 @@ class op(bpy.types.Operator):
 
 	def execute(self, context):
 		utilities_bake.store_bake_settings()
+
+
+		print("--->: "+str())
+
+
 		execute_render(
 			self, context, settings.bake_mode, 
 			bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1], 
+			bpy.context.scene.texToolsSettings.bake_force_single,
+
+			int(bpy.context.scene.texToolsSettings.bake_sampling),
+
 			bpy.context.scene.texToolsSettings.bake_samples,
 			bpy.context.scene.texToolsSettings.bake_ray_distance
 		)
@@ -67,11 +76,7 @@ class op(bpy.types.Operator):
 
 
 
-
-
-
-
-def execute_render(self, context, mode, width, height, samples, ray_distance):
+def execute_render(self, context, mode, width, height, bake_single, sampling_scale, samples, ray_distance):
 
 	# Setup
 	if bpy.context.scene.render.engine != 'CYCLES':
@@ -82,20 +87,29 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 		bpy.ops.object.mode_set(mode='OBJECT')
 
 	
-
-
+	# Get the baking sets / pairs
 	sets = utilities_bake.get_bake_pairs()
 
-	print("________________________________\nBake {}x '{}'".format(len(sets), mode))
+	print("________________________________\nBake {}x '{}' at {} x {}".format(len(sets), mode, width, height))
 
-	for set in sets:
-		name = "{}_{}".format(set.name, mode)
-		path = bpy.path.abspath("//{}.tga".format(name))
+	render_width = sampling_scale * width
+	render_height = sampling_scale * height
+
+
+	for s in range(0,len(sets)):
+		set = sets[s]
+		name_texture = "{}_{}".format(set.name, mode)
+		if bake_single:
+			name_texture = "{}_{}".format(sets[0].name, mode)# In Single mode bake into same texture
+
+		path = bpy.path.abspath("//{}.tga".format(name_texture))
+
 
 		# Requires 1+ low poly objects
 		if len(set.objects_low) == 0:
 			self.report({'ERROR_INVALID_INPUT'}, "No low poly object as part of the '{}' set".format(set.name) )
 			return
+
 
 		# Check for UV maps
 		for obj in set.objects_low:
@@ -103,8 +117,10 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 				self.report({'ERROR_INVALID_INPUT'}, "No UV map available for '{}'".format(obj.name))
 				return
 
-		# Assign Material
+
+		# Assign Material(s))
 		material = get_material(mode)
+
 		material_empty = bpy.data.materials.new(name="bakemat")
 		material_empty.use_nodes = True
 
@@ -123,19 +139,14 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 				assign_vertex_colors(obj, mode)
 				assign_material(obj, material)
 
-		# BRM BakeUI: https://github.com/leukbaars/BRM-BakeUI/blob/master/BRM_BakeUI.py
+
+		# Setup Image
+		clear = (not bake_single) or (bake_single and s==0)
+		image = setup_image(mode, name_texture, render_width, render_height, path, clear)
+
 
 
 		# Setup Material
-		image = bpy.data.images.new(name, width=width, height=height) #context.scene.bakeWidth
-		# image = bpy.ops.image.new(name=name, width=width, height=height, color= (0.5, 0.5, 1.0, 1.0)) #context.scene.bakeWidth
-		# if mode is 'normal':
-			# image.paste(, [0,0,image.size[0],image.size[1]])
-
-
-		image.file_format = 'TARGA'
-		image.filepath_raw = path
-
 		if len(set.objects_low[0].data.materials) <= 0:
 			print("ERROR, need spare material to setup active image texture to bake!!!")
 		else:
@@ -147,7 +158,8 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 			tree.nodes.active = node
 
 
-		print("Bake {} = {}".format(set.name, name))
+		print("Bake '{}' = {}".format(set.name, path))
+
 
 		for i in range(len(set.objects_low)):
 			obj_low = set.objects_low[i]
@@ -161,20 +173,47 @@ def execute_render(self, context, mode, width, height, samples, ray_distance):
 
 			cycles_bake(mode, samples, ray_distance, len(set.objects_high) > 0, obj_cage)
 
-		# for obj_low in set.objects_low:
-		# 	# Select Objects (High first, then current low)
-		# 	bpy.ops.object.select_all(action='DESELECT')
-		# 	for obj_high in set.objects_high:
-		# 		obj_high.select = True
-		# 	obj_low.select = True
-		# 	bpy.context.scene.objects.active = obj_low
 
-		# 	print("Now bake '{}'".format(path))
-		# 	cycles_bake(mode, samples, len(set.objects_high) > 0, None if set)
+		# Downsample image?
+		if not bake_single or (bake_single and s == len(sets)-1):
+			# When baking single, only downsample on last bake
+			if render_width != width or render_height != height:
+				image.scale(width,height)
 			
+			# image.save()
+		
 
-		# 
-		# image.save()
+
+def setup_image(mode, name, width, height, path, clear):#
+	image = None
+
+
+	if name not in bpy.data.images:
+		# Create new image
+		image = bpy.data.images.new(name, width=width, height=height)
+		
+	else:
+		# Reuse existing Image
+		image = bpy.data.images[name]
+		# Reisze?
+		if image.size[0] != width or image.size[1] != height or image.generated_width != width or image.generated_height != height:
+			image.generated_width = width
+			image.generated_height = height
+			image.scale(width, height)
+
+	# Fill with plain color
+	if clear:
+		if mode == 'normal':
+			image.generated_color = (0.5, 0.5, 1, 1)
+		else:
+			image.generated_color = (0.23, 0.23, 0.23, 1)
+		image.generated_type = 'BLANK'
+
+
+	image.file_format = 'TARGA'
+	image.filepath_raw = path
+
+	return image
 
 
 

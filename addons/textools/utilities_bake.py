@@ -90,9 +90,6 @@ def get_bake_type(obj):
 
 
 def get_bake_pairs():
-	# Force all selected into single set?
-	is_force_single = bpy.context.scene.texToolsSettings.bake_force_single
-
 	filtered = {}
 	for obj in bpy.context.selected_objects:
 		if obj.type == 'MESH':
@@ -106,21 +103,16 @@ def get_bake_pairs():
 		if len(groups)==0:
 			groups.append([key])
 		else:
-			if is_force_single:
-				# Force all into the first group
-				groups[-1].append(key)
+			isFound = False
+			for group in groups:
+				groupName = get_bake_name(group[0])
+				if name == groupName:
+					group.append(key)
+					isFound = True
+					break
 
-			else:
-				isFound = False
-				for group in groups:
-					groupName = get_bake_name(group[0])
-					if name == groupName:
-						group.append(key)
-						isFound = True
-						break
-
-				if not isFound:
-					groups.append([key])
+			if not isFound:
+				groups.append([key])
 
 	bake_sets = []
 	for group in groups:

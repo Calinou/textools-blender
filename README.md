@@ -6,11 +6,13 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 
 
 ## Download ##
+* [Blender TexTools 0.7.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.7.0.zip)
 * [Blender TexTools 0.6.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.6.0.zip)
 * [Blender TexTools 0.3.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.3.0.zip)
 
 ## Additional links ##
-* PayPal [Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6) for those that like doing that
+* ![](http://renderhjs.net/textools/blender/img/paypal_donate.png)
+ PayPal [Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6) for those that like doing that
 * [Git repository](https://bitbucket.org/renderhjs/textools-blender) on BitBucket
 * [3dsMax version](http://renderhjs.net/textools/) of TexTools
 * Blenderartist [discussion thread](https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender)
@@ -118,7 +120,7 @@ Reload all textures in the current blend file
 ## Bake ##
 ![](http://renderhjs.net/textools/blender/img/op_bake.png)
 
-Baking in TexTools is **suuuper** easy, just select your objects and press Bake. A realtime set list shows you what will be baked and how many objects are part of each.
+Baking in TexTools is **super** easy, just select your objects and press Bake. A realtime set list shows you what will be baked and how many objects are part of each.
 
 ![](http://renderhjs.net/textools/blender/img/bake_sets_preview.png)
 
@@ -130,8 +132,21 @@ TexTools automatically groups your scene selection into sets to bake. Objects wi
 * ![](http://renderhjs.net/textools/blender/img/bake_obj_high.png) **High poly** objects: when they contain a **Subdevision Surface** modifier or when their name used the keyword 'high', 'highpoly' or 'h' 
 * ![](http://renderhjs.net/textools/blender/img/bake_obj_cage.png) **Cage objects**:when their name used the keyword 'cage' or 'c' . Use this for custom projection cages.
 
-#### Force Single
-Enable this when you want all selected objects to be baked into a single texture. This is great for multi part objects or exploded bake setups.
+
+#### AA / Anti Alias
+![](http://renderhjs.net/textools/blender/img/bake_anti_alias.png)
+
+Anti Aliasing level, choose from: None, 2x and 4x. When you enable Anti Aliasing the bake render is rendered at a scaled resulution and afterwards down scaled. Anti Aliasing works on any baking mode.
+
+
+#### Single
+With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. This is great for multi part objects or exploded bake setups.
+
+
+#### Lock Selection
+![](http://renderhjs.net/textools/blender/img/bake_lock_selection.png)
+
+Lock or unlock the current bake selection. When locked scene selection changes won't affect the baking list. This is great for tweaking meshes, cages or other settings while baking.
 
 
 #### Baking modes

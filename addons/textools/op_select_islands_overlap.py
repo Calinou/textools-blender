@@ -95,24 +95,6 @@ def selectOverlap(context):
 				utilities_uv.setSelectedFaces( group[i].faces )
 
 
-
-	# for i in range(0,count):
-	# 	if len(groups) == 0:
-	# 		groups.append([ islands_all[i] ])
-	# 	else:
-	# 		isFound = False
-	# 		for j in range(i, count):
-	# 			if j > i:
-	# 				A = islands_bounds[i]
-	# 				B = islands_bounds[j]
-	# 				if A.isEqual(B):
-	# 					print("Matched: {} | {}".format(i,j))
-	# 					isFound = True
-	# 					break
-
-	# 		if not isFound:
-	# 			print("..")
-
 	print("Groups: "+str(len(groups)))
 
 
@@ -128,7 +110,6 @@ class Island_bounds:
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 		uvLayer = bm.loops.layers.uv.verify();
 		
-		
 		# Collect topology stats
 		self.faces = faces
 
@@ -141,19 +122,17 @@ class Island_bounds:
 		self.min = bounds['min']
 		self.max = bounds['max']
 
-		# print("Get bounds "+str(self.center))
 
-	def isInside(self, pos, min, max):
-
-		if pos.x >= min.x and pos.x <= max.x:
-			if pos.y >= min.y and pos.y <= max.y:
-				return True
-		return False
 		
-	def isEqual(self, other):
+	def isEqual(A, B):
 
-		# Center is inside other bounds
-		if self.isInside(self.center, other.min, other.max):
+		# Bounding Box AABB intersection?
+		min_x = max(A.min.x, B.min.x)
+		min_y = max(A.min.y, B.min.y)
+		max_x = min(A.max.x, B.max.x)
+		max_y = min(A.max.y, B.max.y)
+		if not (max_x < min_x or max_y < min_y):
 			return True
+		
 
 		return False

@@ -174,7 +174,7 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 			obj_low.select = True
 			bpy.context.scene.objects.active = obj_low
 
-			cycles_bake(mode, samples, ray_distance, len(set.objects_high) > 0, obj_cage)
+			cycles_bake(mode, sampling_scale, samples, ray_distance, len(set.objects_high) > 0, obj_cage)
 
 
 		# Downsample image?
@@ -220,14 +220,15 @@ def setup_image(mode, name, width, height, path, clear):#
 
 
 
-def cycles_bake(mode, samples, ray_distance, isMulti, obj_cage):
+def cycles_bake(mode, sampling_scale, samples, ray_distance, isMulti, obj_cage):
 	# Set samples
 	if mode == 'ao' or mode == 'normal':
 		bpy.context.scene.cycles.samples = samples
 	else:
 		bpy.context.scene.cycles.samples = 1
 
-	bpy.context.scene.render.bake.margin = bpy.context.scene.texToolsSettings.padding
+	# Pixel Padding
+	bpy.context.scene.render.bake.margin = bpy.context.scene.texToolsSettings.padding * sampling_scale
 
 	# Bake Type
 	bake_type = 'EMIT' #DEFAULT

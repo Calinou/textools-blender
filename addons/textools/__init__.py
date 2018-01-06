@@ -196,7 +196,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('4', '4x', 'Render 2x and downsample')], name = "AA", default = '1'
 	)
 	bake_freeze_selection = bpy.props.BoolProperty(
-		name="Freeze Selection",
+		name="Lock Selection",
 		description="When frozen baking sets are not updated",
 		default = False
 	)

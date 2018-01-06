@@ -12,7 +12,7 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_island_relax_straighten_edges"
 	bl_label = "Relax Straight"
 	bl_description = "Relax island and straighten selected edges"
-
+	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):

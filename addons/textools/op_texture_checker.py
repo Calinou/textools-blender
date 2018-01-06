@@ -14,7 +14,8 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_texture_checker"
 	bl_label = "Checker Map"
 	bl_description = "Add a checker map to the selected model and UV view"
-
+	bl_options = {'REGISTER', 'UNDO'}
+	
 	@classmethod
 	def poll(cls, context):
 		return True

@@ -12,7 +12,7 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_select_islands_identical"
 	bl_label = "Select identical"
 	bl_description = "Select identical UV islands with similar topology"
-
+	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):

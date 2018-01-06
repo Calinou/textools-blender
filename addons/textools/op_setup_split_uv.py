@@ -11,7 +11,8 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_setup_split_uv"
 	bl_label = "Split"
 	bl_description = "Unwrap model by sharp edges of topology"
-
+	bl_options = {'REGISTER', 'UNDO'}
+	
 	@classmethod
 	def poll(cls, context):
 

@@ -12,7 +12,7 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_swap_uv_xyz"
 	bl_label = "Swap UV 2 XYZ"
 	bl_description = "Swap UV to XYZ coordinates"
-
+	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):

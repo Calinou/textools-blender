@@ -12,7 +12,8 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_faces_iron"
 	bl_label = "Iron"
 	bl_description = "Unwrap selected faces into a single UV island"
-
+	bl_options = {'REGISTER', 'UNDO'}
+	
 	@classmethod
 	def poll(cls, context):
 

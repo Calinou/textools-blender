@@ -15,7 +15,8 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_island_mirror"
 	bl_label = "Symmetry"
 	bl_description = "Mirrors selected faces to other half or averages based on selected edge center"
-
+	bl_options = {'REGISTER', 'UNDO'}
+	
 	is_stack = bpy.props.BoolProperty(description="Stack the halves on top of each other?", default=False)
 
 	@classmethod

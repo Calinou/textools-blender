@@ -12,7 +12,8 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_island_align_edge"
 	bl_label = "Align Island by Edge"
 	bl_description = "Align the island by selected edge"
-   
+	bl_options = {'REGISTER', 'UNDO'}
+	
 	@classmethod
 	def poll(cls, context):
 

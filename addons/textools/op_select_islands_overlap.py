@@ -13,7 +13,7 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_select_islands_overlap"
 	bl_label = "Select outline"
 	bl_description = "Select all overlapping UV islands"
-
+	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):

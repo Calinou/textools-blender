@@ -12,7 +12,8 @@ class op(bpy.types.Operator):
 	bl_idname = "uv.textools_island_rotate_90"
 	bl_label = "Rotate 90 degrees"
 	bl_description = "Rotate the selected UV island 90 degrees left or right"
-   
+	bl_options = {'REGISTER', 'UNDO'}
+	
 	angle = bpy.props.FloatProperty(name="Angle")
 
 
@@ -36,7 +37,10 @@ class op(bpy.types.Operator):
 		#Requires UV map
 		if not bpy.context.object.data.uv_layers:
 			return False
-
+			
+		# Not in Synced mode
+		if bpy.context.scene.tool_settings.use_uv_select_sync:
+			return False
 
 		return True
 

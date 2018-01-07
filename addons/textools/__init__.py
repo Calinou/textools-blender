@@ -40,6 +40,7 @@ if "bpy" in locals():
 	imp.reload(op_textures_reload)
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
+	imp.reload(op_bake_sort_object_names)
 	imp.reload(op_swap_uv_xyz)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_select_islands_identical)
@@ -64,6 +65,7 @@ else:
 	from . import op_textures_reload
 	from . import op_bake
 	from . import op_bake_explode
+	from . import op_bake_sort_object_names
 	from . import op_swap_uv_xyz
 	from . import op_island_align_edge
 	from . import op_select_islands_identical
@@ -326,7 +328,13 @@ class TexToolsPanel(bpy.types.Panel):
 
 		if not bpy.context.scene.texToolsSettings.bake_freeze_selection:
 			# Update sets
-			settings.sets = utilities_bake.get_bake_pairs()
+			settings.sets = utilities_bake.get_bake_sets()
+
+		if bpy.app.debug_value != 0:
+			row = col.row()
+			row.alert = True
+			row.operator(op_bake_sort_object_names.op.bl_idname)
+
 
 		# Bake Button, Samples, Single option
 		count = 0

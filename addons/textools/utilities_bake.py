@@ -96,7 +96,7 @@ def get_bake_type(obj):
 	return typ
 
 
-def get_bake_pairs():
+def get_bake_sets():
 	filtered = {}
 	for obj in bpy.context.selected_objects:
 		if obj.type == 'MESH':
@@ -120,6 +120,20 @@ def get_bake_pairs():
 
 			if not isFound:
 				groups.append([key])
+
+	# Sort groups alphabetically
+	keys = [get_bake_name(group[0]) for group in groups]
+	keys.sort()
+	sorted_groups = []
+	for key in keys:
+		for group in groups:
+			if key == get_bake_name(group[0]):
+				sorted_groups.append(group)
+				break
+				
+	groups = sorted_groups			
+	# print("Keys: "+", ".join(keys))
+
 
 	bake_sets = []
 	for group in groups:

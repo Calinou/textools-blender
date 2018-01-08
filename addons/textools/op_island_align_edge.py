@@ -39,65 +39,98 @@ class op(bpy.types.Operator):
 		if bpy.context.scene.tool_settings.uv_select_mode != 'EDGE':
 		 	return False
 
-
 		return True
 
 
 	def execute(self, context):
+		#Store selection
+		utilities_uv.selectionStore()
 
 		main(context)
+
+		#Restore selection
+		utilities_uv.selectionRestore()
+
 		return {'FINISHED'}
 
 
 def main(context):
 	print("Executing operator_island_align_edge")
-   	
-	#Store selection
-	utilities_uv.selectionStore()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 	
-	# > bmesh.from_edit_mesh(bpy.context.active_object.data).verts[0].select
-	
-	selectedVerts = []
-
+	faces_selected = [];
 	for face in bm.faces:
 		if face.select:
-			del selectedVerts[:]#Clear List
 			for loop in face.loops:
 				if loop[uvLayer].select:
-					selectedVerts.append(loop[uvLayer].uv)
-					print("Vert selected "+str(face.index))
-
-			if len(selectedVerts) >= 2:
-				print("Selected edge "+str(selectedVerts[0]))
-				break;
-			# break;
+					faces_selected.append(face)
+					break
 	
-	if len(selectedVerts) >= 2:
-		diff = selectedVerts[1] - selectedVerts[0]
-		angle = math.atan2(diff.y, diff.x)%(math.pi/2)
-		print("edges: "+str(diff)+" = "+str(angle * 180 / math.pi))
+	print("faces_selected: "+str(len(faces_selected)))
 
-		bpy.ops.uv.select_linked(extend=False)
+	# Collect 2 uv verts for each island
+	face_uvs = {}
+	for face in faces_selected:
+		uvs = []
+		for loop in face.loops:
+			if loop[uvLayer].select:
+				uvs.append(loop[uvLayer])
+				if len(uvs) >= 2:
+					break
+		if len(uvs) >= 2:
+			face_uvs[face] = uvs
 
-		bpy.context.space_data.pivot_point = 'CURSOR'
-		bpy.ops.uv.cursor_set(location=selectedVerts[0] + diff/2)
+	faces_islands = {}
+	faces_unparsed = faces_selected.copy()
+	for face in face_uvs:
+		if face in faces_unparsed:
 
-		if angle >= (math.pi/4):
-			angle = angle - (math.pi/2)
+			bpy.ops.uv.select_all(action='DESELECT')
+			face_uvs[face][0].select = True;
+			bpy.ops.uv.select_linked(extend=False)#Extend selection
+			
+			#Collect faces
+			faces_island = [face];
+			for f in faces_unparsed:
+				if f != face and f.select and f.loops[0][uvLayer].select:
+					print("append "+str(f.index))
+					faces_island.append(f)
+			for f in faces_island:
+				faces_unparsed.remove(f)
 
-		bpy.ops.transform.rotate(value=angle, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')
+			#Assign Faces to island
+			faces_islands[face] = faces_island
 
-		# angle = math.atan2
+	print("Sets: {}x".format(len(faces_islands)))
+
+	# Align each island to its edges
+	for face in faces_islands:
+		align_island(face_uvs[face][0].uv, face_uvs[face][1].uv, faces_islands[face])
 
 
-		# isUVFaceSelected = True;
-		# for loop in face.loops:
-		# 	if loop[uvLayer].select is False:
-		# 		isUVFaceSelected = False;
-		# 		continue
+def align_island(uv_vert0, uv_vert1, faces):
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+	uvLayer = bm.loops.layers.uv.verify()
 
-	#Restore selection
-	utilities_uv.selectionRestore()
+	print("Align {}x faces".format(len(faces)))
+
+	# Select faces
+	bpy.ops.uv.select_all(action='DESELECT')
+	for face in faces:
+		for loop in face.loops:
+			loop[uvLayer].select = True
+
+	diff = uv_vert1 - uv_vert0
+	angle = math.atan2(diff.y, diff.x)%(math.pi/2)
+
+	bpy.ops.uv.select_linked(extend=False)
+
+	bpy.context.space_data.pivot_point = 'CURSOR'
+	bpy.ops.uv.cursor_set(location=uv_vert0 + diff/2)
+
+	if angle >= (math.pi/4):
+		angle = angle - (math.pi/2)
+
+	bpy.ops.transform.rotate(value=angle, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')

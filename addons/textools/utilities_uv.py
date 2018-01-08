@@ -16,7 +16,11 @@ def selectionStore():
 	# print("selectionStore")
 	settings.selection_uv_mode = bpy.context.scene.tool_settings.uv_select_mode
 	settings.selection_uv_pivot = bpy.context.space_data.pivot_point
-	# https://blender.stackexchange.com/questions/3532/obtain-uv-selection-in-python
+	
+	settings.selection_uv_pivot_pos = None
+	for area in bpy.context.screen.areas:
+		if area.type == 'IMAGE_EDITOR':   #find the UVeditor
+			settings.selection_uv_pivot_pos = area.spaces.active.cursor_location
 
 	#VERT Selection
 	settings.selection_mode = tuple(bpy.context.scene.tool_settings.mesh_select_mode)
@@ -46,7 +50,11 @@ def selectionRestore():
 	# print("selectionRestore")
 	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_uv_mode
 	bpy.context.space_data.pivot_point = settings.selection_uv_pivot
-	
+
+	if settings.selection_uv_pivot_pos != None:
+		bpy.ops.uv.cursor_set(location=settings.selection_uv_pivot_pos)
+
+
 
 	bpy.ops.mesh.select_all(action='DESELECT')
 
@@ -185,4 +193,3 @@ def getSelectionIslands():
 	
 	print("Islands: {}x, {:.4f} seconds".format(len(islands), time.time() - time_A))
 	return islands
-		

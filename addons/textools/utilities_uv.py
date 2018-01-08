@@ -17,10 +17,7 @@ def selectionStore():
 	settings.selection_uv_mode = bpy.context.scene.tool_settings.uv_select_mode
 	settings.selection_uv_pivot = bpy.context.space_data.pivot_point
 	
-	settings.selection_uv_pivot_pos = None
-	for area in bpy.context.screen.areas:
-		if area.type == 'IMAGE_EDITOR':   #find the UVeditor
-			settings.selection_uv_pivot_pos = area.spaces.active.cursor_location
+	settings.selection_uv_pivot_pos = bpy.context.space_data.cursor_location.copy()
 
 	#VERT Selection
 	settings.selection_mode = tuple(bpy.context.scene.tool_settings.mesh_select_mode)
@@ -51,9 +48,7 @@ def selectionRestore():
 	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_uv_mode
 	bpy.context.space_data.pivot_point = settings.selection_uv_pivot
 
-	if settings.selection_uv_pivot_pos != None:
-		bpy.ops.uv.cursor_set(location=settings.selection_uv_pivot_pos)
-
+	bpy.ops.uv.cursor_set(location=settings.selection_uv_pivot_pos)
 
 
 	bpy.ops.mesh.select_all(action='DESELECT')

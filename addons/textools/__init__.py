@@ -382,7 +382,11 @@ class TexToolsPanel(bpy.types.Panel):
 			set = settings.sets[s]
 			r = c.row()
 			r.active = not (bpy.context.scene.texToolsSettings.bake_force_single and s > 0)
-			r.label(text=set.name)
+
+			if set.has_issues:
+				r.label(text=set.name, icon='ERROR')
+			else:
+				r.label(text=set.name)
 
 
 		c = split.column()

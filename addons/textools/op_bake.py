@@ -73,13 +73,10 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		bpy.context.scene.render.engine = 'CYCLES'
 	bpy.context.scene.cycles.samples = samples
 
-	# if len(bpy.context.selected_objects) > 0 and bpy.context.scene.objects.active not in bpy.context.selected_objects:
-	# 	bpy.context.scene.objects.active = bpy.context.selected_objects[0]
+	# Disable edit mode
+	if bpy.context.scene.objects.active != None and bpy.context.object.mode != 'OBJECT':
+	 	bpy.ops.object.mode_set(mode='OBJECT')
 
-	if bpy.context.object.mode != 'OBJECT':
-		bpy.ops.object.mode_set(mode='OBJECT')
-
-	
 	# Get the baking sets / pairs
 	sets = settings.sets
 
@@ -103,12 +100,15 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 			self.report({'ERROR_INVALID_INPUT'}, "No low poly object as part of the '{}' set".format(set.name) )
 			return
 
-
 		# Check for UV maps
 		for obj in set.objects_low:
 			if len(obj.data.uv_layers) == 0:
 				self.report({'ERROR_INVALID_INPUT'}, "No UV map available for '{}'".format(obj.name))
 				return
+
+		if len(set.objects_cage) > 0 and (len(set.objects_low) != len(set.objects_cage)):
+			self.report({'ERROR_INVALID_INPUT'}, "{}x cage objects do not match {}x low poly objects for '{}'".format(len(set.objects_cage), len(set.objects_low), obj.name))
+			return
 
 
 		# Assign Material(s))
@@ -237,11 +237,16 @@ def cycles_bake(mode, sampling_scale, samples, ray_distance, isMulti, obj_cage):
 	elif mode == 'normal':
 		bake_type = 'NORMAL'
 
+	# Normal
+	normal_space = 'TANGENT' #'OBJECT'
+
+	
+
 	# Bake with Cage?
 	if obj_cage is None:
-		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_selected_to_active=isMulti, normal_space='OBJECT')
+		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_selected_to_active=isMulti, normal_space=normal_space)
 	else:
-		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_cage=True, cage_object=obj_cage.name, use_selected_to_active=isMulti, normal_space='OBJECT')
+		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_cage=True, cage_object=obj_cage.name, use_selected_to_active=isMulti, normal_space=normal_space)
 
 
 

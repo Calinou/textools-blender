@@ -27,6 +27,7 @@ class op(bpy.types.Operator):
 def sort_objects(context):
 	print("Sort objects")
 
+	# Collect objects
 	objects = []
 	bounds = {}
 	for obj in bpy.context.selected_objects:

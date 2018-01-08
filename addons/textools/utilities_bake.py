@@ -159,8 +159,25 @@ class BakeSet:
 	objects_cage = []
 	objects_high = []
 	name = ""
+
+	has_issues = False
+
 	def __init__(self, name, objects_low, objects_cage, objects_high):
 		self.objects_low = objects_low
 		self.objects_cage = objects_cage
 		self.objects_high = objects_high
 		self.name = name
+
+		# Needs low poly objects to bake onto
+		if len(objects_low) == 0:
+			self.has_issues = True
+
+		# Check Cage Object count to low poly count
+		if len(objects_cage) > 0 and (len(objects_low) != len(objects_cage)):
+			self.has_issues = True
+
+		# Check for UV maps
+		for obj in objects_low:
+			if len(obj.data.uv_layers) == 0:
+				self.has_issues = True
+				break

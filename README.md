@@ -6,6 +6,7 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 
 
 ## Download ##
+* [Blender TexTools 0.7.2.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.7.2.zip)
 * [Blender TexTools 0.7.1.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.7.1.zip)
 * [Blender TexTools 0.6.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.6.0.zip)
 * [Blender TexTools 0.3.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.3.0.zip)
@@ -120,9 +121,11 @@ Reload all textures in the current blend file
 ## Bake ##
 ![](http://renderhjs.net/textools/blender/img/op_bake.png)
 
-Baking in TexTools is **super** easy, just select your objects and press Bake. A realtime set list shows you what will be baked and how many objects are part of each.
+Baking in TexTools is **super** easy, just select your objects and press Bake. A realtime set list shows you what will be baked and how many objects are part of each. 
 
 ![](http://renderhjs.net/textools/blender/img/bake_sets_preview.png)
+
+You'll see a warning icon in front of items that have missing UV's, missing low poly objects or incorrect cage to low poly object counts.
 
 
 #### Type of objects

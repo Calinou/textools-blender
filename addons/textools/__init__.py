@@ -18,7 +18,7 @@ bl_info = {
 	"name": "TexTools",
 	"description": "UV and texture Tools for Blender, based on ideas of the original TexTools for 3dsMax.",
 	"author": "renderhjs",
-	"version": (0, 7, 0),
+	"version": (0, 7, 2),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
@@ -375,7 +375,7 @@ class TexToolsPanel(bpy.types.Panel):
 
 		# List bake sets
 		row = box.row()
-		split = row.split(percentage=0.4)
+		split = row.split(percentage=0.5)
 		c = split.column()
 
 		for s in range(0, len(settings.sets)):

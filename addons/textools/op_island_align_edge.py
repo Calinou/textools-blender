@@ -35,6 +35,7 @@ class op(bpy.types.Operator):
 		if not bpy.context.object.data.uv_layers:
 			return False
 
+		# Requires UV Edge select mode
 		if bpy.context.scene.tool_settings.uv_select_mode != 'EDGE':
 		 	return False
 

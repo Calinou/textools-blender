@@ -61,7 +61,8 @@ class op(bpy.types.Operator):
 			bpy.context.scene.texToolsSettings.bake_samples,
 			bpy.context.scene.texToolsSettings.bake_ray_distance
 		)
-		# utilities_bake.restore_bake_settings()
+		
+		utilities_bake.restore_bake_settings()
 		return {'FINISHED'}
 
 

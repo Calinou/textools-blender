@@ -18,14 +18,49 @@ split_chars = ['_','.','-']
 
 def store_bake_settings():
 	print("store_bake_settings")
+	# Render Settings
 	settings.bake_render_engine = bpy.context.scene.render.engine
+
+	# Disable Objects that are meant to be hidden
+	sets = settings.sets
+	objects_sets = []
+	for set in sets:
+		for obj in set.objects_low:
+			if obj not in objects_sets:
+				objects_sets.append(obj)
+		for obj in set.objects_high:
+			if obj not in objects_sets:
+				objects_sets.append(obj)
+		for obj in set.objects_cage:
+			if obj not in objects_sets:
+				objects_sets.append(obj)
+
+	settings.bake_objects_hide_render = []
+	for obj in bpy.context.scene.objects:
+		if obj.hide_render == False and obj not in objects_sets:
+			# Check if layer is active
+			for l in range(0, len(obj.layers)):
+				if obj.layers[l] and bpy.context.scene.layers[l]:
+					settings.bake_objects_hide_render.append(obj)
+					break
+
+	for obj in settings.bake_objects_hide_render:
+		obj.hide_render = True
+
+
 
 
 def restore_bake_settings():
 	print("restore_bake_settings")
-
-	if settings.bake_render_engine is not '':
+	
+	# Render Settings
+	if settings.bake_render_engine != '':
 		bpy.context.scene.render.engine = settings.bake_render_engine
+
+	# Disable Objects that are meant to be hidden
+	for obj in settings.bake_objects_hide_render:
+		if obj:
+			obj.hide_render = False
 
 
 

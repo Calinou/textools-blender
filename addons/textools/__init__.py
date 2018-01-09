@@ -40,7 +40,7 @@ if "bpy" in locals():
 	imp.reload(op_textures_reload)
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
-	imp.reload(op_bake_sort_object_names)
+	imp.reload(op_bake_match_names)
 	imp.reload(op_swap_uv_xyz)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_select_islands_identical)
@@ -65,7 +65,7 @@ else:
 	from . import op_textures_reload
 	from . import op_bake
 	from . import op_bake_explode
-	from . import op_bake_sort_object_names
+	from . import op_bake_match_names
 	from . import op_swap_uv_xyz
 	from . import op_island_align_edge
 	from . import op_select_islands_identical
@@ -137,6 +137,21 @@ class op_debug(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+class op_select_bake_object(bpy.types.Operator):
+    bl_idname = "uv.textools_select_bake_object"
+    bl_label = "Select"
+    bl_description = "Select Object"
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        
+        return {'FINISHED'}
+
+
+
 def on_size_dropdown_select(self, context):
 	size = int(bpy.context.scene.texToolsSettings.size_dropdown)
 
@@ -169,7 +184,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name = "Padding",
 		description="padding size in pixels",
 		default = 4,
-		min = 1,
+		min = 0,
 		max = 256
 	)
 	
@@ -198,8 +213,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('4', '4x', 'Render 2x and downsample')], name = "AA", default = '1'
 	)
 	bake_freeze_selection = bpy.props.BoolProperty(
-		name="Lock Selection",
-		description="When frozen baking sets are not updated",
+		name="Lock",
+		description="Lock baking sets, don't change with selection",
 		default = False
 	)
 
@@ -217,22 +232,19 @@ def getIcon(name):
 	return preview_icons[name].icon_id
 
 
-class TexToolsPanel(bpy.types.Panel):
-	bl_label = "TexTools"
+class Panel_Units(bpy.types.Panel):
+	bl_label = "Units"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = "TexTools"
 	
-	def draw_header(self, _):
-		layout = self.layout
-		layout.label(text="", icon_value=getIcon("logo"))
-
-
 	def draw(self, context):
 		layout = self.layout
 		
 		if bpy.app.debug or bpy.app.debug_value != 0:
-			layout.operator(op_debug.bl_idname, icon="CONSOLE")
+			row = layout.row()
+			row.alert =True
+			row.operator(op_debug.bl_idname, icon="CONSOLE")
 		
 		#---------- Settings ------------
 		row = layout.row()
@@ -242,6 +254,25 @@ class TexToolsPanel(bpy.types.Panel):
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
+
+
+
+
+class Panel_Layout(bpy.types.Panel):
+	bl_label = "UV Layout"
+	bl_space_type = 'IMAGE_EDITOR'
+	bl_region_type = 'TOOLS'
+	bl_category = "TexTools"
+	
+	# def draw_header(self, _):
+	# 	layout = self.layout
+	# 	layout.label(text="", icon_value=getIcon("logo"))
+
+
+	def draw(self, context):
+		layout = self.layout
+		
+		
 		if bpy.app.debug_value != 0:
 			layout.alert = True
 			row = layout.row(align=True)
@@ -254,7 +285,6 @@ class TexToolsPanel(bpy.types.Panel):
 			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
 		
 			layout.alert = False
-
 		#---------- Layout ------------
 		# layout.label(text="Layout")
 
@@ -319,9 +349,34 @@ class TexToolsPanel(bpy.types.Panel):
 		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = getIcon("checkerMap"))
 		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = getIcon("textures_reload"))
 
-		#----------- Baking -------------
-		layout.separator()
+		
+			
 
+		# 
+		
+		#---------- ID Colors ------------
+		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists
+		#Example assign vertex colors: https://blender.stackexchange.com/questions/30841/how-to-view-vertex-colors
+		#Color Palette: https://blender.stackexchange.com/questions/73122/how-do-i-create-palette-ui-object
+
+		# row = layout.row()
+		# box = row.box()
+		# box.label(text="ID Colors")
+		# box.operator(bpy.ops.paint.sample_color.idname())
+		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
+		
+
+
+class Panel_Bake(bpy.types.Panel):
+	bl_label = "Texture Baking"
+	bl_space_type = 'IMAGE_EDITOR'
+	bl_region_type = 'TOOLS'
+	bl_category = "TexTools"
+	
+	def draw(self, context):
+		layout = self.layout
+		
+		#----------- Baking -------------
 		row = layout.row()
 		box = row.box()
 		col = box.column(align=True)
@@ -329,11 +384,6 @@ class TexToolsPanel(bpy.types.Panel):
 		if not bpy.context.scene.texToolsSettings.bake_freeze_selection:
 			# Update sets
 			settings.sets = utilities_bake.get_bake_sets()
-
-		if bpy.app.debug_value != 0:
-			row = col.row()
-			row.alert = True
-			row.operator(op_bake_sort_object_names.op.bl_idname)
 
 
 		# Bake Button, Samples, Single option
@@ -371,68 +421,84 @@ class TexToolsPanel(bpy.types.Panel):
 		if settings.bake_mode == 'ao':
 			col.prop(context.scene.texToolsSettings, "bake_samples")
 		
-
-
-		# List bake sets
-		row = box.row()
-		split = row.split(percentage=0.5)
-		c = split.column()
-
-		for s in range(0, len(settings.sets)):
-			set = settings.sets[s]
-			r = c.row()
-			r.active = not (bpy.context.scene.texToolsSettings.bake_force_single and s > 0)
-
-			if set.has_issues:
-				r.label(text=set.name, icon='ERROR')
-			else:
-				r.label(text=set.name)
-
-
-		c = split.column()
-		for set in settings.sets:
-			r = c.row(align=True)
-
-			if len(set.objects_low) > 0:
-				r.label(text="{}".format(len(set.objects_low)), icon_value = getIcon("bake_obj_low"))
-			else:
-				r.label(text="")
-
-			if len(set.objects_high) > 0:
-				r.label(text="{}".format(len(set.objects_high)), icon_value = getIcon("bake_obj_high"))
-			else:
-				r.label(text="")
-
-			if len(set.objects_cage) > 0:
-				r.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
-			else:
-				r.label(text="")
 		
+
+		layout.label(text="Sets")
+
+		row = layout.row()
+		box = row.box()
+
+
+		if bpy.app.debug_value != 0:
+			row = box.row(align=True)
+			row.alert = True
+
+			row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
+			row.operator(op_bake_match_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
+
+
 		# Freeze Selection
 		row = box.row()
 		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
 		icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
 		row.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
 
-		if bpy.app.debug_value != 0:
-			box.alert = True
-			box.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
+
+
 		
 		
 
-		# 
-		
-		#---------- ID Colors ------------
-		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists
-		#Example assign vertex colors: https://blender.stackexchange.com/questions/30841/how-to-view-vertex-colors
-		#Color Palette: https://blender.stackexchange.com/questions/73122/how-do-i-create-palette-ui-object
 
-		# row = layout.row()
-		# box = row.box()
-		# box.label(text="ID Colors")
-		# box.operator(bpy.ops.paint.sample_color.idname())
-		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
+		if len(settings.sets) > 0:
+			# List bake sets
+			box2 = box.box()
+			row = box2.row()
+			split = row.split(percentage=0.55)
+			c = split.column(align=True)
+
+			for s in range(0, len(settings.sets)):
+				set = settings.sets[s]
+				r = c.row(align=True)
+				r.active = not (bpy.context.scene.texToolsSettings.bake_force_single and s > 0)
+
+				if set.has_issues:
+					r.operator(op_select_bake_object.bl_idname, text=set.name, icon='ERROR')
+				else:
+					# r.label(text=set.name)
+					r.operator(op_select_bake_object.bl_idname, text=set.name)
+
+
+			c = split.column(align=True)
+			for set in settings.sets:
+				r = c.row(align=True)
+
+				if len(set.objects_low) > 0:
+					r.label(text="{}".format(len(set.objects_low)), icon_value = getIcon("bake_obj_low"))
+				else:
+					r.label(text="")
+
+				if len(set.objects_high) > 0:
+					r.label(text="{}".format(len(set.objects_high)), icon_value = getIcon("bake_obj_high"))
+				else:
+					r.label(text="")
+
+				if len(set.objects_cage) > 0:
+					r.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
+				else:
+					r.label(text="")
 		
+			if bpy.app.debug_value != 0:
+				row = box.row(align=True)
+				row.alert = True
+				row.active = len(settings.sets) > 0
+
+				row.label(text="Select")
+				row.operator(op_select_bake_object.bl_idname, text = "", icon_value = getIcon("bake_obj_low"))
+				row.operator(op_select_bake_object.bl_idname, text = "", icon_value = getIcon("bake_obj_high"))
+				row.operator(op_select_bake_object.bl_idname, text = "", icon_value = getIcon("bake_obj_cage"))
+
+
+
 
 
 keymaps = []

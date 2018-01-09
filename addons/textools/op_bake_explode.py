@@ -5,6 +5,7 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
+from . import settings
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_bake_explode"
@@ -14,6 +15,8 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if len(settings.sets) == 0:
+			return False
 
 		return True
 

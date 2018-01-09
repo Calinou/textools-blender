@@ -9,8 +9,8 @@ from math import pi
 from . import settings
 
 
-keywords_low = ["low","lowpoly","l"]
-keywords_high = ["high","highpoly","h"]
+keywords_low = ["low","lowpoly","lp","l"]
+keywords_high = ["high","highpoly","hp","h"]
 keywords_cage = ["cage","c"]
 
 split_chars = ['_','.','-']
@@ -68,7 +68,7 @@ def get_bake_name(obj):
 	name = obj.name.lower()
 	
 	# Split by ' ','_','.' etc.
-	split = name
+	split = name.lower()
 	for char in split_chars:
 		split = split.replace(char,' ')
 	strings = split.split(' ')
@@ -89,7 +89,7 @@ def get_bake_name(obj):
 
 
 
-def get_bake_type(obj):
+def get_object_type(obj):
 	typ = ''
 
 	# Detect by subdevision modifier
@@ -98,11 +98,14 @@ def get_bake_type(obj):
 			if modifier.type == 'SUBSURF':
 				typ = 'high'
 				break
+			# elif modifier.type == 'MIRROR':
+			# 	typ = 'high'
+			# 	break
 
 	# Detect by name pattern
 	if typ == '':
 
-		split = obj.name
+		split = obj.name.lower()
 		for char in split_chars:
 			split = split.replace(char,' ')
 		strings = split.split(' ')
@@ -131,11 +134,12 @@ def get_bake_type(obj):
 	return typ
 
 
+
 def get_bake_sets():
 	filtered = {}
 	for obj in bpy.context.selected_objects:
 		if obj.type == 'MESH':
-			filtered[obj] = get_bake_type(obj)
+			filtered[obj] = get_object_type(obj)
 	
 	groups = []
 	# Group by names

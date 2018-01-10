@@ -57,10 +57,6 @@ def explode(self):
 	bbox_all = merge_bounds(list(set_bounds.values()))
 	bbox_max = set_bounds[ sorted_sets[0] ] #  max_bbox(list(set_bounds.values()))
 
-	#sorted_sets[0] #
-	print("... max? {} ".format(sorted_sets[0]))
-
-
 	# Offset sets into their direction
 	dir_offset_last_bbox = {}
 	for i in range(0,6):
@@ -72,7 +68,6 @@ def explode(self):
 			delta = set_bounds[set]['center'] - bbox_all['center']
 			offset_set(set, delta, avg_side*0.1, dir_offset_last_bbox )
 
-	print("\n\n")
 
 
 
@@ -94,12 +89,9 @@ def offset_set(set, delta, margin, dir_offset_last_bbox):
 		direction = [0,0,1]
 
 	delta = Vector((direction[0], direction[1], direction[2]))
-	# delta = Vector((0,0,0))
 
 	# Get Key
 	key = get_delta_key(delta)
-	
-	# print("dir: {}, Key {} inside? {}, keys: {}".format(delta, key, key in dir_offset_last_bbox, dir_offset_last_bbox.keys() ))
 
 	# Calculate Offset
 	bbox = get_bbox_set(set)
@@ -126,6 +118,8 @@ def offset_set(set, delta, margin, dir_offset_last_bbox):
 	offset+= delta * margin
 
 	# Offset items
+	# https://blenderartists.org/forum/showthread.php?237761-Blender-2-6-Set-keyframes-using-Python-script
+	# http://blenderscripting.blogspot.com.au/2011/05/inspired-by-post-on-ba-it-just-so.html
 	for obj in objects:
 		obj.location += offset
 	bpy.context.scene.update()
@@ -133,14 +127,11 @@ def offset_set(set, delta, margin, dir_offset_last_bbox):
 	# Update last bbox in direction
 	dir_offset_last_bbox[key] = get_bbox_set(set)
 
-	# 
-	print("   Off {:.2},{:.2},{:.2}, max.x:{:.2}".format(offset.x, offset.y, offset.z, dir_offset_last_bbox[key]['max'].x ))
-	# print("")
 
 
 
 def get_delta_key(delta):
-	# print("Get key {} is: {}".format(delta, delta.y == -1 ))
+	print("Get key {} is: {}".format(delta, delta.y == -1 ))
 	if delta.x == -1:
 		return 0
 	elif delta.x == 1:
@@ -155,19 +146,8 @@ def get_delta_key(delta):
 		return 5
 
 
-def max_bbox(bounds):
-	# Returns the largest bounding box
-	sizes = {}
-	for i in range(0, len(bounds)):
-		bbox = bounds[i]
-		sizes[i] = bbox['size'].x * bbox['size'].y * bbox['size'].z
-
-	sizes_sorted = sorted(sizes.items(), key=operator.itemgetter(1))
-	return bounds[ sizes_sorted[-1][0] ]
-
 
 def merge_bounds(bounds):
-
 	box_min = bounds[0]['min'].copy()
 	box_max = bounds[0]['max'].copy()
 	
@@ -189,12 +169,14 @@ def merge_bounds(bounds):
 	}
 
 
+
 def get_bbox_set(set):
 	objects = set.objects_low + set.objects_high + set.objects_cage
 	bounds = []
 	for obj in objects:
 		bounds.append( get_bbox(obj) )
 	return merge_bounds(bounds)
+
 
 
 def get_bbox(obj):

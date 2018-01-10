@@ -48,20 +48,23 @@ def explode(self):
 
 	# All combined bounding boxes
 	bbox_all = merge_bounds(list(set_bounds.values()))
-	# bbox
+	bbox_max = max_bbox(list(set_bounds.values()))
 
 
 	# Offset sets into their direction
 	dir_offset_last_bbox = {}
 	for i in range(0,6):
-		dir_offset_last_bbox[i] = bbox_all
+		dir_offset_last_bbox[i] = bbox_max #bbox_all
 
 	# Process each set
 	for set in set_bounds:
-		delta = set_bounds[set]['center'] - bbox_all['center']
-		offset_set(set, delta, avg_side*0.1, dir_offset_last_bbox )
+		if set_bounds[set] != bbox_max:
+			delta = set_bounds[set]['center'] - bbox_all['center']
+			offset_set(set, delta, avg_side*0.1, dir_offset_last_bbox )
 
 	print("\n\n")
+
+
 
 def offset_set(set, delta, margin, dir_offset_last_bbox):
 	objects = set.objects_low + set.objects_high + set.objects_cage
@@ -173,7 +176,14 @@ def get_delta_key(delta):
 	# bpy.ops.transform.translate(value=(1,0,0), release_confirm=False)
 
 def max_bbox(bounds):
-	return bounds[0]
+	# Returns the largest bounding box
+	sizes = {}
+	for i in range(0, len(bounds)):
+		bbox = bounds[i]
+		sizes[i] = bbox['size'].x * bbox['size'].y * bbox['size'].z
+
+	sizes_sorted = sorted(sizes.items(), key=operator.itemgetter(1))
+	return bounds[ sizes_sorted[-1][0] ]
 
 
 def merge_bounds(bounds):

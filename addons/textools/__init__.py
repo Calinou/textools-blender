@@ -165,7 +165,7 @@ class op_select_bake_set(bpy.types.Operator):
 					# Set active object to low poly to better visualize high and low wireframe color
 					if len(set.objects_low) > 0:
 						bpy.context.scene.objects.active = set.objects_low[0]
-						
+
 					break
 		return {'FINISHED'}
 
@@ -482,14 +482,15 @@ class Panel_Bake(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 
+		row = box.row(align=True)
+		row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
+		row.operator(op_bake_match_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
 
-		if bpy.app.debug_value != 0:
-			row = box.row(align=True)
-			row.alert = True
+		# if bpy.app.debug_value != 0:
+		# 	row = box.row(align=True)
+		# 	row.alert = True
 
-			row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
-			row.operator(op_bake_match_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
-
+			
 		# Freeze Selection
 		row = box.row()
 		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection

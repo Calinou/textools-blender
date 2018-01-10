@@ -9,9 +9,9 @@ from math import pi
 from . import settings
 
 
-keywords_low = ["low","lowpoly","lp","l"]
-keywords_high = ["high","highpoly","hp","h"]
-keywords_cage = ["cage","c"]
+keywords_low = ['lowpoly','low','lowp','lp','l']
+keywords_high = ['highpoly','high','highp','hp','h']
+keywords_cage = ['cage','c']
 
 split_chars = ['_','.','-']
 

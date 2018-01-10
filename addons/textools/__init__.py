@@ -96,10 +96,10 @@ from bpy.props import (StringProperty,
 					   )
 
 
-class SomeAddonPrefs(bpy.types.AddonPreferences):
+class Panel_Preferences(bpy.types.AddonPreferences):
 	bl_idname = __name__
 	# here you define the addons customizable props
-	some_prop = bpy.props.FloatProperty(default=1.0)
+	# some_prop = bpy.props.FloatProperty(default=1.0)
 
 	# here you specify how they are drawn
 	def draw(self, context):
@@ -137,19 +137,70 @@ class op_debug(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-class op_select_bake_object(bpy.types.Operator):
-    bl_idname = "uv.textools_select_bake_object"
-    bl_label = "Select"
-    bl_description = "Select Object"
 
-    @classmethod
-    def poll(cls, context):
-        return True
+class op_select_bake_set(bpy.types.Operator):
+	bl_idname = "uv.textools_select_bake_set"
+	bl_label = "Select"
+	bl_description = "Select this bake set in scene"
 
-    def execute(self, context):
-        
-        return {'FINISHED'}
+	select_set = bpy.props.StringProperty(default="")
 
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		print("Set: "+self.select_set)
+		if self.select_set != "":
+			for set in settings.sets:
+				if set.name == self.select_set:
+					# Select this entire set
+					bpy.ops.object.select_all(action='DESELECT')
+					for obj in set.objects_low:
+						obj.select = True
+					for obj in set.objects_high:
+						obj.select = True
+					for obj in set.objects_cage:
+						obj.select = True
+					# Set active object to low poly to better visualize high and low wireframe color
+					if len(set.objects_low) > 0:
+						bpy.context.scene.objects.active = set.objects_low[0]
+						
+					break
+		return {'FINISHED'}
+
+
+
+class op_select_bake_type(bpy.types.Operator):
+	bl_idname = "uv.textoolsselect_bake_type"
+	bl_label = "Select"
+	bl_description = "Select bake objects of this type"
+
+	select_type = bpy.props.StringProperty(default='low')
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		objects = []
+		for set in settings.sets:
+			if self.select_type == 'low':
+				objects+=set.objects_low
+			elif self.select_type == 'high':
+				objects+=set.objects_high
+			elif self.select_type == 'cage':
+				objects+=set.objects_cage
+			elif self.select_type == 'issue' and set.has_issues:
+				objects+=set.objects_low
+				objects+=set.objects_high
+				objects+=set.objects_cage
+
+		bpy.ops.object.select_all(action='DESELECT')
+		for obj in objects:
+			obj.select = True
+
+		return {'FINISHED'}
 
 
 def on_size_dropdown_select(self, context):
@@ -233,15 +284,20 @@ def getIcon(name):
 
 
 class Panel_Units(bpy.types.Panel):
-	bl_label = "Units"
+	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = "TexTools"
 	
+
+	def draw_header(self, _):
+		layout = self.layout
+		layout.label(text="Units: {} x {}".format(bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1]))
+
 	def draw(self, context):
 		layout = self.layout
 		
-		if bpy.app.debug or bpy.app.debug_value != 0:
+		if bpy.app.debug_value != 0:
 			row = layout.row()
 			row.alert =True
 			row.operator(op_debug.bl_idname, icon="CONSOLE")
@@ -253,8 +309,6 @@ class Panel_Units(bpy.types.Panel):
 		
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
-
-
 
 
 
@@ -423,7 +477,7 @@ class Panel_Bake(bpy.types.Panel):
 		
 		
 
-		layout.label(text="Sets")
+		layout.label(text="Items {}x".format(len(settings.sets)))
 
 		row = layout.row()
 		box = row.box()
@@ -436,7 +490,6 @@ class Panel_Bake(bpy.types.Panel):
 			row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
 			row.operator(op_bake_match_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
 
-
 		# Freeze Selection
 		row = box.row()
 		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
@@ -444,14 +497,13 @@ class Panel_Bake(bpy.types.Panel):
 		row.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
 
 
-
-		
-		
-
-
 		if len(settings.sets) > 0:
 			# List bake sets
 			box2 = box.box()
+
+			
+
+
 			row = box2.row()
 			split = row.split(percentage=0.55)
 			c = split.column(align=True)
@@ -462,10 +514,9 @@ class Panel_Bake(bpy.types.Panel):
 				r.active = not (bpy.context.scene.texToolsSettings.bake_force_single and s > 0)
 
 				if set.has_issues:
-					r.operator(op_select_bake_object.bl_idname, text=set.name, icon='ERROR')
+					r.operator(op_select_bake_set.bl_idname, text=set.name, icon='ERROR').select_set = set.name
 				else:
-					# r.label(text=set.name)
-					r.operator(op_select_bake_object.bl_idname, text=set.name)
+					r.operator(op_select_bake_set.bl_idname, text=set.name).select_set = set.name
 
 
 			c = split.column(align=True)
@@ -487,17 +538,14 @@ class Panel_Bake(bpy.types.Panel):
 				else:
 					r.label(text="")
 		
-			if bpy.app.debug_value != 0:
-				row = box.row(align=True)
-				row.alert = True
-				row.active = len(settings.sets) > 0
-
-				row.label(text="Select")
-				row.operator(op_select_bake_object.bl_idname, text = "", icon_value = getIcon("bake_obj_low"))
-				row.operator(op_select_bake_object.bl_idname, text = "", icon_value = getIcon("bake_obj_high"))
-				row.operator(op_select_bake_object.bl_idname, text = "", icon_value = getIcon("bake_obj_cage"))
-
-
+			
+			row = box.row(align=True)
+			row.active = len(settings.sets) > 0
+			row.label(text="Select")
+			row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = getIcon("bake_obj_low")).select_type = 'low'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = getIcon("bake_obj_high")).select_type = 'high'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = getIcon("bake_obj_cage")).select_type = 'cage'
 
 
 

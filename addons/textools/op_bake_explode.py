@@ -34,21 +34,31 @@ def explode(self):
 	
 	print("_________________\nExplode\n")
 
-	set_bounds = {}	
 	sets = settings.sets
 
+	set_bounds = {}
+	set_volume = {}
 	avg_side = 0
 	for set in sets:
 		set_bounds[set] = get_bbox_set(set)
+		set_volume[set] = set_bounds[set]['size'].x * set_bounds[set]['size'].y * set_bounds[set]['size'].z
 
 		avg_side+=set_bounds[set]['size'].x
 		avg_side+=set_bounds[set]['size'].y
 		avg_side+=set_bounds[set]['size'].z
+
 	avg_side/=(len(sets)*3)
+
+	sorted_set_volume = sorted(set_volume.items(), key=operator.itemgetter(1))
+	sorted_sets = [item[0] for item in sorted_set_volume]
+	sorted_sets.reverse()
 
 	# All combined bounding boxes
 	bbox_all = merge_bounds(list(set_bounds.values()))
-	bbox_max = max_bbox(list(set_bounds.values()))
+	bbox_max = set_bounds[ sorted_sets[0] ] #  max_bbox(list(set_bounds.values()))
+
+	#sorted_sets[0] #
+	print("... max? {} ".format(sorted_sets[0]))
 
 
 	# Offset sets into their direction
@@ -57,7 +67,7 @@ def explode(self):
 		dir_offset_last_bbox[i] = bbox_max #bbox_all
 
 	# Process each set
-	for set in set_bounds:
+	for set in sorted_sets:
 		if set_bounds[set] != bbox_max:
 			delta = set_bounds[set]['center'] - bbox_all['center']
 			offset_set(set, delta, avg_side*0.1, dir_offset_last_bbox )
@@ -115,18 +125,6 @@ def offset_set(set, delta, margin, dir_offset_last_bbox):
 	# Add margin
 	offset+= delta * margin
 
-	# if abs(delta.x) == 1:
-	# 	offset = delta * ( bbox_last['max'].x - bbox['min'].x )
-
-	# elif abs(delta.y) == 1:
-	# 	offset = delta * ( bbox_last['max'].y - bbox['min'].y )
-
-		# print("   '{:.2}' - '{:.2}' = Offset:{:.2}".format(
-		# 	bbox_last['max'].x, 
-		# 	bbox['min'].x,
-		# 	( bbox_last['max'].x - bbox['min'].x )
-		# ))
-
 	# Offset items
 	for obj in objects:
 		obj.location += offset
@@ -156,24 +154,6 @@ def get_delta_key(delta):
 	elif delta.z == 1:
 		return 5
 
-	
-
-
-
-# def offset_set(set, dir, length, offsets_dir):
-# 	# http://blenderscripting.blogspot.com.au/2011/05/inspired-by-post-on-ba-it-just-so.html
-
-	
-# 	objects = set.objects_low + set.objects_high + set.objects_cage
-
-# 	print("Move {}x  at {}".format(len(objects), (dir*0.5) ))
-
-# 	bpy.ops.object.select_all(action='DESELECT')
-# 	for obj in objects:
-# 		obj.select = True
-		# obj.location += dir * 0.2
-	# bpy.ops.transform.translate(value=dir*0.5)
-	# bpy.ops.transform.translate(value=(1,0,0), release_confirm=False)
 
 def max_bbox(bounds):
 	# Returns the largest bounding box

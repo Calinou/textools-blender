@@ -338,7 +338,7 @@ def setup_vertex_color_ids(obj):
 	# Color each group
 	for i in range(0,len(groups)):
 		color = Color()
-		color.hsv = ( i / (len(groups)) ), 1.0, 1
+		color.hsv = ( i / (len(groups)) ), 0.9, 1.0
 
 		for face in groups[i]:
 			for loop in face.loops:

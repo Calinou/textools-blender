@@ -7,6 +7,8 @@ from math import pi
 
 from . import settings
 
+frame_range = 50
+
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_bake_explode"
@@ -31,9 +33,6 @@ class op(bpy.types.Operator):
 
 
 def explode(self):
-	
-	print("_________________\nExplode\n")
-
 	sets = settings.sets
 
 	set_bounds = {}
@@ -62,18 +61,24 @@ def explode(self):
 	for i in range(0,6):
 		dir_offset_last_bbox[i] = bbox_max #bbox_all
 
+
+	bpy.context.scene.frame_start = 0
+	bpy.context.scene.frame_end = frame_range
+	bpy.context.scene.frame_current = 0
+
+	
 	# Process each set
 	for set in sorted_sets:
 		if set_bounds[set] != bbox_max:
 			delta = set_bounds[set]['center'] - bbox_all['center']
-			offset_set(set, delta, avg_side*0.1, dir_offset_last_bbox )
+			offset_set(set, delta, avg_side*0.35, dir_offset_last_bbox )
 
 
 
 
 def offset_set(set, delta, margin, dir_offset_last_bbox):
 	objects = set.objects_low + set.objects_high + set.objects_cage
-	print("\nSet '{}' with {}x".format(set.name, len(objects) ))
+	# print("\nSet '{}' with {}x".format(set.name, len(objects) ))
 
 	# Which Direction?
 	delta_max = max(abs(delta.x), abs(delta.y), abs(delta.z))
@@ -120,9 +125,20 @@ def offset_set(set, delta, margin, dir_offset_last_bbox):
 	# Offset items
 	# https://blenderartists.org/forum/showthread.php?237761-Blender-2-6-Set-keyframes-using-Python-script
 	# http://blenderscripting.blogspot.com.au/2011/05/inspired-by-post-on-ba-it-just-so.html
+
+	# Set key A
+	bpy.context.scene.frame_current = 0
+	for obj in objects:
+		obj.keyframe_insert(data_path="location")
+
 	for obj in objects:
 		obj.location += offset
 	bpy.context.scene.update()
+
+	# Set key B
+	bpy.context.scene.frame_current = frame_range
+	for obj in objects:
+		obj.keyframe_insert(data_path="location")
 
 	# Update last bbox in direction
 	dir_offset_last_bbox[key] = get_bbox_set(set)
@@ -131,7 +147,7 @@ def offset_set(set, delta, margin, dir_offset_last_bbox):
 
 
 def get_delta_key(delta):
-	print("Get key {} is: {}".format(delta, delta.y == -1 ))
+	# print("Get key {} is: {}".format(delta, delta.y == -1 ))
 	if delta.x == -1:
 		return 0
 	elif delta.x == 1:

@@ -13,5 +13,5 @@ selection_face_indexies = []
 
 bake_mode = 'UNDEFINED'
 bake_render_engine = ''
-bake_sets = []
-bake_objects_hide_render = []
+bake_objects_hide_render = [] 
+sets = []

@@ -620,35 +620,36 @@ def register():
 		utilities_ui.icon_register(icon)
 	
 
-	#Key Maps
-	wm = bpy.context.window_manager
-	if wm.keyconfigs.addon is not None:
-		# https://github.com/RayMairlot/UV-Rotate-Shortcuts/blob/master/UV%20Rotate.py
+	# #Key Maps
+	# wm = bpy.context.window_manager
+	# if wm.keyconfigs.addon is not None:
+	# 	# https://github.com/RayMairlot/UV-Rotate-Shortcuts/blob/master/UV%20Rotate.py
 
-		km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-		kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', alt=True)
-		kmi.properties.direction = "top"
-		keymaps.append((km, kmi))
+	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', alt=True)
+	# 	kmi.properties.direction = "top"
+	# 	keymaps.append((km, kmi))
 
-		km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-		kmi = km.keymap_items.new(op_align.op.bl_idname, 'DOWN_ARROW', 'PRESS', alt=True)
-		kmi.properties.direction = "bottom"
-		keymaps.append((km, kmi))
+	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'DOWN_ARROW', 'PRESS', alt=True)
+	# 	kmi.properties.direction = "bottom"
+	# 	keymaps.append((km, kmi))
 
-		km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-		kmi = km.keymap_items.new(op_align.op.bl_idname, 'LEFT_ARROW', 'PRESS', alt=True)
-		kmi.properties.direction = "left"
-		keymaps.append((km, kmi))
+	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'LEFT_ARROW', 'PRESS', alt=True)
+	# 	kmi.properties.direction = "left"
+	# 	keymaps.append((km, kmi))
 
-		km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-		kmi = km.keymap_items.new(op_align.op.bl_idname, 'RIGHT_ARROW', 'PRESS', alt=True)
-		kmi.properties.direction = "right"
-		keymaps.append((km, kmi))
+	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'RIGHT_ARROW', 'PRESS', alt=True)
+	# 	kmi.properties.direction = "right"
+	# 	keymaps.append((km, kmi))
 
-		km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-		kmi = km.keymap_items.new(op_island_mirror.op.bl_idname, 'M', 'PRESS', alt=True)
-		kmi.properties.is_stack = False
-		keymaps.append((km, kmi))
+	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
+	# 	kmi = km.keymap_items.new(op_island_mirror.op.bl_idname, 'M', 'PRESS', alt=True)
+	# 	kmi.properties.is_stack = False
+	# 	keymaps.append((km, kmi))
+
 
 
 def unregister():

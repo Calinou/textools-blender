@@ -10,10 +10,10 @@ from . import utilities_bake
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_bake_match_names"
+	bl_idname = "uv.textools_bake_organize_names"
 	bl_label = "Match Names"
 	bl_description = "Match high poly object names to low poly objects by their bounding boxes."
-	# bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):

@@ -30,17 +30,18 @@ bl_info = {
 # More info: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Multi-File_packages
 if "bpy" in locals():
 	import imp
-	imp.reload(utilities_gui)
+	imp.reload(utilities_ui)
 	imp.reload(utilities_bake)
 	imp.reload(settings)
 	
+	imp.reload(op_extend_canvas)
 	imp.reload(op_islands_align_sort)
 	imp.reload(op_texture_checker)
 	imp.reload(op_align)
 	imp.reload(op_textures_reload)
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
-	imp.reload(op_bake_match_names)
+	imp.reload(op_bake_organize_names)
 	imp.reload(op_swap_uv_xyz)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_select_islands_identical)
@@ -55,17 +56,18 @@ if "bpy" in locals():
 
 	
 else:
-	from . import utilities_gui
+	from . import utilities_ui
 	from . import utilities_bake
 	from . import settings
 
+	from . import op_extend_canvas
 	from . import op_islands_align_sort
 	from . import op_texture_checker
 	from . import op_align
 	from . import op_textures_reload
 	from . import op_bake
 	from . import op_bake_explode
-	from . import op_bake_match_names
+	from . import op_bake_organize_names
 	from . import op_swap_uv_xyz
 	from . import op_island_align_edge
 	from . import op_select_islands_identical
@@ -217,7 +219,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name = "Size",
 		size=2, 
 		description="Texture & UV size in pixels",
-		default = (1024,1024),
+		default = (512,512),
 		subtype = "XYZ"
 	)
 
@@ -279,8 +281,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 
 
 
-def getIcon(name):
-	return preview_icons[name].icon_id
+
 
 
 class Panel_Units(bpy.types.Panel):
@@ -311,6 +312,9 @@ class Panel_Units(bpy.types.Panel):
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
 
+		col.operator(op_extend_canvas.op.bl_idname, text="Extend Canvas", icon_value = icon_get("swap_uv_xyz"))
+			
+
 
 class Panel_Layout(bpy.types.Panel):
 	bl_label = "UV Layout"
@@ -320,7 +324,7 @@ class Panel_Layout(bpy.types.Panel):
 	
 	# def draw_header(self, _):
 	# 	layout = self.layout
-	# 	layout.label(text="", icon_value=getIcon("logo"))
+	# 	layout.label(text="", icon_value=icon("logo"))
 
 
 	def draw(self, context):
@@ -330,13 +334,13 @@ class Panel_Layout(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			layout.alert = True
 			row = layout.row(align=True)
-			row.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = getIcon("swap_uv_xyz"))
-			row.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
-			row.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = getIcon("setup_split_uv"))
+			row.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = icon_get("swap_uv_xyz"))
+			row.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("island_relax_straighten_edges"))
+			row.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = icon_get("setup_split_uv"))
 			
 			row = layout.row(align=True)
-			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = getIcon("mirror")).is_stack = False;
-			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = getIcon("mirror")).is_stack = True;
+			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = icon_get("mirror")).is_stack = False;
+			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = icon_get("mirror")).is_stack = True;
 		
 			layout.alert = False
 		#---------- Layout ------------
@@ -345,42 +349,42 @@ class Panel_Layout(bpy.types.Panel):
 		box = layout.box()
 		col = box.column(align=True)
 		row = col.row(align=True)
-		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = getIcon("island_align_edge"))
-		# col.operator(op_island_relax_straighten_edges.op.bl_idname, text="Straight & Relax", icon_value = getIcon("island_relax_straighten_edges"))
+		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("island_align_edge"))
+		# col.operator(op_island_relax_straighten_edges.op.bl_idname, text="Straight & Relax", icon_value = icon_get("island_relax_straighten_edges"))
 
 		row = col.row(align=True)
-		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = getIcon("island_rotate_90_left")).angle = -math.pi / 2
-		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = getIcon("island_rotate_90_right")).angle = math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("island_rotate_90_left")).angle = -math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = icon_get("island_rotate_90_right")).angle = math.pi / 2
 
 		
 		row = box.row(align=True)
 		col = row.column(align=True)
 		col.label(text="")
-		col.operator(op_align.op.bl_idname, text="←", icon_value = getIcon("alignLeft")).direction = "left"
+		col.operator(op_align.op.bl_idname, text="←", icon_value = icon_get("alignLeft")).direction = "left"
 		
 		col = row.column(align=True)
-		col.operator(op_align.op.bl_idname, text="↑", icon_value = getIcon("alignTop")).direction = "top"
-		col.operator(op_align.op.bl_idname, text="↓", icon_value = getIcon("alignBottom")).direction = "bottom"
+		col.operator(op_align.op.bl_idname, text="↑", icon_value = icon_get("alignTop")).direction = "top"
+		col.operator(op_align.op.bl_idname, text="↓", icon_value = icon_get("alignBottom")).direction = "bottom"
 
 		col = row.column(align=True)
 		col.label(text="")
-		col.operator(op_align.op.bl_idname, text="→", icon_value = getIcon("alignRight")).direction = "right"
+		col.operator(op_align.op.bl_idname, text="→", icon_value = icon_get("alignRight")).direction = "right"
 
 
 		aligned = box.row(align=True)
-		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = getIcon("islands_align_sort_h"))
+		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("islands_align_sort_h"))
 		op.is_vertical = False;
-		op.padding = utilities_gui.get_padding()
+		op.padding = utilities_ui.get_padding()
 		
-		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = getIcon("islands_align_sort_v"))
+		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("islands_align_sort_v"))
 		op.is_vertical = True;
-		op.padding = utilities_gui.get_padding()
+		op.padding = utilities_ui.get_padding()
 
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
 		row = col.row(align=True)
 		
-		col.operator(op_faces_iron.op.bl_idname, text="Iron Faces", icon_value = getIcon("faces_iron"))
+		col.operator(op_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("faces_iron"))
 		
 
 		#---------- Selection ------------
@@ -389,10 +393,10 @@ class Panel_Layout(bpy.types.Panel):
 		box = row.box()
 		col = box.column(align=True)
 		row = col.row(align=True)
-		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = getIcon("islands_select_identical"))
-		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = getIcon("islands_select_overlapping"))
+		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("islands_select_identical"))
+		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("islands_select_overlapping"))
 		# aligned = box.row(align=True)
-		col.operator(op_select_islands_outline.op.bl_idname, text="Island Bounds", icon_value = getIcon("op_select_islands_outline"))
+		col.operator(op_select_islands_outline.op.bl_idname, text="Island Bounds", icon_value = icon_get("op_select_islands_outline"))
 		
 
 		#---------- Textures ------------
@@ -400,8 +404,8 @@ class Panel_Layout(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 		col = box.column(align=True)
-		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = getIcon("checkerMap"))
-		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = getIcon("textures_reload"))
+		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
+		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = icon_get("textures_reload"))
 
 		
 			
@@ -446,8 +450,8 @@ class Panel_Bake(bpy.types.Panel):
 			count = 1
 		else:
 			count = len(settings.sets)
-		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = getIcon("op_bake"));
-		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =getIcon("bake_anti_alias"))
+		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
+		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
 		row = col.row(align=True)
 		row.active = len(settings.sets) > 0
@@ -483,8 +487,8 @@ class Panel_Bake(bpy.types.Panel):
 		box = row.box()
 
 		row = box.row(align=True)
-		row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = getIcon("op_bake_explode"));
-		row.operator(op_bake_match_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
+		row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
+		row.operator(op_bake_organize_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
 
 		# if bpy.app.debug_value != 0:
 		# 	row = box.row(align=True)
@@ -525,17 +529,17 @@ class Panel_Bake(bpy.types.Panel):
 				r = c.row(align=True)
 
 				if len(set.objects_low) > 0:
-					r.label(text="{}".format(len(set.objects_low)), icon_value = getIcon("bake_obj_low"))
+					r.label(text="{}".format(len(set.objects_low)), icon_value = icon_get("bake_obj_low"))
 				else:
 					r.label(text="")
 
 				if len(set.objects_high) > 0:
-					r.label(text="{}".format(len(set.objects_high)), icon_value = getIcon("bake_obj_high"))
+					r.label(text="{}".format(len(set.objects_high)), icon_value = icon_get("bake_obj_high"))
 				else:
 					r.label(text="")
 
 				if len(set.objects_cage) > 0:
-					r.label(text="{}".format(len(set.objects_cage)), icon_value = getIcon("bake_obj_cage"))
+					r.label(text="{}".format(len(set.objects_cage)), icon_value = icon_get("bake_obj_cage"))
 				else:
 					r.label(text="")
 		
@@ -544,19 +548,17 @@ class Panel_Bake(bpy.types.Panel):
 			row.active = len(settings.sets) > 0
 			row.label(text="Select")
 			row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
-			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = getIcon("bake_obj_low")).select_type = 'low'
-			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = getIcon("bake_obj_high")).select_type = 'high'
-			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = getIcon("bake_obj_cage")).select_type = 'cage'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_low")).select_type = 'low'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_high")).select_type = 'high'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
 
 
 
 keymaps = []
 
-def registerIcon(fileName):
-	# global custom_icons
-	name = fileName.split('.')[0]   # Don't include file extension
-	icons_dir = os.path.join(os.path.dirname(__file__), "icons")
-	preview_icons.load(name, os.path.join(icons_dir, fileName), 'IMAGE')
+def icon_get(name):
+	return utilities_ui.icon_get(name)
+
 	
 def register():
 	bpy.utils.register_module(__name__)
@@ -566,38 +568,39 @@ def register():
 	bpy.types.Scene.texToolsSettings = bpy.props.PointerProperty(type=TexToolsSettings)
 	
 	#GUI Utilities
-	utilities_gui.register()
+	utilities_ui.register()
 
-	# Register global Icons
-	global preview_icons
-	preview_icons = bpy.utils.previews.new()
-	registerIcon("logo.png")
-	registerIcon("islands_align_sort_h.png")
-	registerIcon("islands_align_sort_v.png")
-	registerIcon("checkerMap.png")
-	registerIcon("swap_uv_xyz.png")
-	registerIcon("island_rotate_90_left.png")
-	registerIcon("island_rotate_90_right.png")
-	registerIcon("textures_reload.png")
-	registerIcon("island_align_edge.png")
-	registerIcon("island_relax_straighten_edges.png")
-	registerIcon("op_select_islands_outline.png")
-	registerIcon("alignBottom.png")
-	registerIcon("alignLeft.png")
-	registerIcon("alignRight.png")
-	registerIcon("alignTop.png")
-	registerIcon("mirror.png")
-	registerIcon("setup_split_uv.png")
-	registerIcon("faces_iron.png")
-	registerIcon("islands_select_identical.png")
-	registerIcon("islands_select_overlapping.png")
-	registerIcon("op_bake.png")
-	registerIcon("op_bake_explode.png")
-	registerIcon("bake_obj_low.png")
-	registerIcon("bake_obj_high.png")
-	registerIcon("bake_obj_cage.png")
-	registerIcon("bake_anti_alias.png")
-	registerIcon("explode.png")
+	# Register Icons
+	icons = ["logo.png", 
+		"islands_align_sort_h.png", 
+		"islands_align_sort_v.png", 
+		"checkerMap.png", 
+		"swap_uv_xyz.png", 
+		"island_rotate_90_left.png", 
+		"island_rotate_90_right.png", 
+		"textures_reload.png", 
+		"island_align_edge.png", 
+		"island_relax_straighten_edges.png", 
+		"op_select_islands_outline.png", 
+		"alignBottom.png", 
+		"alignLeft.png", 
+		"alignRight.png", 
+		"alignTop.png", 
+		"mirror.png", 
+		"setup_split_uv.png", 
+		"faces_iron.png", 
+		"islands_select_identical.png", 
+		"islands_select_overlapping.png", 
+		"op_bake.png", 
+		"op_bake_explode.png", 
+		"bake_obj_low.png", 
+		"bake_obj_high.png", 
+		"bake_obj_cage.png", 
+		"bake_anti_alias.png", 
+		"explode.png"
+	]
+	for icon in icons:
+		utilities_ui.icon_register(icon)
 	
 
 	#Key Maps
@@ -639,11 +642,7 @@ def unregister():
 	del bpy.types.Scene.texToolsSettings
 
 	#GUI Utilities
-	utilities_gui.unregister()
-
-	# Unregister icons
-	global preview_icons
-	bpy.utils.previews.remove(preview_icons)
+	utilities_ui.unregister()
 
 	#handle the keymap
 	for km, kmi in keymaps:

@@ -92,7 +92,6 @@ def sort_objects(self):
 			pairs_low_high[obj_A] = sorted_matches[0][0]
 			print("")
 
-
 	# objects_unsorted = [obj for obj in objects if (obj not in pairs_low_high.values() and obj not in pairs_low_high.keys() )]
 	
 	bpy.ops.object.select_all(action='DESELECT')

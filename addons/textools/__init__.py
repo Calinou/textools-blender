@@ -442,7 +442,7 @@ class Panel_Bake(bpy.types.Panel):
 		box = row.box()
 		col = box.column(align=True)
 
-		if not bpy.context.scene.texToolsSettings.bake_freeze_selection:
+		if not (bpy.context.scene.texToolsSettings.bake_freeze_selection and len(settings.sets) > 0):
 			# Update sets
 			settings.sets = utilities_bake.get_bake_sets()
 
@@ -487,9 +487,9 @@ class Panel_Bake(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 
-		row = box.row(align=True)
-		row.operator(op_bake_organize_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
-		row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
+		col = box.column(align=True)
+		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
+		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
 		
 		# if bpy.app.debug_value != 0:
 		# 	row = box.row(align=True)

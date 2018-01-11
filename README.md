@@ -6,6 +6,7 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 
 
 ## Download ##
+* [Blender_TexTools_0.8.0.zip](http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip)
 * [Blender TexTools 0.7.2.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.7.2.zip)
 * [Blender TexTools 0.7.1.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.7.1.zip)
 * [Blender TexTools 0.6.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.6.0.zip)

@@ -30,7 +30,7 @@ class op(bpy.types.Operator):
 
 
 def sort_objects(self):
-	print("Sort objects")
+	print("___________________\nSort objects")
 
 	# Collect objects
 	objects = []
@@ -76,6 +76,8 @@ def sort_objects(self):
 			p = score / avg_side
 			if p > 0 and p <= 0.65:
 				matches[obj_B] = p
+			else:
+				print("Not matched: {} ".format(p))
 
 		if(len(matches) > 0):
 			sorted_matches = sorted(matches.items(), key=operator.itemgetter(1))
@@ -96,8 +98,7 @@ def sort_objects(self):
 	bpy.ops.object.select_all(action='DESELECT')
 	for obj_A in pairs_low_high:
 		obj_B = pairs_low_high[obj_A]
-		
-		obj_A.name = get_name_low(obj_A.name)
+
 		obj_B.name = get_name_high(obj_A.name)
 
 		obj_A.select = True
@@ -108,14 +109,8 @@ def sort_objects(self):
 
 
 def get_name_high(name_low):
-
-	return name_low+"_high"
-
-
-def get_name_low(name):
-
-	return name
-
+	name_safe = utilities_bake.get_bake_name(name_low)
+	return name_safe+" high"
 
 
 
@@ -134,7 +129,7 @@ def get_score(A, B):
 	# Volume
 	volume_A = bbox_A['size'].x * bbox_A['size'].y * bbox_A['size'].z
 	volume_B = bbox_B['size'].x * bbox_B['size'].y * bbox_B['size'].z
-	delta_vol = math.sqrt(max(volume_A, volume_B) - min(volume_A, volume_B))
+	delta_vol = (max(volume_A, volume_B) - min(volume_A, volume_B))/3.0
 
 	# Longest side
 	side_A_max = max(bbox_A['size'].x, bbox_A['size'].y, bbox_A['size'].z )

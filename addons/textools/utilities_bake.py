@@ -64,8 +64,8 @@ def restore_bake_settings():
 
 
 
-def get_bake_name(obj):
-	name = obj.name.lower()
+def get_bake_name(name):
+	name = name.lower()
 	
 	# Split by ' ','_','.' etc.
 	split = name.lower()
@@ -110,22 +110,30 @@ def get_object_type(obj):
 			split = split.replace(char,' ')
 		strings = split.split(' ')
 
+		# Detect High first, more rare
 		for string in strings:
-			if typ == '':
-				for key in keywords_cage:
-					if key == string:
-						typ = 'cage'
-						break
-			if typ == '':
-				for key in keywords_low:
-					if key == string:
-						typ = 'low'
-						break
 			if typ == '':
 				for key in keywords_high:
 					if key == string:
 						typ = 'high'
 						break
+		# Detect cage, more rare than low
+		if typ == '':
+			for string in strings:		
+				if typ == '':
+					for key in keywords_cage:
+						if key == string:
+							typ = 'cage'
+							break
+		# Detect low
+		if typ == '':
+			for string in strings:
+				if typ == '':
+					for key in keywords_low:
+						if key == string:
+							typ = 'low'
+							break
+			
 
 	# if nothing was detected, assume its low
 	if typ == '':
@@ -144,14 +152,14 @@ def get_bake_sets():
 	groups = []
 	# Group by names
 	for key in filtered:
-		name = get_bake_name(key)
+		name = get_bake_name(key.name)
 
 		if len(groups)==0:
 			groups.append([key])
 		else:
 			isFound = False
 			for group in groups:
-				groupName = get_bake_name(group[0])
+				groupName = get_bake_name(group[0].name)
 				if name == groupName:
 					group.append(key)
 					isFound = True
@@ -161,12 +169,12 @@ def get_bake_sets():
 				groups.append([key])
 
 	# Sort groups alphabetically
-	keys = [get_bake_name(group[0]) for group in groups]
+	keys = [get_bake_name(group[0].name) for group in groups]
 	keys.sort()
 	sorted_groups = []
 	for key in keys:
 		for group in groups:
-			if key == get_bake_name(group[0]):
+			if key == get_bake_name(group[0].name):
 				sorted_groups.append(group)
 				break
 				
@@ -187,7 +195,7 @@ def get_bake_sets():
 			elif filtered[obj] == 'cage':
 				cage.append(obj)
 
-		name = get_bake_name(group[0])
+		name = get_bake_name(group[0].name)
 		bake_sets.append(BakeSet(name, low, cage, high))
 
 	return bake_sets

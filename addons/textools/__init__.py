@@ -468,7 +468,7 @@ class Panel_Bake(bpy.types.Panel):
 
 		# Bake Mode
 		col.template_icon_view(context.scene, "TT_bake_mode")
-		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"")
+		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"").lower()
 		
 
 		# Optional Parameters
@@ -477,13 +477,11 @@ class Panel_Bake(bpy.types.Panel):
 			if len(set.objects_low) > 0 and len(set.objects_high) > 0:
 				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
 				break		
-		
+
 		if settings.bake_mode == 'ao':
 			col.prop(context.scene.texToolsSettings, "bake_samples")
 		
 		
-
-		layout.label(text="Items {}x".format(len(settings.sets)))
 
 		row = layout.row()
 		box = row.box()
@@ -499,17 +497,23 @@ class Panel_Bake(bpy.types.Panel):
 			
 		# Freeze Selection
 		row = box.row()
+
+		split = row.split(percentage=0.8)
+		c = split.column()
 		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
 		icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
-		row.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
+		c.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
 
+		c = split.column()
+		c.label(text="{}x".format(len(settings.sets)))
+		
+		
 
 		if len(settings.sets) > 0:
 			# List bake sets
 			box2 = box.box()
 
 			
-
 
 			row = box2.row()
 			split = row.split(percentage=0.55)
@@ -545,14 +549,15 @@ class Panel_Bake(bpy.types.Panel):
 				else:
 					r.label(text="")
 		
-			
-			row = box.row(align=True)
-			row.active = len(settings.sets) > 0
-			row.label(text="Select")
-			row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
-			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_low")).select_type = 'low'
-			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_high")).select_type = 'high'
-			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
+			# Select by type
+			if len(settings.sets) > 0:
+				row = box.row(align=True)
+				row.active = len(settings.sets) > 0
+				row.label(text="Select")
+				row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
+				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_low")).select_type = 'low'
+				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_high")).select_type = 'high'
+				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
 
 
 

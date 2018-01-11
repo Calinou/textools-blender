@@ -6,6 +6,30 @@ from collections import defaultdict
 from math import pi
 
 from . import utilities_uv
+from . import utilities_ui
+
+
+
+class op_select_extend_direction(bpy.types.Operator):
+	bl_idname = "uv.textools_select_extend_direction"
+	bl_label = "Select"
+	bl_description = "Select this bake set in scene"
+
+	direction = bpy.props.StringProperty(default="TL")
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		print("Set: "+self.direction)
+		
+		bpy.context.scene.texToolsSettings.canvas_extend_direction = self.direction
+
+		return {'FINISHED'}
+
+
+
 
 
 class op(bpy.types.Operator):
@@ -48,7 +72,7 @@ class op(bpy.types.Operator):
 
 	def execute(self, context):
 		
-		swap(context)
+		extend_canvas(self)
 		return {'FINISHED'}
 
 	def invoke(self, context, event):
@@ -57,25 +81,52 @@ class op(bpy.types.Operator):
 	def draw(self, context):
 		# https://b3d.interplanety.org/en/creating-pop-up-panels-with-user-ui-in-blender-add-on/
 		layout = self.layout
-		layout.label("Alignment?")
+		# layout.label("Alignment?")
 
-		col = layout.column(align=True)
+		# box = layout.box()
+		r = layout.row()
+
+		col = r.column(align=True)
+		col.label("Side")
 		row = col.row(align=True)
-		row.operator("object.select_all", text="Tdsa")
-		row.operator("object.select_all", text="Tdsa")
-		layout = layout.column(align=True)
+		row.operator(op_select_extend_direction.bl_idname, text="", icon_value=icon_direction("TL")).direction = "TL"
+		row.operator(op_select_extend_direction.bl_idname, text="", icon_value=icon_direction("TR")).direction = "TR"
 		row = col.row(align=True)
-		row.operator("object.select_all", text="Tdsa")
-		row.operator("object.select_all", text="Tdsa")
+		row.operator(op_select_extend_direction.bl_idname, text="", icon_value=icon_direction("BL")).direction = "BL"
+		row.operator(op_select_extend_direction.bl_idname, text="", icon_value=icon_direction("BR")).direction = "BR"
 		
 
 		# layout.prop(self.size)
-		col = layout.column(align=True)
+		col = r.column(align=True)
 		col.prop(self, "size", text="Size")
 		
 		self.layout.label("....")
 
 
-def swap(context):
-	print("Execute op_extend_canvas")
 
+
+def icon_direction(key):
+	if bpy.context.scene.texToolsSettings.canvas_extend_direction == key:
+		return utilities_ui.icon_get("op_extend_canvas_{}_active".format(key))
+	else:
+		return utilities_ui.icon_get("op_extend_canvas_{}_inactive".format(key))
+
+
+def extend_canvas(self):
+	direction = bpy.context.scene.texToolsSettings.canvas_extend_direction
+	print("Execute op_extend_canvas: {}".format(direction))
+
+
+
+# if __name__ == "__main__":
+	# register()
+utilities_ui.icon_register("op_extend_canvas_TL_active.png")
+utilities_ui.icon_register("op_extend_canvas_TR_active.png")
+utilities_ui.icon_register("op_extend_canvas_BL_active.png")
+utilities_ui.icon_register("op_extend_canvas_BR_active.png")
+utilities_ui.icon_register("op_extend_canvas_TL_inactive.png")
+utilities_ui.icon_register("op_extend_canvas_TR_inactive.png")
+utilities_ui.icon_register("op_extend_canvas_BL_inactive.png")
+utilities_ui.icon_register("op_extend_canvas_BR_inactive.png")
+
+print("__________________Register op_extend_canvas???")

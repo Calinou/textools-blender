@@ -18,7 +18,7 @@ bl_info = {
 	"name": "TexTools",
 	"description": "UV and texture Tools for Blender, based on ideas of the original TexTools for 3dsMax.",
 	"author": "renderhjs",
-	"version": (0, 7, 2),
+	"version": (0, 7, 5),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
@@ -30,9 +30,9 @@ bl_info = {
 # More info: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Multi-File_packages
 if "bpy" in locals():
 	import imp
+	imp.reload(settings)
 	imp.reload(utilities_ui)
 	imp.reload(utilities_bake)
-	imp.reload(settings)
 	
 	imp.reload(op_extend_canvas)
 	imp.reload(op_islands_align_sort)
@@ -56,9 +56,9 @@ if "bpy" in locals():
 
 	
 else:
+	from . import settings
 	from . import utilities_ui
 	from . import utilities_bake
-	from . import settings
 
 	from . import op_extend_canvas
 	from . import op_islands_align_sort
@@ -270,12 +270,14 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		description="Lock baking sets, don't change with selection",
 		default = False
 	)
+	# bake_do_save = bpy.props.BoolProperty(
+	# 	name="Save",
+	# 	description="Save the baked texture?",
+	# 	default = False)
+	canvas_extend_direction = bpy.props.StringProperty(default="TL")
 
 
-	bake_do_save = bpy.props.BoolProperty(
-		name="Save",
-		description="Save the baked texture?",
-		default = False)
+
 
 	id_palette = None;#bpy.types.UILayout.template_palette()
 

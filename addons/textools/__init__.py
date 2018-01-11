@@ -18,13 +18,17 @@ bl_info = {
 	"name": "TexTools",
 	"description": "UV and texture Tools for Blender, based on ideas of the original TexTools for 3dsMax.",
 	"author": "renderhjs",
-	"version": (0, 7, 5),
+	"version": (0, 8, 0),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
 	"warning": "Early release, expect bugs and missing features.",
 	"wiki_url": "https://bitbucket.org/renderhjs/textools-blender"
 }
+
+def get_tab_name():
+	return "TexTools {}.{}".format(bl_info['version'][0], bl_info['version'][1])
+
 
 # Import local modules
 # More info: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Multi-File_packages
@@ -290,7 +294,7 @@ class Panel_Units(bpy.types.Panel):
 	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_category = "TexTools"
+	bl_category = get_tab_name()
 	
 
 	def draw_header(self, _):
@@ -325,7 +329,7 @@ class Panel_Layout(bpy.types.Panel):
 	bl_label = "UV Layout"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_category = "TexTools"
+	bl_category = get_tab_name()
 	
 	# def draw_header(self, _):
 	# 	layout = self.layout
@@ -432,7 +436,7 @@ class Panel_Bake(bpy.types.Panel):
 	bl_label = "Texture Baking"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_category = "TexTools"
+	bl_category = get_tab_name()
 	
 	def draw(self, context):
 		layout = self.layout

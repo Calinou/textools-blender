@@ -313,8 +313,11 @@ class Panel_Units(bpy.types.Panel):
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 
-
-		col.operator(op_extend_canvas.op.bl_idname, text="Extend Canvas", icon_value = icon_get("swap_uv_xyz"))
+		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
+		if bpy.app.debug_value != 0:
+			row = col.row()
+			row.alert = True
+			row.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 			
 
 
@@ -334,17 +337,15 @@ class Panel_Layout(bpy.types.Panel):
 		
 		
 		if bpy.app.debug_value != 0:
-			layout.alert = True
-			row = layout.row(align=True)
-			row.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = icon_get("swap_uv_xyz"))
-			row.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("island_relax_straighten_edges"))
-			row.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = icon_get("setup_split_uv"))
-			
-			row = layout.row(align=True)
+			col = layout.column(align=True)
+			col.alert = True
+			col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = icon_get("swap_uv_xyz"))
+			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("island_relax_straighten_edges"))
+			col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = icon_get("setup_split_uv"))
+			row = col.row(align=True)
 			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = icon_get("mirror")).is_stack = False;
 			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = icon_get("mirror")).is_stack = True;
-		
-			layout.alert = False
+
 		#---------- Layout ------------
 		# layout.label(text="Layout")
 
@@ -487,9 +488,9 @@ class Panel_Bake(bpy.types.Panel):
 		box = row.box()
 
 		row = box.row(align=True)
-		row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
 		row.operator(op_bake_organize_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
-
+		row.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
+		
 		# if bpy.app.debug_value != 0:
 		# 	row = box.row(align=True)
 		# 	row.alert = True
@@ -497,17 +498,10 @@ class Panel_Bake(bpy.types.Panel):
 			
 		# Freeze Selection
 		row = box.row()
-
-		split = row.split(percentage=0.8)
-		c = split.column()
 		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
 		icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
-		c.prop(context.scene.texToolsSettings, "bake_freeze_selection", icon=icon)
+		row.prop(context.scene.texToolsSettings, "bake_freeze_selection",text="Lock {}x".format(len(settings.sets)), icon=icon)
 
-		c = split.column()
-		c.label(text="{}x".format(len(settings.sets)))
-		
-		
 
 		if len(settings.sets) > 0:
 			# List bake sets
@@ -553,11 +547,25 @@ class Panel_Bake(bpy.types.Panel):
 			if len(settings.sets) > 0:
 				row = box.row(align=True)
 				row.active = len(settings.sets) > 0
+
+				count_types = [0,0,0,0]
+				for set in settings.sets:
+					if set.has_issues:
+						count_types[0]+=1
+					if len(set.objects_low) > 0:
+						count_types[1]+=1
+					if len(set.objects_high) > 0:
+						count_types[2]+=1
+					if len(set.objects_cage) > 0:
+						count_types[3]+=1
+
 				row.label(text="Select")
-				row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
+				if count_types[0] > 0:
+					row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
 				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_low")).select_type = 'low'
 				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_high")).select_type = 'high'
-				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
+				if count_types[3] > 0:
+					row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
 
 
 
@@ -578,7 +586,9 @@ def register():
 	utilities_ui.register()
 
 	# Register Icons
-	icons = ["logo.png", 
+	icons = [
+		# "logo.png", 
+		"op_extend_canvas_open.png",
 		"islands_align_sort_h.png", 
 		"islands_align_sort_v.png", 
 		"checkerMap.png", 

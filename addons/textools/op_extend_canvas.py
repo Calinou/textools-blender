@@ -30,8 +30,6 @@ class op_select_extend_direction(bpy.types.Operator):
 
 
 
-
-
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_extend_canvas"
 	bl_label = "Extend Canvas"
@@ -53,10 +51,6 @@ class op(bpy.types.Operator):
 			return False
 		
 		if bpy.context.active_object.type != 'MESH':
-			return False
-
-		#Only in Edit mode
-		if bpy.context.active_object.mode != 'EDIT':
 			return False
 
 		#Only in UV editor mode
@@ -115,6 +109,12 @@ def icon_direction(key):
 def extend_canvas(self):
 	direction = bpy.context.scene.texToolsSettings.canvas_extend_direction
 	print("Execute op_extend_canvas: {}".format(direction))
+
+	#Only in Edit mode
+	# if bpy.context.active_object.mode != 'EDIT':
+	# 	return False
+
+
 
 
 

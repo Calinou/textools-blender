@@ -11,9 +11,9 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 * [Blender TexTools 0.6.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.6.0.zip)
 * [Blender TexTools 0.3.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.3.0.zip)
 
-## Additional links ##
+## Links ##
 * ![](http://renderhjs.net/textools/blender/img/paypal_donate.png)
- PayPal [Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6) for those that like doing that
+ [PayPal Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6) for those that like doing that
 * [Git repository](https://bitbucket.org/renderhjs/textools-blender) on BitBucket
 * [3dsMax version](http://renderhjs.net/textools/) of TexTools
 * Blenderartist [discussion thread](https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender)
@@ -36,13 +36,28 @@ TexTools is a free addon for Blender with a collection of UV and Texture related
 
 
 
-## Texture Size ##
-![](http://renderhjs.net/textools/blender/img/screenshot_texture_settings.png)
+## ► Units ##
 
 Used to set the texture size for baking but also the padding size for UV operations when spacing UV islands. Use the dropdown menu to quickly assign common square texture sizes. All units are in pixels.
 
+![](http://renderhjs.net/textools/blender/img/screenshot_texture_settings.png)
 
-## Layout ##
+#### Size
+A dropdown with common texture sizes for the Width and Height of the texture in pixels
+
+#### Padding
+Padding size in pixels. The padding is used for UV margins and texture baking.
+
+#### Resize
+![](http://renderhjs.net/textools/blender/img/op_extend_canvas_open.png)
+
+Opens a resize popup where you can extend or resize the UV layout canvas to either direction.
+
+
+---
+
+
+## ► UV Layout ##
 
 
 #### Align
@@ -82,6 +97,7 @@ Select the mirror UV edge loop ![Edge mode](http://renderhjs.net/textools/blende
 Unwraps selected viewpoert faces ![Face mode](http://renderhjs.net/textools/blender/img/selection_view_face.png) into a single UV island. This is often a quicker approach of unwrapping as opposed to marking the boundary edges (mark seams).
 
 ---
+
 ## Select ##
 
 #### Select Similar
@@ -117,23 +133,21 @@ Assigns a checker map to the selected object or cycles through 2 checker maps. W
 
 Reload all textures in the current blend file
 
+---
 
-## Bake ##
+## ► Texture Baking ##
+
+
+#### Bake
 ![](http://renderhjs.net/textools/blender/img/op_bake.png)
+Bakes the textures of the selected objects
+
 
 Baking in TexTools is **super** easy, just select your objects and press Bake. A realtime set list shows you what will be baked and how many objects are part of each. 
 
 ![](http://renderhjs.net/textools/blender/img/bake_sets_preview.png)
 
 You'll see a warning icon in front of items that have missing UV's, missing low poly objects or incorrect cage to low poly object counts.
-
-
-#### Type of objects
-TexTools automatically groups your scene selection into sets to bake. Objects with common name prefixes are grouped into a set. Objects can be of 3 different object types:
-
-* ![](http://renderhjs.net/textools/blender/img/bake_obj_low.png) **Low poly** objects: when their name used the keyword 'low', 'lowpoly' or 'l' 
-* ![](http://renderhjs.net/textools/blender/img/bake_obj_high.png) **High poly** objects: when they contain a **Subdevision Surface** modifier or when their name used the keyword 'high', 'highpoly' or 'h' 
-* ![](http://renderhjs.net/textools/blender/img/bake_obj_cage.png) **Cage objects**:when their name used the keyword 'cage' or 'c' . Use this for custom projection cages.
 
 
 #### AA / Anti Alias
@@ -146,12 +160,6 @@ Anti Aliasing level, choose from: None, 2x and 4x. When you enable Anti Aliasing
 With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. It uses the name or ID from the first item in the bake set list. This is great for multi part objects or exploded bake setups.
 
 
-#### Lock Selection
-![](http://renderhjs.net/textools/blender/img/bake_lock_selection.png)
-
-Lock or unlock the current bake selection. When locked scene selection changes won't affect the baking list. This is great for tweaking meshes, cages or other settings while baking.
-
-
 #### Baking modes
 * **'AO'** Ambient Occlusion pass, use the 'Samples' value below to adjust the amount of samples
 * **'Cavity'** Convex and Concarve render pass using vertex color and cycles pointiness for a refined result
@@ -159,6 +167,41 @@ Lock or unlock the current bake selection. When locked scene selection changes w
 * **'GradientZ'** World space Z axis as gradient mask
 * **'ID'** World space Z axis as gradient mask
 * **'Normal'** Normal map in tangent space
+
+
+---
+
+#### Type of baking objects
+TexTools automatically groups your scene selection into sets to bake. Objects with common name prefixes are grouped into a set. Objects can be of 3 different object types:
+
+* ![](http://renderhjs.net/textools/blender/img/bake_obj_low.png) **Low poly** objects: when their name used the keyword: 'lowpoly', 'low', 'lp' or 'l' 
+* ![](http://renderhjs.net/textools/blender/img/bake_obj_high.png) **High poly** objects: when they contain a **Subdevision Surface** modifier or when their name used the keyword: 'highpoly','high','hp' or 'h' 
+* ![](http://renderhjs.net/textools/blender/img/bake_obj_cage.png) **Cage objects**:when their name used the keyword 'cage' or 'c' . Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.
+
+
+#### Organize
+Declutters your selected object names by matching high and low poly objects by their bounding box location and size. Only high poly objects are renamed to match the low poly names with the ' high' suffix.
+
+
+#### Explode
+![](http://renderhjs.net/textools/blender/img/op_bake_explode.png)
+
+Moves all selected bake pairs apart into 6 directions. Offsets are based on bounding boxes and offset to the center of the whole group. Margins are a 35% of the average side of all bounding boxes. Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.
+
+
+#### Lock Selection
+![](http://renderhjs.net/textools/blender/img/bake_lock_selection.png)
+
+Lock or unlock the current bake selection. When locked scene selection changes won't affect the baking list. This is great for tweaking meshes, cages or other settings while baking.
+
+
+#### Select by type
+![](http://renderhjs.net/textools/blender/img/bake_select_by_type.png)
+
+Select from the baking sets all objects that match a critera such as 'Warning', 'Low', 'High' or 'Cage' objects. 
+
+**Tip**: When bake sets are locked you can select scene objects here independently of the bake sets.
+
 
 ---
 

@@ -17,7 +17,8 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if len(bpy.context.selected_objects) == 0:
+		# Require 2 or more objects to sort
+		if len(bpy.context.selected_objects) <= 1:
 			return False
 
 		return True

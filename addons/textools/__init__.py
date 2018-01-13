@@ -217,6 +217,25 @@ def on_size_dropdown_select(self, context):
 	bpy.context.scene.texToolsSettings.padding = 8
 
 
+
+def get_dropdown_uv_values(self, context):
+	# Dynamic Dropdowns: https://blender.stackexchange.com/questions/35223/whats-the-correct-way-of-implementing-dynamic-dropdown-menus-in-python
+	if bpy.context.active_object != None:
+		if bpy.context.active_object.type == 'MESH':
+			if bpy.context.object.data.uv_layers:
+				options = []
+				step = 0
+				for uvLoop in bpy.context.object.data.uv_layers:
+					options.append((uvLoop.name, "#{}  {}".format(step+1, uvLoop.name), 'description', 0))
+					step+=1
+
+				return options
+
+	return []
+	# return [('One', 'Label One', 'description')]
+
+
+
 class TexToolsSettings(bpy.types.PropertyGroup):
 	#Width and Height
 	size = bpy.props.IntVectorProperty(
@@ -235,6 +254,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('2048', '2048', ''), 
 		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024'
 	)
+
+	uv_channel = bpy.props.EnumProperty(items = get_dropdown_uv_values, name = "UV")
 
 	#Padding
 	padding = bpy.props.IntProperty(
@@ -319,10 +340,33 @@ class Panel_Units(bpy.types.Panel):
 
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
 		if bpy.app.debug_value != 0:
-			row = col.row()
+			row = layout.row()
 			row.alert = True
 			row.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
-			
+		
+
+		# UV Channel
+		row = layout.row()
+		split = row.split(percentage=0.35)
+		c = split.column(align=True)
+		c.label(text="UV" , icon='GROUP_UVS')
+
+		c = split.column(align=True)
+		row = c.row()
+
+		is_error = False
+		if len(bpy.context.selected_objects) > 0:
+			if bpy.context.active_object != None and bpy.context.active_object in bpy.context.selected_objects:
+				if bpy.context.active_object.type == 'MESH':
+					if not bpy.context.object.data.uv_layers:
+						row.label(text="None", icon= 'ERROR')
+						is_error = True
+		if not is_error:
+			row.prop(context.scene.texToolsSettings, "uv_channel", text="")
+
+		
+
+
 
 
 class Panel_Layout(bpy.types.Panel):
@@ -468,6 +512,15 @@ class Panel_Bake(bpy.types.Panel):
 		else:
 			row.label(text="")
 
+
+		if bpy.app.debug_value != 0:
+			row = col.row()
+			row.alert = True
+			row.prop(context.scene.texToolsSettings, "bake_force_single", text="Dither Floats")
+
+
+
+
 		col.separator()
 
 
@@ -492,7 +545,7 @@ class Panel_Bake(bpy.types.Panel):
 		box = row.box()
 
 		col = box.column(align=True)
-		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize", icon = 'BOOKMARKS')
+		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize {}x".format(len(bpy.context.selected_objects)), icon = 'BOOKMARKS')
 		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
 		
 		# if bpy.app.debug_value != 0:
@@ -501,13 +554,40 @@ class Panel_Bake(bpy.types.Panel):
 
 			
 		# Freeze Selection
-		row = box.row()
+		col = box.column(align=True)
+		row = col.row(align=True)
 		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
 		icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
 		row.prop(context.scene.texToolsSettings, "bake_freeze_selection",text="Lock {}x".format(len(settings.sets)), icon=icon)
 
 
+		# Select by type
 		if len(settings.sets) > 0:
+			row = col.row(align=True)
+			row.active = len(settings.sets) > 0
+
+			count_types = [0,0,0,0]
+			for set in settings.sets:
+				if set.has_issues:
+					count_types[0]+=1
+				if len(set.objects_low) > 0:
+					count_types[1]+=1
+				if len(set.objects_high) > 0:
+					count_types[2]+=1
+				if len(set.objects_cage) > 0:
+					count_types[3]+=1
+
+			row.label(text="Select")
+			if count_types[0] > 0:
+				row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_low")).select_type = 'low'
+			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_high")).select_type = 'high'
+			if count_types[3] > 0:
+				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
+
+
+		if len(settings.sets) > 0:
+
 			# List bake sets
 			box2 = box.box()
 
@@ -547,30 +627,7 @@ class Panel_Bake(bpy.types.Panel):
 				else:
 					r.label(text="")
 		
-			# Select by type
-			if len(settings.sets) > 0:
-				row = box.row(align=True)
-				row.active = len(settings.sets) > 0
-
-				count_types = [0,0,0,0]
-				for set in settings.sets:
-					if set.has_issues:
-						count_types[0]+=1
-					if len(set.objects_low) > 0:
-						count_types[1]+=1
-					if len(set.objects_high) > 0:
-						count_types[2]+=1
-					if len(set.objects_cage) > 0:
-						count_types[3]+=1
-
-				row.label(text="Select")
-				if count_types[0] > 0:
-					row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
-				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_low")).select_type = 'low'
-				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_high")).select_type = 'high'
-				if count_types[3] > 0:
-					row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
-
+			
 
 
 keymaps = []

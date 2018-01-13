@@ -217,23 +217,34 @@ def on_size_dropdown_select(self, context):
 	bpy.context.scene.texToolsSettings.padding = 8
 
 
+def on_dropdown_uv_select(self, context):
+	if bpy.context.active_object != None:
+		if bpy.context.active_object.type == 'MESH':
+			if bpy.context.object.data.uv_layers:
+
+				# Change Mesh UV Channel
+				index = int(bpy.context.scene.texToolsSettings.uv_channel)
+				if index < len(bpy.context.object.data.uv_textures):
+					bpy.context.object.data.uv_textures.active_index = index
+
+
 
 def get_dropdown_uv_values(self, context):
 	# Dynamic Dropdowns: https://blender.stackexchange.com/questions/35223/whats-the-correct-way-of-implementing-dynamic-dropdown-menus-in-python
+	
+	# Requires mesh and UV data
 	if bpy.context.active_object != None:
 		if bpy.context.active_object.type == 'MESH':
 			if bpy.context.object.data.uv_layers:
 				options = []
 				step = 0
 				for uvLoop in bpy.context.object.data.uv_layers:
-					options.append((uvLoop.name, "#{}  {}".format(step+1, uvLoop.name), 'description', 0))
+					# options.append((str(step), "#{}  {}".format(step+1, uvLoop.name), "Change UV channel to '{}'".format(uvLoop.name), step))
+					options.append((str(step), "#{}".format(step+1), "Change UV channel to '{}'".format(uvLoop.name), step))
 					step+=1
 
 				return options
-
 	return []
-	# return [('One', 'Label One', 'description')]
-
 
 
 class TexToolsSettings(bpy.types.PropertyGroup):
@@ -255,7 +266,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024'
 	)
 
-	uv_channel = bpy.props.EnumProperty(items = get_dropdown_uv_values, name = "UV")
+	uv_channel = bpy.props.EnumProperty(
+		items = get_dropdown_uv_values, 
+		name = "UV", 
+		update = on_dropdown_uv_select
+	)
 
 	#Padding
 	padding = bpy.props.IntProperty(
@@ -347,7 +362,7 @@ class Panel_Units(bpy.types.Panel):
 
 		# UV Channel
 		row = layout.row()
-		split = row.split(percentage=0.35)
+		split = row.split(percentage=0.5)
 		c = split.column(align=True)
 		c.label(text="UV" , icon='GROUP_UVS')
 

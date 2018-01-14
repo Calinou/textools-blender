@@ -125,128 +125,6 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 
 
 
-
-class op_debug(bpy.types.Operator):
-	bl_idname = "uv.textools_debug"
-	bl_label = "Debug"
-	bl_description = "Open console and enable dbug mode"
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		bpy.ops.wm.console_toggle()# Toggle Console (Windows only)
-		bpy.app.debug = True# Debug Vertex indexies
-		bpy.context.object.data.show_extra_indices = True
-		bpy.app.debug_value = 1 #Set to Non '0
-		return {'FINISHED'}
-
-
-
-class op_select_bake_set(bpy.types.Operator):
-	bl_idname = "uv.textools_select_bake_set"
-	bl_label = "Select"
-	bl_description = "Select this bake set in scene"
-
-	select_set = bpy.props.StringProperty(default="")
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		print("Set: "+self.select_set)
-		if self.select_set != "":
-			for set in settings.sets:
-				if set.name == self.select_set:
-					# Select this entire set
-					bpy.ops.object.select_all(action='DESELECT')
-					for obj in set.objects_low:
-						obj.select = True
-					for obj in set.objects_high:
-						obj.select = True
-					for obj in set.objects_cage:
-						obj.select = True
-					# Set active object to low poly to better visualize high and low wireframe color
-					if len(set.objects_low) > 0:
-						bpy.context.scene.objects.active = set.objects_low[0]
-
-					break
-		return {'FINISHED'}
-
-
-
-class op_select_bake_type(bpy.types.Operator):
-	bl_idname = "uv.textoolsselect_bake_type"
-	bl_label = "Select"
-	bl_description = "Select bake objects of this type"
-
-	select_type = bpy.props.StringProperty(default='low')
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		objects = []
-		for set in settings.sets:
-			if self.select_type == 'low':
-				objects+=set.objects_low
-			elif self.select_type == 'high':
-				objects+=set.objects_high
-			elif self.select_type == 'cage':
-				objects+=set.objects_cage
-			elif self.select_type == 'issue' and set.has_issues:
-				objects+=set.objects_low
-				objects+=set.objects_high
-				objects+=set.objects_cage
-
-		bpy.ops.object.select_all(action='DESELECT')
-		for obj in objects:
-			obj.select = True
-
-		return {'FINISHED'}
-
-
-def on_size_dropdown_select(self, context):
-	size = int(bpy.context.scene.texToolsSettings.size_dropdown)
-
-	bpy.context.scene.texToolsSettings.size[0] = size;
-	bpy.context.scene.texToolsSettings.size[1] = size;
-	bpy.context.scene.texToolsSettings.padding = 8
-
-
-def on_dropdown_uv_select(self, context):
-	if bpy.context.active_object != None:
-		if bpy.context.active_object.type == 'MESH':
-			if bpy.context.object.data.uv_layers:
-
-				# Change Mesh UV Channel
-				index = int(bpy.context.scene.texToolsSettings.uv_channel)
-				if index < len(bpy.context.object.data.uv_textures):
-					bpy.context.object.data.uv_textures.active_index = index
-
-
-
-def get_dropdown_uv_values(self, context):
-	# Dynamic Dropdowns: https://blender.stackexchange.com/questions/35223/whats-the-correct-way-of-implementing-dynamic-dropdown-menus-in-python
-	
-	# Requires mesh and UV data
-	if bpy.context.active_object != None:
-		if bpy.context.active_object.type == 'MESH':
-			if bpy.context.object.data.uv_layers:
-				options = []
-				step = 0
-				for uvLoop in bpy.context.object.data.uv_layers:
-					# options.append((str(step), "#{}  {}".format(step+1, uvLoop.name), "Change UV channel to '{}'".format(uvLoop.name), step))
-					options.append((str(step), "#{}".format(step+1), "Change UV channel to '{}'".format(uvLoop.name), step))
-					step+=1
-
-				return options
-	return []
-
-
 class TexToolsSettings(bpy.types.PropertyGroup):
 	#Width and Height
 	size = bpy.props.IntVectorProperty(
@@ -319,7 +197,157 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 
 
 
-	id_palette = None;#bpy.types.UILayout.template_palette()
+	# id_palette = None;#bpy.types.UILayout.template_palette()
+
+
+
+
+
+class op_debug(bpy.types.Operator):
+	bl_idname = "uv.textools_debug"
+	bl_label = "Debug"
+	bl_description = "Open console and enable dbug mode"
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		bpy.ops.wm.console_toggle()# Toggle Console (Windows only)
+		bpy.app.debug = True# Debug Vertex indexies
+		bpy.context.object.data.show_extra_indices = True
+		bpy.app.debug_value = 1 #Set to Non '0
+		return {'FINISHED'}
+
+
+
+class op_select_bake_set(bpy.types.Operator):
+	bl_idname = "uv.textools_select_bake_set"
+	bl_label = "Select"
+	bl_description = "Select this bake set in scene"
+
+	select_set = bpy.props.StringProperty(default="")
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		print("Set: "+self.select_set)
+		if self.select_set != "":
+			for set in settings.sets:
+				if set.name == self.select_set:
+					# Select this entire set
+					bpy.ops.object.select_all(action='DESELECT')
+					for obj in set.objects_low:
+						obj.select = True
+					for obj in set.objects_high:
+						obj.select = True
+					for obj in set.objects_cage:
+						obj.select = True
+					# Set active object to low poly to better visualize high and low wireframe color
+					if len(set.objects_low) > 0:
+						bpy.context.scene.objects.active = set.objects_low[0]
+
+					break
+		return {'FINISHED'}
+
+
+
+class op_select_bake_type(bpy.types.Operator):
+	bl_idname = "uv.textools_select_bake_type"
+	bl_label = "Select"
+	bl_description = "Select bake objects of this type"
+
+	select_type = bpy.props.StringProperty(default='low')
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		objects = []
+		for set in settings.sets:
+			if self.select_type == 'low':
+				objects+=set.objects_low
+			elif self.select_type == 'high':
+				objects+=set.objects_high
+			elif self.select_type == 'cage':
+				objects+=set.objects_cage
+			elif self.select_type == 'issue' and set.has_issues:
+				objects+=set.objects_low
+				objects+=set.objects_high
+				objects+=set.objects_cage
+
+		bpy.ops.object.select_all(action='DESELECT')
+		for obj in objects:
+			obj.select = True
+
+		return {'FINISHED'}
+
+
+def on_size_dropdown_select(self, context):
+	size = int(bpy.context.scene.texToolsSettings.size_dropdown)
+
+	bpy.context.scene.texToolsSettings.size[0] = size;
+	bpy.context.scene.texToolsSettings.size[1] = size;
+	bpy.context.scene.texToolsSettings.padding = 8
+
+
+def on_dropdown_uv_select(self, context):
+	if bpy.context.active_object != None:
+		if bpy.context.active_object.type == 'MESH':
+			if bpy.context.object.data.uv_layers:
+
+				# Change Mesh UV Channel
+				index = int(bpy.context.scene.texToolsSettings.uv_channel)
+				if index < len(bpy.context.object.data.uv_textures):
+					bpy.context.object.data.uv_textures.active_index = index
+
+
+class op_uv_channel_move(bpy.types.Operator):
+	bl_idname = "uv.textools_uv_channel_move"
+	bl_label = "Move UV Channel"
+	bl_description = "Move UV channel up or down"
+
+	is_up = bpy.props.BoolProperty(default=False)
+
+	@classmethod
+	def poll(cls, context):
+		if bpy.context.active_object == None:
+			return False
+		if bpy.context.active_object.type != 'MESH':
+			return False
+		if len(bpy.context.object.data.uv_layers) <= 1:
+			return False
+
+		return True
+
+	def execute(self, context):
+		
+		print("Swap UV channel: "+str(self.is_up))
+
+		return {'FINISHED'}
+
+
+
+def get_dropdown_uv_values(self, context):
+	# Dynamic Dropdowns: https://blender.stackexchange.com/questions/35223/whats-the-correct-way-of-implementing-dynamic-dropdown-menus-in-python
+	
+	# Requires mesh and UV data
+	if bpy.context.active_object != None:
+		if bpy.context.active_object.type == 'MESH':
+			if bpy.context.object.data.uv_layers:
+				options = []
+				step = 0
+				for uvLoop in bpy.context.object.data.uv_layers:
+					# options.append((str(step), "#{}  {}".format(step+1, uvLoop.name), "Change UV channel to '{}'".format(uvLoop.name), step))
+					options.append((str(step), "#{}".format(step+1), "Change UV channel to '{}'".format(uvLoop.name), step))
+					step+=1
+
+				return options
+	return []
+
 
 
 
@@ -362,12 +390,12 @@ class Panel_Units(bpy.types.Panel):
 
 		# UV Channel
 		row = layout.row()
-		split = row.split(percentage=0.5)
+		split = row.split(percentage=0.25)
 		c = split.column(align=True)
-		c.label(text="UV" , icon='GROUP_UVS')
+		c.label(text="UV")#, icon='GROUP_UVS'
 
 		c = split.column(align=True)
-		row = c.row()
+		row = c.row(align=True)
 
 		is_error = False
 		if len(bpy.context.selected_objects) > 0:
@@ -378,6 +406,10 @@ class Panel_Units(bpy.types.Panel):
 						is_error = True
 		if not is_error:
 			row.prop(context.scene.texToolsSettings, "uv_channel", text="")
+			# row = c.row(align=True)
+			row.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_UP_BAR').is_up = True;
+			row.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_DOWN_BAR').is_up = False;
+
 
 		
 

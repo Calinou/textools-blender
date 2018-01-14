@@ -46,7 +46,7 @@ def main(context):
 			for space in area.spaces: # iterate through spaces in current VIEW_3D area
 				if space.type == 'VIEW_3D': # check if space is a 3D view
 					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
-					space.show_textured_shadeless = True
+					# space.show_textured_shadeless = True
 
 
 

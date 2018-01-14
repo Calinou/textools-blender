@@ -31,8 +31,6 @@ class op(bpy.types.Operator):
 
 
 def sort_objects(self):
-	print("___________________\nSort objects")
-
 	# Collect objects
 	objects = []
 	bounds = {}

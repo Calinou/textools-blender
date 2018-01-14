@@ -249,9 +249,7 @@ class op_uv_channel_move(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
-
 		uv_textures = bpy.context.object.data.uv_textures
-		count = len(uv_textures)
 
 		if uv_textures.active_index == 0 and not self.is_down:
 			return {'FINISHED'}
@@ -264,7 +262,7 @@ class op_uv_channel_move(bpy.types.Operator):
 		def move_bottom(name):
 			# Set index
 			uv_textures.active_index = get_index(name)
-			# Copy (bottom)
+			# Copy (to bottom)
 			bpy.ops.mesh.uv_texture_add()
 			# Delete previous
 			uv_textures.active_index = get_index(name)
@@ -273,6 +271,8 @@ class op_uv_channel_move(bpy.types.Operator):
 			uv_textures.active_index = len(uv_textures)-1
 			uv_textures.active.name = name
 
+		count = len(uv_textures)
+
 		index_A = uv_textures.active_index
 		index_B = index_A + (1 if self.is_down else -1)
 
@@ -280,18 +280,13 @@ class op_uv_channel_move(bpy.types.Operator):
 			# Move up
 			for n in [uv_textures[i].name for i in range(index_B, count) if i != index_A]:
 				move_bottom(n)
-
-			# uv_textures.active_index = index_B
 			bpy.context.scene.texToolsSettings.uv_channel = str(index_B)
 
 		elif self.is_down:
 			# Move down
 			for n in [uv_textures[i].name for i in range(index_A, count) if i != index_B]:
 				move_bottom(n)
-
-			# uv_textures.active_index = index_B
 			bpy.context.scene.texToolsSettings.uv_channel = str(index_B)
-
 
 		return {'FINISHED'}
 

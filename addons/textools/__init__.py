@@ -125,84 +125,6 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 
 
 
-class TexToolsSettings(bpy.types.PropertyGroup):
-	#Width and Height
-	size = bpy.props.IntVectorProperty(
-		name = "Size",
-		size=2, 
-		description="Texture & UV size in pixels",
-		default = (512,512),
-		subtype = "XYZ"
-	)
-
-	size_dropdown = bpy.props.EnumProperty(items= [('64', '64', ''), 
-		('128', '128', ''), 
-		('256', '256', ''), 
-		('512', '512', ''), 
-		('1024', '1024', ''), 
-		('2048', '2048', ''), 
-		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024'
-	)
-
-	uv_channel = bpy.props.EnumProperty(
-		items = get_dropdown_uv_values, 
-		name = "UV", 
-		update = on_dropdown_uv_select
-	)
-
-	#Padding
-	padding = bpy.props.IntProperty(
-		name = "Padding",
-		description="padding size in pixels",
-		default = 4,
-		min = 0,
-		max = 256
-	)
-	
-	bake_samples = bpy.props.FloatProperty(
-		name = "Samples",
-		description = "Samples in Cycles for Baking. The higher the less noise. Default: 64",
-		default = 64,
-		min = 1,
-		max = 4000
-	)
-	bake_ray_distance = bpy.props.FloatProperty(
-		name = "Ray Dist.",
-		description = "Ray distance when baking. When using cage used as extrude distance",
-		default = 0.01,
-		min = 0.000,
-		max = 100.00
-	)
-	bake_force_single = bpy.props.BoolProperty(
-		name="Single Texture",
-		description="Force a single texture bake accross all selected objects",
-		default = False
-	)
-	bake_sampling = bpy.props.EnumProperty(items= 
-		[('1', 'None', 'No Anti Aliasing (Fast)'), 
-		('2', '2x', 'Render 2x and downsample'), 
-		('4', '4x', 'Render 2x and downsample')], name = "AA", default = '1'
-	)
-	bake_freeze_selection = bpy.props.BoolProperty(
-		name="Lock",
-		description="Lock baking sets, don't change with selection",
-		default = False
-	)
-	# bake_do_save = bpy.props.BoolProperty(
-	# 	name="Save",
-	# 	description="Save the baked texture?",
-	# 	default = False)
-	canvas_extend_direction = bpy.props.StringProperty(default="TL")
-
-
-
-
-	# id_palette = None;#bpy.types.UILayout.template_palette()
-
-
-
-
-
 class op_debug(bpy.types.Operator):
 	bl_idname = "uv.textools_debug"
 	bl_label = "Debug"
@@ -286,12 +208,14 @@ class op_select_bake_type(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+
 def on_size_dropdown_select(self, context):
 	size = int(bpy.context.scene.texToolsSettings.size_dropdown)
 
 	bpy.context.scene.texToolsSettings.size[0] = size;
 	bpy.context.scene.texToolsSettings.size[1] = size;
 	bpy.context.scene.texToolsSettings.padding = 8
+
 
 
 def on_dropdown_uv_select(self, context):
@@ -305,12 +229,13 @@ def on_dropdown_uv_select(self, context):
 					bpy.context.object.data.uv_textures.active_index = index
 
 
+
 class op_uv_channel_move(bpy.types.Operator):
 	bl_idname = "uv.textools_uv_channel_move"
 	bl_label = "Move UV Channel"
 	bl_description = "Move UV channel up or down"
 
-	is_up = bpy.props.BoolProperty(default=False)
+	is_down = bpy.props.BoolProperty(default=False)
 
 	@classmethod
 	def poll(cls, context):
@@ -324,8 +249,83 @@ class op_uv_channel_move(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
+
+		uv_textures = bpy.context.object.data.uv_textures
+		count = len(uv_textures)
+
+		if uv_textures.active_index == 0 and not self.is_down:
+			return {'FINISHED'}
+		elif uv_textures.active_index == len(uv_textures)-1 and self.is_down:
+			return {'FINISHED'}
+
+		def get_index(name):
+			return ([i for i in range(len(uv_textures)) if uv_textures[i].name == name])[0]
+
+		def move_bottom(name):
+			# Set index
+			uv_textures.active_index = get_index(name)
+			# Copy (bottom)
+			bpy.ops.mesh.uv_texture_add()
+			# Delete previous
+			uv_textures.active_index = get_index(name)
+			bpy.ops.mesh.uv_texture_remove()
+			# Rename new
+			uv_textures.active_index = len(uv_textures)-1
+			uv_textures.active.name = name
+
+		index_A = uv_textures.active_index
+		index_B = index_A + (1 if self.is_down else -1)
+
+		if not self.is_down:
+			# Move up
+			for n in [uv_textures[i].name for i in range(index_B, count) if i != index_A]:
+				move_bottom(n)
+
+			# uv_textures.active_index = index_B
+			bpy.context.scene.texToolsSettings.uv_channel = str(index_B)
+
+		elif self.is_down:
+			# Move down
+			for n in [uv_textures[i].name for i in range(index_A, count) if i != index_B]:
+				move_bottom(n)
+
+			# uv_textures.active_index = index_B
+			bpy.context.scene.texToolsSettings.uv_channel = str(index_B)
+
+
+		return {'FINISHED'}
+
+
+class op_uv_channel_add(bpy.types.Operator):
+	bl_idname = "uv.textools_uv_channel_add"
+	bl_label = "Add UV Channel"
+	bl_description = "Add a new UV channel"
+
+	@classmethod
+	def poll(cls, context):
+		if bpy.context.active_object == None:
+			return False
+		if bpy.context.active_object.type != 'MESH':
+			return False
+		if  len(bpy.context.selected_objects) != 1:
+			return False
+
+		return True
+
+	def execute(self, context):
+		print("Add UV")
 		
-		print("Swap UV channel: "+str(self.is_up))
+		if bpy.context.active_object.mode != 'EDIT':
+			bpy.ops.object.mode_set(mode='EDIT')
+
+		bpy.ops.mesh.select_all(action='SELECT')
+		bpy.ops.uv.smart_project(
+			angle_limit=65, 
+			island_margin=utilities_ui.get_padding(), 
+			user_area_weight=0, 
+			use_aspect=True, 
+			stretch_to_bounds=True
+		)
 
 		return {'FINISHED'}
 
@@ -351,6 +351,74 @@ def get_dropdown_uv_values(self, context):
 
 
 
+class TexToolsSettings(bpy.types.PropertyGroup):
+	#Width and Height
+	size = bpy.props.IntVectorProperty(
+		name = "Size",
+		size=2, 
+		description="Texture & UV size in pixels",
+		default = (512,512),
+		subtype = "XYZ"
+	)
+
+	size_dropdown = bpy.props.EnumProperty(items= [('64', '64', ''), 
+		('128', '128', ''), 
+		('256', '256', ''), 
+		('512', '512', ''), 
+		('1024', '1024', ''), 
+		('2048', '2048', ''), 
+		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024'
+	)
+
+	uv_channel = bpy.props.EnumProperty(
+		items = get_dropdown_uv_values, 
+		name = "UV", 
+		update = on_dropdown_uv_select
+	)
+
+	#Padding
+	padding = bpy.props.IntProperty(
+		name = "Padding",
+		description="padding size in pixels",
+		default = 4,
+		min = 0,
+		max = 256
+	)
+	
+	bake_samples = bpy.props.FloatProperty(
+		name = "Samples",
+		description = "Samples in Cycles for Baking. The higher the less noise. Default: 64",
+		default = 64,
+		min = 1,
+		max = 4000
+	)
+	bake_ray_distance = bpy.props.FloatProperty(
+		name = "Ray Dist.",
+		description = "Ray distance when baking. When using cage used as extrude distance",
+		default = 0.01,
+		min = 0.000,
+		max = 100.00
+	)
+	bake_force_single = bpy.props.BoolProperty(
+		name="Single Texture",
+		description="Force a single texture bake accross all selected objects",
+		default = False
+	)
+	bake_sampling = bpy.props.EnumProperty(items= 
+		[('1', 'None', 'No Anti Aliasing (Fast)'), 
+		('2', '2x', 'Render 2x and downsample'), 
+		('4', '4x', 'Render 2x and downsample')], name = "AA", default = '1'
+	)
+	bake_freeze_selection = bpy.props.BoolProperty(
+		name="Lock",
+		description="Lock baking sets, don't change with selection",
+		default = False
+	)
+	# bake_do_save = bpy.props.BoolProperty(
+	# 	name="Save",
+	# 	description="Save the baked texture?",
+	# 	default = False)
+	canvas_extend_direction = bpy.props.StringProperty(default="TL")
 
 
 
@@ -363,7 +431,7 @@ class Panel_Units(bpy.types.Panel):
 
 	def draw_header(self, _):
 		layout = self.layout
-		layout.label(text="Units: {} x {}".format(bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1]))
+		layout.label(text="Size: {} x {}".format(bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1]))
 
 	def draw(self, context):
 		layout = self.layout
@@ -389,30 +457,40 @@ class Panel_Units(bpy.types.Panel):
 		
 
 		# UV Channel
-		row = layout.row()
-		split = row.split(percentage=0.25)
-		c = split.column(align=True)
-		c.label(text="UV")#, icon='GROUP_UVS'
-
-		c = split.column(align=True)
-		row = c.row(align=True)
-
-		is_error = False
-		if len(bpy.context.selected_objects) > 0:
-			if bpy.context.active_object != None and bpy.context.active_object in bpy.context.selected_objects:
-				if bpy.context.active_object.type == 'MESH':
-					if not bpy.context.object.data.uv_layers:
-						row.label(text="None", icon= 'ERROR')
-						is_error = True
-		if not is_error:
-			row.prop(context.scene.texToolsSettings, "uv_channel", text="")
-			# row = c.row(align=True)
-			row.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_UP_BAR').is_up = True;
-			row.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_DOWN_BAR').is_up = False;
-
-
 		
+		row = layout.row()
 
+		if bpy.context.active_object != None and len(bpy.context.selected_objects) == 1:
+			if bpy.context.active_object in bpy.context.selected_objects:
+				if bpy.context.active_object.type == 'MESH':
+					
+					split = row.split(percentage=0.25)
+					c = split.column(align=True)
+					c.label(text="UV")#, icon='GROUP_UVS'
+
+					
+					if not bpy.context.object.data.uv_layers:
+						c = split.column(align=True)
+						row = c.row(align=True)
+						# row.label(text="None", icon= 'ERROR')
+
+						row.operator(op_uv_channel_add.bl_idname, text="Add", icon = 'ZOOMIN')
+					else:
+						c = split.column(align=True)
+						row = c.row(align=True)
+						row.prop(context.scene.texToolsSettings, "uv_channel", text="")
+
+						c = split.column(align=True)
+						row = c.row(align=True)
+						row.alignment = 'RIGHT'
+
+						r = row.row(align=True)
+						r.active = bpy.context.object.data.uv_textures.active_index > 0
+						r.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_UP_BAR').is_down = False;
+						
+						r = row.row(align=True)
+						r.active = bpy.context.object.data.uv_textures.active_index < (len(bpy.context.object.data.uv_textures)-1)
+						r.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_DOWN_BAR').is_down = True;
 
 
 
@@ -548,7 +626,7 @@ class Panel_Bake(bpy.types.Panel):
 			count = 1
 		else:
 			count = len(settings.sets)
-		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
+		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon='RENDER_STILL');#icon_value = icon_get("op_bake")
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
 		row = col.row(align=True)

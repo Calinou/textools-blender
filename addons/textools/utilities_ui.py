@@ -16,8 +16,7 @@ def icon_register(fileName):
 	name = fileName.split('.')[0]   # Don't include file extension
 	icons_dir = os.path.join(os.path.dirname(__file__), "icons")
 	preview_icons.load(name, os.path.join(icons_dir, fileName), 'IMAGE')
-
-	print("register icon {}, {}x".format(fileName, len(preview_icons)))
+	# print("register icon {}, {}x".format(fileName, len(preview_icons)))
 
 
 

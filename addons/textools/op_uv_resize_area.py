@@ -9,6 +9,8 @@ from . import utilities_uv
 from . import utilities_ui
 
 
+name_texture = "TT_resize_area"
+
 
 utilities_ui.icon_register("op_extend_canvas_TL_active.png")
 utilities_ui.icon_register("op_extend_canvas_TR_active.png")
@@ -87,40 +89,6 @@ class op(bpy.types.Operator):
 		return True
 
 
-	def execute(self, context):
-
-
-		#Store selection
-		utilities_uv.selectionStore()
-
-		# Get start and end size
-		size_A = Vector([ 
-			bpy.context.scene.texToolsSettings.size[0],
-			bpy.context.scene.texToolsSettings.size[1]
-		)
-		size_B = Vector([ 
-			self.size_x,
-			self.size_y
-		)
-
-		resize_uv(
-			self,
-			self.direction,
-			size_A, 
-			size_B
-		)
-		resize_image(
-			self.direction,
-			size_A,
-			size_B
-		)
-
-		#Restore selection
-		utilities_uv.selectionRestore()
-
-		return {'FINISHED'}
-
-
 	def invoke(self, context, event):
 		print("Invoke resize area")
 		self.size_x = bpy.context.scene.texToolsSettings.size[0]
@@ -172,14 +140,49 @@ class op(bpy.types.Operator):
 
 		layout.separator()
 
-
-
-def resize_uv(self, mode, size_A, size_B):
-	# direction = bpy.context.scene.texToolsSettings.canvas_extend_direction
 	
-	# print("Execute op_extend_canvas: {} to {}".format(size_A, size_B))
+	def execute(self, context):
 
-	size_B.x*=2
+
+		#Store selection
+		utilities_uv.selectionStore()
+
+		# Get start and end size
+		size_A = Vector([ 
+			bpy.context.scene.texToolsSettings.size[0],
+			bpy.context.scene.texToolsSettings.size[1]
+		])
+		size_B = Vector([ 
+			self.size_x,
+			self.size_y
+		])
+
+		resize_uv(
+			self,
+			context,
+			self.direction,
+			size_A, 
+			size_B
+		)
+		resize_image(
+			context,
+			self.direction,
+			size_A,
+			size_B
+		)
+
+		bpy.context.scene.texToolsSettings.size[0] = self.size_x
+		bpy.context.scene.texToolsSettings.size[1] = self.size_y
+
+
+		#Restore selection
+		utilities_uv.selectionRestore()
+
+		return {'FINISHED'}
+
+
+
+def resize_uv(self, context, mode, size_A, size_B):
 
 	# Set pivot
 	bpy.context.space_data.pivot_point = 'CURSOR'
@@ -203,9 +206,50 @@ def resize_uv(self, mode, size_A, size_B):
 
 
 
-def resize_image(mode, size_A, size_B):
-	print("resize image")
-	
+def resize_image(context, mode, size_A, size_B):
+	print("resize image {}".format( context.area.spaces ))
+
+	# Notes: 	https://blender.stackexchange.com/questions/31514/active-image-of-uv-image-editor
+	# 			https://docs.blender.org/api/blender_python_api_2_70_4/bpy.types.SpaceImageEditor.html
+
 	# check if current image not 'None'
+	if context.area.spaces.active != None:
+		if context.area.spaces.active.image != None:
+			# Resize assigned image
+			image = context.area.spaces.active.image
+			print("Image: {} | {}".format(image, image.source))
+
+			if image.source == 'FILE' or image.source == 'GENERATED':
+				print("Yes editable type")
+				image.scale( int(size_B.x), int(size_B.y) )
+
+		else:
+			# No Image assigned
+
+			# Get background color from theme + 1.25x brighter
+			theme = bpy.context.user_preferences.themes[0]
+			color = theme.image_editor.space.back.copy()
+			color.r*= 1.15
+			color.g*= 1.15
+			color.b*= 1.15
+
+			image = None
+			if name_texture in bpy.data.images:
+				# TexTools Image already exists
+				image = bpy.data.images[name_texture]
+				image.scale( int(size_B.x), int(size_B.y) )
+				image.generated_width = int(size_B.x)
+				image.generated_height = int(size_B.y)
+			else:
+				# Create new image
+				image = bpy.data.images.new(name_texture, width=int(size_B.x), height=int(size_B.y))
+				image.generated_color = (color.r, color.g, color.b, 1.0)
+				image.generated_type = 'BLANK'
+				image.generated_width = int(size_B.x)
+				image.generated_height = int(size_B.y)
+
+			# Assign in UV view
+			context.area.spaces.active.image = image
+
 
 

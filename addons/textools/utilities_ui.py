@@ -7,6 +7,17 @@ import os
 preview_collections = {}
 preview_icons = bpy.utils.previews.new()
 
+size_textures = [
+		('64', '64', ''), 
+		('128', '128', ''), 
+		('256', '256', ''), 
+		('512', '512', ''), 
+		('1024', '1024', ''), 
+		('2048', '2048', ''), 
+		('4096', '4096', '')
+	]
+
+
 
 def icon_get(name):
 	return preview_icons[name].icon_id

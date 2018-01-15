@@ -38,7 +38,7 @@ if "bpy" in locals():
 	imp.reload(utilities_ui)
 	imp.reload(utilities_bake)
 	
-	imp.reload(op_extend_canvas)
+	imp.reload(op_uv_extend_canvas)
 	imp.reload(op_islands_align_sort)
 	imp.reload(op_texture_checker)
 	imp.reload(op_align)
@@ -55,7 +55,6 @@ if "bpy" in locals():
 	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_island_straighten_edge_loops)
 	imp.reload(op_island_rotate_90)
-	imp.reload(op_setup_split_uv)
 	imp.reload(op_faces_iron)
 
 	
@@ -64,7 +63,7 @@ else:
 	from . import utilities_ui
 	from . import utilities_bake
 
-	from . import op_extend_canvas
+	from . import op_uv_extend_canvas
 	from . import op_islands_align_sort
 	from . import op_texture_checker
 	from . import op_align
@@ -81,7 +80,6 @@ else:
 	from . import op_island_relax_straighten_edges
 	from . import op_island_straighten_edge_loops
 	from . import op_island_rotate_90
-	from . import op_setup_split_uv
 	from . import op_faces_iron
 	
 
@@ -356,13 +354,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		subtype = "XYZ"
 	)
 
-	size_dropdown = bpy.props.EnumProperty(items= [('64', '64', ''), 
-		('128', '128', ''), 
-		('256', '256', ''), 
-		('512', '512', ''), 
-		('1024', '1024', ''), 
-		('2048', '2048', ''), 
-		('4096', '4096', '')], name = "Texture Size", update = on_size_dropdown_select, default = '1024'
+	size_dropdown = bpy.props.EnumProperty(
+		items = utilities_ui.size_textures, 
+		name = "Texture Size", 
+		update = on_size_dropdown_select, 
+		default = '1024'
 	)
 
 	uv_channel = bpy.props.EnumProperty(
@@ -413,7 +409,6 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	# 	name="Save",
 	# 	description="Save the baked texture?",
 	# 	default = False)
-	canvas_extend_direction = bpy.props.StringProperty(default="TL")
 
 
 
@@ -443,12 +438,11 @@ class Panel_Units(bpy.types.Panel):
 		
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
+		
+		col.operator(op_uv_extend_canvas.op.bl_idname, text="Extend Canvas", icon_value = icon_get("op_extend_canvas_open"))
+		
 
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
-		if bpy.app.debug_value != 0:
-			row = layout.row()
-			row.alert = True
-			row.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 		
 
 		# UV Channel
@@ -509,7 +503,6 @@ class Panel_Layout(bpy.types.Panel):
 			col.alert = True
 			col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = icon_get("swap_uv_xyz"))
 			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("island_relax_straighten_edges"))
-			col.operator(op_setup_split_uv.op.bl_idname, text="Split", icon_value = icon_get("setup_split_uv"))
 			row = col.row(align=True)
 			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = icon_get("mirror")).is_stack = False;
 			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = icon_get("mirror")).is_stack = True;

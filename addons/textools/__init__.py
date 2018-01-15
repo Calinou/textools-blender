@@ -18,7 +18,7 @@ bl_info = {
 	"name": "TexTools",
 	"description": "UV and texture Tools for Blender, based on ideas of the original TexTools for 3dsMax.",
 	"author": "renderhjs",
-	"version": (0, 8, 0),
+	"version": (0, 8, 2),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
@@ -35,52 +35,56 @@ def get_tab_name():
 if "bpy" in locals():
 	import imp
 	imp.reload(settings)
-	imp.reload(utilities_ui)
 	imp.reload(utilities_bake)
+	imp.reload(utilities_ui)
 	
-	imp.reload(op_uv_extend_canvas)
-	imp.reload(op_islands_align_sort)
-	imp.reload(op_texture_checker)
 	imp.reload(op_align)
-	imp.reload(op_textures_reload)
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
 	imp.reload(op_bake_organize_names)
-	imp.reload(op_swap_uv_xyz)
+	imp.reload(op_faces_iron)
 	imp.reload(op_island_align_edge)
-	imp.reload(op_select_islands_identical)
-	imp.reload(op_select_islands_overlap)
-	imp.reload(op_select_islands_outline)
 	imp.reload(op_island_mirror)
 	imp.reload(op_island_relax_straighten_edges)
-	imp.reload(op_island_straighten_edge_loops)
 	imp.reload(op_island_rotate_90)
-	imp.reload(op_faces_iron)
+	imp.reload(op_island_straighten_edge_loops)
+	imp.reload(op_islands_align_sort)
+	imp.reload(op_select_islands_identical)
+	imp.reload(op_select_islands_outline)
+	imp.reload(op_select_islands_overlap)
+	imp.reload(op_swap_uv_xyz)
+	imp.reload(op_texture_checker)
+	imp.reload(op_textures_reload)
+	imp.reload(op_uv_channel_add)
+	imp.reload(op_uv_channel_swap)
+	imp.reload(op_uv_resize_area)
 
 	
 else:
 	from . import settings
-	from . import utilities_ui
 	from . import utilities_bake
+	from . import utilities_ui
 
-	from . import op_uv_extend_canvas
-	from . import op_islands_align_sort
-	from . import op_texture_checker
 	from . import op_align
-	from . import op_textures_reload
 	from . import op_bake
 	from . import op_bake_explode
 	from . import op_bake_organize_names
-	from . import op_swap_uv_xyz
+	from . import op_faces_iron
 	from . import op_island_align_edge
-	from . import op_select_islands_identical
-	from . import op_select_islands_overlap
-	from . import op_select_islands_outline
 	from . import op_island_mirror
 	from . import op_island_relax_straighten_edges
-	from . import op_island_straighten_edge_loops
 	from . import op_island_rotate_90
-	from . import op_faces_iron
+	from . import op_island_straighten_edge_loops
+	from . import op_islands_align_sort
+	from . import op_select_islands_identical
+	from . import op_select_islands_outline
+	from . import op_select_islands_overlap
+	from . import op_swap_uv_xyz
+	from . import op_texture_checker
+	from . import op_textures_reload
+	from . import op_uv_channel_add
+	from . import op_uv_channel_swap
+	from . import op_uv_resize_area
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -207,16 +211,19 @@ class op_select_bake_type(bpy.types.Operator):
 
 
 
-def on_size_dropdown_select(self, context):
+def on_dropdown_size(self, context):
 	size = int(bpy.context.scene.texToolsSettings.size_dropdown)
-
 	bpy.context.scene.texToolsSettings.size[0] = size;
 	bpy.context.scene.texToolsSettings.size[1] = size;
-	bpy.context.scene.texToolsSettings.padding = 8
+
+	if size <= 512:
+		bpy.context.scene.texToolsSettings.padding = 4
+	else:
+		bpy.context.scene.texToolsSettings.padding = 8
 
 
 
-def on_dropdown_uv_select(self, context):
+def on_dropdown_uv_channel(self, context):
 	if bpy.context.active_object != None:
 		if bpy.context.active_object.type == 'MESH':
 			if bpy.context.object.data.uv_layers:
@@ -225,102 +232,6 @@ def on_dropdown_uv_select(self, context):
 				index = int(bpy.context.scene.texToolsSettings.uv_channel)
 				if index < len(bpy.context.object.data.uv_textures):
 					bpy.context.object.data.uv_textures.active_index = index
-
-
-
-class op_uv_channel_move(bpy.types.Operator):
-	bl_idname = "uv.textools_uv_channel_move"
-	bl_label = "Move UV Channel"
-	bl_description = "Move UV channel up or down"
-
-	is_down = bpy.props.BoolProperty(default=False)
-
-	@classmethod
-	def poll(cls, context):
-		if bpy.context.active_object == None:
-			return False
-		if bpy.context.active_object.type != 'MESH':
-			return False
-		if len(bpy.context.object.data.uv_layers) <= 1:
-			return False
-
-		return True
-
-	def execute(self, context):
-		uv_textures = bpy.context.object.data.uv_textures
-
-		if uv_textures.active_index == 0 and not self.is_down:
-			return {'FINISHED'}
-		elif uv_textures.active_index == len(uv_textures)-1 and self.is_down:
-			return {'FINISHED'}
-
-		def get_index(name):
-			return ([i for i in range(len(uv_textures)) if uv_textures[i].name == name])[0]
-
-		def move_bottom(name):
-			# Set index
-			uv_textures.active_index = get_index(name)
-			# Copy (to bottom)
-			bpy.ops.mesh.uv_texture_add()
-			# Delete previous
-			uv_textures.active_index = get_index(name)
-			bpy.ops.mesh.uv_texture_remove()
-			# Rename new
-			uv_textures.active_index = len(uv_textures)-1
-			uv_textures.active.name = name
-
-		count = len(uv_textures)
-
-		index_A = uv_textures.active_index
-		index_B = index_A + (1 if self.is_down else -1)
-
-		if not self.is_down:
-			# Move up
-			for n in [uv_textures[i].name for i in range(index_B, count) if i != index_A]:
-				move_bottom(n)
-			bpy.context.scene.texToolsSettings.uv_channel = str(index_B)
-
-		elif self.is_down:
-			# Move down
-			for n in [uv_textures[i].name for i in range(index_A, count) if i != index_B]:
-				move_bottom(n)
-			bpy.context.scene.texToolsSettings.uv_channel = str(index_B)
-
-		return {'FINISHED'}
-
-
-class op_uv_channel_add(bpy.types.Operator):
-	bl_idname = "uv.textools_uv_channel_add"
-	bl_label = "Add UV Channel"
-	bl_description = "Add a new UV channel"
-
-	@classmethod
-	def poll(cls, context):
-		if bpy.context.active_object == None:
-			return False
-		if bpy.context.active_object.type != 'MESH':
-			return False
-		if  len(bpy.context.selected_objects) != 1:
-			return False
-
-		return True
-
-	def execute(self, context):
-		print("Add UV")
-		
-		if bpy.context.active_object.mode != 'EDIT':
-			bpy.ops.object.mode_set(mode='EDIT')
-
-		bpy.ops.mesh.select_all(action='SELECT')
-		bpy.ops.uv.smart_project(
-			angle_limit=65, 
-			island_margin=utilities_ui.get_padding(), 
-			user_area_weight=0, 
-			use_aspect=True, 
-			stretch_to_bounds=True
-		)
-
-		return {'FINISHED'}
 
 
 
@@ -357,14 +268,14 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	size_dropdown = bpy.props.EnumProperty(
 		items = utilities_ui.size_textures, 
 		name = "Texture Size", 
-		update = on_size_dropdown_select, 
+		update = on_dropdown_size, 
 		default = '1024'
 	)
 
 	uv_channel = bpy.props.EnumProperty(
 		items = get_dropdown_uv_values, 
 		name = "UV", 
-		update = on_dropdown_uv_select
+		update = on_dropdown_uv_channel
 	)
 
 	#Padding
@@ -439,7 +350,7 @@ class Panel_Units(bpy.types.Panel):
 		col.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 		
-		col.operator(op_uv_extend_canvas.op.bl_idname, text="Extend Canvas", icon_value = icon_get("op_extend_canvas_open"))
+		col.operator(op_uv_resize_area.op.bl_idname, text="Resize Area", icon_value = icon_get("op_extend_canvas_open"))
 		
 
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
@@ -463,7 +374,7 @@ class Panel_Units(bpy.types.Panel):
 						row = c.row(align=True)
 						# row.label(text="None", icon= 'ERROR')
 
-						row.operator(op_uv_channel_add.bl_idname, text="Add", icon = 'ZOOMIN')
+						row.operator(op_uv_channel_add.op.bl_idname, text="Add", icon = 'ZOOMIN')
 					else:
 						c = split.column(align=True)
 						row = c.row(align=True)
@@ -475,11 +386,11 @@ class Panel_Units(bpy.types.Panel):
 
 						r = row.row(align=True)
 						r.active = bpy.context.object.data.uv_textures.active_index > 0
-						r.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_UP_BAR').is_down = False;
+						r.operator(op_uv_channel_swap.op.bl_idname, text="", icon = 'TRIA_UP_BAR').is_down = False;
 						
 						r = row.row(align=True)
 						r.active = bpy.context.object.data.uv_textures.active_index < (len(bpy.context.object.data.uv_textures)-1)
-						r.operator(op_uv_channel_move.bl_idname, text="", icon = 'TRIA_DOWN_BAR').is_down = True;
+						r.operator(op_uv_channel_swap.op.bl_idname, text="", icon = 'TRIA_DOWN_BAR').is_down = True;
 
 
 

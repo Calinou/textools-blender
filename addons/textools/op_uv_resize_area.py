@@ -16,19 +16,20 @@ utilities_ui.icon_register("op_extend_canvas_BL_active.png")
 utilities_ui.icon_register("op_extend_canvas_BR_active.png")
 
 
+
+def on_dropdown_size_x(self, context):
+	self.size_x = int(self.dropdown_size_x)
+
+def on_dropdown_size_y(self, context):
+	self.size_y = int(self.dropdown_size_y)
+
+
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_uv_extend_canvas"
-	bl_label = "Extend Canvas"
-	bl_description = "Resize the UV canvas size"
+	bl_idname = "uv.textools_uv_resize_uv"
+	bl_label = "Resize Area"
+	bl_description = "Resize or extend the UV area"
 	bl_options = {'REGISTER', 'UNDO'}
 
-	# size = bpy.props.IntVectorProperty(
-	# 	name = "Size",
-	# 	size=2, 
-	# 	description="Texture & UV size in pixels",
-	# 	default = (512,512),
-	# 	subtype = "XYZ"
-	# )
 	size_x = bpy.props.IntProperty(
 		name = "Width",
 		description="padding size in pixels",
@@ -46,13 +47,13 @@ class op(bpy.types.Operator):
 	dropdown_size_x = bpy.props.EnumProperty(
 		items = utilities_ui.size_textures, 
 		name = "", 
-		# update = on_size_dropdown_select, 
+		update = on_dropdown_size_x, 
 		default = '1024'
 	)
 	dropdown_size_y = bpy.props.EnumProperty(
 		items = utilities_ui.size_textures, 
 		name = "", 
-		# update = on_size_dropdown_select, 
+		update = on_dropdown_size_y, 
 		default = '1024'
 	)
 
@@ -62,20 +63,17 @@ class op(bpy.types.Operator):
 		('TR',' ','Top Right', utilities_ui.icon_get("op_extend_canvas_TR_active"),1),
 		('BR',' ','Bottom Right', utilities_ui.icon_get("op_extend_canvas_BR_active"),3)
 	))
-	# direction = bpy.props.EnumProperty(name='direction', items=(
-	# 	('TL','up name','description'),
-	# 	('TR','down name','description'),
-	# 	('BL','down name','description'),
-	# 	('BR','down name','description')
-	# ))
-
-
+	
 	@classmethod
 	def poll(cls, context):
 		if not bpy.context.active_object:
 			return False
 		
 		if bpy.context.active_object.type != 'MESH':
+			return False
+
+		#Only in Edit mode
+		if bpy.context.active_object.mode != 'EDIT':
 			return False
 
 		#Only in UV editor mode
@@ -90,12 +88,56 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-		
-		extend_canvas(self)
+
+
+		#Store selection
+		utilities_uv.selectionStore()
+
+		# Get start and end size
+		size_A = Vector([ 
+			bpy.context.scene.texToolsSettings.size[0],
+			bpy.context.scene.texToolsSettings.size[1]
+		)
+		size_B = Vector([ 
+			self.size_x,
+			self.size_y
+		)
+
+		resize_uv(
+			self,
+			self.direction,
+			size_A, 
+			size_B
+		)
+		resize_image(
+			self.direction,
+			size_A,
+			size_B
+		)
+
+		#Restore selection
+		utilities_uv.selectionRestore()
+
 		return {'FINISHED'}
 
+
 	def invoke(self, context, event):
-		return context.window_manager.invoke_props_dialog(self, width = 200)
+		print("Invoke resize area")
+		self.size_x = bpy.context.scene.texToolsSettings.size[0]
+		self.size_y = bpy.context.scene.texToolsSettings.size[1]
+
+		for item in utilities_ui.size_textures:
+			if int(item[0]) == self.size_x:
+				self.dropdown_size_x = item[0]
+				break
+		for item in utilities_ui.size_textures:
+			if int(item[0]) == self.size_y:
+				self.dropdown_size_y = item[0]
+				break
+
+
+		return context.window_manager.invoke_props_dialog(self, width = 120)
+
 
 	def draw(self, context):
 		# https://b3d.interplanety.org/en/creating-pop-up-panels-with-user-ui-in-blender-add-on/
@@ -105,7 +147,7 @@ class op(bpy.types.Operator):
 		layout.separator()
 
 
-		layout.label(text="New Size")
+		layout.label(text="Size")
 		col = layout.column(align=True)
 
 		row = col.row(align=True)
@@ -123,11 +165,6 @@ class op(bpy.types.Operator):
 		# c = split.column(align=True)
 		# c.prop(self, "dropdown_size_x", text="")
 		
-
-
-
-		
-		# box = layout.box()
 		col = layout.column(align=True)
 		col.label("Direction")
 		row = col.row(align=True)
@@ -136,13 +173,39 @@ class op(bpy.types.Operator):
 		layout.separator()
 
 
-def extend_canvas(self):
+
+def resize_uv(self, mode, size_A, size_B):
 	# direction = bpy.context.scene.texToolsSettings.canvas_extend_direction
-	print("Execute op_extend_canvas: {}".format(222))
+	
+	# print("Execute op_extend_canvas: {} to {}".format(size_A, size_B))
 
-	#Only in Edit mode
-	# if bpy.context.active_object.mode != 'EDIT':
-	# 	return False
+	size_B.x*=2
 
+	# Set pivot
+	bpy.context.space_data.pivot_point = 'CURSOR'
+	if mode == 'TL':
+		bpy.ops.uv.cursor_set(location=Vector([0,1]))
+	elif mode == 'TR':
+		bpy.ops.uv.cursor_set(location=Vector([1,1]))
+	elif mode == 'BL':
+		bpy.ops.uv.cursor_set(location=Vector([0,0]))
+	elif mode == 'BR':
+		bpy.ops.uv.cursor_set(location=Vector([1,0]))
+
+	# Select all UV faces
+	bpy.ops.uv.select_all(action='SELECT')
+
+	# Resize
+	scale_x = size_A.x / size_B.x
+	scale_y = size_A.y / size_B.y
+	print("Scale {} | {}".format(scale_x, scale_y))
+	bpy.ops.transform.resize(value=(scale_x, scale_y, 1.0), proportional='DISABLED')
+
+
+
+def resize_image(mode, size_A, size_B):
+	print("resize image")
+	
+	# check if current image not 'None'
 
 

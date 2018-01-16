@@ -19,8 +19,6 @@ class op(bpy.types.Operator):
 			return False
 		if bpy.context.active_object.type != 'MESH':
 			return False
-		if len(bpy.context.object.data.uv_layers) <= 1:
-			return False
 		return True
 
 

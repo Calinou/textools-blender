@@ -482,8 +482,12 @@ class Panel_Layout(bpy.types.Panel):
 		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
 		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = icon_get("textures_reload"))
 
-		
-			
+		if bpy.app.debug_value != 0:
+		#---------- Texel ------------
+			col.separator()
+			col = box.column(align=True)
+			col.alert = True
+			col.operator(op_textures_reload.op.bl_idname, text="Apply Texel", icon_value = icon_get("textures_reload"))
 
 		# 
 		

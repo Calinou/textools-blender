@@ -53,6 +53,8 @@ if "bpy" in locals():
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_select_islands_overlap)
 	imp.reload(op_swap_uv_xyz)
+	imp.reload(op_texel_density_get)
+	imp.reload(op_texel_density_set)
 	imp.reload(op_texture_checker)
 	imp.reload(op_textures_reload)
 	imp.reload(op_uv_channel_add)
@@ -80,6 +82,8 @@ else:
 	from . import op_select_islands_outline
 	from . import op_select_islands_overlap
 	from . import op_swap_uv_xyz
+	from . import op_texel_density_get
+	from . import op_texel_density_set
 	from . import op_texture_checker
 	from . import op_textures_reload
 	from . import op_uv_channel_add
@@ -216,7 +220,9 @@ def on_dropdown_size(self, context):
 	bpy.context.scene.texToolsSettings.size[0] = size;
 	bpy.context.scene.texToolsSettings.size[1] = size;
 
-	if size <= 512:
+	if size <= 128:
+		bpy.context.scene.texToolsSettings.padding = 2
+	elif size <= 512:
 		bpy.context.scene.texToolsSettings.padding = 4
 	else:
 		bpy.context.scene.texToolsSettings.padding = 8
@@ -316,6 +322,20 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		description="Lock baking sets, don't change with selection",
 		default = False
 	)
+	texel_mode_scale = bpy.props.EnumProperty(items= 
+		[('ISLAND', 'Islands', 'Scale UV islands to match Texel Density'), 
+		('ALL', 'All', 'Scale all UVs together to match Texel Density')], 
+		name = "Mode", 
+		default = 'ISLAND'
+	)
+	texel_density = bpy.props.FloatProperty(
+		name = "Texel",
+		description = "Texel size or Pixels per 1 unit ratio",
+		default = 256,
+		min = 0.0,
+		max = 100.00
+	)
+
 	# bake_do_save = bpy.props.BoolProperty(
 	# 	name="Save",
 	# 	description="Save the baked texture?",
@@ -347,11 +367,13 @@ class Panel_Units(bpy.types.Panel):
 		col = row.column(align=True)
 		col.prop(context.scene.texToolsSettings, "size_dropdown", text="Size")
 		
-		col.prop(context.scene.texToolsSettings, "size", text="")
+		r = col.row(align = True)
+		r.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 		
-		col.operator(op_uv_resize_area.op.bl_idname, text="Resize Area", icon_value = icon_get("op_extend_canvas_open"))
-		
+		r = col.row(align = True)
+		r.operator(op_uv_resize_area.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
+		r.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
 
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
 		
@@ -360,6 +382,7 @@ class Panel_Units(bpy.types.Panel):
 		
 		row = layout.row()
 
+		has_uv_channel = False
 		if bpy.context.active_object != None and len(bpy.context.selected_objects) == 1:
 			if bpy.context.active_object in bpy.context.selected_objects:
 				if bpy.context.active_object.type == 'MESH':
@@ -392,7 +415,10 @@ class Panel_Units(bpy.types.Panel):
 						r.active = bpy.context.object.data.uv_textures.active_index < (len(bpy.context.object.data.uv_textures)-1)
 						r.operator(op_uv_channel_swap.op.bl_idname, text="", icon = 'TRIA_DOWN_BAR').is_down = True;
 
-
+					has_uv_channel = True
+		if not has_uv_channel:
+			row.label(text="UV")
+			
 
 class Panel_Layout(bpy.types.Panel):
 	bl_label = "UV Layout"
@@ -475,20 +501,33 @@ class Panel_Layout(bpy.types.Panel):
 		
 
 		#---------- Textures ------------
-		layout.label(text="Textures")
+		layout.label(text="Texels")
 		row = layout.row()
 		box = row.box()
 		col = box.column(align=True)
-		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
 		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = icon_get("textures_reload"))
 
 		if bpy.app.debug_value != 0:
 		#---------- Texel ------------
 			col.separator()
 			col = box.column(align=True)
-			col.alert = True
-			col.operator(op_textures_reload.op.bl_idname, text="Apply Texel", icon_value = icon_get("textures_reload"))
+			# col.alert = True
+			
+			row = col.row(align=True)
+			row.prop(context.scene.texToolsSettings, "texel_density", text="")
+			row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
 
+			row = col.row(align=True)
+			row.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
+			row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
+		
+			# col.prop(context.scene.texToolsSettings, "bake_force_single", text="Per Island")
+			# col = box.column(align=True)
+			# row = col.row(align=True)
+			# row.label(text="Mode")
+			# row.prop(context.scene.texToolsSettings, "texel_mode_scale", expand=True)
+		
+			
 		# 
 		
 		#---------- ID Colors ------------

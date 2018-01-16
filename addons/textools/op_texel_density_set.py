@@ -7,9 +7,9 @@ from math import pi
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_texel_density_get"
-	bl_label = "Get Texel size"
-	bl_description = "Get Pixel per unit ratio or Texel density"
+	bl_idname = "uv.textools_texel_density_set"
+	bl_label = "Resize Area"
+	bl_description = "Resize or extend the UV area"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	@classmethod
@@ -20,7 +20,7 @@ class op(bpy.types.Operator):
 		
 		if len(bpy.context.selected_objects) == 0:
 			return False
-
+		
 		if bpy.context.active_object.type != 'MESH':
 			return False
 
@@ -36,10 +36,10 @@ class op(bpy.types.Operator):
 
 	
 	def execute(self, context):
-		get_texel_density(self, context)
+		set_texel_density(self, context)
 		return {'FINISHED'}
 
 
 
-def get_texel_density(self, context):
-	print("Get texel density")
+def set_texel_density(self, context):
+	print("Set texel density")

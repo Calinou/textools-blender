@@ -6,14 +6,14 @@ from collections import defaultdict
 from math import pi
 
 
-name_material = "TT_checkerMap_material"
-name_texture = "TT_checkerMap_texture"
-name_node = "TT_checkerMap_node"
-
-names_checkermap = [
-	"TT_checkermap_A", 
-	"TT_checkermap_B"
-]
+# name_material = "TT_checkerMap_material"
+# name_texture = "TT_checkerMap_texture"
+# name_node = "TT_checkerMap_node"
+name_images_prefix = "TT_checkermap_"
+# names_checkermap = [
+# 	"TT_checkermap_A", 
+# 	"TT_checkermap_B"
+# ]
 
 class op(bpy.types.Operator):
 	"""UV Operator description"""
@@ -27,86 +27,199 @@ class op(bpy.types.Operator):
 		if bpy.context.object == None:
 			return False
 
+		if len(bpy.context.selected_objects) == 0:
+			return False
+
+		if bpy.context.active_object.type != 'MESH':
+			return False
+
+		#Only in UV editor mode
+		if bpy.context.area.type != 'IMAGE_EDITOR':
+			return False
+
 		return True
 
 	def execute(self, context):
-		main(context)
+		assign_checker_map(
+			context,
+			bpy.context.scene.texToolsSettings.size[0], 
+			bpy.context.scene.texToolsSettings.size[1]
+		)
 		return {'FINISHED'}
 
 
-def main(context):
 
-	if bpy.context.scene.render.engine != 'CYCLES':
-		bpy.context.scene.render.engine = 'CYCLES'
+def assign_checker_map(context, size_x, size_y):
+	# Disable edit mode
+	if bpy.context.scene.objects.active != None and bpy.context.object.mode != 'OBJECT':
+		bpy.ops.object.mode_set(mode='OBJECT')
 
+	# Collect Objects
+	objects = []
+	for obj in bpy.context.selected_objects:
+		if obj.type == 'MESH':
+			objects.append(obj)
+
+
+	print("Assign {}x".format(len(objects)))
+
+
+	if len(objects) > 0:
+		#Change View mode to TEXTURED
+		for area in bpy.context.screen.areas:
+			if area.type == 'VIEW_3D':
+				for space in area.spaces:
+					if space.type == 'VIEW_3D':
+						space.viewport_shade = 'TEXTURED'
+
+		name = (name_images_prefix+"{}_{}x{}").format('A', size_x, size_y)
+		image = get_image(name, size_x, size_y)
+
+		for obj in objects:
+			bpy.ops.object.mode_set(mode='OBJECT')
+			bpy.ops.object.select_all(action='DESELECT')
+			obj.select = True
+			bpy.context.scene.objects.active = obj
+
+			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.ops.uv.select_all(action='SELECT')
+
+			# Assign in UV view
+			# if context.area.spaces.active != None:
+			# 	print("Assign active image")
+			# 	context.area.spaces.active.image = image
+			for area in bpy.context.screen.areas :
+				if area.type == 'IMAGE_EDITOR' :
+					area.spaces.active.image = image
 	
-	#Change View mode to TEXTURED
-	for area in bpy.context.screen.areas: # iterate through areas in current screen
-		if area.type == 'VIEW_3D':
-			for space in area.spaces: # iterate through spaces in current VIEW_3D area
-				if space.type == 'VIEW_3D': # check if space is a 3D view
-					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
-					# space.show_textured_shadeless = True
+
+	# Restore object selection
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.select_all(action='DESELECT')
+	for obj in objects:				
+		obj.select = True
+
+
+	# Clean up unused images
+	for image in bpy.data.images:
+
+		if name_images_prefix in image.name:
+			print("N: {} | {}x".format(image.name, image.users))
+			if not image.users:
+				print("Remove unused image {}".format(image.name))
+				bpy.data.images.remove(image)
 
 
 
 
-	# Setup Material
-	material = None
-	if name_material in bpy.data.materials:
-		material = bpy.data.materials[name_material]
-	else:
-		material = bpy.data.materials.new(name_material)
-		material.use_nodes = True
-
-	if material == None:
-		return
-
-	# Assign material
-	if len(bpy.context.object.data.materials) > 0:
-		bpy.context.object.data.materials[0] = material
-	else:
-		bpy.context.object.data.materials.append(material)
 
 
-	# Setup Node
-	tree = material.node_tree
-	node = None
-	if name_node in tree.nodes:
-		node = tree.nodes[name_node]
-	else:
-		node = tree.nodes.new("ShaderNodeTexImage")
-	node.name = name_node
-	node.select = True
-	tree.nodes.active = node
+		# bpy.ops.object.editmode_toggle()
+		# bpy.ops.uv.select_all(action='TOGGLE')
+		# bpy.ops.uv.select_all(action='TOGGLE')
+		# bpy.ops.uv.select_all(action='TOGGLE')
+		# bpy.ops.uv.pack_islands(margin=0.001)
+		# bpy.data.images["TT_uv_checker_512_512"].generated_type = 'UV_GRID'
+		# bpy.data.images["TT_uv_checker_512_512"].generated_type = 'COLOR_GRID'
+		# bpy.data.images["TT_uv_checker_512_512"].generated_type = 'UV_GRID'
+		# 
+		# bpy.ops.object.editmode_toggle()
 
-	
-	# Setup Image
-	if node.image == None:
-		node.image = get_image( names_checkermap[0] )
+def get_image(name, size_x, size_y):
 
-	else:
-		print("Current image? {}".format(node.image.name))
-		if node.image.name not in names_checkermap:
-			node.image = get_image( names_checkermap[0] )
-		else:
-			# Cycle to next image
-			index = (names_checkermap.index(node.image.name)+ 1) % len(names_checkermap)
-			node.image = get_image( names_checkermap[index] )
+	if name in bpy.data.images:
+		return bpy.data.images[name];
 
-
-
-def get_image(name):
-
-	#Get Image
-	image = None
-	if bpy.data.images.get(name) is not None:
-  		image = bpy.data.images[name];
-	else:
-		#Load image
-		pathTexture = icons_dir = os.path.join(os.path.dirname(__file__), "resources/{}.png".format(name))
-		image = bpy.ops.image.open(filepath=pathTexture, relative_path=False)
-		bpy.data.images["{}.png".format(name)].name = name #remove extension in name
-		image = bpy.data.images[name];
-	
+	image = bpy.data.images.new(name, width=size_x, height=size_y)
+	image.generated_type = 'UV_GRID' #COLOR_GRID
+	image.generated_width = int(size_x)
+	image.generated_height = int(size_y)
 	return image
+
+
+def get_texture_object(obj):
+	return None
+
+
+
+
+
+
+
+
+# def main(context):
+
+# 	if bpy.context.scene.render.engine != 'CYCLES':
+# 		bpy.context.scene.render.engine = 'CYCLES'
+
+	
+# 	#Change View mode to TEXTURED
+# 	for area in bpy.context.screen.areas: # iterate through areas in current screen
+# 		if area.type == 'VIEW_3D':
+# 			for space in area.spaces: # iterate through spaces in current VIEW_3D area
+# 				if space.type == 'VIEW_3D': # check if space is a 3D view
+# 					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
+# 					# space.show_textured_shadeless = True
+
+
+
+
+# 	# Setup Material
+# 	material = None
+# 	if name_material in bpy.data.materials:
+# 		material = bpy.data.materials[name_material]
+# 	else:
+# 		material = bpy.data.materials.new(name_material)
+# 		material.use_nodes = True
+
+# 	if material == None:
+# 		return
+
+# 	# Assign material
+# 	if len(bpy.context.object.data.materials) > 0:
+# 		bpy.context.object.data.materials[0] = material
+# 	else:
+# 		bpy.context.object.data.materials.append(material)
+
+
+# 	# Setup Node
+# 	tree = material.node_tree
+# 	node = None
+# 	if name_node in tree.nodes:
+# 		node = tree.nodes[name_node]
+# 	else:
+# 		node = tree.nodes.new("ShaderNodeTexImage")
+# 	node.name = name_node
+# 	node.select = True
+# 	tree.nodes.active = node
+
+	
+# 	# Setup Image
+# 	if node.image == None:
+# 		node.image = get_image( names_checkermap[0] )
+
+# 	else:
+# 		print("Current image? {}".format(node.image.name))
+# 		if node.image.name not in names_checkermap:
+# 			node.image = get_image( names_checkermap[0] )
+# 		else:
+# 			# Cycle to next image
+# 			index = (names_checkermap.index(node.image.name)+ 1) % len(names_checkermap)
+# 			node.image = get_image( names_checkermap[index] )
+
+
+
+# def get_image(name):
+
+# 	#Get Image
+# 	image = None
+# 	if bpy.data.images.get(name) is not None:
+#   		image = bpy.data.images[name];
+# 	else:
+# 		#Load image
+# 		pathTexture = icons_dir = os.path.join(os.path.dirname(__file__), "resources/{}.png".format(name))
+# 		image = bpy.ops.image.open(filepath=pathTexture, relative_path=False)
+# 		bpy.data.images["{}.png".format(name)].name = name #remove extension in name
+# 		image = bpy.data.images[name];
+	
+# 	return image

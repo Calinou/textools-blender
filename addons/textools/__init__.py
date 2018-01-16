@@ -371,9 +371,12 @@ class Panel_Units(bpy.types.Panel):
 		r.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 		
-		r = col.row(align = True)
-		r.operator(op_uv_resize_area.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
-		r.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
+		
+		col.operator(op_uv_resize_area.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
+		# r = col.row(align = True)
+		col.separator()
+		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
+		col.operator(op_textures_reload.op.bl_idname, text="Reload Textures", icon_value = icon_get("textures_reload"))
 
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
 		
@@ -500,18 +503,17 @@ class Panel_Layout(bpy.types.Panel):
 		col.operator(op_select_islands_outline.op.bl_idname, text="Island Bounds", icon_value = icon_get("op_select_islands_outline"))
 		
 
-		#---------- Textures ------------
-		layout.label(text="Texels")
-		row = layout.row()
-		box = row.box()
-		col = box.column(align=True)
-		col.operator(op_textures_reload.op.bl_idname, text="Reload All", icon_value = icon_get("textures_reload"))
-
-		if bpy.app.debug_value != 0:
 		#---------- Texel ------------
+		if bpy.app.debug_value != 0:
+		
+			layout.label(text="Texels")
+			# row = layout.row()
+			box = layout.box()
+			col = box.column(align=True)
+
 			col.separator()
 			col = box.column(align=True)
-			# col.alert = True
+			col.alert = True
 			
 			row = col.row(align=True)
 			row.prop(context.scene.texToolsSettings, "texel_density", text="")

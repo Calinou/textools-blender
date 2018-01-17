@@ -6,7 +6,7 @@ from collections import defaultdict
 from math import pi
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_textures_reload"
+	bl_idname = "uv.textools_texture_reload_all"
 	bl_label = "Reload Textures and remove unused Textures"
 	bl_description = "Reload all textures"
 
@@ -20,12 +20,14 @@ class op(bpy.types.Operator):
 
 
 def main(context):
+	# Clean up unused images
+	for img in bpy.data.images:
+		if not img.users:
+			bpy.data.images.remove(img)
+			
 	#Reload all File images
 	for img in bpy.data.images :
 		if img.source == 'FILE' :
 			img.reload()
 
-	# Clean up unused images
-	for img in bpy.data.images:
-		if not img.users:
-			bpy.data.images.remove(img)
+	

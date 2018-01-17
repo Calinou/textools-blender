@@ -1,9 +1,9 @@
 import bpy
 import bmesh
 import operator
+import math
 from mathutils import Vector
 from collections import defaultdict
-from math import pi
 
 
 class op(bpy.types.Operator):
@@ -14,6 +14,9 @@ class op(bpy.types.Operator):
 	
 	@classmethod
 	def poll(cls, context):
+		#Only in UV editor mode
+		if bpy.context.area.type != 'IMAGE_EDITOR':
+			return False
 
 		if not bpy.context.active_object:
 			return False
@@ -22,10 +25,6 @@ class op(bpy.types.Operator):
 			return False
 
 		if bpy.context.active_object.type != 'MESH':
-			return False
-
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
 			return False
 
 		#Requires UV map
@@ -43,3 +42,101 @@ class op(bpy.types.Operator):
 
 def get_texel_density(self, context):
 	print("Get texel density")
+
+	# Force Object mode
+	if bpy.context.object.mode == 'EDIT':
+		bpy.ops.object.mode_set(mode='OBJECT')
+
+	# Collect valid Objects
+	objects = []
+	for obj in bpy.context.selected_objects:
+		if obj.type == 'MESH' and obj.data.uv_layers:
+			objects.append(obj)
+
+	if len(objects) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No valid objects with UV maps selected" )
+		return
+
+
+	# Get area for each triangle in view and UV
+	for obj in objects:
+		bpy.ops.object.select_all(action='DESELECT')
+		obj.select = True
+
+		image = get_object_texture_image(obj)
+
+		if image:
+			image_length = min(image.size[0], image.size[1])
+
+			print("image size {}".format(image_length))
+
+			# Create triangulated copy
+			bpy.ops.object.duplicate()
+			bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
+
+
+			bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+			uvLayer = bm.loops.layers.uv.verify()
+
+			for face in bm.faces:
+				# Triangle Verts
+				triangle_uv = [loop[uvLayer].uv for loop in face.loops ]
+				triangle_vt = [vert.co for vert in face.verts]
+
+				#Triangle Areas
+				area_uv = get_area_triangle(triangle_uv[0], triangle_uv[1], triangle_uv[2] )
+				area_vt = get_area_triangle(triangle_vt[0], triangle_vt[1], triangle_vt[2] )
+				
+				print("Area: {} | {}".format(area_uv, area_vt))
+
+			bpy.ops.object.mode_set(mode='OBJECT')
+			bpy.ops.object.delete()
+
+	# Restore selection
+	bpy.ops.object.select_all(action='DESELECT')
+	for obj in objects:
+		obj.select = True
+	bpy.context.scene.objects.active = objects[0]
+
+
+def get_object_texture_image(obj):
+
+	# Search in material & texture slots
+	for slot_mat in obj.material_slots:
+		for slot_tex in slot_mat.material.texture_slots:
+			if slot_tex and hasattr(slot_tex.texture , 'image'):
+				return slot_tex.texture.image
+
+	# Search in UV editor background image
+	if len(obj.data.uv_textures) > 0:
+		if len(obj.data.uv_textures[0].data) > 0:
+			if obj.data.uv_textures[0].data[0].image:
+				return obj.data.uv_textures[0].data[0].image
+
+	# obj.select = True
+	# bpy.context.scene.objects.active = obj
+	# bpy.ops.object.mode_set(mode='EDIT')
+	# bpy.ops.uv.select_all(action='SELECT')
+	# bpy.context.scene.update()
+
+	# for area in bpy.context.screen.areas :
+	# 	if area.type == 'IMAGE_EDITOR':
+	# 		if area.spaces.active.image:
+	# 			print("Area {}".format(area.spaces.active))
+	# 			# area.tag_redraw()
+	# 			bpy.ops.object.mode_set(mode='OBJECT')
+	# 			return area.spaces.active.image
+	
+	return None
+
+
+def get_area_triangle(A,B,C):
+	# Heron's formula: http://www.1728.org/triang.htm
+	# area = square root (s • (s - a) • (s - b) • (s - c))
+	a = (B-A).length
+	b = (C-B).length
+	c = (A-C).length
+	s = (a+b+c)/2.0
+	return math.sqrt(s * (s-a) * (s-b) * (s-c))

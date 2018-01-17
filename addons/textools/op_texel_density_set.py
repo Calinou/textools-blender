@@ -8,8 +8,8 @@ from math import pi
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_texel_density_set"
-	bl_label = "Resize Area"
-	bl_description = "Resize or extend the UV area"
+	bl_label = "Set Texel size"
+	bl_description = "Apply texel density by scaling the UV's to match the ratio"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	@classmethod

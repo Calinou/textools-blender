@@ -6,14 +6,8 @@ from collections import defaultdict
 from math import pi
 
 
-# name_material = "TT_checkerMap_material"
-# name_texture = "TT_checkerMap_texture"
-# name_node = "TT_checkerMap_node"
-name_images_prefix = "TT_checkermap_"
-# names_checkermap = [
-# 	"TT_checkermap_A", 
-# 	"TT_checkermap_B"
-# ]
+name_images_prefix = "TT_checker_"
+
 
 class op(bpy.types.Operator):
 	"""UV Operator description"""
@@ -24,6 +18,10 @@ class op(bpy.types.Operator):
 	
 	@classmethod
 	def poll(cls, context):
+		#Only in UV editor mode
+		if bpy.context.area.type != 'IMAGE_EDITOR':
+			return False
+
 		if bpy.context.object == None:
 			return False
 
@@ -33,8 +31,8 @@ class op(bpy.types.Operator):
 		if bpy.context.active_object.type != 'MESH':
 			return False
 
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
+		#Requires UV map
+		if not bpy.context.object.data.uv_layers:
 			return False
 
 		return True
@@ -58,39 +56,23 @@ def assign_checker_map(context, size_x, size_y):
 	objects = []
 	for obj in bpy.context.selected_objects:
 		if obj.type == 'MESH':
-			objects.append(obj)
+			if obj.data.uv_layers:
+				objects.append(obj)
 
-
-	print("Assign {}x".format(len(objects)))
+	#Change View mode to TEXTURED
+	for area in bpy.context.screen.areas:
+		if area.type == 'VIEW_3D':
+			for space in area.spaces:
+				if space.type == 'VIEW_3D':
+					space.viewport_shade = 'TEXTURED'
 
 
 	if len(objects) > 0:
-		#Change View mode to TEXTURED
-		for area in bpy.context.screen.areas:
-			if area.type == 'VIEW_3D':
-				for space in area.spaces:
-					if space.type == 'VIEW_3D':
-						space.viewport_shade = 'TEXTURED'
-
 		name = (name_images_prefix+"{}_{}x{}").format('A', size_x, size_y)
 		image = get_image(name, size_x, size_y)
 
 		for obj in objects:
-			bpy.ops.object.mode_set(mode='OBJECT')
-			bpy.ops.object.select_all(action='DESELECT')
-			obj.select = True
-			bpy.context.scene.objects.active = obj
-
-			bpy.ops.object.mode_set(mode='EDIT')
-			bpy.ops.uv.select_all(action='SELECT')
-
-			# Assign in UV view
-			# if context.area.spaces.active != None:
-			# 	print("Assign active image")
-			# 	context.area.spaces.active.image = image
-			for area in bpy.context.screen.areas :
-				if area.type == 'IMAGE_EDITOR' :
-					area.spaces.active.image = image
+			apply_faces_image(obj, image)
 	
 
 	# Restore object selection
@@ -111,19 +93,20 @@ def assign_checker_map(context, size_x, size_y):
 
 
 
+def apply_faces_image(obj, image):
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
 
+	bpy.ops.object.mode_set(mode='EDIT')
+	bpy.ops.uv.select_all(action='SELECT')
 
+	# Assign in UV view
+	for area in bpy.context.screen.areas :
+		if area.type == 'IMAGE_EDITOR' :
+			area.spaces.active.image = image
 
-		# bpy.ops.object.editmode_toggle()
-		# bpy.ops.uv.select_all(action='TOGGLE')
-		# bpy.ops.uv.select_all(action='TOGGLE')
-		# bpy.ops.uv.select_all(action='TOGGLE')
-		# bpy.ops.uv.pack_islands(margin=0.001)
-		# bpy.data.images["TT_uv_checker_512_512"].generated_type = 'UV_GRID'
-		# bpy.data.images["TT_uv_checker_512_512"].generated_type = 'COLOR_GRID'
-		# bpy.data.images["TT_uv_checker_512_512"].generated_type = 'UV_GRID'
-		# 
-		# bpy.ops.object.editmode_toggle()
 
 def get_image(name, size_x, size_y):
 

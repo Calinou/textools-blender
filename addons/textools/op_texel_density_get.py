@@ -2,9 +2,8 @@ import bpy
 import bmesh
 import operator
 import math
-from mathutils import Vector
-from collections import defaultdict
 
+from . import utilities_texel
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_texel_density_get"
@@ -33,9 +32,11 @@ class op(bpy.types.Operator):
 
 		return True
 
-	
 	def execute(self, context):
-		get_texel_density(self, context)
+		get_texel_density(
+			self, 
+			context
+		)
 		return {'FINISHED'}
 
 
@@ -58,24 +59,25 @@ def get_texel_density(self, context):
 		return
 
 
+	sum_area_vt = 0
+	sum_area_uv = 0
+
 	# Get area for each triangle in view and UV
 	for obj in objects:
 		bpy.ops.object.select_all(action='DESELECT')
 		obj.select = True
 
-		image = get_object_texture_image(obj)
-
+		# Find image of object
+		image = utilities_texel.get_object_texture_image(obj)
 		if image:
-			image_length = min(image.size[0], image.size[1])
-
-			print("image size {}".format(image_length))
 
 			# Create triangulated copy
 			bpy.ops.object.duplicate()
 			bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.context.tool_settings.mesh_select_mode = (False, False, True)
+			bpy.ops.mesh.select_all(action='SELECT')
 			bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
-
 
 			bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 			uvLayer = bm.loops.layers.uv.verify()
@@ -86,11 +88,13 @@ def get_texel_density(self, context):
 				triangle_vt = [vert.co for vert in face.verts]
 
 				#Triangle Areas
-				area_uv = get_area_triangle(triangle_uv[0], triangle_uv[1], triangle_uv[2] )
-				area_vt = get_area_triangle(triangle_vt[0], triangle_vt[1], triangle_vt[2] )
+				face_area_vt = utilities_texel.get_area_triangle(triangle_vt[0], triangle_vt[1], triangle_vt[2] )
+				face_area_uv = utilities_texel.get_area_triangle(triangle_uv[0], triangle_uv[1], triangle_uv[2] )
 				
-				print("Area: {} | {}".format(area_uv, area_vt))
+				sum_area_vt+= math.sqrt( face_area_vt )
+				sum_area_uv+= math.sqrt( face_area_uv ) * min(image.size[0], image.size[1])
 
+			# Delete Copy
 			bpy.ops.object.mode_set(mode='OBJECT')
 			bpy.ops.object.delete()
 
@@ -100,43 +104,10 @@ def get_texel_density(self, context):
 		obj.select = True
 	bpy.context.scene.objects.active = objects[0]
 
+	print("Sum verts area {}".format(sum_area_vt))
+	print("Sum texture area {}".format(sum_area_uv))
 
-def get_object_texture_image(obj):
-
-	# Search in material & texture slots
-	for slot_mat in obj.material_slots:
-		for slot_tex in slot_mat.material.texture_slots:
-			if slot_tex and hasattr(slot_tex.texture , 'image'):
-				return slot_tex.texture.image
-
-	# Search in UV editor background image
-	if len(obj.data.uv_textures) > 0:
-		if len(obj.data.uv_textures[0].data) > 0:
-			if obj.data.uv_textures[0].data[0].image:
-				return obj.data.uv_textures[0].data[0].image
-
-	# obj.select = True
-	# bpy.context.scene.objects.active = obj
-	# bpy.ops.object.mode_set(mode='EDIT')
-	# bpy.ops.uv.select_all(action='SELECT')
-	# bpy.context.scene.update()
-
-	# for area in bpy.context.screen.areas :
-	# 	if area.type == 'IMAGE_EDITOR':
-	# 		if area.spaces.active.image:
-	# 			print("Area {}".format(area.spaces.active))
-	# 			# area.tag_redraw()
-	# 			bpy.ops.object.mode_set(mode='OBJECT')
-	# 			return area.spaces.active.image
-	
-	return None
+	# bpy.context.scene.texToolsSettings.texel_density = math.sqrt( sum_area_uv) / math.sqrt( sum_area_vt)
+	bpy.context.scene.texToolsSettings.texel_density = sum_area_uv / sum_area_vt
 
 
-def get_area_triangle(A,B,C):
-	# Heron's formula: http://www.1728.org/triang.htm
-	# area = square root (s • (s - a) • (s - b) • (s - c))
-	a = (B-A).length
-	b = (C-B).length
-	c = (A-C).length
-	s = (a+b+c)/2.0
-	return math.sqrt(s * (s-a) * (s-b) * (s-c))

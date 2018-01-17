@@ -322,8 +322,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default = False
 	)
 	texel_mode_scale = bpy.props.EnumProperty(items= 
-		[('ISLAND', 'Islands', 'Scale UV islands to match Texel Density'), 
-		('OBJECT', 'Object', 'Scale all UVs together to match Texel Density')], 
+		[('ISLAND', 'Scale Islands', 'Scale UV islands to match Texel Density'), 
+		('ALL', 'Scale All UVs', 'Scale all UVs together to match Texel Density')], 
 		name = "Mode", 
 		default = 'ISLAND'
 	)
@@ -331,8 +331,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name = "Texel",
 		description = "Texel size or Pixels per 1 unit ratio",
 		default = 256,
-		min = 0.0,
-		max = 100.00
+		min = 0.0
+		# max = 100.00
 	)
 
 	# bake_do_save = bpy.props.BoolProperty(
@@ -448,7 +448,7 @@ class Panel_Layout(bpy.types.Panel):
 
 		#---------- Layout ------------
 		# layout.label(text="Layout")
-
+		
 		box = layout.box()
 		col = box.column(align=True)
 		row = col.row(align=True)
@@ -503,31 +503,22 @@ class Panel_Layout(bpy.types.Panel):
 		
 
 		#---------- Texel ------------
-		if bpy.app.debug_value != 0:
-		
-			layout.label(text="Texels")
-			# row = layout.row()
-			box = layout.box()
-			col = box.column(align=True)
 
-			col.separator()
-			col = box.column(align=True)
-			col.alert = True
-			
-			row = col.row(align=True)
-			row.prop(context.scene.texToolsSettings, "texel_density", text="")
-			row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
+		box = layout.box()
+		col = box.column(align=True)
 
-			row = col.row(align=True)
-			row.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
-			row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
-		
-			# col.prop(context.scene.texToolsSettings, "bake_force_single", text="Per Island")
-			# col = box.column(align=True)
-			# row = col.row(align=True)
-			# row.label(text="Mode")
-			# row.prop(context.scene.texToolsSettings, "texel_mode_scale", expand=True)
-		
+		col = box.column(align=True)
+		row = col.row(align=True)
+		row.label(text="" , icon_value = icon_get("texel_density"))
+		row.separator()
+		row.prop(context.scene.texToolsSettings, "texel_density", text="")
+		row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+
+		col = box.column(align=True)
+		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
+		col.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
+
 			
 		# 
 		
@@ -717,33 +708,34 @@ def register():
 	# Register Icons
 	icons = [
 		# "logo.png", 
-		"op_extend_canvas_open.png",
-		"islands_align_sort_h.png", 
-		"islands_align_sort_v.png", 
-		"checkerMap.png", 
-		"swap_uv_xyz.png", 
-		"island_rotate_90_left.png", 
-		"island_rotate_90_right.png", 
-		"textures_reload.png", 
-		"island_align_edge.png", 
-		"island_relax_straighten_edges.png", 
-		"op_select_islands_outline.png", 
 		"alignBottom.png", 
 		"alignLeft.png", 
 		"alignRight.png", 
 		"alignTop.png", 
-		"mirror.png", 
-		"setup_split_uv.png", 
+		"bake_anti_alias.png", 
+		"bake_obj_cage.png", 
+		"bake_obj_high.png", 
+		"bake_obj_low.png", 
+		"checkerMap.png", 
+		"explode.png",
 		"faces_iron.png", 
+		"island_align_edge.png", 
+		"island_relax_straighten_edges.png", 
+		"island_rotate_90_left.png", 
+		"island_rotate_90_right.png", 
+		"islands_align_sort_h.png", 
+		"islands_align_sort_v.png", 
 		"islands_select_identical.png", 
 		"islands_select_overlapping.png", 
+		"mirror.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
-		"bake_obj_low.png", 
-		"bake_obj_high.png", 
-		"bake_obj_cage.png", 
-		"bake_anti_alias.png", 
-		"explode.png"
+		"op_extend_canvas_open.png",
+		"op_select_islands_outline.png", 
+		"setup_split_uv.png", 
+		"swap_uv_xyz.png", 
+		"texel_density.png",
+		"textures_reload.png"
 	]
 	for icon in icons:
 		utilities_ui.icon_register(icon)

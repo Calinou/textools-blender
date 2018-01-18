@@ -28,15 +28,21 @@ h1{
 
 h2{
 	text-shadow: 0px 1px 1px #6c6c6c;
-	color: #2a2a2a;
+	color: #222222;
 }
 hr {
 	/*background-color: #fff;*/
-	color: #474747;
+	color:#2b2b2b; 
+	background-color:#2b2b2b; 
+	height:6px; 
+	border:none;
+	box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.7);
+	/*color: #474747;
 	size: 1px;
-	margin-top: 32px;
+	*/margin-top: 32px;
 }
-a{
+
+a:not(.NoButton){
 	border-style: solid;
     border-width: 4px 6px 4px 6px;
     border-image: url(images/style_link.png) 4 6 4 6 fill stretch;
@@ -45,20 +51,52 @@ a{
     color: #d8d8d8;
     margin-left: 4px;
     margin-right: 4px;
+    /*max-width: 100%;*/
     /*float: right;*/
     display: block;
+}
+
+a.NoButton:link {
+	color: #6d6d6d;
+}
+a.NoButton:visited {
+	color: #6d6d6d;
+}
+a.NoButton:hover {
+	color: #6d6d6d;
+}
+a.NoButton:active {
+	color: #6d6d6d;
 }
 
 .PanelColumns {
 	padding: 16px;
 	background-color: #464646;
 	border-radius: 8px;
-	box-shadow: 0px 3px #000000;
-	/*text-shadow: 0px 4px;*/
+	box-shadow: 0px 3px #131313;
 	column-count: 2;
 	column-gap: 40px;
 	column-rule: 1px solid #202020;
+	border: 1px solid  #636363;
 }
+.PanelColumns3 {
+	padding: 16px;
+	background-color: #464646;
+	border-radius: 8px;
+	box-shadow: 0px 3px #131313;
+	column-count: 3;
+	column-gap: 40px;
+	column-rule: 1px solid #202020;
+	border: 1px solid  #636363;
+}
+
+
+
+
+
+
+
+
 .PanelContent {
 	/*column-span: all;*/
 	margin-top: 0px;

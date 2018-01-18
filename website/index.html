@@ -18,13 +18,18 @@ body,td,th {
       <tbody>
         <tr>
           <td><h1>TexTools for <img src="images/logo_blender.png" width="39" height="32" alt=""/> Blender</h1></td>
-          <td width="140" align="right"><a href="http://renderhjs.net/textools/">TexTools 3dsMax</a></td>
-          <td width="80" align="right"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"><img src="images/style_paypal.png" width="63" height="25" alt=""/></a></td>
+          <td width="160" align="right"><a href="http://renderhjs.net/textools/3dsMax.html">TexTools for 3dsMax</a></td>
+          <td width="80" align="right"><a class="NoButton" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"><img src="images/style_paypal.png" width="63" height="25" alt=""/></a></td>
         </tr>
       </tbody>
     </table>
-    <p> TexTools is a free addon for Blender with a collection of UV and Texture related tools. Back in 2009 I released the Original TexTools for 3dsMax. Currently this is an early development release and more features will be added in the future. Most of the tools are context sensitive or perform 2 actions at once.</p>
+    <p> TexTools is a free addon for Blender with a collection of UV and Texture related tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Currently this is an early development release and more features will be added in the future. </p>
     <div class="PanelColumns">
+    <div class="PanelContent">
+      <h2>Download</h2>
+      <p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip">Blender_TexTools_0.8.0.zip </a></p>
+      </div>
+      
     <div class="PanelContent">
       <h2>Installation</h2>
       <ol>
@@ -39,13 +44,16 @@ body,td,th {
         <li> TexTools now is in the UV/Image Editor <img src="images/show_uv_image_editor.png" alt=""/>   in the left Tool Panel.</li>
       </ol>
       </div>
-      <div class="PanelContent">
-      <h2>Download</h2>
-      <p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip">Blender_TexTools_0.8.0.zip </a></p>
+      
+      	<div class="PanelContent">
+      <h2>Requirements</h2>
+      <p>Blender 2.79</p>
       </div>
+      
       <div class="PanelContent">
       <h2>Links</h2>
-      <p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source</a><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donatio</a><a href="http://renderhjs.net/textools/">3dsMax Version</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist Thread</a></p>
+      <p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source</a>
+      <br><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donatio</a><a href="http://renderhjs.net/textools/">3dsMax Version</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist Thread</a></p>
       <p>Personal Links</p>
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tbody>
@@ -73,12 +81,13 @@ body,td,th {
       <div class="PanelContent">
       <h2><img src="images/op_uv_resize_area.png" width="32" height="32" alt=""/> Resize</h2>
       <p>Opens a resize popup where you can extend or resize the UV layout canvas to either direction.</p>
+      <p><img src="images/demo_resize_area.gif" alt=""/></p>
       </div>
       <div class="PanelContent">
       <h2>UV Channel</h2>
       <p>Cycle through existing UV channel via this dropdown menu. If no UV map exists a button to create one will appear instead.</p>
       <p>The up and down arrow allow you to swap UV channels up or down.</p>
-      <p><img src="images/demo_uv_channel.gif" width="422" height="204" alt=""/></p>
+      <p><img src="images/demo_uv_channel.gif" alt=""/></p>
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
@@ -86,7 +95,7 @@ body,td,th {
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_texture_reload_all.png" width="34" height="34" alt=""/> Reload Textures</h2>
-      <p>Reload all textures in the current blend file</p>
+      <p>Reload all textures in the current blend file and removes unsued ones.</p>
     </div>
     </div>
     <hr>
@@ -136,15 +145,20 @@ body,td,th {
     <div class="PanelColumns">
      <div class="PanelContent">
       <h2><img src="images/texel_density.png" width="32" height="32" alt=""/> Texel Density</h2>
-      <p>...</p>
-      <p><img src="images/demo_texel_density.gif" width="662" height="358" alt=""/></p>
+      <p>Texel density is a value that describes how many pixels from a texture are visible per 1 unit or 1 meter. This value can be sampled from UV face selections, or from selected Objects.</p>
+      <p><img src="images/demo_texel_density.gif" alt=""/></p>
       </div>
     <div class="PanelContent">
       <h2><img src="images/op_texel_density_get.png" width="32" height="32" alt=""/> Get Density</h2>
       <p>Calculates the Texel density of the selected objects or UV faces when in UV editor mode.</p>
       </div>
       <div class="PanelContent">
-      <h2>Set Density</h2>
+      <h2><img src="images/op_texel_density_set.png" width="32" height="32" alt=""/> Apply Density</h2>
+      <p>Applies the Texel Density to the selected Objects or UV faces <img src="images/show_selection_uv_face.png" alt=""/> by scaling the UV's. Select from the dropdown menu from 2 modes of scaling the UV's:</p>
+      <ul>
+        <li>Scale by UV Islands</li>
+        <li>Scale by Object UVs</li>
+      </ul> 
       </div>
     </div>
     <hr>
@@ -158,18 +172,19 @@ body,td,th {
       <div class="PanelContent">
         <h2><img src="images/bake_anti_alias.png" width="32" height="32" alt=""/> AA / Anti Alias</h2>
         <p>Anti Aliasing level, choose from: None, 2x and 4x. When you enable Anti Aliasing the bake render is rendered at a scaled resulution and afterwards down scaled. Anti Aliasing works on any baking mode.</p>
+        <p><img src="images/demo_anit_alias.gif" alt=""/></p>
       </div>
       <div class="PanelContent">
         <h2>Single</h2>
         <p>With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. It uses the name or ID from the first item in the bake set list. This is great for multi part objects or exploded bake setups.</p>
+        <p><img src="images/bake_single.png" width="144" height="22" alt=""/></p>
       </div>
        
 </div>
   <h3>Bake Objects</h3>
- <p>dsadsa</p>
-<div class="PanelColumns">
+  <div class="PanelColumns">
     <div class="PanelContent">
-        <h2>Object Pairs</h2>
+        <h2>Bake Sets</h2>
         <p>...</p>
           <p>Type of baking objects </p>
       <p>TexTools automatically groups your scene selection into sets to bake. Objects with common name prefixes are grouped into a set. Objects can be of 3 different object types:  </p>
@@ -194,36 +209,46 @@ body,td,th {
       <div class="PanelContent">
         <h2>Organize</h2>
         <p>Declutters your selected object names by matching high and low poly objects by their bounding box location and size. Only high poly objects are renamed to match the low poly names with the ' high' suffix.</p>
+        <p><img src="images/demo_bake_organize.gif" alt=""/></p>
     </div>
       <div class="PanelContent">
         <h2><img src="images/op_bake_explode.png" width="32" height="32" alt=""/> Explode</h2>
         <p>Moves all selected bake pairs apart into 6 directions. Offsets are based on bounding boxes and offset to the center of the whole group. Margins are a 35% of the average side of all bounding boxes. Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.</p>
-        <p><img src="images/demo_bake_explode.gif" width="518" height="446" alt=""/></p>
+        <p><img src="images/demo_bake_explode.gif" alt=""/></p>
     </div>
   </div>
-  <h3>Bake Types</h3>
-  <p>....</p>
-  <div class="PanelColumns">
+  <h3>Bake Types  </h3>
+  <div class="PanelColumns3">
     <div class="PanelContent">
       <h2>Normal Tangent</h2> 
-      A normal map with a local Tangent space.
-</div>
+      <p><img src="images/bake_normal.png" width="128" height="128" alt=""/></p>
+      <p>A normal map with a local Tangent space. Parameters: Ray Distance    </p>
+    </div>
       <div class="PanelContent">
       <h2>ID Map</h2> 
-      Assigns a unique color to each mesh element. This map is often used to quickly select elements in Texture editing Applications such as Photoshop or Substance Painter.
-</div>
+      <p><img src="images/bake_mode_id.png" width="128" height="128" alt=""/></p>
+      <p>Assigns a unique color to each mesh element. This map is often used to quickly select elements in Texture editing Applications such as Photoshop or Substance Painter.    </p>
+    </div>
     <div class="PanelContent">
           <h2>AO / Ambient Occlusion</h2>
-    ....</div>
+      <p><img src="images/bake_mode_ao.png" width="128" height="128" alt=""/></p>
+      <p>A plain ambient Occlusion bake in Cycles. </p>
+      <p>Parameters: Samples </p>
+    </div>
      <div class="PanelContent">
           <h2>Cavity</h2>
-    Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node.</div>
+       <p><img src="images/bake_mode_cavity.png" width="128" height="128" alt=""/></p>
+       <p>Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node.    </p>
+    </div>
      <div class="PanelContent">
           <h2>Dust</h2>
-    Dust is similar to the cavity map but adds additional Z top normals to the mix. Use this mask for dust and dirt masks in your texturing process.</div>
+       <p><img src="images/bake_mode_dust.png" width="128" height="128" alt=""/></p>
+       <p>Dust is similar to the cavity map but adds additional Z top normals to the mix. Use this mask for dust and dirt masks in your texturing process.    </p>
+    </div>
      <div class="PanelContent">
           <h2>Gradient Z</h2>
-    e left Tool Panel.      
+       <p><img src="images/bake_mode_gradient_z.png" width="128" height="128" alt=""/></p>
+       <p>A linear gradient from top to bottom of the object in world space.    </p>
     </div>
   </div>
   
@@ -246,8 +271,13 @@ body,td,th {
       <li> Set the value other than '0' </li>
       <li>Protoype tools should be shown in red in the interface</li>
       </ol>
-    <p><img src="images/show_debug_menu.png" width="197" height="90" alt=""/></p>
+    <p><img src="images/show_debug_menu.png" alt=""/></p>
     </div>
+    <div class="PanelContent">
+      <h2>Code Structure</h2>
+      <p>...</p>
+    </div>
+
     <div class="PanelContent">
       <h2>Release Log</h2>
       <p>Having issues with the latest version? Try a older version which you can find here:</p>
@@ -263,7 +293,7 @@ body,td,th {
     </div>
   </div>
   <br>
-  <p>2018 render|hjs</p>
+  <p>2018 <a href="http://www.renderhjs.net/" class="NoButton">render|hjs</a></p>
 </div>
 </body>
 </html>

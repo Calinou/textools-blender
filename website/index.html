@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TexTools</title>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed" rel="stylesheet">
+<style type="text/css">
+body,td,th {
+	font-family: Roboto, sans-serif;
+}
+</style>
+</head>
+
+<body>
+<div class="Page">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+          <td><h1>TexTools for <img src="images/logo_blender.png" width="39" height="32" alt=""/> Blender</h1></td>
+          <td width="140" align="right"><a href="http://renderhjs.net/textools/">TexTools 3dsMax</a></td>
+          <td width="80" align="right"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"><img src="images/style_paypal.png" width="63" height="25" alt=""/></a></td>
+        </tr>
+      </tbody>
+    </table>
+    <p> TexTools is a free addon for Blender with a collection of UV and Texture related tools. Back in 2009 I released the Original TexTools for 3dsMax. Currently this is an early development release and more features will be added in the future. Most of the tools are context sensitive or perform 2 actions at once.</p>
+    <div class="PanelColumns">
+    <div class="PanelContent">
+      <h2>Installation</h2>
+      <ol>
+        <li>Open User Preferences <br>
+        <img src="images/show_open_preferences.png" alt=""/>        </li>
+        <li>Go to the Add-ons tab <br>
+        <img src="images/show_preferences_addons.png" alt=""/>        </li>
+        <li> Press Install Addon  and Select the zip file. <br>
+        <img src="images/show_install_addon_from_file.png" alt=""/>        </li>
+        <li>Enable the TexTools Addon <br>
+        <img src="images/show_enable_addon.png" alt=""/>        </li>
+        <li> TexTools now is in the UV/Image Editor <img src="images/show_uv_image_editor.png" alt=""/>   in the left Tool Panel.</li>
+      </ol>
+      </div>
+      <div class="PanelContent">
+      <h2>Download</h2>
+      <p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip">Blender_TexTools_0.8.0.zip </a></p>
+      </div>
+      <div class="PanelContent">
+      <h2>Links</h2>
+      <p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source</a><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donatio</a><a href="http://renderhjs.net/textools/">3dsMax Version</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist Thread</a></p>
+      <p>Personal Links</p>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+          <tr>
+            <td><a href="http://www.renderhjs.net/">renderhjs.net </a></td>
+            <td><a href="https://www.youtube.com/renderhjs">YouTube</a></td>
+            <td><a href="https://twitter.com/renderhjs">Twitter</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      </div>
+    </div>
+    <hr>
+    <h1>Size Panel</h1>
+    <div class="PanelColumns">
+    <div class="PanelContent">
+      <h2>Size</h2>
+      <p>Used to set the texture size for baking but also the padding size for UV operations when spacing UV islands. Use the dropdown menu to quickly assign common square texture sizes. All units are in pixels.</p>
+      </div>
+      <div class="PanelContent">
+      <h2>Padding</h2>
+      <p>Padding size in pixels. The padding is used for UV margins and texture baking.</p>
+      </div>
+      <div class="PanelContent">
+      <h2><img src="images/op_uv_resize_area.png" width="32" height="32" alt=""/> Resize</h2>
+      <p>Opens a resize popup where you can extend or resize the UV layout canvas to either direction.</p>
+      </div>
+      <div class="PanelContent">
+      <h2>UV Channel</h2>
+      <p>Cycle through existing UV channel via this dropdown menu. If no UV map exists a button to create one will appear instead.</p>
+      <p>The up and down arrow allow you to swap UV channels up or down.</p>
+      <p><img src="images/demo_uv_channel.gif" width="422" height="204" alt=""/></p>
+      </div>
+      <div class="PanelContent">
+      <h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
+      <p>Assigns a checker map to the selected object or cycles through 2 checker maps. When a checker map is assigned it changes the view to texture mode.</p>
+      </div>
+      <div class="PanelContent">
+      <h2><img src="images/op_texture_reload_all.png" width="34" height="34" alt=""/> Reload Textures</h2>
+      <p>Reload all textures in the current blend file</p>
+    </div>
+    </div>
+    <hr>
+    <h1>UV Layout Panel</h1>
+    <div class="PanelColumns">
+    <div class="PanelContent">
+      <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
+      <p>In UV vertex mode <img src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. In the UV face mode <img src="images/show_selection_uv_face.png" alt=""/>  selected UV islands are aligned to either side of the initial selection bounds.</p>
+      </div>
+      <div class="PanelContent">
+      <h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
+    Aligns the UV island of the selected UV edge Edge mode to the closest 90 degree angle.</div>
+    <div class="PanelContent">
+      <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
+      <p>Rotates the UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
+      </div>
+      <div class="PanelContent">
+      <h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
+      <p>Sorts the selected UV islands by longest side and aligns them vertically or horizontally in a row.</p>
+      </div>
+      <div class="PanelContent">
+      <h2><img src="images/op_faces_iron.png" width="32" height="32" alt=""/> Iron Faces</h2>
+      <p>Unwraps selected viewport faces Face <img src="images/show_selection_view_face.png" alt=""/> mode into a single UV island. This is often a quicker approach of unwrapping as opposed to marking the boundary edges (mark seams).</p>
+      </div>
+      
+    </div>
+    
+    <h3>Selection Tools</h3>
+
+    </p>
+    <div class="PanelColumns">
+    <div class="PanelContent">
+      <h2><img src="images/op_select_islands_identical.png" width="32" height="32" alt=""/> Select Similar</h2>
+      <p>Selects similar UV islands based on the UV island input selection and matching UV Island topology.</p>
+      </div>
+      <div class="PanelContent">
+      <h2><img src="images/op_select_islands_overlap.png" width="32" height="32" alt=""/> Select Overlap</h2>
+    Collects all UV islands that overlap each other and select of each group all UV faces <img src="images/show_selection_uv_face.png" alt=""/> except for one island.</div>
+    <div class="PanelContent">
+      <h2><img src="images/op_select_islands_outline.png" width="32" height="32" alt=""/> Select Island Bounds</h2>
+      <p>Selects the edge bounds <img src="images/show_selection_view_edge.png" alt=""/>of all UV Islands in the 3D viewport.</p>
+      </div>
+    </div>
+    
+   <h3> Texel Density Tools</h3>
+    
+    <div class="PanelColumns">
+     <div class="PanelContent">
+      <h2><img src="images/texel_density.png" width="32" height="32" alt=""/> Texel Density</h2>
+      <p>...</p>
+      <p><img src="images/demo_texel_density.gif" width="662" height="358" alt=""/></p>
+      </div>
+    <div class="PanelContent">
+      <h2><img src="images/op_texel_density_get.png" width="32" height="32" alt=""/> Get Density</h2>
+      <p>Calculates the Texel density of the selected objects or UV faces when in UV editor mode.</p>
+      </div>
+      <div class="PanelContent">
+      <h2>Set Density</h2>
+      </div>
+    </div>
+    <hr>
+    <h1>Texture Baking Panel</h1>
+    <p>To bake textures in TexTools just select your objects and press Bake. High and low poly object pairs are detected via object names.</p>
+    <div class="PanelColumns">
+        <div class="PanelContent">
+          <h2><img src="images/op_bake.png" width="32" height="32" alt=""/> Bake</h2>
+          <p>Bakes the current texture type with the current selected object set.</p>
+      </div>
+      <div class="PanelContent">
+        <h2><img src="images/bake_anti_alias.png" width="32" height="32" alt=""/> AA / Anti Alias</h2>
+        <p>Anti Aliasing level, choose from: None, 2x and 4x. When you enable Anti Aliasing the bake render is rendered at a scaled resulution and afterwards down scaled. Anti Aliasing works on any baking mode.</p>
+      </div>
+      <div class="PanelContent">
+        <h2>Single</h2>
+        <p>With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. It uses the name or ID from the first item in the bake set list. This is great for multi part objects or exploded bake setups.</p>
+      </div>
+       
+</div>
+  <h3>Bake Objects</h3>
+ <p>dsadsa</p>
+<div class="PanelColumns">
+    <div class="PanelContent">
+        <h2>Object Pairs</h2>
+        <p>...</p>
+          <p>Type of baking objects </p>
+      <p>TexTools automatically groups your scene selection into sets to bake. Objects with common name prefixes are grouped into a set. Objects can be of 3 different object types:  </p>
+      <p><img src="images/bake_obj_low.png" width="32" height="32" alt=""/><br>
+      Low poly objects: when their name used the keyword: 'lowpoly', 'low', 'lp' or 'l'  </p>
+      <p><img src="images/bake_obj_high.png" width="32" height="32" alt=""/> <br>
+      High poly objects: when they contain a Subdevision Surface modifier or when their name used the keyword: 'highpoly','high','hp' or 'h'  </p>
+      <p><img src="images/bake_obj_cage.png" width="30" height="32" alt=""/> <br>
+      Cage objects:when their name used the keyword 'cage' or 'c' . Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.</p>
+    </div>
+    <div class="PanelContent">
+      <h2>Lock Selection</h2>
+      <p>Lock or unlock the current bake selection. When locked scene selection changes won't affect the baking list. This is great for tweaking meshes, cages or other settings while baking.</p>
+        <p><img src="images/bake_lock_selection.png" width="133" height="28" alt=""/></p>
+    </div>
+      <div class="PanelContent">
+        <h2>Select by type</h2>
+        <p>Select from the baking sets all objects that match a critera such as 'Warning', 'Low', 'High' or 'Cage' objects. </p>
+        <p><img src="images/bake_select_type.png" width="159" height="28" alt=""/></p>
+        <p><strong>Tip</strong>: When bake sets are locked you can select scene objects here independently of the bake sets.</p>
+    </div>
+      <div class="PanelContent">
+        <h2>Organize</h2>
+        <p>Declutters your selected object names by matching high and low poly objects by their bounding box location and size. Only high poly objects are renamed to match the low poly names with the ' high' suffix.</p>
+    </div>
+      <div class="PanelContent">
+        <h2><img src="images/op_bake_explode.png" width="32" height="32" alt=""/> Explode</h2>
+        <p>Moves all selected bake pairs apart into 6 directions. Offsets are based on bounding boxes and offset to the center of the whole group. Margins are a 35% of the average side of all bounding boxes. Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.</p>
+        <p><img src="images/demo_bake_explode.gif" width="518" height="446" alt=""/></p>
+    </div>
+  </div>
+  <h3>Bake Types</h3>
+  <p>....</p>
+  <div class="PanelColumns">
+    <div class="PanelContent">
+      <h2>Normal Tangent</h2> 
+      A normal map with a local Tangent space.
+</div>
+      <div class="PanelContent">
+      <h2>ID Map</h2> 
+      Assigns a unique color to each mesh element. This map is often used to quickly select elements in Texture editing Applications such as Photoshop or Substance Painter.
+</div>
+    <div class="PanelContent">
+          <h2>AO / Ambient Occlusion</h2>
+    ....</div>
+     <div class="PanelContent">
+          <h2>Cavity</h2>
+    Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node.</div>
+     <div class="PanelContent">
+          <h2>Dust</h2>
+    Dust is similar to the cavity map but adds additional Z top normals to the mix. Use this mask for dust and dirt masks in your texturing process.</div>
+     <div class="PanelContent">
+          <h2>Gradient Z</h2>
+    e left Tool Panel.      
+    </div>
+  </div>
+  
+  <hr>
+  <h1>Developer Notes</h1>
+    <div class="PanelColumns">
+     <div class="PanelContent">
+    <h2>Using GIT source version in Blender</h2>
+    <p>dsad sad sa asd sda dasd as das daadsasd adsa adsdsasa ds dsadasd sa</p>
+    <ol>
+      <li>Goto user preferences (Ctrl + Alt + U) </li>
+      <li>In the 'File' tab set the 'Scripts' path to '{GIT Path}\' so that blender will pick up 'addons' folder </li>
+      <li>In the 'Add-ons' tab enable TexTools</li>
+      </ol>
+      </div>
+       <div class="PanelContent">
+    <h2>Enable debug features</h2>
+    <ol>
+      <li> Press Ctrl + Alt + D for the debug value panel</li>
+      <li> Set the value other than '0' </li>
+      <li>Protoype tools should be shown in red in the interface</li>
+      </ol>
+    <p><img src="images/show_debug_menu.png" width="197" height="90" alt=""/></p>
+    </div>
+    <div class="PanelContent">
+      <h2>Release Log</h2>
+      <p>Having issues with the latest version? Try a older version which you can find here:</p>
+ 
+<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip"> TexTools 0.8.0.zip</a>
+<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.2.zip">TexTools 0.7.2.zip</a>
+<a href="http://renderhjs.net/textools/blender/Blender TexTools 0.7.1.zip"> TexTools 0.7.1.zip </a>
+<a href="http://renderhjs.net/textools/blender/Blender TexTools 0.7.0.zip">TexTools 0.7.0.zip </a>
+<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.6.0.zip"> TexTools 0.6.0.zip </a>
+<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.3.0.zip"> TexTools 0.3.0.zip </a> 
+       
+
+    </div>
+  </div>
+  <br>
+  <p>2018 render|hjs</p>
+</div>
+</body>
+</html>

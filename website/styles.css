@@ -1,0 +1,81 @@
+@charset "utf-8";
+body {
+	background-color: #202020;
+	font-family: 'Roboto', sans-serif;
+	color: #dadada;
+	font-size:14px;
+
+	/*width:960px;
+	display:flex; 
+	flex-direction:column;*/
+}
+h1,h2 {
+	font-family: 'Roboto Condensed', sans-serif;
+}
+
+.Page {
+	max-width: 920px;/*50em;*/
+    margin: 0 auto;
+	/*min-height:100%;*/
+	
+	/*position:relative;*/
+}
+
+
+h1{
+	font-size:32px
+}
+
+h2{
+	text-shadow: 0px 1px 1px #6c6c6c;
+	color: #2a2a2a;
+}
+hr {
+	/*background-color: #fff;*/
+	color: #474747;
+	size: 1px;
+	margin-top: 32px;
+}
+a{
+	border-style: solid;
+    border-width: 4px 6px 4px 6px;
+    border-image: url(images/style_link.png) 4 6 4 6 fill stretch;
+    text-decoration: none;
+    padding: 0px;
+    color: #d8d8d8;
+    margin-left: 4px;
+    margin-right: 4px;
+    /*float: right;*/
+    display: block;
+}
+
+.PanelColumns {
+	padding: 16px;
+	background-color: #464646;
+	border-radius: 8px;
+	box-shadow: 0px 3px #000000;
+	/*text-shadow: 0px 4px;*/
+	column-count: 2;
+	column-gap: 40px;
+	column-rule: 1px solid #202020;
+}
+.PanelContent {
+	/*column-span: all;*/
+	margin-top: 0px;
+	padding-top: 0px;
+	/*vertical-align: top;*/
+	width: 100%;
+	border-color: #FF383B;
+	break-inside: avoid-column;
+
+	/*display:inline-block*/
+}
+.PanelContent h2 img {
+	/*padding-top:-12px;*/
+	height:24px;
+	width:24px;
+}
+.PanelContent p img{
+	max-width: 100%;
+    height: auto;   
+}

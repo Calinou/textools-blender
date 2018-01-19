@@ -23,7 +23,14 @@ body,td,th {
         </tr>
       </tbody>
     </table>
-    <p> TexTools is a free addon for Blender with a collection of UV and Texture related tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Currently this is an early development release and more features will be added in the future. </p>
+    <p> TexTools is a <strong>free</strong> addon for Blender with a collection of UV and Texture related tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Currently this is an early development release and more features will be added in the future. </p>
+    <p><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+          <td align="center" valign="middle"><img src="images/demo_bake_explode.gif" width="518" height="446" alt=""/></td>
+        </tr>
+      </tbody>
+    </table></p>
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2>Download</h2>
@@ -33,21 +40,19 @@ body,td,th {
     <div class="PanelContent">
       <h2>Installation</h2>
       <ol>
-        <li>Open User Preferences <br>
-        <img src="images/show_open_preferences.png" alt=""/>        </li>
-        <li>Go to the Add-ons tab <br>
-        <img src="images/show_preferences_addons.png" alt=""/>        </li>
-        <li> Press Install Addon  and Select the zip file. <br>
-        <img src="images/show_install_addon_from_file.png" alt=""/>        </li>
-        <li>Enable the TexTools Addon <br>
-        <img src="images/show_enable_addon.png" alt=""/>        </li>
-        <li> TexTools now is in the UV/Image Editor <img src="images/show_uv_image_editor.png" alt=""/>   in the left Tool Panel.</li>
+        <li>Open User Preferences<br>
+<img src="images/show_open_preferences.png" alt=""/>        </li>
+        <li>Select  the Add-ons tab  <img src="images/show_preferences_addons.png" alt=""/>        </li>
+        <li> Press Install Addon  and Select the zip file<br>
+<img src="images/show_install_addon_from_file.png" alt=""/>        </li>
+        <li>Enable the TexTools Addon  <img src="images/show_enable_addon.png" alt=""/>        </li>
+        <li> TexTools  is in tool panel of the UV/Image Editor <img src="images/show_uv_image_editor.png" alt=""/></li>
       </ol>
       </div>
       
       	<div class="PanelContent">
       <h2>Requirements</h2>
-      <p>Blender 2.79</p>
+      <p>Blender 2.79 for Windows, Mac or Linux</p>
       </div>
       
       <div class="PanelContent">
@@ -66,8 +71,8 @@ body,td,th {
       </table>
 
       </div>
-    </div>
-    <hr>
+  </div>
+  <hr>
     <h1>Size Panel</h1>
     <div class="PanelColumns">
     <div class="PanelContent">
@@ -80,18 +85,19 @@ body,td,th {
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_uv_resize_area.png" width="32" height="32" alt=""/> Resize</h2>
-      <p>Opens a resize popup where you can extend or resize the UV layout canvas to either direction.</p>
-      <p><img src="images/demo_resize_area.gif" alt=""/></p>
+      <p>Opens a resize popup where you can extend or resize the UV layout canvas to either direction. Rather than scaling it will extend the UV area size while mainting the UV proportions.</p>
+      <p><img src="images/uv_resize_area_panel.png" alt=""/></p>
       </div>
       <div class="PanelContent">
       <h2>UV Channel</h2>
       <p>Cycle through existing UV channel via this dropdown menu. If no UV map exists a button to create one will appear instead.</p>
+      <p><img src="images/uv_channels.png" alt=""/></p>
       <p>The up and down arrow allow you to swap UV channels up or down.</p>
       <p><img src="images/demo_uv_channel.gif" alt=""/></p>
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
-      <p>Assigns a checker map to the selected object or cycles through 2 checker maps. When a checker map is assigned it changes the view to texture mode.</p>
+      <p>Assigns a checker map texture to the faces of the objects, this does not affect your materials. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to texture mode. Checker maps don't contribute to the filesize of the blend file as they are stored procedurally.</p>
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_texture_reload_all.png" width="34" height="34" alt=""/> Reload Textures</h2>
@@ -114,7 +120,7 @@ body,td,th {
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
-      <p>Sorts the selected UV islands by longest side and aligns them vertically or horizontally in a row.</p>
+      <p>Sorts the selected UV islands by longest side and aligns them <strong>vertically</strong> or <strong>horizontally</strong> in a row.</p>
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_faces_iron.png" width="32" height="32" alt=""/> Iron Faces</h2>
@@ -130,6 +136,7 @@ body,td,th {
     <div class="PanelContent">
       <h2><img src="images/op_select_islands_identical.png" width="32" height="32" alt=""/> Select Similar</h2>
       <p>Selects similar UV islands based on the UV island input selection and matching UV Island topology.</p>
+      <p><img src="images/demo_select_similar.gif" alt=""/></p>
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_select_islands_overlap.png" width="32" height="32" alt=""/> Select Overlap</h2>
@@ -167,33 +174,47 @@ body,td,th {
     <div class="PanelColumns">
         <div class="PanelContent">
           <h2><img src="images/op_bake.png" width="32" height="32" alt=""/> Bake</h2>
-          <p>Bakes the current texture type with the current selected object set.</p>
+          <p>Bakes the current texture type with the current selected object set. Baked images will appear in UV/Image Editor <img src="images/show_uv_image_editor.png" width="107" height="16" alt=""/></p>
       </div>
       <div class="PanelContent">
         <h2><img src="images/bake_anti_alias.png" width="32" height="32" alt=""/> AA / Anti Alias</h2>
-        <p>Anti Aliasing level, choose from: None, 2x and 4x. When you enable Anti Aliasing the bake render is rendered at a scaled resulution and afterwards down scaled. Anti Aliasing works on any baking mode.</p>
+        <p>Anti Aliasing level, choose from: <strong>None</strong>, <strong>2x</strong> and <strong>4x</strong>. When you enable Anti Aliasing the bake render is rendered at a scaled resulution and afterwards down scaled. Anti Aliasing works on any baking mode.</p>
         <p><img src="images/demo_anit_alias.gif" alt=""/></p>
       </div>
       <div class="PanelContent">
         <h2>Single</h2>
-        <p>With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. It uses the name or ID from the first item in the bake set list. This is great for multi part objects or exploded bake setups.</p>
+        <p>With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. It uses the name or ID from the first item in the bake set list. </p>
         <p><img src="images/bake_single.png" width="144" height="22" alt=""/></p>
+        <p>This is great for multi part objects or exploded bake setups.      </p>
       </div>
        
 </div>
-  <h3>Bake Objects</h3>
+  <h3>Bake Sets</h3>
   <div class="PanelColumns">
     <div class="PanelContent">
         <h2>Bake Sets</h2>
-        <p>...</p>
-          <p>Type of baking objects </p>
-      <p>TexTools automatically groups your scene selection into sets to bake. Objects with common name prefixes are grouped into a set. Objects can be of 3 different object types:  </p>
-      <p><img src="images/bake_obj_low.png" width="32" height="32" alt=""/><br>
-      Low poly objects: when their name used the keyword: 'lowpoly', 'low', 'lp' or 'l'  </p>
-      <p><img src="images/bake_obj_high.png" width="32" height="32" alt=""/> <br>
-      High poly objects: when they contain a Subdevision Surface modifier or when their name used the keyword: 'highpoly','high','hp' or 'h'  </p>
-      <p><img src="images/bake_obj_cage.png" width="30" height="32" alt=""/> <br>
-      Cage objects:when their name used the keyword 'cage' or 'c' . Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.</p>
+        <p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools automatically groups your scene selection into bake sets. Objects with common name prefixes are grouped into a set. You can bake just with a single object, with high and low poly or in addition that with a custom cage object.        </p>
+        <table width="100%" border="0" cellspacing="10" cellpadding="0">
+          <tr>
+            <td valign="top"><img src="images/bake_obj_low.png" width="32" height="32" alt=""/></td>
+            <td valign="top"><p>Low poly objects: when their name used the keyword: <strong>lowpoly</strong>, <strong>low</strong>, <strong>lp</strong> or<strong> l</strong></p>
+            <p>Example: <em><strong>scope </strong>or <strong>scope_low</strong></em></p></td>
+          </tr>
+          <tbody>
+            <tr>
+              <td valign="top"><img src="images/bake_obj_high.png" width="32" height="32" alt=""/></td>
+              <td valign="top"><p>High poly objects: when they contain a <a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/generate/subsurf.html" class="NoButton">Subdevision Surface modifier</a> or when their name used the keyword: <strong>highpoly</strong>, <strong>high</strong>, <strong>hp</strong> or <strong>h</strong></p>
+              <p>Example: <em><strong>scope_h</strong></em></p></td>
+            </tr>
+            <tr>
+              <td valign="top"><img src="images/bake_obj_cage.png" width="30" height="32" alt=""/></td>
+              <td valign="top"><p>Cage objects:when their name used the keyword <strong>cage</strong> or <strong>c</strong> . Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.</p>
+              <p>Example: <strong>scope_c</strong></p></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Tip: Expand the tool panel width to see the amount of objects for each type.</p>
+        <p><img src="images/demo_resize_panel_bake_sets.gif" width="234" height="56" alt=""/></p>
     </div>
     <div class="PanelContent">
       <h2>Lock Selection</h2>
@@ -202,18 +223,19 @@ body,td,th {
     </div>
       <div class="PanelContent">
         <h2>Select by type</h2>
-        <p>Select from the baking sets all objects that match a critera such as 'Warning', 'Low', 'High' or 'Cage' objects. </p>
+        <p>Select from the baking sets all objects that match a critera such as <strong>Warning</strong>, <strong>Low</strong>, <strong>High</strong> or <strong>Cage</strong> objects. </p>
         <p><img src="images/bake_select_type.png" width="159" height="28" alt=""/></p>
         <p><strong>Tip</strong>: When bake sets are locked you can select scene objects here independently of the bake sets.</p>
     </div>
       <div class="PanelContent">
-        <h2>Organize</h2>
+        <h2><img src="images/op_bake_organize_names.png" width="32" height="32" alt=""/> Organize</h2>
         <p>Declutters your selected object names by matching high and low poly objects by their bounding box location and size. Only high poly objects are renamed to match the low poly names with the ' high' suffix.</p>
         <p><img src="images/demo_bake_organize.gif" alt=""/></p>
     </div>
       <div class="PanelContent">
         <h2><img src="images/op_bake_explode.png" width="32" height="32" alt=""/> Explode</h2>
-        <p>Moves all selected bake pairs apart into 6 directions. Offsets are based on bounding boxes and offset to the center of the whole group. Margins are a 35% of the average side of all bounding boxes. Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.</p>
+        <p>Moves all selected bake pairs apart into 6 directions. Offsets are based on bounding boxes and offset to the center of the whole group. Margins are a 35% of the average side of all bounding boxes. </p>
+        <p>Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.</p>
         <p><img src="images/demo_bake_explode.gif" alt=""/></p>
     </div>
   </div>
@@ -222,7 +244,7 @@ body,td,th {
     <div class="PanelContent">
       <h2>Normal Tangent</h2> 
       <p><img src="images/bake_normal.png" width="128" height="128" alt=""/></p>
-      <p>A normal map with a local Tangent space. Parameters: Ray Distance    </p>
+      <p>A normal map with a local Tangent space.</p>
     </div>
       <div class="PanelContent">
       <h2>ID Map</h2> 
@@ -233,7 +255,7 @@ body,td,th {
           <h2>AO / Ambient Occlusion</h2>
       <p><img src="images/bake_mode_ao.png" width="128" height="128" alt=""/></p>
       <p>A plain ambient Occlusion bake in Cycles. </p>
-      <p>Parameters: Samples </p>
+      <p>Parameters: <strong>Samples</strong></p>
     </div>
      <div class="PanelContent">
           <h2>Cavity</h2>
@@ -257,25 +279,28 @@ body,td,th {
     <div class="PanelColumns">
      <div class="PanelContent">
     <h2>Using GIT source version in Blender</h2>
-    <p>dsad sad sa asd sda dasd as das daadsasd adsa adsdsasa ds dsadasd sa</p>
+    <p>Quite often the latest GIT source code version is not very stable. To run the GIT version I recommend setting up the '<strong>Scripts</strong>' path in the user preferences to point to the GIT folder.</p>
     <ol>
-      <li>Goto user preferences (Ctrl + Alt + U) </li>
-      <li>In the 'File' tab set the 'Scripts' path to '{GIT Path}\' so that blender will pick up 'addons' folder </li>
+      <li>Goto user preferences (<strong>Ctrl</strong> + <strong>Alt</strong> + <strong>U</strong>) </li>
+      <li>In the '<strong>File</strong>' tab set the '<strong>Scripts</strong>' path to '{GIT Path}\' so that blender will pick up 'addons' folder </li>
       <li>In the 'Add-ons' tab enable TexTools</li>
       </ol>
       </div>
        <div class="PanelContent">
-    <h2>Enable debug features</h2>
+    <h2>Enable debug</h2>
+    <p>By default the public releases and the GIT source version hide development tools in the UI. To reveal them you have to set the debug panel value to other than '<strong>0</strong>'</p>
     <ol>
-      <li> Press Ctrl + Alt + D for the debug value panel</li>
+      <li> Press <strong>Ctrl</strong> + <strong>Alt</strong> + <strong>D</strong> for the debug value panel</li>
       <li> Set the value other than '0' </li>
       <li>Protoype tools should be shown in red in the interface</li>
       </ol>
-    <p><img src="images/show_debug_menu.png" alt=""/></p>
-    </div>
+    <p><img src="images/demo_enable_debug.gif" alt=""/></p>
+    <p>Additional tools should now be highlighted in red inside the interface.</p>
+      </div>
     <div class="PanelContent">
       <h2>Code Structure</h2>
-      <p>...</p>
+      <p>Each operator for the tools has it's own python package file. Should you want to inspect or change the code this should make it easy to look for the right code. All code is commented fairly thorough and to my best ability simplified.</p>
+      <p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
     </div>
 
     <div class="PanelContent">

@@ -2,7 +2,7 @@
 body {
 	background-color: #202020;
 	font-family: 'Roboto', sans-serif;
-	color: #dadada;
+	color: #b9b9b9;
 	font-size:14px;
 
 	/*width:960px;
@@ -20,7 +20,9 @@ h1,h2 {
 	
 	/*position:relative;*/
 }
-
+strong{
+	color: #ffffff;
+}
 
 h1{
 	font-size:32px

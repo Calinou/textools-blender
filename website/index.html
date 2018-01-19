@@ -23,8 +23,7 @@ body,td,th {
         </tr>
       </tbody>
     </table>
-    <p> TexTools is a <strong>free</strong> addon for Blender with a collection of UV and Texture related tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Currently this is an early development release and more features will be added in the future. </p>
-    <p><table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of UV and Texture  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Current features  include: Easy <strong>Texture Baking</strong>, <strong>UV Align</strong> and <strong>Selection</strong> tools and <strong>Texel Density</strong> tools.</p><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tbody>
         <tr>
           <td align="center" valign="middle"><img src="images/demo_bake_explode.gif" width="518" height="446" alt=""/></td>
@@ -34,8 +33,8 @@ body,td,th {
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2>Download</h2>
-      <p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip">Blender_TexTools_0.8.0.zip </a></p>
-      </div>
+      <p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip">Blender_TexTools_0.8.0.zip </a>      </p>
+    </div>
       
     <div class="PanelContent">
       <h2>Installation</h2>
@@ -46,7 +45,7 @@ body,td,th {
         <li> Press Install Addon  and Select the zip file<br>
 <img src="images/show_install_addon_from_file.png" alt=""/>        </li>
         <li>Enable the TexTools Addon  <img src="images/show_enable_addon.png" alt=""/>        </li>
-        <li> TexTools  is in tool panel of the UV/Image Editor <img src="images/show_uv_image_editor.png" alt=""/></li>
+        <li> TexTools  is in the tool panel of the UV/Image Editor <img src="images/show_uv_image_editor.png" alt=""/></li>
       </ol>
       </div>
       
@@ -57,15 +56,15 @@ body,td,th {
       
       <div class="PanelContent">
       <h2>Links</h2>
-      <p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source</a>
+      <p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a>
       <br><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donatio</a><a href="http://renderhjs.net/textools/">3dsMax Version</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist Thread</a></p>
-      <p>Personal Links</p>
+      <p>Personal links</p>
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tbody>
           <tr>
-            <td><a href="http://www.renderhjs.net/">renderhjs.net </a></td>
-            <td><a href="https://www.youtube.com/renderhjs">YouTube</a></td>
-            <td><a href="https://twitter.com/renderhjs">Twitter</a></td>
+            <td width="33%"><a href="http://www.renderhjs.net/">renderhjs.net </a></td>
+            <td width="33%"><a href="https://www.youtube.com/renderhjs">YouTube</a></td>
+            <td width="33%"><a href="https://twitter.com/renderhjs">Twitter</a></td>
           </tr>
         </tbody>
       </table>
@@ -73,7 +72,7 @@ body,td,th {
       </div>
   </div>
   <hr>
-    <h1>Size Panel</h1>
+    <h1>►Size Panel</h1>
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2>Size</h2>
@@ -103,9 +102,9 @@ body,td,th {
       <h2><img src="images/op_texture_reload_all.png" width="34" height="34" alt=""/> Reload Textures</h2>
       <p>Reload all textures in the current blend file and removes unsued ones.</p>
     </div>
-    </div>
+  </div>
     <hr>
-    <h1>UV Layout Panel</h1>
+    <h1>►UV Layout Panel</h1>
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
@@ -134,7 +133,7 @@ body,td,th {
     </p>
     <div class="PanelColumns">
     <div class="PanelContent">
-      <h2><img src="images/op_select_islands_identical.png" width="32" height="32" alt=""/> Select Similar</h2>
+      <h2> <img src="images/op_select_islands_identical.png" width="32" height="32" alt=""/> Select Similar</h2>
       <p>Selects similar UV islands based on the UV island input selection and matching UV Island topology.</p>
       <p><img src="images/demo_select_similar.gif" alt=""/></p>
       </div>
@@ -162,19 +161,20 @@ body,td,th {
       <div class="PanelContent">
       <h2><img src="images/op_texel_density_set.png" width="32" height="32" alt=""/> Apply Density</h2>
       <p>Applies the Texel Density to the selected Objects or UV faces <img src="images/show_selection_uv_face.png" alt=""/> by scaling the UV's. Select from the dropdown menu from 2 modes of scaling the UV's:</p>
-      <ul>
-        <li>Scale by UV Islands</li>
-        <li>Scale by Object UVs</li>
-      </ul> 
+      <p><strong>Scale by UV Islands: </strong>Means that UV's are scaled by each UV island for their center.</p>
+      <p><strong>Scale by UV Islands: </strong>Scales the entire UV set to the top left corner as a whole.</p> 
       </div>
     </div>
     <hr>
-    <h1>Texture Baking Panel</h1>
+    <h1>►Texture Baking Panel</h1>
     <p>To bake textures in TexTools just select your objects and press Bake. High and low poly object pairs are detected via object names.</p>
     <div class="PanelColumns">
         <div class="PanelContent">
           <h2><img src="images/op_bake.png" width="32" height="32" alt=""/> Bake</h2>
-          <p>Bakes the current texture type with the current selected object set. Baked images will appear in UV/Image Editor <img src="images/show_uv_image_editor.png" width="107" height="16" alt=""/></p>
+          <p>Bakes the current texture type with the current selected object set. Baked images will appear in UV/Image Editor <img src="images/show_uv_image_editor.png" width="107" height="16" alt=""/>. </p>
+          <p>Press the big thumnail button to change the current <strong>bake mode</strong>. Additional parameters are listed below the bake mode thumbnail.</p>
+          <p><img src="images/demo_bake_modes.gif" alt=""/></p>
+          <p><strong>Note: </strong>Baked textures are not saved but require to be saved manually (<strong>F3 key</strong> in Image/UV editor)</p>
       </div>
       <div class="PanelContent">
         <h2><img src="images/bake_anti_alias.png" width="32" height="32" alt=""/> AA / Anti Alias</h2>
@@ -213,7 +213,7 @@ body,td,th {
             </tr>
           </tbody>
         </table>
-        <p>Tip: Expand the tool panel width to see the amount of objects for each type.</p>
+        <p><strong>Tip</strong>: Expand the tool panel width to see the amount of objects for each type.</p>
         <p><img src="images/demo_resize_panel_bake_sets.gif" width="234" height="56" alt=""/></p>
     </div>
     <div class="PanelContent">
@@ -301,6 +301,7 @@ body,td,th {
       <h2>Code Structure</h2>
       <p>Each operator for the tools has it's own python package file. Should you want to inspect or change the code this should make it easy to look for the right code. All code is commented fairly thorough and to my best ability simplified.</p>
       <p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
+      <p>Materials used for baking are stored in the resources folder as *.blend file.</p>
     </div>
 
     <div class="PanelContent">

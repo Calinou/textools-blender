@@ -21,9 +21,11 @@ utilities_ui.icon_register("op_extend_canvas_BR_active.png")
 
 def on_dropdown_size_x(self, context):
 	self.size_x = int(self.dropdown_size_x)
+	# context.area.tag_redraw()
 
 def on_dropdown_size_y(self, context):
 	self.size_y = int(self.dropdown_size_y)
+	# context.area.tag_redraw()
 
 
 class op(bpy.types.Operator):
@@ -104,8 +106,10 @@ class op(bpy.types.Operator):
 				break
 
 
-		return context.window_manager.invoke_props_dialog(self, width = 120)
+		return context.window_manager.invoke_props_dialog(self, width = 140)
 
+	def check(self, context):
+		return True
 
 	def draw(self, context):
 		# https://b3d.interplanety.org/en/creating-pop-up-panels-with-user-ui-in-blender-add-on/
@@ -114,22 +118,35 @@ class op(bpy.types.Operator):
 
 		layout.separator()
 
+		# New Size
+		row = layout.row()
+		split = row.split(percentage=0.6)
+		c = split.column(align=True)
+		c.prop(self, "size_x", text="X",expand=True)
+		c.prop(self, "size_y", text="Y",expand=True)
 
-		layout.label(text="New size")
-		col = layout.column(align=True)
+		c = split.column(align=True)
+		c.prop(self, "dropdown_size_x", text="")
+		c.prop(self, "dropdown_size_y", text="")
 
-		row = col.row(align=True)
-		row.prop(self, "size_x", text="X",expand=True)
-		row.prop(self, "dropdown_size_x", text="")
-
-		row = col.row(align=True)
-		row.prop(self, "size_y", text="Y",expand=True)
-		row.prop(self, "dropdown_size_y", text="")
-
+		# Direction
 		col = layout.column(align=True)
 		col.label("Direction")
 		row = col.row(align=True)
 		row.prop(self,'direction', expand=True)
+
+		# Summary
+		size_A = "{} x {}".format(bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1])
+		if bpy.context.scene.texToolsSettings.size[0] == bpy.context.scene.texToolsSettings.size[1]:
+			size_A = "{}²".format(bpy.context.scene.texToolsSettings.size[0])
+		size_B = "{} x {}".format(self.size_x, self.size_y)
+		if self.size_x == self.size_y:
+			size_B = "{}²".format(self.size_x)
+
+		layout.label(text="{} to {}".format(
+			size_A, size_B
+		))
+
 
 		layout.separator()
 

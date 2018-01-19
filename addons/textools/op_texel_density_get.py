@@ -3,7 +3,16 @@ import bmesh
 import operator
 import math
 
+
+
+# if "bpy" in locals() and utilities_texel:
+# 	import imp
+# 	imp.reload(utilities_texel)
+# else:
 from . import utilities_texel
+
+
+
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_texel_density_get"
@@ -54,9 +63,23 @@ def get_texel_density(self, context):
 		if obj.type == 'MESH' and obj.data.uv_layers:
 			objects.append(obj)
 
+	# Check for missing UV channels
 	if len(objects) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No valid objects with UV maps selected" )
+		self.report({'ERROR_INVALID_INPUT'}, "No UV map assigned to one of the selected objects." )
 		return
+
+	# Check for valid images / textures
+	obj_images = {}
+	for obj in objects:
+		print("Fetch...")
+		image = utilities_texel.get_object_texture_image(obj)
+		if image:
+			obj_images[obj] = image
+
+	if len(obj_images) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No valid Texture(s) found on any of the selected objects." )
+		return
+
 
 
 	sum_area_vt = 0
@@ -68,7 +91,7 @@ def get_texel_density(self, context):
 		obj.select = True
 
 		# Find image of object
-		image = utilities_texel.get_object_texture_image(obj)
+		image = obj_images[obj]
 		if image:
 
 			# Create triangulated copy

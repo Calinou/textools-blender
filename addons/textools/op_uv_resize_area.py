@@ -115,7 +115,7 @@ class op(bpy.types.Operator):
 		layout.separator()
 
 
-		layout.label(text="Size")
+		layout.label(text="New size")
 		col = layout.column(align=True)
 
 		row = col.row(align=True)
@@ -126,13 +126,6 @@ class op(bpy.types.Operator):
 		row.prop(self, "size_y", text="Y",expand=True)
 		row.prop(self, "dropdown_size_y", text="")
 
-
-		# split = row.split(percentage=0.65)
-		# c = split.column(align=True)
-		# c.prop(self, "size_x", text="",expand=True)
-		# c = split.column(align=True)
-		# c.prop(self, "dropdown_size_x", text="")
-		
 		col = layout.column(align=True)
 		col.label("Direction")
 		row = col.row(align=True)

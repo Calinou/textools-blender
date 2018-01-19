@@ -7,11 +7,23 @@ from mathutils import Vector
 
 def get_object_texture_image(obj):
 
+	print("Get img for '{}'".format(obj.name))
+
 	# Search in material & texture slots
 	for slot_mat in obj.material_slots:
+		# Check for traditional texture slots in material
 		for slot_tex in slot_mat.material.texture_slots:
-			if slot_tex and hasattr(slot_tex.texture , 'image'):
+			if slot_tex and slot_tex.texture and hasattr(slot_tex.texture , 'image'):
 				return slot_tex.texture.image
+		
+		# Check if material uses Nodes
+		if slot_mat.material:
+			if hasattr(slot_mat.material , 'node_tree'):
+				if slot_mat.material.node_tree:
+					for node in slot_mat.material.node_tree.nodes:
+						if type(node) is bpy.types.ShaderNodeTexImage:
+							if node.image:
+								return node.image
 
 	# Search in UV editor background image
 	if len(obj.data.uv_textures) > 0:

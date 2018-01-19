@@ -16,14 +16,14 @@
 
 bl_info = {
 	"name": "TexTools",
-	"description": "UV and texture Tools for Blender, based on ideas of the original TexTools for 3dsMax.",
+	"description": "TexTools is a Free addon for Blender 3D with a set of UV and Texture tools.",
 	"author": "renderhjs",
-	"version": (0, 8, 2),
+	"version": (0, 9, 0),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
-	"warning": "Early release, expect bugs and missing features.",
-	"wiki_url": "https://bitbucket.org/renderhjs/textools-blender"
+	"warning": "Early release, expect bugs.",
+	"wiki_url": "http://renderhjs.net/textools/blender/"
 }
 
 def get_tab_name():
@@ -117,17 +117,15 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 	def draw(self, context):
 		layout = self.layout
 
-		layout.label(text="Additional Links")
-
-		row = layout.row()
-		split = row.split(percentage=0.33)
+		box = layout.box()
+		box.label(text="Visit the TexTools website for in debth documentation.")
+		box.operator("wm.url_open", text="Official Website", icon='HELP').url = "http://renderhjs.net/textools/blender/"
 		
-		c = split.column()
-		c.operator("wm.url_open", text="Donate", icon='HELP').url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"
-		c = split.column()
-		c.operator("wm.url_open", text="GIT Source", icon='WORDWRAP_ON').url = "https://bitbucket.org/renderhjs/textools-blender/src"
-		c = split.column()
-		c.operator("wm.url_open", text="BlederArtist BBS", icon='BLENDER').url = "https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender"
+		box.label(text="Additional Links")
+		col = box.column(align=True)
+		col.operator("wm.url_open", text="Donate", icon='HELP').url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"
+		col.operator("wm.url_open", text="GIT Source", icon='WORDWRAP_ON').url = "https://bitbucket.org/renderhjs/textools-blender/src"
+		col.operator("wm.url_open", text="BlederArtist BBS", icon='BLENDER').url = "https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender"
 
 
 
@@ -374,9 +372,8 @@ class Panel_Units(bpy.types.Panel):
 		col.operator(op_uv_resize_area.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 		# r = col.row(align = True)
 		col.separator()
-		col.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
 		col.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("textures_reload"))
-
+		
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
 		
 
@@ -506,9 +503,13 @@ class Panel_Layout(bpy.types.Panel):
 
 		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
 		box = layout.box()
-		col = box.column(align=True)
+		# col = box.column(align=True)
+
+		box.operator(op_texture_checker.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
+		
 
 		col = box.column(align=True)
+
 		row = col.row(align=True)
 		row.label(text="" , icon_value = icon_get("texel_density"))
 		row.separator()
@@ -560,7 +561,7 @@ class Panel_Bake(bpy.types.Panel):
 			count = 1
 		else:
 			count = len(settings.sets)
-		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon='RENDER_STILL');#icon_value = icon_get("op_bake")
+		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
 		row = col.row(align=True)

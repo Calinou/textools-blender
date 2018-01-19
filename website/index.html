@@ -23,7 +23,7 @@ body,td,th {
         </tr>
       </tbody>
     </table>
-    <p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of UV and Texture  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Current features  include: Easy <strong>Texture Baking</strong>, <strong>UV Align</strong> and <strong>Selection</strong> tools and <strong>Texel Density</strong> tools.</p><table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of UV and Texture  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Current features  include: Easy <strong>Texture Baking</strong>, <strong>UV Align</strong> and <strong>Selection</strong> tools and <strong>Texel Density</strong> tools. Each tool comes with tooltips and is context sensitive as well as inactive when not available.</p><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tbody>
         <tr>
           <td align="center" valign="middle"><img src="images/demo_bake_explode.gif" width="518" height="446" alt=""/></td>
@@ -51,13 +51,13 @@ body,td,th {
       
       	<div class="PanelContent">
       <h2>Requirements</h2>
-      <p>Blender 2.79 for Windows, Mac or Linux</p>
+      <p><a href="https://www.blender.org/download/releases/2-79/" class="NoButton">Blender 2.79</a> for Windows, Mac or Linux</p>
       </div>
       
       <div class="PanelContent">
       <h2>Links</h2>
       <p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a>
-      <br><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donatio</a><a href="http://renderhjs.net/textools/">3dsMax Version</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist Thread</a></p>
+      <br><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donation</a><a href="http://renderhjs.net/textools/">3dsMax Version</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist BBS</a></p>
       <p>Personal links</p>
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tbody>
@@ -71,12 +71,13 @@ body,td,th {
 
       </div>
   </div>
-  <hr>
     <h1>►Size Panel</h1>
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2>Size</h2>
       <p>Used to set the texture size for baking but also the padding size for UV operations when spacing UV islands. Use the dropdown menu to quickly assign common square texture sizes. All units are in pixels.</p>
+      <p><img src="images/show_units_size.png" alt=""/></p>
+      <p><strong>Tip</strong>: Hold down ctrl + scroll Mouse Wheel to quickly cycle through the sizes</p>
       </div>
       <div class="PanelContent">
       <h2>Padding</h2>
@@ -95,21 +96,20 @@ body,td,th {
       <p><img src="images/demo_uv_channel.gif" alt=""/></p>
       </div>
       <div class="PanelContent">
-      <h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
-      <p>Assigns a checker map texture to the faces of the objects, this does not affect your materials. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to texture mode. Checker maps don't contribute to the filesize of the blend file as they are stored procedurally.</p>
-      </div>
-      <div class="PanelContent">
       <h2><img src="images/op_texture_reload_all.png" width="34" height="34" alt=""/> Reload Textures</h2>
-      <p>Reload all textures in the current blend file and removes unsued ones.</p>
-    </div>
+      <p>Reload all textures in the current blend file and removes unsued ones. </p>
+      <p><strong>Note</strong>: Blender only fully removes unused items the next time you open the file, press <strong>Ctrl + Shift + O</strong> to quickly re-open your blend file and clear unsused items.</p>
+      </div>
   </div>
-    <hr>
     <h1>►UV Layout Panel</h1>
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
-      <p>In UV vertex mode <img src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. In the UV face mode <img src="images/show_selection_uv_face.png" alt=""/>  selected UV islands are aligned to either side of the initial selection bounds.</p>
-      </div>
+      <p>This tool has 4 directions to align UV islands or UV vertices to. </p>
+      <p><img src="images/show_align_buttons.png" width="111" height="45" alt=""/></p>
+      <p>In UV vertex mode <img src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds.      </p>
+      <p> In the UV face mode <img src="images/show_selection_uv_face.png" alt=""/>  selected UV islands are aligned to either side of the initial selection bounds.      </p>
+    </div>
       <div class="PanelContent">
       <h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
     Aligns the UV island of the selected UV edge Edge mode to the closest 90 degree angle.</div>
@@ -150,6 +150,10 @@ body,td,th {
     
     <div class="PanelColumns">
      <div class="PanelContent">
+       <h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
+       <p>Assigns a checker map texture to the faces of the objects, this does not affect your materials. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to texture mode. </p>
+     </div>
+     <div class="PanelContent">
       <h2><img src="images/texel_density.png" width="32" height="32" alt=""/> Texel Density</h2>
       <p>Texel density is a value that describes how many pixels from a texture are visible per 1 unit or 1 meter. This value can be sampled from UV face selections, or from selected Objects.</p>
       <p><img src="images/demo_texel_density.gif" alt=""/></p>
@@ -165,7 +169,6 @@ body,td,th {
       <p><strong>Scale by UV Islands: </strong>Scales the entire UV set to the top left corner as a whole.</p> 
       </div>
     </div>
-    <hr>
     <h1>►Texture Baking Panel</h1>
     <p>To bake textures in TexTools just select your objects and press Bake. High and low poly object pairs are detected via object names.</p>
     <div class="PanelColumns">
@@ -196,19 +199,28 @@ body,td,th {
         <p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools automatically groups your scene selection into bake sets. Objects with common name prefixes are grouped into a set. You can bake just with a single object, with high and low poly or in addition that with a custom cage object.        </p>
         <table width="100%" border="0" cellspacing="10" cellpadding="0">
           <tr>
-            <td valign="top"><img src="images/bake_obj_low.png" width="32" height="32" alt=""/></td>
-            <td valign="top"><p>Low poly objects: when their name used the keyword: <strong>lowpoly</strong>, <strong>low</strong>, <strong>lp</strong> or<strong> l</strong></p>
-            <p>Example: <em><strong>scope </strong>or <strong>scope_low</strong></em></p></td>
+            <td valign="top"><img src="images/bake_obj_low.png" width="24" height="24" alt=""/></td>
+            <td valign="top">Low poly objects: when their name used the keyword: <strong>lowpoly</strong>, <strong>low</strong>, <strong>lp</strong> or<strong> l</strong> <br>
+              <br>
+              Example: <em><strong>scope </strong>or <strong>scope_low</strong></em></td>
+          </tr>
+          <tr>
+            <td valign="top">&nbsp;</td>
+            <td valign="top">&nbsp;</td>
           </tr>
           <tbody>
             <tr>
-              <td valign="top"><img src="images/bake_obj_high.png" width="32" height="32" alt=""/></td>
-              <td valign="top"><p>High poly objects: when they contain a <a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/generate/subsurf.html" class="NoButton">Subdevision Surface modifier</a> or when their name used the keyword: <strong>highpoly</strong>, <strong>high</strong>, <strong>hp</strong> or <strong>h</strong></p>
-              <p>Example: <em><strong>scope_h</strong></em></p></td>
+              <td valign="top"><img src="images/bake_obj_high.png" width="24" height="24" alt=""/></td>
+              <td valign="top">High poly objects: when they contain a Subdevision Surface modifier or when their name used the keyword: <strong>highpoly</strong>, <strong>high</strong>, <strong>hp</strong> or <strong>h</strong><br><br>
+              Example: <em><strong>scope_h</strong></em></td>
             </tr>
             <tr>
-              <td valign="top"><img src="images/bake_obj_cage.png" width="30" height="32" alt=""/></td>
-              <td valign="top"><p>Cage objects:when their name used the keyword <strong>cage</strong> or <strong>c</strong> . Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.</p>
+              <td valign="top">&nbsp;</td>
+              <td valign="top">&nbsp;</td>
+            </tr>
+            <tr>
+              <td valign="top"><img src="images/bake_obj_cage.png" width="24" height="24" alt=""/></td>
+              <td valign="top">Cage objects:when their name used the keyword <strong>cage</strong> or <strong>c</strong> . Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.
               <p>Example: <strong>scope_c</strong></p></td>
             </tr>
           </tbody>
@@ -273,8 +285,6 @@ body,td,th {
        <p>A linear gradient from top to bottom of the object in world space.    </p>
     </div>
   </div>
-  
-  <hr>
   <h1>Developer Notes</h1>
     <div class="PanelColumns">
      <div class="PanelContent">
@@ -287,7 +297,7 @@ body,td,th {
       </ol>
       </div>
        <div class="PanelContent">
-    <h2>Enable debug</h2>
+    <h2>Debug mode</h2>
     <p>By default the public releases and the GIT source version hide development tools in the UI. To reveal them you have to set the debug panel value to other than '<strong>0</strong>'</p>
     <ol>
       <li> Press <strong>Ctrl</strong> + <strong>Alt</strong> + <strong>D</strong> for the debug value panel</li>
@@ -306,7 +316,7 @@ body,td,th {
 
     <div class="PanelContent">
       <h2>Release Log</h2>
-      <p>Having issues with the latest version? Try a older version which you can find here:</p>
+      <p>Having issues with the latest version? Try an older version from the list below:</p>
  
 <a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip"> TexTools 0.8.0.zip</a>
 <a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.2.zip">TexTools 0.7.2.zip</a>

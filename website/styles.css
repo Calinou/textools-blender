@@ -60,21 +60,12 @@ a:not(.NoButton){
     display: block;
 }
 
-a.NoButton:link {
-	color: #6d6d6d;
-}
-a.NoButton:visited {
-	color: #6d6d6d;
-}
-a.NoButton:hover {
-	color: #6d6d6d;
-}
-a.NoButton:active {
-	color: #6d6d6d;
+a.NoButton:link, a.NoButton:visited, a.NoButton:hover, a.NoButton:active {
+	color: #ae7f37;
 }
 
 .PanelColumns {
-	padding: 16px;
+	padding: 12px;
 	background-color: #464646;
 	border-radius: 8px;
 	box-shadow: 0px 3px #131313;
@@ -84,7 +75,7 @@ a.NoButton:active {
 	border: 1px solid  #636363;
 }
 .PanelColumns3 {
-	padding: 16px;
+	padding: 12px;
 	background-color: #464646;
 	border-radius: 8px;
 	box-shadow: 0px 3px #131313;

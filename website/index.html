@@ -24,11 +24,7 @@ body,td,th {
       </tbody>
     </table>
     <p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of UV and Texture  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Current features  include: Easy <strong>Texture Baking</strong>, <strong>UV Align</strong> and <strong>Selection</strong> tools and <strong>Texel Density</strong> tools. Each tool comes with tooltips and is context sensitive as well as inactive when not available.</p><table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tbody>
-        <tr>
-          <td align="center" valign="middle"><img src="images/demo_bake_explode.gif" width="518" height="446" alt=""/></td>
-        </tr>
-      </tbody>
+      
     </table></p>
     <div class="PanelColumns">
     <div class="PanelContent">
@@ -75,13 +71,13 @@ body,td,th {
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2>Size</h2>
-      <p>Used to set the texture size for baking but also the padding size for UV operations when spacing UV islands. Use the dropdown menu to quickly assign common square texture sizes. All units are in pixels.</p>
+      <p>Set the texture size for baking, checker maps. Use the dropdown menu to quickly assign common  texture sizes. All units are in pixels.</p>
       <p><img src="images/show_units_size.png" alt=""/></p>
       <p><strong>Tip</strong>: Hold down ctrl + scroll Mouse Wheel to quickly cycle through the sizes</p>
       </div>
       <div class="PanelContent">
       <h2>Padding</h2>
-      <p>Padding size in pixels. The padding is used for UV margins and texture baking.</p>
+      <p>Padding is used for UV margins and texture baking.</p>
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_uv_resize_area.png" width="32" height="32" alt=""/> Resize</h2>
@@ -112,10 +108,10 @@ body,td,th {
     </div>
       <div class="PanelContent">
       <h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
-    Aligns the UV island of the selected UV edge Edge mode to the closest 90 degree angle.</div>
+    Aligns the UV island of the selected UV edge <img src="images/show_selection_uv_edge.png" alt=""/>  to the closest 90 degree angle.</div>
     <div class="PanelContent">
       <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
-      <p>Rotates the UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
+      <p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
@@ -123,7 +119,7 @@ body,td,th {
       </div>
       <div class="PanelContent">
       <h2><img src="images/op_faces_iron.png" width="32" height="32" alt=""/> Iron Faces</h2>
-      <p>Unwraps selected viewport faces Face <img src="images/show_selection_view_face.png" alt=""/> mode into a single UV island. This is often a quicker approach of unwrapping as opposed to marking the boundary edges (mark seams).</p>
+      <p>Unwraps selected viewport faces Face <img src="images/show_selection_view_face.png" alt=""/> mode into a single UV island. This approach can be quicker than marking edges for UV seams before unwrapping.</p>
       </div>
       
     </div>
@@ -142,7 +138,7 @@ body,td,th {
     Collects all UV islands that overlap each other and select of each group all UV faces <img src="images/show_selection_uv_face.png" alt=""/> except for one island.</div>
     <div class="PanelContent">
       <h2><img src="images/op_select_islands_outline.png" width="32" height="32" alt=""/> Select Island Bounds</h2>
-      <p>Selects the edge bounds <img src="images/show_selection_view_edge.png" alt=""/>of all UV Islands in the 3D viewport.</p>
+      <p>Selects the edge bounds <img src="images/show_selection_view_edge.png" alt=""/>of all UV Islands in the 3D view.</p>
       </div>
     </div>
     
@@ -151,7 +147,7 @@ body,td,th {
     <div class="PanelColumns">
      <div class="PanelContent">
        <h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
-       <p>Assigns a checker map texture to the faces of the objects, this does not affect your materials. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to texture mode. </p>
+       <p>Assigns a checker map texture (blender render) or material (cycles) to the objects. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to <strong>texture mode</strong>. </p>
      </div>
      <div class="PanelContent">
       <h2><img src="images/texel_density.png" width="32" height="32" alt=""/> Texel Density</h2>
@@ -165,19 +161,36 @@ body,td,th {
       <div class="PanelContent">
       <h2><img src="images/op_texel_density_set.png" width="32" height="32" alt=""/> Apply Density</h2>
       <p>Applies the Texel Density to the selected Objects or UV faces <img src="images/show_selection_uv_face.png" alt=""/> by scaling the UV's. Select from the dropdown menu from 2 modes of scaling the UV's:</p>
-      <p><strong>Scale by UV Islands: </strong>Means that UV's are scaled by each UV island for their center.</p>
-      <p><strong>Scale by UV Islands: </strong>Scales the entire UV set to the top left corner as a whole.</p> 
+      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+        <tr>
+          <td valign="top"><strong>Scale All</strong></td>
+          <td valign="top">Scales the entire UV set to the top left corner as a whole.</td>
+        </tr>
+        <tr>
+          <td valign="top">&nbsp;</td>
+          <td valign="top">&nbsp;</td>
+        </tr>
+        <tbody>
+          <tr>
+            <td valign="top"><strong>Scale Islands</strong></td>
+            <td valign="top">UV's are scaled individually by each UV island at its center.</td>
+          </tr>
+        </tbody>
+      </table>
       </div>
     </div>
     <h1>Texture Baking Panel</h1>
-    <p>To bake textures in TexTools just select your objects and press Bake. High and low poly object pairs are detected via object names.</p>
+    <p>To bake textures in TexTools just select your objects and press Bake. High  low poly and cageobject pairs are detected via object names. You can bake just with a <strong>single </strong>objects,  <strong>high</strong> <strong>poly </strong>to <strong>low poly</strong> or in addition that with a custom <strong>cage</strong> object. </p>
     <div class="PanelColumns">
         <div class="PanelContent">
           <h2><img src="images/op_bake.png" width="32" height="32" alt=""/> Bake</h2>
-          <p>Bakes the current texture type with the current selected object set. Baked images will appear in UV/Image Editor <img src="images/show_uv_image_editor.png" width="107" height="16" alt=""/>. </p>
+          <p>Bakes the current texture type with the current selected object set. Baked images will appear in UV/Image Editor <img src="images/show_uv_image_editor.png" width="107" height="16" alt=""/>.          </p>
+          <p><strong>Note: </strong>Baked textures are not saved but require to be saved manually (<strong>F3 key</strong> in Image/UV editor)</p>
+      </div>
+        <div class="PanelContent">
+          <h2> Bake Mode</h2>
           <p>Press the big thumnail button to change the current <strong>bake mode</strong>. Additional parameters are listed below the bake mode thumbnail.</p>
           <p><img src="images/demo_bake_modes.gif" alt=""/></p>
-          <p><strong>Note: </strong>Baked textures are not saved but require to be saved manually (<strong>F3 key</strong> in Image/UV editor)</p>
       </div>
       <div class="PanelContent">
         <h2><img src="images/bake_anti_alias.png" width="32" height="32" alt=""/> AA / Anti Alias</h2>
@@ -186,21 +199,21 @@ body,td,th {
       </div>
       <div class="PanelContent">
         <h2>Single</h2>
-        <p>With multiple objects selected enable this when you want all items to be baked into a single texture as opposed to multiple. It uses the name or ID from the first item in the bake set list. </p>
+        <p>Bakes selected objects into a single texture as opposed to one texture per set. It uses the name or ID from the first item in the baked image name.</p>
         <p><img src="images/bake_single.png" width="144" height="22" alt=""/></p>
-        <p>This is great for multi part objects or exploded bake setups.      </p>
+        <p>This options is useful for multi part objects that belong to the same texture.</p>
       </div>
        
 </div>
   <h3>Bake Sets</h3>
   <div class="PanelColumns">
     <div class="PanelContent">
-        <h2>Bake Sets</h2>
-        <p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools automatically groups your scene selection into bake sets. Objects with common name prefixes are grouped into a set. You can bake just with a single object, with high and low poly or in addition that with a custom cage object.        </p>
+        <h2>Bake Sets List</h2>
+        <p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools automatically groups your scene selection into bake sets. Objects with common name  are grouped into a set. </p>
         <table width="100%" border="0" cellspacing="10" cellpadding="0">
           <tr>
             <td valign="top"><img src="images/bake_obj_low.png" width="24" height="24" alt=""/></td>
-            <td valign="top">Low poly objects: when their name used the keyword: <strong>lowpoly</strong>, <strong>low</strong>, <strong>lp</strong> or<strong> l</strong> <br>
+            <td valign="top">Low poly objects: when their name contains: <strong>lowpoly</strong>, <strong>low</strong>, <strong>lp</strong> or<strong> l</strong> <br>
               <br>
               Example: <em><strong>scope </strong>or <strong>scope_low</strong></em></td>
           </tr>
@@ -211,8 +224,8 @@ body,td,th {
           <tbody>
             <tr>
               <td valign="top"><img src="images/bake_obj_high.png" width="24" height="24" alt=""/></td>
-              <td valign="top">High poly objects: when they contain a Subdevision Surface modifier or when their name used the keyword: <strong>highpoly</strong>, <strong>high</strong>, <strong>hp</strong> or <strong>h</strong><br><br>
-              Example: <em><strong>scope_h</strong></em></td>
+              <td valign="top">High poly objects: when they contain a Subdevision Surface modifier or when their name contains: <strong>highpoly</strong>, <strong>high</strong>, <strong>hp</strong> or <strong>h</strong><br><br>
+              Example: <em><strong>scope_h </strong>or <strong>scope.hp</strong></em></td>
             </tr>
             <tr>
               <td valign="top">&nbsp;</td>
@@ -220,8 +233,8 @@ body,td,th {
             </tr>
             <tr>
               <td valign="top"><img src="images/bake_obj_cage.png" width="24" height="24" alt=""/></td>
-              <td valign="top">Cage objects:when their name used the keyword <strong>cage</strong> or <strong>c</strong> . Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.
-              <p>Example: <strong>scope_c</strong></p></td>
+              <td valign="top">Cage objects:when their name contains <strong>cage</strong> or <strong>c</strong><br><br>
+              Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.<br><br>Example: <strong>scope_c</strong></td>
             </tr>
           </tbody>
         </table>
@@ -241,14 +254,15 @@ body,td,th {
     </div>
       <div class="PanelContent">
         <h2><img src="images/op_bake_organize_names.png" width="32" height="32" alt=""/> Organize</h2>
-        <p>Declutters your selected object names by matching high and low poly objects by their bounding box location and size. Only high poly objects are renamed to match the low poly names with the ' high' suffix.</p>
+        <p>Declutters your selected object names by matching high and low poly objects by their bounding box location and size. </p>
         <p><img src="images/demo_bake_organize.gif" alt=""/></p>
+        <p>Only high poly objects are renamed to match the low poly names with the ' high' suffix.</p>
     </div>
       <div class="PanelContent">
         <h2><img src="images/op_bake_explode.png" width="32" height="32" alt=""/> Explode</h2>
-        <p>Moves all selected bake pairs apart into 6 directions. Offsets are based on bounding boxes and offset to the center of the whole group. Margins are a 35% of the average side of all bounding boxes. </p>
-        <p>Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.</p>
+        <p>Moves all selected bake pairs apart into 6 directions. Offsets are based on bounding boxes and offset to the center of the whole group. Margins are a 35% of the average side of all bounding boxes.        </p>
         <p><img src="images/demo_bake_explode.gif" alt=""/></p>
+        <p>Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.</p>
     </div>
   </div>
   <h3>Bake Types  </h3>
@@ -266,7 +280,7 @@ body,td,th {
     <div class="PanelContent">
           <h2>AO / Ambient Occlusion</h2>
       <p><img src="images/bake_mode_ao.png" width="128" height="128" alt=""/></p>
-      <p>A plain ambient Occlusion bake in Cycles. </p>
+      <p>An Ambient Occlusion bake in Cycles. </p>
       <p>Parameters: <strong>Samples</strong></p>
     </div>
      <div class="PanelContent">

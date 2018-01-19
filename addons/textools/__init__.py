@@ -320,8 +320,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default = False
 	)
 	texel_mode_scale = bpy.props.EnumProperty(items= 
-		[('ISLAND', 'Scale UV Islands', 'Scale UV islands to match Texel Density'), 
-		('ALL', 'Scale All UVs', 'Scale all UVs together to match Texel Density')], 
+		[('ISLAND', 'Scale Islands', 'Scale UV islands to match Texel Density'), 
+		('ALL', 'Scale Together', 'Scale all UVs together to match Texel Density')], 
 		name = "Mode", 
 		default = 'ISLAND'
 	)

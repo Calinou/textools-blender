@@ -61,7 +61,7 @@ def main(context):
 	print("--------------------------- Executing operator_mirror")
 
 	#Store selection
-	utilities_uv.selectionStore()
+	utilities_uv.selection_store()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
@@ -280,7 +280,7 @@ def main(context):
 		mirror_verts(verts_middle, verts_A, verts_B, True)
 
 	#Restore selection
-	# utilities_uv.selectionRestore()
+	# utilities_uv.selection_restore()
 
 
 

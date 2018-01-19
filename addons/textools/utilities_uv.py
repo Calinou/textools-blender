@@ -8,7 +8,7 @@ from math import pi
 
 from . import settings
 
-def selectionStore():
+def selection_store():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 
@@ -40,7 +40,7 @@ def selectionStore():
 				settings.selection_uv_loops.append(loop[uvLayer])
 
 
-def selectionRestore():
+def selection_restore():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 
@@ -52,6 +52,11 @@ def selectionRestore():
 
 
 	bpy.ops.mesh.select_all(action='DESELECT')
+
+	if hasattr(bm.verts, "ensure_lookup_table"): 
+		bm.verts.ensure_lookup_table()
+		# bm.edges.ensure_lookup_table()
+		bm.faces.ensure_lookup_table()
 
 	#VERT Selection
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')

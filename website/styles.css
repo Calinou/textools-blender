@@ -23,11 +23,13 @@ strong{
 h1{
 	font-size:32px;
 	color: #e5e5e5;
+	text-shadow: 0px 2px 2px #000000;
 }
 
 
 h3{
-	color: #e5e5e5;
+	color: #bebebe;
+	text-align: center;
 }
 
 

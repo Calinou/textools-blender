@@ -74,13 +74,19 @@ def set_texel_density(self, context, mode, density):
 		bpy.context.scene.objects.active = obj
 		obj.select = True
 
+		
 
 		# Find image of object
 		image = utilities_texel.get_object_texture_image(obj)
 		if image:
 			print("Process {} @{}".format(obj.name, density))
 			bpy.ops.object.mode_set(mode='EDIT')
+
+			# Store selection
+			utilities_uv.selection_store()
+
 			bpy.ops.mesh.select_all(action='SELECT')
+
 
 
 			bm = bmesh.from_edit_mesh(obj.data);
@@ -123,19 +129,27 @@ def set_texel_density(self, context, mode, density):
 
 				# Apply scale to group
 				scale = density / (sum_area_uv / sum_area_vt)
-				# scale = (sum_area_uv / sum_area_vt) / density
 
-				print("Scale: D: {:.2f} D: {:.2f} = scale: {:.2f}".format(density, (sum_area_uv / sum_area_vt), scale))
+				# print("Scale: D: {:.2f} D: {:.2f} = scale: {:.2f}".format(density, (sum_area_uv / sum_area_vt), scale))
 
+				# Set Scale Origin to Island or top left
+				if mode == 'ALL':
+					bpy.context.space_data.pivot_point = 'CURSOR'
+					bpy.ops.uv.cursor_set(location=(0, 1))
+
+				elif mode == 'ISLAND':
+					bpy.context.space_data.pivot_point = 'MEDIAN'
+
+				# Select Face loops and scale
 				bpy.ops.uv.select_all(action='DESELECT')
 				bpy.context.scene.tool_settings.uv_select_mode = 'VERTEX'
-				bpy.context.space_data.pivot_point = 'MEDIAN'
 				for face in group:
 					for loop in face.loops:
 						loop[uvLayer].select = True
 				bpy.ops.transform.resize(value=(scale, scale, 1), proportional='DISABLED')
 
-				
+			# Restore selection
+			utilities_uv.selection_restore()
 
 	# Restore selection
 	bpy.ops.object.mode_set(mode='OBJECT')

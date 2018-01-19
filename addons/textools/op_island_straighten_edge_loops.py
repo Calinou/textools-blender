@@ -93,7 +93,7 @@ def main(context):
 	print("Executing op_island_straighten_edge_loops")
    	
 	#Store selection
-	utilities_uv.selectionStore()
+	utilities_uv.selection_store()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
@@ -132,5 +132,5 @@ def main(context):
 
 
 	#Restore selection
-	utilities_uv.selectionRestore()
+	utilities_uv.selection_restore()
 

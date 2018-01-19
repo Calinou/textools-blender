@@ -44,12 +44,12 @@ class op(bpy.types.Operator):
 
 	def execute(self, context):
 		#Store selection
-		utilities_uv.selectionStore()
+		utilities_uv.selection_store()
 
 		main(context)
 
 		#Restore selection
-		utilities_uv.selectionRestore()
+		utilities_uv.selection_restore()
 
 		return {'FINISHED'}
 

@@ -53,7 +53,7 @@ class op(bpy.types.Operator):
 
 def align(context, direction):
 	#Store selection
-	utilities_uv.selectionStore()
+	utilities_uv.selection_store()
 
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
@@ -123,7 +123,7 @@ def align(context, direction):
 		bmesh.update_edit_mesh(obj.data)
 
 	#Restore selection
-	utilities_uv.selectionRestore()
+	utilities_uv.selection_restore()
 
 
 

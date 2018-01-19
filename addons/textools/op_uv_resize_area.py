@@ -138,7 +138,7 @@ class op(bpy.types.Operator):
 
 
 		#Store selection
-		utilities_uv.selectionStore()
+		utilities_uv.selection_store()
 
 		# Get start and end size
 		size_A = Vector([ 
@@ -169,7 +169,7 @@ class op(bpy.types.Operator):
 
 
 		#Restore selection
-		utilities_uv.selectionRestore()
+		utilities_uv.selection_restore()
 
 		return {'FINISHED'}
 

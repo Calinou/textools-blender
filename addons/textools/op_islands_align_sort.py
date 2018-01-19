@@ -59,7 +59,7 @@ def main(context, isVertical, padding):
 	print("Executing IslandsAlignSort main {}".format(padding))
    	
 	#Store selection
-	utilities_uv.selectionStore()
+	utilities_uv.selection_store()
 
 	if bpy.context.space_data.pivot_point != 'CENTER':
 		bpy.context.space_data.pivot_point = 'CENTER'
@@ -124,7 +124,7 @@ def main(context, isVertical, padding):
 
 
 	#Restore selection
-	utilities_uv.selectionRestore()
+	utilities_uv.selection_restore()
 
 
 def alignIslandMinimalBounds(uvLayer, faces):

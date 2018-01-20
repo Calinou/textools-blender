@@ -114,15 +114,21 @@ def set_texel_density(self, context, mode, density):
 				for face in group:
 					# Triangle Verts
 					triangle_uv = [loop[uvLayer].uv for loop in face.loops ]
-					# triangle_vt = [vert.co for vert in face.verts]
 					triangle_vt = [obj.matrix_world * vert.co for vert in face.verts]
-					# corners = [obj.matrix_world * Vector(corner) for corner in obj.bound_box]
-
 
 					#Triangle Areas
-					face_area_vt = utilities_texel.get_area_triangle(triangle_vt[0], triangle_vt[1], triangle_vt[2] )
-
-					face_area_uv = utilities_texel.get_area_triangle(triangle_uv[0], triangle_uv[1], triangle_uv[2] )
+					face_area_vt = utilities_texel.get_area_triangle(
+						triangle_vt[0], 
+						triangle_vt[1], 
+						triangle_vt[2] 
+					)
+					face_area_uv = utilities_texel.get_area_triangle_uv(
+						triangle_uv[0], 
+						triangle_uv[1], 
+						triangle_uv[2],
+						image.size[0],
+						image.size[1]
+					)
 					
 					sum_area_vt+= math.sqrt( face_area_vt )
 					sum_area_uv+= math.sqrt( face_area_uv ) * min(image.size[0], image.size[1])

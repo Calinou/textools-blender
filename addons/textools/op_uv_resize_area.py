@@ -7,7 +7,7 @@ from math import pi
 
 from . import utilities_uv
 from . import utilities_ui
-
+from . import utilities_texel
 
 name_texture = "TT_resize_area"
 
@@ -211,7 +211,6 @@ def resize_uv(self, context, mode, size_A, size_B):
 	# Resize
 	scale_x = size_A.x / size_B.x
 	scale_y = size_A.y / size_B.y
-	print("Scale {} | {}".format(scale_x, scale_y))
 	bpy.ops.transform.resize(value=(scale_x, scale_y, 1.0), proportional='DISABLED')
 
 
@@ -223,6 +222,13 @@ def resize_image(context, mode, size_A, size_B):
 	# 			https://docs.blender.org/api/blender_python_api_2_70_4/bpy.types.SpaceImageEditor.html
 
 	# check if current image not 'None'
+
+	# image = utilities_texel.get_object_texture_image
+	# image_editor = context.area.spaces.active.image
+
+	# if image:
+
+
 	if context.area.spaces.active != None:
 		if context.area.spaces.active.image != None:
 			# Resize assigned image
@@ -230,8 +236,13 @@ def resize_image(context, mode, size_A, size_B):
 			print("Image: {} | {}".format(image, image.source))
 
 			if image.source == 'FILE' or image.source == 'GENERATED':
-				print("Yes editable type")
+				print("Yes editable type, {}".format(image.generated_type))
+				if image.generated_type == 'UV_GRID':
+					image.generated_width = int(size_B.x)
+					image.generated_height = int(size_B.y)
 				image.scale( int(size_B.x), int(size_B.y) )
+				
+
 
 		else:
 			# No Image assigned

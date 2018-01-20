@@ -5,8 +5,7 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
-
-name_images_prefix = "TT_checker_"
+from . import utilities_texel
 
 
 class op(bpy.types.Operator):
@@ -67,29 +66,20 @@ def assign_checker_map(context, size_x, size_y):
 
 
 	if len(objects) > 0:
-		name = (name_images_prefix+"{}_{}x{}").format('A', size_x, size_y)
+		name = utilities_texel.get_checker_name(size_x, size_y)
 		image = get_image(name, size_x, size_y)
 
 		for obj in objects:
 			apply_faces_image(obj, image)
 	
-
 	# Restore object selection
 	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.object.select_all(action='DESELECT')
 	for obj in objects:				
 		obj.select = True
 
-
-	# Clean up unused images
-	for image in bpy.data.images:
-		if name_images_prefix in image.name:
-			print("N: {} | {}x".format(image.name, image.users))
-			if not image.users:
-				print("Remove unused image {}".format(image.name))
-				bpy.data.images.remove(image)
-
-	# TODO: Clean up unused materials
+	# Clean up images and materials
+	utilities_texel.checker_images_cleanup()
 
 
 

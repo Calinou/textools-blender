@@ -231,18 +231,11 @@ def resize_image(context, mode, size_A, size_B):
 
 	if context.area.spaces.active != None:
 		if context.area.spaces.active.image != None:
-			# Resize assigned image
 			image = context.area.spaces.active.image
-			print("Image: {} | {}".format(image, image.source))
-
-			if image.source == 'FILE' or image.source == 'GENERATED':
-				print("Yes editable type, {}".format(image.generated_type))
-				if image.generated_type == 'UV_GRID':
-					image.generated_width = int(size_B.x)
-					image.generated_height = int(size_B.y)
-				image.scale( int(size_B.x), int(size_B.y) )
-				
-
+			image_obj = utilities_texel.get_object_texture_image(bpy.context.active_object)
+			if name_texture in image.name or image == image_obj:
+				# Resize Image UV editor background image
+				utilities_texel.image_resize(image, int(size_B.x), int(size_B.y))
 
 		else:
 			# No Image assigned
@@ -271,6 +264,9 @@ def resize_image(context, mode, size_A, size_B):
 
 			# Assign in UV view
 			context.area.spaces.active.image = image
+
+		# Clean up images and materials
+		utilities_texel.checker_images_cleanup()
 
 
 

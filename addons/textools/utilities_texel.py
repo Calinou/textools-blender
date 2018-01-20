@@ -5,6 +5,10 @@ import time
 import math
 from mathutils import Vector
 
+
+image_material_prefix = "TT_checker_"
+
+
 def get_object_texture_image(obj):
 
 	print("Get img for '{}'".format(obj.name))
@@ -34,6 +38,36 @@ def get_object_texture_image(obj):
 	return None
 
 
+
+def image_resize(image, size_x, size_y):
+	if image and image.source == 'FILE' or image.source == 'GENERATED':
+		image.generated_width = int(size_x)
+		image.generated_height = int(size_y)
+		image.scale( int(size_x), int(size_y) )
+	
+
+def checker_images_cleanup():
+	# Clean up unused images
+	for image in bpy.data.images:
+		if image_material_prefix in image.name:
+			if not image.users:
+				print("Remove unused image {}".format(image.name))
+				bpy.data.images.remove(image)
+
+			# Check if name missmatches size
+			name = get_checker_name(image.size[0], image.size[1])
+			if image.name != name:
+				# In cycles find related material as well
+				if image.name in bpy.data.materials:
+					bpy.data.materials[image.name].name = name
+				image.name = name
+
+
+def get_checker_name(size_x, size_y):
+	return (image_material_prefix+"{}x{}").format(size_x, size_y)
+
+
+
 def get_area_triangle_uv(A,B,C, size_x, size_y):
 	scale_x = size_x / max(size_x, size_y)
 	scale_y = size_y / max(size_x, size_y)
@@ -46,6 +80,8 @@ def get_area_triangle_uv(A,B,C, size_x, size_y):
 	C.y/=scale_y
 
 	return get_area_triangle(A,B,C)
+
+
 
 def get_area_triangle(A,B,C):
 	# Heron's formula: http://www.1728.org/triang.htm

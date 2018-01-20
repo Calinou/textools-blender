@@ -76,7 +76,7 @@ def get_texel_density(self, context):
 			obj_images[obj] = image
 
 	if len(obj_images) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No valid Texture(s) found on any of the selected objects." )
+		self.report({'ERROR_INVALID_INPUT'}, "No Texture found on any of the selected objects." )
 		return
 
 

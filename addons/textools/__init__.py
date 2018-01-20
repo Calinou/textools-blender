@@ -37,6 +37,8 @@ if "bpy" in locals():
 	imp.reload(settings)
 	imp.reload(utilities_bake)
 	imp.reload(utilities_ui)
+	imp.reload(utilities_texel)
+	imp.reload(utilities_uv)
 	
 	imp.reload(op_align)
 	imp.reload(op_bake)
@@ -66,6 +68,8 @@ else:
 	from . import settings
 	from . import utilities_bake
 	from . import utilities_ui
+	from . import utilities_texel
+	from . import utilities_uv
 
 	from . import op_align
 	from . import op_bake
@@ -320,8 +324,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default = False
 	)
 	texel_mode_scale = bpy.props.EnumProperty(items= 
-		[('ISLAND', 'Scale Islands', 'Scale UV islands to match Texel Density'), 
-		('ALL', 'Scale Together', 'Scale all UVs together to match Texel Density')], 
+		[('ISLAND', 'Islands', 'Scale UV islands to match Texel Density'), 
+		('ALL', 'Together', 'Scale all UVs together to match Texel Density')], 
 		name = "Mode", 
 		default = 'ISLAND'
 	)
@@ -518,7 +522,7 @@ class Panel_Layout(bpy.types.Panel):
 
 		col = box.column(align=True)
 		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
-		col.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
+		col.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
 
 			
 		# 

@@ -207,16 +207,17 @@ body,td,th {
        
 </div>
   <h3>Bake Sets</h3>
+  <p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection into bake sets. Objects with a common name  are grouped into a set, keywords  are used to differenciate between specific object types such as highpoly, floating geometry or cage objects.</p>
   <div class="PanelColumns">
     <div class="PanelContent">
         <h2>Bake Sets List</h2>
-        <p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools automatically groups your scene selection into bake sets. Objects with common name  are grouped into a set. </p>
+        <p>This area displays the selected bake sets. Each bake set can contain 4 different type of objects. They are</p>
         <table width="100%" border="0" cellspacing="10" cellpadding="0">
           <tr>
             <td valign="top"><img src="images/bake_obj_low.png" width="24" height="24" alt=""/></td>
-            <td valign="top">Low poly objects: when their name contains: <strong>lowpoly</strong>, <strong>low</strong>, <strong>lp</strong> or<strong> l</strong> <br>
+            <td valign="top"><p>Low poly objects: when their name contains. Keywords: <strong>lowpoly</strong>, <strong>low</strong>, <strong>lp</strong> or<strong> l</strong> <br>
               <br>
-              Example: <em><strong>scope </strong>or <strong>scope_low</strong></em></td>
+              Name example: <em><strong>scope </strong>or <strong>scope_low</strong></em></p></td>
           </tr>
           <tr>
             <td valign="top">&nbsp;</td>
@@ -225,8 +226,18 @@ body,td,th {
           <tbody>
             <tr>
               <td valign="top"><img src="images/bake_obj_high.png" width="24" height="24" alt=""/></td>
-              <td valign="top">High poly objects: when they contain a Subdevision Surface modifier or when their name contains: <strong>highpoly</strong>, <strong>high</strong>, <strong>hp</strong> or <strong>h</strong><br><br>
-              Example: <em><strong>scope_h </strong>or <strong>scope.hp</strong></em></td>
+              <td valign="top">High poly objects: when they contain a Subdevision Surface modifier or when their name. Keywords: <strong>highpoly</strong>, <strong>high</strong>, <strong>hp</strong> or <strong>h</strong><br><br>
+              Name example: <em><strong>scope_h </strong>or <strong>scope.hp</strong></em></td>
+            </tr>
+            <tr>
+              <td valign="top">&nbsp;</td>
+              <td valign="top">&nbsp;</td>
+            </tr>
+            <tr>
+              <td valign="top"><img src="images/bake_obj_float.png" width="32" height="32" alt=""/></td>
+              <td valign="top">Floating geometry objects. Floating geometry does not cast shadows. Keywords: <strong>floater</strong>, <strong>float</strong> or <strong>f</strong><br>
+                <br>
+                Name example: <strong>scope_float</strong></td>
             </tr>
             <tr>
               <td valign="top">&nbsp;</td>
@@ -234,8 +245,9 @@ body,td,th {
             </tr>
             <tr>
               <td valign="top"><img src="images/bake_obj_cage.png" width="24" height="24" alt=""/></td>
-              <td valign="top">Cage objects:when their name contains <strong>cage</strong> or <strong>c</strong><br><br>
-              Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.<br><br>Example: <strong>scope_c</strong></td>
+              <td valign="top">Cages are used to project rays from a custom mesh, this match needs to match the face and vertex count of the low poly object.. Keywords: <strong>cage</strong> or <strong>c</strong><br>
+                <br>
+                Name example: <strong>scope_c</strong></td>
             </tr>
           </tbody>
         </table>

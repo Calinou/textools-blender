@@ -86,15 +86,14 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 	render_width = sampling_scale * width
 	render_height = sampling_scale * height
 
-
 	for s in range(0,len(sets)):
 		set = sets[s]
+
+		# Get image name
 		name_texture = "{}_{}".format(set.name, mode)
 		if bake_single:
 			name_texture = "{}_{}".format(sets[0].name, mode)# In Single mode bake into same texture
-
 		path = bpy.path.abspath("//{}.tga".format(name_texture))
-
 
 		# Requires 1+ low poly objects
 		if len(set.objects_low) == 0:
@@ -111,10 +110,8 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 			self.report({'ERROR_INVALID_INPUT'}, "{}x cage objects do not match {}x low poly objects for '{}'".format(len(set.objects_cage), len(set.objects_low), obj.name))
 			return
 
-
 		# Assign Material(s))
 		material = get_material(mode)
-
 		material_empty = None
 		if "TT_bake_node" in bpy.data.materials:
 			material_empty = material_empty = bpy.data.materials["TT_bake_node"]
@@ -123,7 +120,7 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		material_empty.use_nodes = True
 
 
-		if len(set.objects_high) == 0:
+		if (len(set.objects_high) + len(set.objects_float)) == 0:
 			# Assign material to lowpoly
 			for obj in set.objects_low:
 				assign_vertex_colors(obj, mode)
@@ -134,7 +131,7 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 				assign_material(obj, material_empty)
 
 			# Assign material to highpoly
-			for obj in set.objects_high:
+			for obj in (set.objects_high+set.objects_float):
 				assign_vertex_colors(obj, mode)
 				assign_material(obj, material)
 
@@ -143,14 +140,11 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		clear = (not bake_single) or (bake_single and s==0)
 		image = setup_image(mode, name_texture, render_width, render_height, path, clear)
 
-
-
 		# Setup Material
 		if len(set.objects_low[0].data.materials) <= 0:
 			print("ERROR, need spare material to setup active image texture to bake!!!")
 		else:
 			tree = set.objects_low[0].data.materials[0].node_tree
-
 			node = None
 			if "checkermap" in tree.nodes:
 				node = tree.nodes["checkermap"]
@@ -164,18 +158,26 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 
 		print("Bake '{}' = {}".format(set.name, path))
 
-
+		# Bake each low poly object in this set
 		for i in range(len(set.objects_low)):
 			obj_low = set.objects_low[i]
 			obj_cage = None if i >= len(set.objects_cage) else set.objects_cage[i]
 
-			bpy.ops.object.select_all(action='DESELECT')
-			for obj_high in set.objects_high:
-				obj_high.select = True
-			obj_low.select = True
 			bpy.context.scene.objects.active = obj_low
 
+			bpy.ops.object.select_all(action='DESELECT')
+			for obj_high in (set.objects_high):
+				obj_high.select = True
+			obj_low.select = True
 			cycles_bake(mode, sampling_scale, samples, ray_distance, len(set.objects_high) > 0, obj_cage)
+
+			# Bake Floaters seperate?
+			if len(set.objects_float) > 0:
+				bpy.ops.object.select_all(action='DESELECT')
+				for obj_high in (set.objects_float):
+					obj_high.select = True
+				obj_low.select = True
+				cycles_bake(mode, sampling_scale, samples, ray_distance, len(set.objects_float) > 0, obj_cage)
 
 
 		# Downsample image?

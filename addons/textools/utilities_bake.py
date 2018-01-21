@@ -12,8 +12,9 @@ from . import settings
 keywords_low = ['lowpoly','low','lowp','lp','l']
 keywords_high = ['highpoly','high','highp','hp','h']
 keywords_cage = ['cage','c']
+keywords_float = ['floater','float','f']
 
-split_chars = ['_','.','-']
+split_chars = [' ','_','.','-']
 
 
 def store_bake_settings():
@@ -46,6 +47,8 @@ def store_bake_settings():
 
 	for obj in settings.bake_objects_hide_render:
 		obj.hide_render = True
+		# obj.cycles_visibility.shadow = False
+
 
 
 
@@ -61,6 +64,7 @@ def restore_bake_settings():
 	for obj in settings.bake_objects_hide_render:
 		if obj:
 			obj.hide_render = False
+			# obj.cycles_visibility.shadow = True
 
 
 
@@ -74,7 +78,7 @@ def get_bake_name(name):
 	strings = split.split(' ')
 
 	# Remove all keys from name
-	keys = keywords_cage+keywords_high+keywords_low
+	keys = keywords_cage + keywords_high + keywords_low + keywords_float
 	new_strings = []
 	for string in strings:
 		is_found = False
@@ -90,56 +94,49 @@ def get_bake_name(name):
 
 
 def get_object_type(obj):
-	typ = ''
 
-	# Detect by subdevision modifier
+	# Detect by modifiers
 	if obj.modifiers:
 		for modifier in obj.modifiers:
 			if modifier.type == 'SUBSURF':
-				typ = 'high'
-				break
-			# elif modifier.type == 'MIRROR':
-			# 	typ = 'high'
-			# 	break
+				return 'high'
+			elif modifier.type == 'BEVEL':
+				return 'high'
+
 
 	# Detect by name pattern
-	if typ == '':
+	split = obj.name.lower()
+	for char in split_chars:
+		split = split.replace(char,' ')
+	strings = split.split(' ')
 
-		split = obj.name.lower()
-		for char in split_chars:
-			split = split.replace(char,' ')
-		strings = split.split(' ')
+	# Detect High first, more rare
+	for string in strings:
+		for key in keywords_high:
+			if key == string:
+				return 'high'
+	
+	# Detect cage, more rare than low
+	for string in strings:		
+		for key in keywords_cage:
+			if key == string:
+				return 'cage'
 
-		# Detect High first, more rare
-		for string in strings:
-			if typ == '':
-				for key in keywords_high:
-					if key == string:
-						typ = 'high'
-						break
-		# Detect cage, more rare than low
-		if typ == '':
-			for string in strings:		
-				if typ == '':
-					for key in keywords_cage:
-						if key == string:
-							typ = 'cage'
-							break
-		# Detect low
-		if typ == '':
-			for string in strings:
-				if typ == '':
-					for key in keywords_low:
-						if key == string:
-							typ = 'low'
-							break
-			
+	# Detect float, more rare than low
+	for string in strings:		
+		for key in keywords_float:
+			if key == string:
+				return 'float'
+
+	# Detect low
+	for string in strings:
+		for key in keywords_low:
+			if key == string:
+				return 'low'
+
 
 	# if nothing was detected, assume its low
-	if typ == '':
-		typ = 'low'
-
-	return typ
+	return 'low'
 
 
 
@@ -187,6 +184,7 @@ def get_bake_sets():
 		low = []
 		high = []
 		cage = []
+		float = []
 		for obj in group:
 			if filtered[obj] == 'low':
 				low.append(obj)
@@ -194,25 +192,30 @@ def get_bake_sets():
 				high.append(obj)
 			elif filtered[obj] == 'cage':
 				cage.append(obj)
+			elif filtered[obj] == 'float':
+				float.append(obj)
+
 
 		name = get_bake_name(group[0].name)
-		bake_sets.append(BakeSet(name, low, cage, high))
+		bake_sets.append(BakeSet(name, low, cage, high, float))
 
 	return bake_sets
 
 
 class BakeSet:
-	objects_low = []
-	objects_cage = []
-	objects_high = []
+	objects_low = []	#low poly geometry
+	objects_cage = []	#Cage low poly geometry
+	objects_high = []	#High poly geometry
+	objects_float = []	#Floating geometry
 	name = ""
 
 	has_issues = False
 
-	def __init__(self, name, objects_low, objects_cage, objects_high):
+	def __init__(self, name, objects_low, objects_cage, objects_high, objects_float):
 		self.objects_low = objects_low
 		self.objects_cage = objects_cage
 		self.objects_high = objects_high
+		self.objects_float = objects_float
 		self.name = name
 
 		# Needs low poly objects to bake onto

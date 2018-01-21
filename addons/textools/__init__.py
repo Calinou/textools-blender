@@ -203,10 +203,13 @@ class op_select_bake_type(bpy.types.Operator):
 				objects+=set.objects_high
 			elif self.select_type == 'cage':
 				objects+=set.objects_cage
+			elif self.select_type == 'float':
+				objects+=set.objects_float
 			elif self.select_type == 'issue' and set.has_issues:
 				objects+=set.objects_low
 				objects+=set.objects_high
 				objects+=set.objects_cage
+				objects+=set.objects_float
 
 		bpy.ops.object.select_all(action='DESELECT')
 		for obj in objects:
@@ -522,7 +525,10 @@ class Panel_Layout(bpy.types.Panel):
 
 		col = box.column(align=True)
 		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
-		col.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
+		row = col.row(align=True)
+		if bpy.context.object.mode == 'EDIT':
+			row.enabled  = False
+		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
 
 			
 		# 
@@ -630,37 +636,49 @@ class Panel_Bake(bpy.types.Panel):
 			row = col.row(align=True)
 			row.active = len(settings.sets) > 0
 
-			count_types = [0,0,0,0]
+			count_types = {
+				'low':0, 'high':0, 'cage':0, 'float':0, 'issue':0, 
+			}
 			for set in settings.sets:
 				if set.has_issues:
-					count_types[0]+=1
+					count_types['issue']+=1
 				if len(set.objects_low) > 0:
-					count_types[1]+=1
+					count_types['low']+=1
 				if len(set.objects_high) > 0:
-					count_types[2]+=1
+					count_types['high']+=1
 				if len(set.objects_cage) > 0:
-					count_types[3]+=1
+					count_types['cage']+=1
+				if len(set.objects_float) > 0:
+					count_types['float']+=1
 
 			row.label(text="Select")
-			if count_types[0] > 0:
+			if count_types['issue'] > 0:
 				row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
+
 			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_low")).select_type = 'low'
 			row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_high")).select_type = 'high'
-			if count_types[3] > 0:
+			
+			if count_types['float'] > 0:
+				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_float")).select_type = 'float'
+			
+			if count_types['cage'] > 0:
 				row.operator(op_select_bake_type.bl_idname, text = "", icon_value = icon_get("bake_obj_cage")).select_type = 'cage'
-
-
-		if len(settings.sets) > 0:
+			
 
 			# List bake sets
 			box2 = box.box()
-
-			
-
 			row = box2.row()
-			split = row.split(percentage=0.55)
-			c = split.column(align=True)
+			split = None
 
+			countTypes = (0 if count_types['low'] == 0 else 1) + (0 if count_types['high'] == 0 else 1) + (0 if count_types['cage'] == 0 else 1) + (0 if count_types['float'] == 0 else 1)
+			if countTypes > 2:
+				# More than 3 types, use less space for label
+				split = row.split(percentage=0.45)
+			else:
+				# Only 2 or less types, use more space for label
+				split = row.split(percentage=0.55)
+
+			c = split.column(align=True)
 			for s in range(0, len(settings.sets)):
 				set = settings.sets[s]
 				r = c.row(align=True)
@@ -675,6 +693,7 @@ class Panel_Bake(bpy.types.Panel):
 			c = split.column(align=True)
 			for set in settings.sets:
 				r = c.row(align=True)
+				r.alignment = "LEFT"
 
 				if len(set.objects_low) > 0:
 					r.label(text="{}".format(len(set.objects_low)), icon_value = icon_get("bake_obj_low"))
@@ -686,10 +705,17 @@ class Panel_Bake(bpy.types.Panel):
 				else:
 					r.label(text="")
 
+				if len(set.objects_float) > 0:
+					r.label(text="{}".format(len(set.objects_float)), icon_value = icon_get("bake_obj_float"))
+				# else:
+				# 	r.label(text="")
+
 				if len(set.objects_cage) > 0:
 					r.label(text="{}".format(len(set.objects_cage)), icon_value = icon_get("bake_obj_cage"))
-				else:
-					r.label(text="")
+				# else:
+				# 	r.label(text="")
+
+				
 		
 			
 
@@ -721,6 +747,7 @@ def register():
 		"bake_obj_cage.png", 
 		"bake_obj_high.png", 
 		"bake_obj_low.png", 
+		"bake_obj_float.png", 
 		"checkerMap.png", 
 		"explode.png",
 		"faces_iron.png", 

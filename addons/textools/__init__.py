@@ -328,9 +328,9 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	)
 	texel_mode_scale = bpy.props.EnumProperty(items= 
 		[('ISLAND', 'Islands', 'Scale UV islands to match Texel Density'), 
-		('ALL', 'Together', 'Scale all UVs together to match Texel Density')], 
+		('ALL', 'Combined', 'Scale all UVs together to match Texel Density')], 
 		name = "Mode", 
-		default = 'ISLAND'
+		default = 'ALL'
 	)
 	texel_density = bpy.props.FloatProperty(
 		name = "Texel",
@@ -697,23 +697,23 @@ class Panel_Bake(bpy.types.Panel):
 
 				if len(set.objects_low) > 0:
 					r.label(text="{}".format(len(set.objects_low)), icon_value = icon_get("bake_obj_low"))
-				else:
+				elif count_types['low'] > 0:
 					r.label(text="")
 
 				if len(set.objects_high) > 0:
 					r.label(text="{}".format(len(set.objects_high)), icon_value = icon_get("bake_obj_high"))
-				else:
+				elif count_types['high'] > 0:
 					r.label(text="")
 
 				if len(set.objects_float) > 0:
 					r.label(text="{}".format(len(set.objects_float)), icon_value = icon_get("bake_obj_float"))
-				# else:
-				# 	r.label(text="")
+				elif count_types['float'] > 0:
+					r.label(text="")
 
 				if len(set.objects_cage) > 0:
 					r.label(text="{}".format(len(set.objects_cage)), icon_value = icon_get("bake_obj_cage"))
-				# else:
-				# 	r.label(text="")
+				elif count_types['cage'] > 0:
+					r.label(text="")
 
 				
 		

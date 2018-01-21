@@ -53,58 +53,69 @@ class op(bpy.types.Operator):
 def get_texel_density(self, context):
 	print("Get texel density")
 
-	# Force Object mode
+
+	object_face_indexies = {}
+	object_edit_mode = bpy.context.object.mode == 'EDIT'
+
 	if bpy.context.object.mode == 'EDIT':
-		bpy.ops.object.mode_set(mode='OBJECT')
-
-	# Collect valid Objects
-	objects = []
-	for obj in bpy.context.selected_objects:
+		# Only selected Mesh faces
+		obj = bpy.context.active_object
 		if obj.type == 'MESH' and obj.data.uv_layers:
-			objects.append(obj)
+			bm = bmesh.from_edit_mesh(obj.data)
+			object_face_indexies[obj] = [face.index for face in bm.faces if face.select]
+	else:
+		# Selected objects with all faces each
+		selected_objects = [obj for obj in bpy.context.selected_objects]
+		for obj in selected_objects:
+			if obj.type == 'MESH' and obj.data.uv_layers:
+				bpy.ops.object.mode_set(mode='OBJECT')
+				bpy.ops.object.select_all(action='DESELECT')
+				bpy.context.scene.objects.active = obj
+				obj.select = True
+				bpy.ops.object.mode_set(mode='EDIT')
 
-	# Check for missing UV channels
-	if len(objects) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No UV map assigned to one of the selected objects." )
+				bm = bmesh.from_edit_mesh(obj.data)
+				object_face_indexies[obj] = [face.index for face in bm.faces]
+
+	# Warning: No valid input objects
+	if len(object_face_indexies) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No valid meshes or UV maps" )
 		return
 
-	# Check for valid images / textures
-	obj_images = {}
-	for obj in objects:
+	# Collect Images / textures
+	object_images = {}
+	for obj in object_face_indexies:
 		image = utilities_texel.get_object_texture_image(obj)
 		if image:
-			obj_images[obj] = image
+			object_images[obj] = image
 
-	if len(obj_images) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No Texture found on any of the selected objects." )
+	# Warning: No valid images
+	if len(object_images) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No Texture found. Assign Checker map or texture." )
 		return
-
 
 
 	sum_area_vt = 0
 	sum_area_uv = 0
 
 	# Get area for each triangle in view and UV
-	for obj in objects:
+	for obj in object_face_indexies:
+		bpy.ops.object.mode_set(mode='OBJECT')
 		bpy.ops.object.select_all(action='DESELECT')
+		bpy.context.scene.objects.active = obj
 		obj.select = True
 
 		# Find image of object
-		image = obj_images[obj]
+		image = object_images[obj]
 		if image:
-
-			# Create triangulated copy
-			bpy.ops.object.duplicate()
-			bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 			bpy.ops.object.mode_set(mode='EDIT')
-			bpy.context.tool_settings.mesh_select_mode = (False, False, True)
-			bpy.ops.mesh.select_all(action='SELECT')
-			bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
-
-			bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+			bm = bmesh.from_edit_mesh(obj.data)
 			uvLayer = bm.loops.layers.uv.verify()
 
-			for face in bm.faces:
+			bm.faces.ensure_lookup_table()
+			for index in object_face_indexies[obj]:
+				face = bm.faces[index]
+
 				# Triangle Verts
 				triangle_uv = [loop[uvLayer].uv for loop in face.loops ]
 				triangle_vt = [vert.co for vert in face.verts]
@@ -126,20 +137,22 @@ def get_texel_density(self, context):
 				sum_area_vt+= math.sqrt( face_area_vt )
 				sum_area_uv+= math.sqrt( face_area_uv ) * min(image.size[0], image.size[1])
 
-			# Delete Copy
-			bpy.ops.object.mode_set(mode='OBJECT')
-			bpy.ops.object.delete()
+			
 
 	# Restore selection
+	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.object.select_all(action='DESELECT')
-	for obj in objects:
+	for obj in object_face_indexies:
 		obj.select = True
-	bpy.context.scene.objects.active = objects[0]
+	bpy.context.scene.objects.active = list(object_face_indexies.keys())[0]
+	if object_edit_mode:
+		bpy.ops.object.mode_set(mode='EDIT')
+
 
 	print("Sum verts area {}".format(sum_area_vt))
 	print("Sum texture area {}".format(sum_area_uv))
 
-	# bpy.context.scene.texToolsSettings.texel_density = math.sqrt( sum_area_uv) / math.sqrt( sum_area_vt)
-	bpy.context.scene.texToolsSettings.texel_density = sum_area_uv / sum_area_vt
-
-
+	if sum_area_uv == 0 or sum_area_vt == 0:
+		bpy.context.scene.texToolsSettings.texel_density = 0
+	else:
+		bpy.context.scene.texToolsSettings.texel_density = sum_area_uv / sum_area_vt

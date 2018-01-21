@@ -45,12 +45,16 @@ class op(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
-		utilities_bake.store_bake_settings()
+		
 
 
 		print("--->: "+str())
+		# Store Selection
+		selected_objects 	= [obj for obj in bpy.context.selected_objects]
+		active_object 		= bpy.context.scene.objects.active
 
-
+		# Render sets
+		utilities_bake.store_bake_settings()
 		execute_render(
 			self, context, settings.bake_mode, 
 			bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1], 
@@ -61,8 +65,15 @@ class op(bpy.types.Operator):
 			bpy.context.scene.texToolsSettings.bake_samples,
 			bpy.context.scene.texToolsSettings.bake_ray_distance
 		)
-		
 		utilities_bake.restore_bake_settings()
+
+		# Restore selection
+		bpy.ops.object.select_all(action='DESELECT')
+		for obj in selected_objects:
+			obj.select = True
+		if active_object:
+			bpy.context.scene.objects.active = active_object
+
 		return {'FINISHED'}
 
 
@@ -81,7 +92,7 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 	# Get the baking sets / pairs
 	sets = settings.sets
 
-	print("________________________________\nBake {}x '{}' at {} x {}".format(len(sets), mode, width, height))
+	# print("________________________________\nBake {}x '{}' at {} x {}".format(len(sets), mode, width, height))
 
 	render_width = sampling_scale * width
 	render_height = sampling_scale * height

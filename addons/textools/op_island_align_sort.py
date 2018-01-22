@@ -13,7 +13,7 @@ imp.reload(utilities_uv)
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_islands_align_sort"
+	bl_idname = "uv.textools_island_align_sort"
 	bl_label = "Align & Sort"
 	bl_description = "Rotates UV islands to minimal bounds and sorts them horizontal or vertical"
 	bl_options = {'REGISTER', 'UNDO'}

@@ -3,15 +3,7 @@ import bmesh
 import operator
 import math
 
-
-
-# if "bpy" in locals() and utilities_texel:
-# 	import imp
-# 	imp.reload(utilities_texel)
-# else:
 from . import utilities_texel
-
-
 
 
 class op(bpy.types.Operator):
@@ -35,9 +27,13 @@ class op(bpy.types.Operator):
 		if bpy.context.active_object.type != 'MESH':
 			return False
 
-		#Requires UV map
 		if not bpy.context.object.data.uv_layers:
 			return False
+
+		# if bpy.context.object.mode == 'EDIT':
+		# 	# In edit mode requires face select mode
+		# 	if bpy.context.scene.tool_settings.mesh_select_mode[2] == False:
+		# 		return False
 
 		return True
 
@@ -53,38 +49,17 @@ class op(bpy.types.Operator):
 def get_texel_density(self, context):
 	print("Get texel density")
 
-
-	object_face_indexies = {}
-	object_edit_mode = bpy.context.object.mode == 'EDIT'
-
-	if bpy.context.object.mode == 'EDIT':
-		# Only selected Mesh faces
-		obj = bpy.context.active_object
-		if obj.type == 'MESH' and obj.data.uv_layers:
-			bm = bmesh.from_edit_mesh(obj.data)
-			object_face_indexies[obj] = [face.index for face in bm.faces if face.select]
-	else:
-		# Selected objects with all faces each
-		selected_objects = [obj for obj in bpy.context.selected_objects]
-		for obj in selected_objects:
-			if obj.type == 'MESH' and obj.data.uv_layers:
-				bpy.ops.object.mode_set(mode='OBJECT')
-				bpy.ops.object.select_all(action='DESELECT')
-				bpy.context.scene.objects.active = obj
-				obj.select = True
-				bpy.ops.object.mode_set(mode='EDIT')
-
-				bm = bmesh.from_edit_mesh(obj.data)
-				object_face_indexies[obj] = [face.index for face in bm.faces]
+	edit_mode = bpy.context.object.mode == 'EDIT'
+	object_faces = utilities_texel.get_selected_object_faces()
 
 	# Warning: No valid input objects
-	if len(object_face_indexies) == 0:
+	if len(object_faces) == 0:
 		self.report({'ERROR_INVALID_INPUT'}, "No valid meshes or UV maps" )
 		return
 
 	# Collect Images / textures
 	object_images = {}
-	for obj in object_face_indexies:
+	for obj in object_faces:
 		image = utilities_texel.get_object_texture_image(obj)
 		if image:
 			object_images[obj] = image
@@ -94,12 +69,11 @@ def get_texel_density(self, context):
 		self.report({'ERROR_INVALID_INPUT'}, "No Texture found. Assign Checker map or texture." )
 		return
 
-
 	sum_area_vt = 0
 	sum_area_uv = 0
 
 	# Get area for each triangle in view and UV
-	for obj in object_face_indexies:
+	for obj in object_faces:
 		bpy.ops.object.mode_set(mode='OBJECT')
 		bpy.ops.object.select_all(action='DESELECT')
 		bpy.context.scene.objects.active = obj
@@ -111,9 +85,9 @@ def get_texel_density(self, context):
 			bpy.ops.object.mode_set(mode='EDIT')
 			bm = bmesh.from_edit_mesh(obj.data)
 			uvLayer = bm.loops.layers.uv.verify()
-
 			bm.faces.ensure_lookup_table()
-			for index in object_face_indexies[obj]:
+			
+			for index in object_faces[obj]:
 				face = bm.faces[index]
 
 				# Triangle Verts
@@ -133,26 +107,23 @@ def get_texel_density(self, context):
 					image.size[0],
 					image.size[1]
 				)
-				
 				sum_area_vt+= math.sqrt( face_area_vt )
 				sum_area_uv+= math.sqrt( face_area_uv ) * min(image.size[0], image.size[1])
-
-			
 
 	# Restore selection
 	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.object.select_all(action='DESELECT')
-	for obj in object_face_indexies:
+	for obj in object_faces:
 		obj.select = True
-	bpy.context.scene.objects.active = list(object_face_indexies.keys())[0]
-	if object_edit_mode:
+	bpy.context.scene.objects.active = list(object_faces.keys())[0]
+	if edit_mode:
 		bpy.ops.object.mode_set(mode='EDIT')
 
-
-	print("Sum verts area {}".format(sum_area_vt))
-	print("Sum texture area {}".format(sum_area_uv))
+	# print("Sum verts area {}".format(sum_area_vt))
+	# print("Sum texture area {}".format(sum_area_uv))
 
 	if sum_area_uv == 0 or sum_area_vt == 0:
 		bpy.context.scene.texToolsSettings.texel_density = 0
 	else:
 		bpy.context.scene.texToolsSettings.texel_density = sum_area_uv / sum_area_vt
+	

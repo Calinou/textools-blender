@@ -50,18 +50,19 @@ if "bpy" in locals():
 	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_island_rotate_90)
 	imp.reload(op_island_straighten_edge_loops)
-	imp.reload(op_islands_align_sort)
+	imp.reload(op_island_align_sort)
 	imp.reload(op_select_islands_identical)
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_select_islands_overlap)
 	imp.reload(op_swap_uv_xyz)
+	imp.reload(op_texel_checker_map)
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
-	imp.reload(op_texel_checker_map)
 	imp.reload(op_texture_reload_all)
 	imp.reload(op_uv_channel_add)
 	imp.reload(op_uv_channel_swap)
-	imp.reload(op_uv_resize_area)
+	imp.reload(op_uv_crop)
+	imp.reload(op_uv_resize)
 
 	
 else:
@@ -81,18 +82,19 @@ else:
 	from . import op_island_relax_straighten_edges
 	from . import op_island_rotate_90
 	from . import op_island_straighten_edge_loops
-	from . import op_islands_align_sort
+	from . import op_island_align_sort
 	from . import op_select_islands_identical
 	from . import op_select_islands_outline
 	from . import op_select_islands_overlap
 	from . import op_swap_uv_xyz
+	from . import op_texel_checker_map
 	from . import op_texel_density_get
 	from . import op_texel_density_set
-	from . import op_texel_checker_map
 	from . import op_texture_reload_all
 	from . import op_uv_channel_add
 	from . import op_uv_channel_swap
-	from . import op_uv_resize_area
+	from . import op_uv_crop
+	from . import op_uv_resize
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -330,7 +332,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		[('ISLAND', 'Islands', 'Scale UV islands to match Texel Density'), 
 		('ALL', 'Combined', 'Scale all UVs together to match Texel Density')], 
 		name = "Mode", 
-		default = 'ALL'
+		default = 'ISLAND'
 	)
 	texel_density = bpy.props.FloatProperty(
 		name = "Texel",
@@ -375,9 +377,10 @@ class Panel_Units(bpy.types.Panel):
 		r.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
 		
+		row = col.row(align=True)
+		row.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
+		row.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 		
-		col.operator(op_uv_resize_area.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
-		# r = col.row(align = True)
 		col.separator()
 		col.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("textures_reload"))
 		
@@ -479,11 +482,11 @@ class Panel_Layout(bpy.types.Panel):
 
 
 		aligned = box.row(align=True)
-		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("islands_align_sort_h"))
+		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("islands_align_sort_h"))
 		op.is_vertical = False;
 		op.padding = utilities_ui.get_padding()
 		
-		op = aligned.operator(op_islands_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("islands_align_sort_v"))
+		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("islands_align_sort_v"))
 		op.is_vertical = True;
 		op.padding = utilities_ui.get_padding()
 
@@ -745,9 +748,9 @@ def register():
 		"alignTop.png", 
 		"bake_anti_alias.png", 
 		"bake_obj_cage.png", 
+		"bake_obj_float.png", 
 		"bake_obj_high.png", 
 		"bake_obj_low.png", 
-		"bake_obj_float.png", 
 		"checkerMap.png", 
 		"explode.png",
 		"faces_iron.png", 
@@ -764,6 +767,7 @@ def register():
 		"op_bake_explode.png", 
 		"op_extend_canvas_open.png",
 		"op_select_islands_outline.png", 
+		"op_uv_crop.png", 
 		"setup_split_uv.png", 
 		"swap_uv_xyz.png", 
 		"texel_density.png",

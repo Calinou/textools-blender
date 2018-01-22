@@ -6,8 +6,6 @@ from collections import defaultdict
 from math import pi
 
 from . import utilities_uv
-import imp
-imp.reload(utilities_uv)
 
 
 class op(bpy.types.Operator):

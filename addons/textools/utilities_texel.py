@@ -9,6 +9,36 @@ from mathutils import Vector
 image_material_prefix = "TT_checker_"
 
 
+# Return all faces of selected objects or only selected faces
+def get_selected_object_faces():
+	object_faces_indexies = {}
+
+	if bpy.context.object.mode == 'EDIT':
+		# Only selected Mesh faces
+		obj = bpy.context.active_object
+		if obj.type == 'MESH' and obj.data.uv_layers:
+			bm = bmesh.from_edit_mesh(obj.data)
+			bm.faces.ensure_lookup_table()
+			object_faces_indexies[obj] = [face.index for face in bm.faces if face.select]
+	else:
+		# Selected objects with all faces each
+		selected_objects = [obj for obj in bpy.context.selected_objects]
+		for obj in selected_objects:
+			if obj.type == 'MESH' and obj.data.uv_layers:
+				bpy.ops.object.mode_set(mode='OBJECT')
+				bpy.ops.object.select_all(action='DESELECT')
+				bpy.context.scene.objects.active = obj
+				obj.select = True
+
+				bpy.ops.object.mode_set(mode='EDIT')
+				bm = bmesh.from_edit_mesh(obj.data)
+				bm.faces.ensure_lookup_table()
+				object_faces_indexies[obj] = [face.index for face in bm.faces]
+
+	return object_faces_indexies
+
+
+
 def get_object_texture_image(obj):
 
 	print("Get img for '{}'".format(obj.name))
@@ -44,6 +74,7 @@ def image_resize(image, size_x, size_y):
 		image.generated_width = int(size_x)
 		image.generated_height = int(size_y)
 		image.scale( int(size_x), int(size_y) )
+	
 	
 
 def checker_images_cleanup():

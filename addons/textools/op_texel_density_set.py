@@ -35,6 +35,11 @@ class op(bpy.types.Operator):
 		if not bpy.context.object.data.uv_layers:
 			return False
 
+		# if bpy.context.object.mode == 'EDIT':
+		# 	# In edit mode requires face select mode
+		# 	if bpy.context.scene.tool_settings.mesh_select_mode[2] == False:
+		# 		return False	
+
 		return True
 
 	
@@ -50,64 +55,69 @@ class op(bpy.types.Operator):
 
 
 def set_texel_density(self, context, mode, density):
-
 	print("Set texel density!")
 
-	# Force Object mode
 	if bpy.context.object.mode == 'EDIT':
-		bpy.ops.object.mode_set(mode='OBJECT')
+		mode = 'EDIT'
+	object_faces = utilities_texel.get_selected_object_faces()
 
-	# Collect valid Objects
-	objects = []
-	for obj in bpy.context.selected_objects:
-		if obj.type == 'MESH' and obj.data.uv_layers:
-			objects.append(obj)
 
-	if len(objects) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No valid objects with UV maps selected" )
+	# Warning: No valid input objects
+	if len(object_faces) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No valid meshes or UV maps" )
 		return
 
-	# Process each object
-	for obj in objects:
+	# Collect Images / textures
+	object_images = {}
+	for obj in object_faces:
+		image = utilities_texel.get_object_texture_image(obj)
+		if image:
+			object_images[obj] = image
+
+	# Warning: No valid images
+	if len(object_images) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No Texture found. Assign Checker map or texture." )
+		return
+
+
+	for obj in object_faces:
 		bpy.ops.object.mode_set(mode='OBJECT')
 		bpy.ops.object.select_all(action='DESELECT')
 		bpy.context.scene.objects.active = obj
 		obj.select = True
 
-		
-
 		# Find image of object
-		image = utilities_texel.get_object_texture_image(obj)
+		image = object_images[obj]
 		if image:
-			print("Process {} @{}".format(obj.name, density))
 			bpy.ops.object.mode_set(mode='EDIT')
 
 			# Store selection
 			utilities_uv.selection_store()
 
-			bpy.ops.mesh.select_all(action='SELECT')
-
-
-
-			bm = bmesh.from_edit_mesh(obj.data);
-			uvLayer = bm.loops.layers.uv.verify();
+			bm = bmesh.from_edit_mesh(obj.data)
+			uvLayer = bm.loops.layers.uv.verify()
 
 			# Collect groups of faces to scale together
-			groups_faces = []
-			if mode == 'ALL':
+			group_faces = []
+			if mode == 'EDIT':
+				# Scale selected faces
+				bm.faces.ensure_lookup_table()
+				group_faces = [[ bm.faces[index] ] for index in object_faces[obj] ]
+
+			elif mode == 'ALL':
 				# Scale all UV's together
-				groups_faces = [bm.faces]
+				group_faces = [bm.faces]
 
 			elif mode == 'ISLAND':
 				# Scale each UV idland centered
+				bpy.ops.mesh.select_all(action='SELECT')
 				bpy.ops.uv.select_all(action='SELECT')
-				groups_faces = utilities_uv.getSelectionIslands()
+				group_faces = utilities_uv.getSelectionIslands()
+
+			print("group_faces {}x".format(len(group_faces)))
 
 
-			print("groups: {}x".format(len(groups_faces)))
-
-
-			for group in groups_faces:
+			for group in group_faces:
 				# Get triangle areas
 				sum_area_vt = 0
 				sum_area_uv = 0
@@ -136,15 +146,12 @@ def set_texel_density(self, context, mode, density):
 				# Apply scale to group
 				scale = density / (sum_area_uv / sum_area_vt)
 
-				# print("Scale: D: {:.2f} D: {:.2f} = scale: {:.2f}".format(density, (sum_area_uv / sum_area_vt), scale))
-
 				# Set Scale Origin to Island or top left
-				if mode == 'ALL':
+				if mode == 'EDIT' or mode == 'ISLAND':
+					bpy.context.space_data.pivot_point = 'MEDIAN'
+				elif mode == 'ALL':
 					bpy.context.space_data.pivot_point = 'CURSOR'
 					bpy.ops.uv.cursor_set(location=(0, 1))
-
-				elif mode == 'ISLAND':
-					bpy.context.space_data.pivot_point = 'MEDIAN'
 
 				# Select Face loops and scale
 				bpy.ops.uv.select_all(action='DESELECT')
@@ -152,14 +159,19 @@ def set_texel_density(self, context, mode, density):
 				for face in group:
 					for loop in face.loops:
 						loop[uvLayer].select = True
+
+				print("Scale: {} {}x".format(scale, len(group)))
 				bpy.ops.transform.resize(value=(scale, scale, 1), proportional='DISABLED')
 
 			# Restore selection
 			utilities_uv.selection_restore()
 
+
 	# Restore selection
 	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.object.select_all(action='DESELECT')
-	for obj in objects:
+	for obj in object_faces:
 		obj.select = True
-	bpy.context.scene.objects.active = objects[0]
+	bpy.context.scene.objects.active = list(object_faces.keys())[0]
+	if mode == 'EDIT':
+		bpy.ops.object.mode_set(mode='EDIT')

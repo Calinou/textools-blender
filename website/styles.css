@@ -126,7 +126,21 @@ a.NoButton:link, a.NoButton:visited, a.NoButton:hover, a.NoButton:active {
 	height:24px;
 	width:24px;
 }
-.PanelContent p img{
+.PanelContent p img:not(.Icon){
 	max-width: 100%;
     height: auto;   
+	
+	/*Center*/
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+	
+	border: 1px solid #393939;
+	border-radius: 4px;
+	/*box-shadow: 0px -2px 0px 0px #222222;*/
 }
+
+.Icon{
+	
+}
+

@@ -16,7 +16,7 @@
 
 bl_info = {
 	"name": "TexTools",
-	"description": "TexTools is a Free addon for Blender 3D with a set of UV and Texture tools.",
+	"description": "Professional UV and Texture tools for Blender.",
 	"author": "renderhjs",
 	"version": (0, 9, 0),
 	"blender": (2, 79, 0),

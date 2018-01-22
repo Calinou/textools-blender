@@ -180,7 +180,15 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 			for obj_high in (set.objects_high):
 				obj_high.select = True
 			obj_low.select = True
-			cycles_bake(mode, sampling_scale, samples, ray_distance, len(set.objects_high) > 0, obj_cage)
+			cycles_bake(
+				mode, 
+				bpy.context.scene.texToolsSettings.padding,
+				sampling_scale, 
+				samples, 
+				ray_distance,
+				 len(set.objects_high) > 0, 
+				 obj_cage
+			)
 
 			# Bake Floaters seperate?
 			if len(set.objects_float) > 0:
@@ -188,7 +196,15 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 				for obj_high in (set.objects_float):
 					obj_high.select = True
 				obj_low.select = True
-				cycles_bake(mode, sampling_scale, samples, ray_distance, len(set.objects_float) > 0, obj_cage)
+				cycles_bake(
+					mode, 
+					0,
+					sampling_scale, 
+					samples, 
+					ray_distance, 
+					len(set.objects_float) > 0,
+					 obj_cage
+				)
 
 
 		# Downsample image?
@@ -234,7 +250,7 @@ def setup_image(mode, name, width, height, path, clear):#
 
 
 
-def cycles_bake(mode, sampling_scale, samples, ray_distance, isMulti, obj_cage):
+def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, obj_cage):
 	# Set samples
 	if mode == 'ao' or mode == 'normal':
 		bpy.context.scene.cycles.samples = samples
@@ -242,7 +258,7 @@ def cycles_bake(mode, sampling_scale, samples, ray_distance, isMulti, obj_cage):
 		bpy.context.scene.cycles.samples = 1
 
 	# Pixel Padding
-	bpy.context.scene.render.bake.margin = bpy.context.scene.texToolsSettings.padding * sampling_scale
+	bpy.context.scene.render.bake.margin = padding * sampling_scale
 
 	# Bake Type
 	bake_type = 'EMIT' #DEFAULT
@@ -258,9 +274,9 @@ def cycles_bake(mode, sampling_scale, samples, ray_distance, isMulti, obj_cage):
 
 	# Bake with Cage?
 	if obj_cage is None:
-		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_selected_to_active=isMulti, normal_space=normal_space)
+		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_selected_to_active=is_multi, normal_space=normal_space)
 	else:
-		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_cage=True, cage_object=obj_cage.name, use_selected_to_active=isMulti, normal_space=normal_space)
+		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_cage=True, cage_object=obj_cage.name, use_selected_to_active=is_multi, normal_space=normal_space)
 
 
 

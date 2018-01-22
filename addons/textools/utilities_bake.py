@@ -94,6 +94,17 @@ def get_bake_name(name):
 
 
 def get_object_type(obj):
+	# Detect by name pattern
+	split = obj.name.lower()
+	for char in split_chars:
+		split = split.replace(char,' ')
+	strings = split.split(' ')
+
+	# Detect float, more rare than low
+	for string in strings:		
+		for key in keywords_float:
+			if key == string:
+				return 'float'
 
 	# Detect by modifiers
 	if obj.modifiers:
@@ -103,12 +114,6 @@ def get_object_type(obj):
 			elif modifier.type == 'BEVEL':
 				return 'high'
 
-
-	# Detect by name pattern
-	split = obj.name.lower()
-	for char in split_chars:
-		split = split.replace(char,' ')
-	strings = split.split(' ')
 
 	# Detect High first, more rare
 	for string in strings:
@@ -122,11 +127,7 @@ def get_object_type(obj):
 			if key == string:
 				return 'cage'
 
-	# Detect float, more rare than low
-	for string in strings:		
-		for key in keywords_float:
-			if key == string:
-				return 'float'
+	
 
 	# Detect low
 	for string in strings:

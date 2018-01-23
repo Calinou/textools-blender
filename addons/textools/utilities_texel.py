@@ -13,6 +13,8 @@ image_material_prefix = "TT_checker_"
 def get_selected_object_faces():
 	object_faces_indexies = {}
 
+	previous_mode = bpy.context.object.mode
+
 	if bpy.context.object.mode == 'EDIT':
 		# Only selected Mesh faces
 		obj = bpy.context.active_object
@@ -34,6 +36,8 @@ def get_selected_object_faces():
 				bm = bmesh.from_edit_mesh(obj.data)
 				bm.faces.ensure_lookup_table()
 				object_faces_indexies[obj] = [face.index for face in bm.faces]
+
+	bpy.ops.object.mode_set(mode=previous_mode)
 
 	return object_faces_indexies
 

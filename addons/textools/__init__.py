@@ -61,6 +61,7 @@ if "bpy" in locals():
 	imp.reload(op_texture_reload_all)
 	imp.reload(op_uv_channel_add)
 	imp.reload(op_uv_channel_swap)
+	imp.reload(op_uv_size_get)
 	imp.reload(op_uv_crop)
 	imp.reload(op_uv_resize)
 
@@ -93,6 +94,7 @@ else:
 	from . import op_texture_reload_all
 	from . import op_uv_channel_add
 	from . import op_uv_channel_swap
+	from . import op_uv_size_get
 	from . import op_uv_crop
 	from . import op_uv_resize
 	
@@ -369,10 +371,12 @@ class Panel_Units(bpy.types.Panel):
 			row.operator(op_debug.bl_idname, icon="CONSOLE")
 		
 		#---------- Settings ------------
-		row = layout.row()
-		col = row.column(align=True)
-		col.prop(context.scene.texToolsSettings, "size_dropdown", text="Size")
-		
+		# row = layout.row()
+		col = layout.column(align=True)
+		r = col.row(align = True)
+		r.prop(context.scene.texToolsSettings, "size_dropdown", text="Size")
+		r.operator(op_uv_size_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+
 		r = col.row(align = True)
 		r.prop(context.scene.texToolsSettings, "size", text="")
 		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
@@ -515,7 +519,7 @@ class Panel_Layout(bpy.types.Panel):
 		box = layout.box()
 		# col = box.column(align=True)
 
-		box.operator(op_texel_checker_map.op.bl_idname, text ="Checker", icon_value = icon_get("checkerMap"))
+		box.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("checkerMap"))
 		
 
 		col = box.column(align=True)

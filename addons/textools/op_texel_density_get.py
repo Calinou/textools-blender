@@ -54,7 +54,7 @@ def get_texel_density(self, context):
 
 	# Warning: No valid input objects
 	if len(object_faces) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No valid meshes or UV maps" )
+		self.report({'ERROR_INVALID_INPUT'}, "No UV maps or meshes selected" )
 		return
 
 	# Collect Images / textures
@@ -66,7 +66,7 @@ def get_texel_density(self, context):
 
 	# Warning: No valid images
 	if len(object_images) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No Texture found. Assign Checker map or texture." )
+		self.report({'ERROR_INVALID_INPUT'}, "No Texture found. Assign Checker map or texture first." )
 		return
 
 	sum_area_vt = 0

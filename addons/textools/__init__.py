@@ -1,19 +1,3 @@
-#    Blender TexTools, 
-#    <TexTools, Blender addon for editing UVs and Texture maps.>
-#    Copyright (C) <2017> <renderhjs>
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 bl_info = {
 	"name": "TexTools",
 	"description": "Professional UV and Texture tools for Blender.",
@@ -44,13 +28,12 @@ if "bpy" in locals():
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
 	imp.reload(op_bake_organize_names)
-	imp.reload(op_faces_iron)
 	imp.reload(op_island_align_edge)
+	imp.reload(op_island_align_sort)
 	imp.reload(op_island_mirror)
 	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_island_rotate_90)
 	imp.reload(op_island_straighten_edge_loops)
-	imp.reload(op_island_align_sort)
 	imp.reload(op_select_islands_identical)
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_select_islands_overlap)
@@ -59,11 +42,13 @@ if "bpy" in locals():
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
 	imp.reload(op_texture_reload_all)
+	imp.reload(op_unwrap_edges_pipe)
+	imp.reload(op_unwrap_faces_iron)
 	imp.reload(op_uv_channel_add)
 	imp.reload(op_uv_channel_swap)
-	imp.reload(op_uv_size_get)
 	imp.reload(op_uv_crop)
 	imp.reload(op_uv_resize)
+	imp.reload(op_uv_size_get)
 
 	
 else:
@@ -77,13 +62,12 @@ else:
 	from . import op_bake
 	from . import op_bake_explode
 	from . import op_bake_organize_names
-	from . import op_faces_iron
 	from . import op_island_align_edge
+	from . import op_island_align_sort
 	from . import op_island_mirror
 	from . import op_island_relax_straighten_edges
 	from . import op_island_rotate_90
 	from . import op_island_straighten_edge_loops
-	from . import op_island_align_sort
 	from . import op_select_islands_identical
 	from . import op_select_islands_outline
 	from . import op_select_islands_overlap
@@ -92,11 +76,13 @@ else:
 	from . import op_texel_density_get
 	from . import op_texel_density_set
 	from . import op_texture_reload_all
+	from . import op_unwrap_edges_pipe
+	from . import op_unwrap_faces_iron
 	from . import op_uv_channel_add
 	from . import op_uv_channel_swap
-	from . import op_uv_size_get
 	from . import op_uv_crop
 	from . import op_uv_resize
+	from . import op_uv_size_get
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -496,9 +482,13 @@ class Panel_Layout(bpy.types.Panel):
 
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
-		row = col.row(align=True)
+		# row = col.row(align=True)
 		
-		col.operator(op_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("faces_iron"))
+		col.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("faces_iron"))
+		if bpy.app.debug_value != 0:
+			row = col.row(align=True)
+			row.alert = True
+			row.operator(op_unwrap_edges_pipe.op.bl_idname, text="Peel Edge", icon_value = icon_get("faces_iron"))
 		
 
 		#---------- Selection ------------

@@ -9,7 +9,7 @@ from . import utilities_uv
 
 class op(bpy.types.Operator):
 	"""UV Operator description"""
-	bl_idname = "uv.textools_faces_iron"
+	bl_idname = "uv.textools_unwrap_faces_iron"
 	bl_label = "Iron"
 	bl_description = "Unwrap selected faces into a single UV island"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -24,9 +24,6 @@ class op(bpy.types.Operator):
 			return False
 
 		#Only in Edit mode
-		if bpy.context.active_object.mode != 'EDIT':
-			return False
-
 		if bpy.context.active_object.mode != 'EDIT':
 			return False
 

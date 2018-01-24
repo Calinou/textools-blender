@@ -77,9 +77,10 @@ body,td,th {
     <div class="PanelColumns">
     <div class="PanelContent">
       <h2>Size &amp; Padding</h2>
-      <p>Set the texture size for baking, checker maps. Padding is used for UV margins and texture baking. Use the dropdown menu to quickly assign common  texture sizes. All units are in pixels.</p>
+      <p>Set the texture size in pixels for baking and checker maps. Use the dropdown menu to quickly assign common  texture sizes. </p>
       <p><img src="images/demo_units_size.gif" alt=""/></p>
-      <p><strong>Tip</strong>: Hold down ctrl + scroll Mouse Wheel to quickly cycle through the sizes</p>
+      <p>Pressing the eyedropper <img src="images/show_eyedropper_tool.png" alt="" width="20" height="19" class="Icon"/> button will get the texture size from the selected object. Padding is used for UV margins and texture baking. </p>
+      <p><strong>Tip</strong>: Hold down <strong>Ctrl</strong> + scroll <strong>Mouse Wheel</strong> to quickly cycle through the sizes.</p>
       </div>
    
       <div class="PanelContent">
@@ -110,13 +111,15 @@ body,td,th {
     <div class="PanelContent">
       <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
       <p>This tool has 4 directions to align UV islands or UV vertices to. </p>
-      <p><img src="images/show_align_buttons.png" width="111" height="45" alt=""/></p>
-      <p>In UV vertex mode <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds.      </p>
-      <p> In the UV face mode <img src="images/show_selection_uv_face.png" alt="" class="Icon"/>  selected UV islands are aligned to either side of the initial selection bounds.      </p>
+      <p>In UV vertex mode <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. </p>
+      <p><img src="images/demo_align.gif" alt=""/></p>
+      <p> In the UV face mode <img src="images/show_selection_uv_face.png" alt="" class="Icon"/>  selected UV islands are aligned to either side of the initial selection bounds.    </p>
     </div>
       <div class="PanelContent">
       <h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
-    Aligns the UV island of the selected UV edge <img class="Icon" src="images/show_selection_uv_edge.png" alt=""/>  to the closest 90 degree angle.</div>
+      <p>Aligns the UV island of the selected UV edge <img class="Icon" src="images/show_selection_uv_edge.png" alt=""/>  to the closest 90 degree angle.</p>
+      <p><strong>Tip</strong>: You can align mutliple UV islands by edge at once.</p>
+      </div>
     <div class="PanelContent">
       <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
       <p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
@@ -128,6 +131,7 @@ body,td,th {
       <div class="PanelContent">
       <h2><img src="images/op_faces_iron.png" width="32" height="32" alt=""/> Iron Faces</h2>
       <p>Unwraps selected viewport faces Face <img src="images/show_selection_view_face.png" alt="" class="Icon"/> mode into a single UV island. This approach can be quicker than marking edges for UV seams before unwrapping.</p>
+      <p><img src="images/demo_iron_faces.gif" alt=""/></p>
       </div>
       
     </div>

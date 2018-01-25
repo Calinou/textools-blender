@@ -31,19 +31,19 @@ if "bpy" in locals():
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
 	imp.reload(op_island_mirror)
-	imp.reload(op_island_relax_straighten_edges)
 	imp.reload(op_island_rotate_90)
 	imp.reload(op_island_straighten_edge_loops)
 	imp.reload(op_select_islands_identical)
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_select_islands_overlap)
+	imp.reload(op_smoothing_uv_islands)
 	imp.reload(op_swap_uv_xyz)
 	imp.reload(op_texel_checker_map)
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
 	imp.reload(op_texture_reload_all)
-	imp.reload(op_unwrap_edges_pipe)
 	imp.reload(op_unwrap_faces_iron)
+	imp.reload(op_unwrap_peel_edge)
 	imp.reload(op_uv_channel_add)
 	imp.reload(op_uv_channel_swap)
 	imp.reload(op_uv_crop)
@@ -65,19 +65,19 @@ else:
 	from . import op_island_align_edge
 	from . import op_island_align_sort
 	from . import op_island_mirror
-	from . import op_island_relax_straighten_edges
 	from . import op_island_rotate_90
 	from . import op_island_straighten_edge_loops
 	from . import op_select_islands_identical
 	from . import op_select_islands_outline
+	from . import op_smoothing_uv_islands
 	from . import op_select_islands_overlap
 	from . import op_swap_uv_xyz
 	from . import op_texel_checker_map
 	from . import op_texel_density_get
 	from . import op_texel_density_set
 	from . import op_texture_reload_all
-	from . import op_unwrap_edges_pipe
 	from . import op_unwrap_faces_iron
+	from . import op_unwrap_peel_edge
 	from . import op_uv_channel_add
 	from . import op_uv_channel_swap
 	from . import op_uv_crop
@@ -372,7 +372,7 @@ class Panel_Units(bpy.types.Panel):
 		row.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 		
 		col.separator()
-		col.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("textures_reload"))
+		col.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
 		
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
 		
@@ -437,11 +437,11 @@ class Panel_Layout(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
 			col.alert = True
-			col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ", icon_value = icon_get("swap_uv_xyz"))
-			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("island_relax_straighten_edges"))
+			col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ")
+			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("op_island_straighten_edge_loops"))
 			row = col.row(align=True)
-			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = icon_get("mirror")).is_stack = False;
-			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = icon_get("mirror")).is_stack = True;
+			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = icon_get("op_island_mirror")).is_stack = False;
+			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = icon_get("op_island_mirror")).is_stack = True;
 
 		#---------- Layout ------------
 		# layout.label(text="Layout")
@@ -449,34 +449,33 @@ class Panel_Layout(bpy.types.Panel):
 		box = layout.box()
 		col = box.column(align=True)
 		row = col.row(align=True)
-		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("island_align_edge"))
-		# col.operator(op_island_relax_straighten_edges.op.bl_idname, text="Straight & Relax", icon_value = icon_get("island_relax_straighten_edges"))
+		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
 
 		row = col.row(align=True)
-		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("island_rotate_90_left")).angle = -math.pi / 2
-		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = icon_get("island_rotate_90_right")).angle = math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("op_island_rotate_90_left")).angle = -math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = icon_get("op_island_rotate_90_right")).angle = math.pi / 2
 
 		
 		row = box.row(align=True)
 		col = row.column(align=True)
 		col.label(text="")
-		col.operator(op_align.op.bl_idname, text="←", icon_value = icon_get("alignLeft")).direction = "left"
+		col.operator(op_align.op.bl_idname, text="←", icon_value = icon_get("op_align_left")).direction = "left"
 		
 		col = row.column(align=True)
-		col.operator(op_align.op.bl_idname, text="↑", icon_value = icon_get("alignTop")).direction = "top"
-		col.operator(op_align.op.bl_idname, text="↓", icon_value = icon_get("alignBottom")).direction = "bottom"
+		col.operator(op_align.op.bl_idname, text="↑", icon_value = icon_get("op_align_top")).direction = "top"
+		col.operator(op_align.op.bl_idname, text="↓", icon_value = icon_get("op_align_bottom")).direction = "bottom"
 
 		col = row.column(align=True)
 		col.label(text="")
-		col.operator(op_align.op.bl_idname, text="→", icon_value = icon_get("alignRight")).direction = "right"
+		col.operator(op_align.op.bl_idname, text="→", icon_value = icon_get("op_align_right")).direction = "right"
 
 
 		aligned = box.row(align=True)
-		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("islands_align_sort_h"))
+		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
 		op.is_vertical = False;
 		op.padding = utilities_ui.get_padding()
 		
-		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("islands_align_sort_v"))
+		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("op_island_align_sort_v"))
 		op.is_vertical = True;
 		op.padding = utilities_ui.get_padding()
 
@@ -484,24 +483,40 @@ class Panel_Layout(bpy.types.Panel):
 		col = aligned.column(align=True)
 		# row = col.row(align=True)
 		
-		col.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("faces_iron"))
-		if bpy.app.debug_value != 0:
-			row = col.row(align=True)
-			row.alert = True
-			row.operator(op_unwrap_edges_pipe.op.bl_idname, text="Peel Edge", icon_value = icon_get("faces_iron"))
+		col.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
+		col.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
+		# if bpy.app.debug_value != 0:
+		# 	row = col.row(align=True)
+		# 	row.alert = True
+		# 	row.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
 		
 
 		#---------- Selection ------------
 		layout.label(text="Select")
-		row = layout.row()
-		box = row.box()
+		# row = layout.row()
+		box = layout.box()
 		col = box.column(align=True)
 		row = col.row(align=True)
-		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("islands_select_identical"))
-		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("islands_select_overlapping"))
+		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("op_select_islands_identical"))
+		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("op_select_islands_overlap"))
 		# aligned = box.row(align=True)
 		col.operator(op_select_islands_outline.op.bl_idname, text="Island Bounds", icon_value = icon_get("op_select_islands_outline"))
 		
+
+
+		
+		#---------- Mesh ------------
+		if bpy.app.debug_value != 0:
+			layout.label(text="Mesh")
+			box = layout.box()
+			box.alert = True
+			box.operator(op_smoothing_uv_islands.op.bl_idname, text="Smooth by UV", icon_value = icon_get("op_select_islands_outline"))
+			# op_UV_to_XYZ
+			# 
+
+
+
+
 
 		#---------- Texel ------------
 
@@ -509,7 +524,7 @@ class Panel_Layout(bpy.types.Panel):
 		box = layout.box()
 		# col = box.column(align=True)
 
-		box.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("checkerMap"))
+		box.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
 		
 
 		col = box.column(align=True)
@@ -735,37 +750,34 @@ def register():
 
 	# Register Icons
 	icons = [
-		# "logo.png", 
-		"alignBottom.png", 
-		"alignLeft.png", 
-		"alignRight.png", 
-		"alignTop.png", 
 		"bake_anti_alias.png", 
 		"bake_obj_cage.png", 
 		"bake_obj_float.png", 
 		"bake_obj_high.png", 
 		"bake_obj_low.png", 
-		"checkerMap.png", 
-		"explode.png",
-		"faces_iron.png", 
-		"island_align_edge.png", 
-		"island_relax_straighten_edges.png", 
-		"island_rotate_90_left.png", 
-		"island_rotate_90_right.png", 
-		"islands_align_sort_h.png", 
-		"islands_align_sort_v.png", 
-		"islands_select_identical.png", 
-		"islands_select_overlapping.png", 
-		"mirror.png", 
+		"op_align_bottom.png", 
+		"op_align_left.png", 
+		"op_align_right.png", 
+		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
 		"op_extend_canvas_open.png",
+		"op_island_align_edge.png", 
+		"op_island_align_sort_h.png", 
+		"op_island_align_sort_v.png", 
+		"op_island_mirror.png", 
+		"op_island_rotate_90_left.png", 
+		"op_island_rotate_90_right.png", 
+		"op_island_straighten_edge_loops.png", 
+		"op_select_islands_identical.png", 
 		"op_select_islands_outline.png", 
+		"op_select_islands_overlap.png", 
+		"op_texel_checker_map.png", 
+		"op_texture_reload_all.png",
+		"op_unwrap_faces_iron.png", 
+		"op_unwrap_peel_edge.png", 
 		"op_uv_crop.png", 
-		"setup_split_uv.png", 
-		"swap_uv_xyz.png", 
-		"texel_density.png",
-		"textures_reload.png"
+		"texel_density.png"
 	]
 	for icon in icons:
 		utilities_ui.icon_register(icon)

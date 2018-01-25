@@ -10,8 +10,8 @@ from . import utilities_uv
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_island_straighten_edge_loops"
-	bl_label = "Straighten edge loops"
-	bl_description = "Straighten edge loops of UV Island"
+	bl_label = "Straight edge loops"
+	bl_description = "Straighten edge loops of UV Island and relax rest"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	@classmethod

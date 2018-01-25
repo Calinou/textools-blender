@@ -8,8 +8,8 @@ from math import pi
 from . import utilities_uv
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_unwrap_edges_pipe"
-	bl_label = "Unwrap Edge Pipe"
+	bl_idname = "uv.textools_unwrap_peel_edge"
+	bl_label = "Peel Edge"
 	bl_description = "Unwrap pipe along selected edges"
 	bl_options = {'REGISTER', 'UNDO'}
 	

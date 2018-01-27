@@ -29,6 +29,8 @@ if "bpy" in locals():
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
 	imp.reload(op_bake_organize_names)
+	imp.reload(op_color_assign)
+	imp.reload(op_color_select)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
 	imp.reload(op_island_mirror)
@@ -50,8 +52,6 @@ if "bpy" in locals():
 	imp.reload(op_uv_crop)
 	imp.reload(op_uv_resize)
 	imp.reload(op_uv_size_get)
-	imp.reload(op_color_assign)
-	imp.reload(op_color_select)
 
 	
 else:
@@ -66,6 +66,8 @@ else:
 	from . import op_bake
 	from . import op_bake_explode
 	from . import op_bake_organize_names
+	from . import op_color_assign
+	from . import op_color_select
 	from . import op_island_align_edge
 	from . import op_island_align_sort
 	from . import op_island_mirror
@@ -73,8 +75,8 @@ else:
 	from . import op_island_straighten_edge_loops
 	from . import op_select_islands_identical
 	from . import op_select_islands_outline
-	from . import op_smoothing_uv_islands
 	from . import op_select_islands_overlap
+	from . import op_smoothing_uv_islands
 	from . import op_swap_uv_xyz
 	from . import op_texel_checker_map
 	from . import op_texel_density_get
@@ -87,8 +89,6 @@ else:
 	from . import op_uv_crop
 	from . import op_uv_resize
 	from . import op_uv_size_get
-	from . import op_color_assign
-	from . import op_color_select
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -241,16 +241,29 @@ def on_dropdown_uv_channel(self, context):
 					bpy.context.object.data.uv_textures.active_index = index
 
 
+def on_color_changed(self, context):
+	for i in range(0, context.scene.texToolsSettings.color_ID_count):
+		material = utilities_color.get_material(i)
+		if material:
+			material.diffuse_color = utilities_color.get_color(i)
 
-def on_dropdown_color_template(self, context):
+
+def on_color_dropdown_template(self, context):
 	# Change Mesh UV Channel
 	hex_colors = bpy.context.scene.texToolsSettings.color_ID_templates.split(',')
 	context.scene.texToolsSettings.color_ID_count = len(hex_colors)
 
+	# Assign color slots
 	for i in range(0, len(hex_colors)):
 		color = utilities_color.hex_to_color("#"+hex_colors[i])
 		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), color)
 
+		material = utilities_color.get_material(i)
+		if material:
+			print("tweak color {}".format(i))
+			material.diffuse_color = utilities_color.get_color(i)
+
+	# Assign existing materials
 
 	print("Color: "+",".join(hex_colors))
 
@@ -353,7 +366,15 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 
 
 	def get_color():
-		return bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", default=(0.5, 0.5, 0.5), size=3, max=1.0, min=0.0)#, update=update_color_1
+		return bpy.props.FloatVectorProperty(
+			name="Color1", 
+			description="Set Color 1 for the Palette", 
+			subtype="COLOR", 
+			default=(0.5, 0.5, 0.5), 
+			size=3, 
+			max=1.0, min=0.0,
+			update=on_color_changed
+		)#, update=update_color_1
 
 	color_ID_color_0 = get_color()
 	color_ID_color_1 = get_color()
@@ -370,10 +391,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 			('000000,656565,a0a0a0,d1d1d1,ffffff', '5 Gray', '...'), 
 			('143240,209d8c,fed761,ffab56,fb6941', '5 Sunset', '...'), 
 			('ff0000,0000ff,00ff00,ffff00,00ffff', '5 Code', '...'),
+			('3a4342,2e302f,242325,d5cc9e,d6412b', '5 Sea Wolf', '...'),
 			('9b59b6,3498db,2ecc71,f1c40f,e67e22,e74c3c,ecf0f1,95a5a6', '8 Rainbow', '...')
 		], 
 		name = "Preset", 
-		update = on_dropdown_color_template,
+		update = on_color_dropdown_template,
 		default = 'ff0000,0000ff,00ff00,ffff00,00ffff'
 	)
 
@@ -381,7 +403,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name = "Count",
 		description="Number of color IDs",
 		default = 3,
-		min = 1,
+		min = 2,
 		max = 8
 	)
 
@@ -809,11 +831,17 @@ class Panel_Colors(bpy.types.Panel):
 		# bpy.context.scene.texToolsSettings
 		# row.prop(context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
 		# row.prop(bpy.context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
-
-		row = box.row(align=False)
+		col = box.column(align=True)
+		row = col.row(align=True)
 		row.prop(context.scene.texToolsSettings, "color_ID_templates", text="")
-		row.prop(context.scene.texToolsSettings, "color_ID_count", text="", expand=False)
+		row = col.row(align=True)
+		row.prop(context.scene.texToolsSettings, "color_ID_count", text="Colors", expand=False)
 
+		row.operator(op_uv_size_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+
+		# col = row.column()
+		# col.alignment = 'RIGHT'
+		# 
 		# Color rows
 		row = box.row(align=True)
 		for i in range(context.scene.texToolsSettings.color_ID_count):

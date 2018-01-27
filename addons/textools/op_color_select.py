@@ -41,3 +41,5 @@ class op(bpy.types.Operator):
 def select_color(self, context, index):
 	obj = bpy.context.active_object
 	
+	if bpy.context.active_object.mode != 'EDIT':
+		bpy.ops.object.mode_set(mode='EDIT')

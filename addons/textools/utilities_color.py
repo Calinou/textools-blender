@@ -11,6 +11,8 @@ from . import settings
 
 material_prefix = "TT_color_"
 
+
+
 def hex_to_color(hex):
 	gamma = 2.2
 	hex = hex.strip('#')
@@ -34,10 +36,8 @@ def get_material_name(index):
 
 
 def get_color(index):
-
 	if index < bpy.context.scene.texToolsSettings.color_ID_count:
 		return getattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(index))
-
 	return None
 
 

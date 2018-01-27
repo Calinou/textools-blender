@@ -92,7 +92,7 @@ def assign_color(self, context, index):
 		if area.type == 'VIEW_3D':
 			for space in area.spaces:
 				if space.type == 'VIEW_3D':
-					space.viewport_shade = 'TEXTURED'
+					space.viewport_shade = 'MATERIAL'
 
 	bpy.ops.object.mode_set(mode=previous_mode)
 

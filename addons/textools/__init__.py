@@ -51,6 +51,7 @@ if "bpy" in locals():
 	imp.reload(op_uv_resize)
 	imp.reload(op_uv_size_get)
 	imp.reload(op_color_assign)
+	imp.reload(op_color_select)
 
 	
 else:
@@ -87,6 +88,7 @@ else:
 	from . import op_uv_resize
 	from . import op_uv_size_get
 	from . import op_color_assign
+	from . import op_color_select
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -803,6 +805,7 @@ class Panel_Colors(bpy.types.Panel):
 				if bpy.context.active_object.mode == 'EDIT':
 					icon_assign = 'FACESEL'
 
+
 		# bpy.context.scene.texToolsSettings
 		# row.prop(context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
 		# row.prop(bpy.context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
@@ -816,7 +819,12 @@ class Panel_Colors(bpy.types.Panel):
 		for i in range(context.scene.texToolsSettings.color_ID_count):
 			col = row.column(align=True)
 			col.prop(context.scene.texToolsSettings, "color_ID_color_{}".format(i), text="")
-			col.operator(op_color_assign.op.bl_idname, text="", icon = icon_assign).index = i
+			col.operator(op_color_assign.op.bl_idname, text="", icon = "FILE_TICK").index = i
+			
+			if bpy.context.active_object:
+				if bpy.context.active_object.type == 'MESH':
+					if bpy.context.active_object.mode == 'EDIT':
+						col.operator(op_color_select.op.bl_idname, text="", icon = "FACESEL").index = i
 
 		
 

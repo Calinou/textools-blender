@@ -8,6 +8,9 @@ from math import pi
 from . import utilities_uv
 
 
+id_shape_key_mesh = "mesh"
+id_shape_key_uv = "uv"
+
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_swap_uv_xyz"
 	bl_label = "Swap UV 2 XYZ"
@@ -35,25 +38,145 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-		
-		swap(context)
+		swap_uv_xyz(context)
 		return {'FINISHED'}
 
 
-def swap(context):
+def swap_uv_xyz(context):
 	print("....")
 
 	
+	
+	obj = bpy.context.active_object
+
+	
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+	# Add shape keys
+	# obj.shape_key_add(id_shape_key_mesh)
+	# obj.shape_key_add(id_shape_key_uv)
+	
+
 	bpy.ops.object.mode_set(mode='EDIT')
 
 	obj = bpy.context.active_object;
 	bm = bmesh.from_edit_mesh(obj.data);
 	uvLayer = bm.loops.layers.uv.verify();
 
+	# bpy.data.shape_keys["Key"].key_blocks[id_shape_key_uv].value = 1
+
+
+	# Find unique UV verts
+	clusters = []
+
 	for face in bm.faces:
-		# indexFace = face.index;
 		for loop in face.loops:
-			# if loop[uvLayer].select is True:
+			uv = loop[uvLayer]
+
+			is_merged = False
+			for cluster in clusters:
+				d = (uv.uv - cluster.uvs[0].uv).length
+				# print("{}:{}  d: {:d}   =  {:d}|{:d} - {:d}|{:d}  == {} ".format(
+				# 	loop.vert.index, cluster.vertex.index,
+				# 	int(d * 512),
+				# 	int((uv.uv*512).x), int((uv.uv*512).y),
+				# 	int((cluster.uvs[0].uv*512).x), int((cluster.uvs[0].uv*512).y), 
+				# 	d <= 0.001
+				# ))
+
+				if d <= 0.001:
+					# Merge
+					# print("merge {} at {} ".format(loop.vert.index, d))
+					cluster.append(uv)
+					isMerged = True;
+					break;
+
+			if not is_merged:
+				print("Add new {}".format(loop.vert.index))
+				# New cluster
+				clusters.append( 
+					UVCluster(loop.vert, [uv] )
+				)
+
+	print("UV clusters: {0}".format(len(clusters)))
+	for cluster in clusters:
+		print("C: {}  = {}x ".format(cluster.vertex.index, len(cluster.uvs)))
+
+
+	# clusters = []
+	# uv_to_clusters = {}
+	# vert_to_clusters = {}
+
+	# for face in bm.faces:
+	# 	if face.select:
+	# 		for loop in face.loops:
+	# 			vert = loop.vert
+	# 			uv = loop[uvLayer]
+				
+	# 			# vert_to_uv
+	# 			if vert not in vert_to_uv:
+	# 				vert_to_uv[vert] = [uv];
+	# 			else:
+	# 				vert_to_uv[vert].append(uv)
+
+	# 			# uv_to_vert
+	# 			if uv not in uv_to_vert:
+	# 				uv_to_vert[ uv ] = vert;
+	# 			if uv not in uv_to_face:
+	# 				uv_to_face[ uv ] = face;
+
+	# 			# clusters
+	# 			isMerged = False
+	# 			for cluster in clusters:
+	# 				d = (uv.uv - cluster.uvs[0].uv).length
+	# 				if d <= 0.0000001:
+	# 					#Merge
+	# 					cluster.append(uv)
+	# 					uv_to_clusters[uv] = cluster
+	# 					if vert not in vert_to_clusters:
+	# 						vert_to_clusters[vert] = cluster
+	# 					isMerged = True;
+	# 					break;
+	# 			if not isMerged:
+	# 				#New Group
+	# 				clusters.append( UVCluster(vert, [uv]) )
+	# 				uv_to_clusters[uv] = clusters[-1]
+	# 				if vert not in vert_to_clusters:
+	# 						vert_to_clusters[vert] = clusters[-1]
+
+
+
+class UVCluster:
+	uvs = []
+	vertex = None
+	
+	def __init__(self, vertex, uvs):
+		self.vertex = vertex
+		self.uvs = uvs
+
+	def append(self, uv):
+		self.uvs.append(uv)
+
+
+
+
+
+
+
+
+
+
+
+
+
+	# id_shape_key_mesh =
+	# id_shape_key_uv = "
+
+
+	# print("Shape keys '{0}'".format(obj.data.shape_keys))
+	'''
+	for face in bm.faces:
+		for loop in face.loops:
 			uv = loop[uvLayer].uv
 			# print("uv: "+str(uv.x)+" , "+str(uv.y))
 			# print("Info: "+str(loop.vert.co))
@@ -73,7 +196,7 @@ def swap(context):
 	bpy.ops.transform.resize(value=(1, 1, 0), constraint_axis=(False, False, True), constraint_orientation='GLOBAL', proportional='DISABLED')
 
 	print("Box? "+str(box))
-
+	'''
 
 
 

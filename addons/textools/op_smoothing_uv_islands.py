@@ -1,9 +1,10 @@
 import bpy
 import bmesh
 import operator
+import math
 from mathutils import Vector
 from collections import defaultdict
-from math import pi
+
 
 from . import utilities_uv
 from . import utilities_ui
@@ -56,9 +57,13 @@ def smooth_uv_islands(self, context):
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
 	bpy.ops.uv.textools_select_islands_outline()
 	bpy.ops.mesh.mark_sharp()
-
+	bpy.ops.mesh.select_all(action='DESELECT')
+	
 	# Apply Edge split modifier
-	bpy.ops.object.modifier_add(type='EDGE_SPLIT')
-	bpy.context.object.modifiers["EdgeSplit"].use_edge_angle = False
+	bpy.context.object.data.use_auto_smooth = True
+	bpy.context.object.data.auto_smooth_angle = math.pi
+
+	# bpy.ops.object.modifier_add(type='EDGE_SPLIT')
+	# bpy.context.object.modifiers["EdgeSplit"].use_edge_angle = False
 
 	bpy.ops.object.mode_set(mode='OBJECT')

@@ -20,8 +20,9 @@ if "bpy" in locals():
 	import imp
 	imp.reload(settings)
 	imp.reload(utilities_bake)
-	imp.reload(utilities_ui)
+	imp.reload(utilities_color)
 	imp.reload(utilities_texel)
+	imp.reload(utilities_ui)
 	imp.reload(utilities_uv)
 	
 	imp.reload(op_align)
@@ -49,13 +50,15 @@ if "bpy" in locals():
 	imp.reload(op_uv_crop)
 	imp.reload(op_uv_resize)
 	imp.reload(op_uv_size_get)
+	imp.reload(op_color_assign)
 
 	
 else:
 	from . import settings
 	from . import utilities_bake
-	from . import utilities_ui
+	from . import utilities_color
 	from . import utilities_texel
+	from . import utilities_ui
 	from . import utilities_uv
 
 	from . import op_align
@@ -83,6 +86,7 @@ else:
 	from . import op_uv_crop
 	from . import op_uv_resize
 	from . import op_uv_size_get
+	from . import op_color_assign
 	
 
 # Import general modules. Important: must be placed here and not on top
@@ -210,6 +214,7 @@ class op_select_bake_type(bpy.types.Operator):
 
 
 def on_dropdown_size(self, context):
+	# Help: http://elfnor.com/drop-down-and-button-select-menus-for-blender-operator-add-ons.html
 	size = int(bpy.context.scene.texToolsSettings.size_dropdown)
 	bpy.context.scene.texToolsSettings.size[0] = size;
 	bpy.context.scene.texToolsSettings.size[1] = size;
@@ -232,6 +237,20 @@ def on_dropdown_uv_channel(self, context):
 				index = int(bpy.context.scene.texToolsSettings.uv_channel)
 				if index < len(bpy.context.object.data.uv_textures):
 					bpy.context.object.data.uv_textures.active_index = index
+
+
+
+def on_dropdown_color_template(self, context):
+	# Change Mesh UV Channel
+	hex_colors = bpy.context.scene.texToolsSettings.color_ID_templates.split(',')
+	context.scene.texToolsSettings.color_ID_count = len(hex_colors)
+
+	for i in range(0, len(hex_colors)):
+		color = utilities_color.hex_to_color("#"+hex_colors[i])
+		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), color)
+
+
+	print("Color: "+",".join(hex_colors))
 
 
 
@@ -328,6 +347,40 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default = 256,
 		min = 0.0
 		# max = 100.00
+	)
+
+
+	def get_color():
+		return bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", default=(0.5, 0.5, 0.5), size=3, max=1.0, min=0.0)#, update=update_color_1
+
+	color_ID_color_0 = get_color()
+	color_ID_color_1 = get_color()
+	color_ID_color_2 = get_color()
+	color_ID_color_3 = get_color()
+	color_ID_color_4 = get_color()
+	color_ID_color_5 = get_color()
+	color_ID_color_6 = get_color()
+	color_ID_color_7 = get_color()
+	# color_ID_color_8 = get_color()
+	
+	color_ID_templates = bpy.props.EnumProperty(items= 
+		[	
+			('000000,656565,a0a0a0,d1d1d1,ffffff', '5 Gray', '...'), 
+			('143240,209d8c,fed761,ffab56,fb6941', '5 Sunset', '...'), 
+			('ff0000,0000ff,00ff00,ffff00,00ffff', '5 Code', '...'),
+			('9b59b6,3498db,2ecc71,f1c40f,e67e22,e74c3c,ecf0f1,95a5a6', '8 Rainbow', '...')
+		], 
+		name = "Preset", 
+		update = on_dropdown_color_template,
+		default = 'ff0000,0000ff,00ff00,ffff00,00ffff'
+	)
+
+	color_ID_count = bpy.props.IntProperty(
+		name = "Count",
+		description="Number of color IDs",
+		default = 3,
+		min = 1,
+		max = 8
 	)
 
 	# bake_do_save = bpy.props.BoolProperty(
@@ -437,7 +490,6 @@ class Panel_Layout(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
 			col.alert = True
-			col.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ")
 			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("op_island_straighten_edge_loops"))
 			row = col.row(align=True)
 			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = icon_get("op_island_mirror")).is_stack = False;
@@ -506,15 +558,16 @@ class Panel_Layout(bpy.types.Panel):
 
 		
 		#---------- Mesh ------------
+
+		layout.label(text="Mesh")
+		box = layout.box()
+		col = box.column(align=True)
+		col.operator(op_smoothing_uv_islands.op.bl_idname, text="Smooth by UV", icon_value = icon_get("op_smoothing_uv_islands"))
 		if bpy.app.debug_value != 0:
-			layout.label(text="Mesh")
-			box = layout.box()
-			box.alert = True
-			box.operator(op_smoothing_uv_islands.op.bl_idname, text="Smooth by UV", icon_value = icon_get("op_select_islands_outline"))
-			# op_UV_to_XYZ
-			# 
-
-
+			row = col.row(align=True)
+			row.alert = True
+			row.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ")
+			
 
 
 
@@ -556,6 +609,7 @@ class Panel_Layout(bpy.types.Panel):
 		# box.operator(bpy.ops.paint.sample_color.idname())
 		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
 		
+
 
 
 class Panel_Bake(bpy.types.Panel):
@@ -727,8 +781,47 @@ class Panel_Bake(bpy.types.Panel):
 				elif count_types['cage'] > 0:
 					r.label(text="")
 
-				
+
+
+class Panel_Colors(bpy.types.Panel):
+	bl_label = "Color ID"
+	bl_space_type = 'IMAGE_EDITOR'
+	bl_region_type = 'TOOLS'
+	bl_category = get_tab_name()
+
+	def draw(self, context):
+		layout = self.layout
 		
+		# layout.label(text="Select face and color")
+		
+		box = layout.box()
+		
+
+		icon_assign = 'OBJECT_DATA'
+		if bpy.context.active_object:
+			if bpy.context.active_object.type == 'MESH':
+				if bpy.context.active_object.mode == 'EDIT':
+					icon_assign = 'FACESEL'
+
+		# bpy.context.scene.texToolsSettings
+		# row.prop(context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
+		# row.prop(bpy.context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
+
+		row = box.row(align=False)
+		row.prop(context.scene.texToolsSettings, "color_ID_templates", text="")
+		row.prop(context.scene.texToolsSettings, "color_ID_count", text="", expand=False)
+
+		# Color rows
+		row = box.row(align=True)
+		for i in range(context.scene.texToolsSettings.color_ID_count):
+			col = row.column(align=True)
+			col.prop(context.scene.texToolsSettings, "color_ID_color_{}".format(i), text="")
+			col.operator(op_color_assign.op.bl_idname, text="", icon = icon_assign).index = i
+
+		
+
+		# https://github.com/blenderskool/kaleidoscope/blob/fb5cb1ab87a57b46618d99afaf4d3154ad934529/spectrum.py
+	
 			
 
 
@@ -742,9 +835,8 @@ def register():
 	bpy.utils.register_module(__name__)
 	
 	#Register settings
-	# bpy.utils.register_class(TexToolsSettings)
 	bpy.types.Scene.texToolsSettings = bpy.props.PointerProperty(type=TexToolsSettings)
-	
+
 	#GUI Utilities
 	utilities_ui.register()
 
@@ -772,6 +864,7 @@ def register():
 		"op_select_islands_identical.png", 
 		"op_select_islands_outline.png", 
 		"op_select_islands_overlap.png", 
+		"op_smoothing_uv_islands.png", 
 		"op_texel_checker_map.png", 
 		"op_texture_reload_all.png",
 		"op_unwrap_faces_iron.png", 

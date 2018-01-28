@@ -381,38 +381,46 @@
 			<p>Color ID's are a quick way to block out your model with a set of colors or face groups. Colors are global accross your blend file and can be adjusted at any time.</p>
 			<div class="Panel">
 				<div class="Columns2">
-					<div class="Content">
-						<h2>Color templates<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <div class="Content">
+					<h2>Color templates<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>Choose from a collection of color themes. Once selected this will replace your previous colors but maintain your material ID's.</p>
+						<p><img src="images/demo_color_id_templates.gif" alt=""/></p>
 					</div>
 					<div class="Content">
-						<h2><img src="images/op_texel_density_get.png" width="32" height="32" alt=""/> Get Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>...</p>
-					</div>
+					  <h2> Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					  <p>The amount of colors to display and use. Choose <strong>between 2 and 10</strong>.</p>
+					  <p><img src="images/demo_color_id_colors.gif" alt=""/></p>
+			      </div>
+					<div class="Content">
+					  <h2><img src="images/op_texel_density_get.png" width="32" height="32" alt=""/> Get <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<p>Get color slots from existing material slots of the selected object.</p>
+				  </div>
 					<div class="Content">
 						<h2>Clear<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>Clears the multi material setup of the selected objects.</p>
 					</div>
-					<div class="Content">
-						<h2>Color Controls<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>....</p>
-						<table width="100%" border="0" cellspacing="10" cellpadding="0">
-							<tr>
-								<td valign="top"><strong>Assign</strong></td>
-								<td valign="top">Assigns the color to the selected Objects in object mode <strong><img class="Icon" src="images/show_selection_object.png" alt=""/></strong> or selected faces<strong><img class="Icon" src="images/show_selection_view_face.png" alt=""/></strong> in edit mode.</td>
-							</tr>
-							<tbody>
-								<tr>
-									<td valign="top"><strong> Select</strong></td>
-									<td valign="top">...</td>
-								</tr>
-							</tbody>
-						</table>
+				  <div class="Content">
+				    <h2>Color Controls<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<p>The main interface to assign and select colors on selected objects or faces in edit mode.</p>
+						<p><img src="images/color_id_swatches.png" alt=""/></p>
+					  <table width="100%" border="0" cellspacing="10" cellpadding="0">
+						  <tr>
+						    <td valign="top"><strong><img class="Icon" src="images/color_id_color.png" alt=""/> Color</strong></td>
+						    <td valign="top">Change the global color for this swatch. You can change colors before or after you assigned them.</td>
+					    </tr>
+						  <tr>
+							  <td width="164" valign="top"><strong><img class="Icon" src="images/op_color_assign.png" alt=""/> Assign</strong></td>
+							  <td width="700" valign="top">Assigns the color to the selected Objects in object mode <strong><img class="Icon" src="images/show_selection_object.png" alt=""/></strong> or selected faces<strong><img class="Icon" src="images/show_selection_view_face.png" alt=""/></strong> in edit mode.</td>
+					    </tr>
+						  <tbody>
+							  <tr>
+								  <td valign="top"><strong> <img class="Icon" src="images/show_selection_view_face.png" alt=""/> Select</strong></td>
+								  <td valign="top">Only in edit mode: Select faces by color.</td>
+							  </tr>
+						  </tbody>
+				    </table>
 					</div>
-					<div class="Content">
-						<h2>Pack Texture</h2>
-						<p>.Converts the active color materials into a packed texture using just 1 material instead. Each face is unwrapped to match the color area of the texture.</p>
-					</div>
+					
 				</div>
 			</div>
 			<hr>

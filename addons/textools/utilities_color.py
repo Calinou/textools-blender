@@ -51,6 +51,16 @@ def get_material(index):
 
 	# Create new image instead
 	material = bpy.data.materials.new(name)
-	material.diffuse_color = get_color(index)
+	assign_material_color(material, get_color(index))
 
 	return material
+
+
+def assign_material_color(index):
+	material = get_material(index)
+	if material:
+		material.diffuse_color = get_color(index)
+
+		if bpy.context.scene.render.engine == 'BLENDER_RENDER' or bpy.context.scene.render.engine == 'BLENDER_GAME':
+			# These viewports require lights or unlit shading to be visible
+			bpy.context.object.active_material.use_shadeless = True

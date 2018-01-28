@@ -25,19 +25,20 @@ h1{
 	color: #e5e5e5;
 	text-shadow: 0px 2px 2px #000000;
 }
-
-
+h2{
+	text-shadow: 0px 1px 1px #6c6c6c;
+	color: #222222;
+}
 h3{
 	color: #bebebe;
 	text-align: center;
 }
 
-
-
-h2{
-	text-shadow: 0px 1px 1px #6c6c6c;
-	color: #222222;
+.New {
+	float: right;
 }
+
+
 hr {
 	/*background-color: #fff;*/
 	color:#2b2b2b; 
@@ -66,33 +67,26 @@ a.NoButton:link, a.NoButton:visited, a.NoButton:hover, a.NoButton:active {
 	color: #ae7f37;
 }
 
-.PanelColumns {
+
+.Panel{
 	padding: 12px;
 	background-color: #464646;
 	border-radius: 8px;
 	box-shadow: 0px 3px #131313;
+	border: 1px solid  #636363;
+}
+.Columns2 {
 	column-count: 2;
 	column-gap: 40px;
 	column-rule: 1px solid #202020;
-	border: 1px solid  #636363;
 }
-.PanelColumns3 {
-	padding: 12px;
-	background-color: #464646;
-	border-radius: 8px;
-	box-shadow: 0px 3px #131313;
+.Columns3 {
 	column-count: 3;
 	column-gap: 40px;
 	column-rule: 1px solid #202020;
-	border: 1px solid  #636363;
 }
 
-
-
-
-
-
-.PanelContent:not(:last-child):after {
+.Content:not(:last-child):after {
 	/*background-color: #333;*/
 	content: "";
 	display: inline-block;
@@ -110,7 +104,7 @@ a.NoButton:link, a.NoButton:visited, a.NoButton:hover, a.NoButton:active {
 
 
 
-.PanelContent {
+.Content {
 	/*column-span: all;*/
 	margin-top: 0px;
 	padding-top: 0px;
@@ -121,12 +115,12 @@ a.NoButton:link, a.NoButton:visited, a.NoButton:hover, a.NoButton:active {
 
 	/*display:inline-block*/
 }
-.PanelContent h2 img {
+.Content h2 img:not(.New) {
 	/*padding-top:-12px;*/
 	height:24px;
 	width:24px;
 }
-.PanelContent p img:not(.Icon){
+.Content p img:not(.Icon){
 	max-width: 100%;
     height: auto;   
 	

@@ -10,7 +10,7 @@ from . import utilities_color
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_color_assign"
 	bl_label = "Assign Color"
-	bl_description = "..."
+	bl_description = "Assign color to selected objects or faces in edit mode."
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	index = bpy.props.IntProperty(description="Color Index", default=0)
@@ -52,8 +52,6 @@ def assign_color(self, context, index):
 	faces = []
 
 
-	
-
 	#Assign to all or just selected faces?
 	if bpy.context.active_object.mode == 'EDIT':
 		faces = [face for face in bm.faces if face.select]
@@ -80,51 +78,19 @@ def assign_color(self, context, index):
 			slot.material = utilities_color.get_material(index)
 		
 		# Verify color
-		slot.material.diffuse_color = utilities_color.get_color(index)
+		utilities_color.assign_material_color(index)
 
 		# Assign to selection
 		bpy.context.object.active_material_index = index
 		bpy.ops.object.material_slot_assign()
 
 
-	#Change View mode to TEXTURED
+	#Change View mode to MATERIAL
 	for area in bpy.context.screen.areas:
 		if area.type == 'VIEW_3D':
 			for space in area.spaces:
 				if space.type == 'VIEW_3D':
 					space.viewport_shade = 'MATERIAL'
 
+	# restore mode
 	bpy.ops.object.mode_set(mode=previous_mode)
-
-
-		# for slot in obj.material_slots:
-		# 	if not slot.material or slot.material.name != name_material:
-		# 		slot.material = utilities_color.get_material(index)
-		# 		# Replace
-		# 		print("  Slot: {}".format(slot.material.name))
-
-
-
-
-
-
-		# Search in material & texture slots
-		# for slot_mat in obj.material_slots:
-		# 	# Check for traditional texture slots in material
-		# 	for slot_tex in slot_mat.material.texture_slots:
-		# 		if slot_tex and slot_tex.texture and hasattr(slot_tex.texture , 'image'):
-		# 			return slot_tex.texture.image
-			
-		# 	# Check if material uses Nodes
-		# 	if slot_mat.material:
-		# 		if hasattr(slot_mat.material , 'node_tree'):
-		# 			if slot_mat.material.node_tree:
-		# 				for node in slot_mat.material.node_tree.nodes:
-		# 					if type(node) is bpy.types.ShaderNodeTexImage:
-		# 						if node.image:
-		# 							return node.image
-
-
-
-def get_material(index):
-	print("...")

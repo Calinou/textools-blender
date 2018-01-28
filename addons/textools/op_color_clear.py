@@ -8,12 +8,11 @@ from math import pi
 from . import utilities_color
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_color_select"
-	bl_label = "Assign Color"
-	bl_description = "Select faces by color material"
+	bl_idname = "uv.textools_color_clear"
+	bl_label = "Clear Colors"
+	bl_description = "Clear color materials on model"
 	bl_options = {'REGISTER', 'UNDO'}
 	
-	index = bpy.props.IntProperty(description="Color Index", default=0)
 
 	@classmethod
 	def poll(cls, context):
@@ -33,16 +32,13 @@ class op(bpy.types.Operator):
 		return True
 	
 	def execute(self, context):
-		select_color(self, context, self.index)
+		clear_colors(self, context)
 		return {'FINISHED'}
 
 
 
-def select_color(self, context, index):
-	print("Color select "+str(index) )
+def clear_colors(self, context, index):
+	# obj = bpy.context.active_object
 
-	obj = bpy.context.active_object
+	print("Clear materials for selected objcts")
 	
-	if bpy.context.active_object.mode != 'EDIT':
-		bpy.ops.object.mode_set(mode='EDIT')
-

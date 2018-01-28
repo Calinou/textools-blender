@@ -2,11 +2,10 @@ bl_info = {
 	"name": "TexTools",
 	"description": "Professional UV and Texture tools for Blender.",
 	"author": "renderhjs",
-	"version": (0, 9, 0),
+	"version": (1, 0, 0),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
-	"warning": "Early release, expect bugs.",
 	"wiki_url": "http://renderhjs.net/textools/blender/"
 }
 
@@ -31,6 +30,7 @@ if "bpy" in locals():
 	imp.reload(op_bake_organize_names)
 	imp.reload(op_color_assign)
 	imp.reload(op_color_select)
+	imp.reload(op_color_clear)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
 	imp.reload(op_island_mirror)
@@ -68,6 +68,7 @@ else:
 	from . import op_bake_organize_names
 	from . import op_color_assign
 	from . import op_color_select
+	from . import op_color_clear
 	from . import op_island_align_edge
 	from . import op_island_align_sort
 	from . import op_island_mirror
@@ -245,7 +246,7 @@ def on_color_changed(self, context):
 	for i in range(0, context.scene.texToolsSettings.color_ID_count):
 		material = utilities_color.get_material(i)
 		if material:
-			material.diffuse_color = utilities_color.get_color(i)
+			utilities_color.assign_material_color(i)
 
 
 def on_color_dropdown_template(self, context):
@@ -258,14 +259,7 @@ def on_color_dropdown_template(self, context):
 		color = utilities_color.hex_to_color("#"+hex_colors[i])
 		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), color)
 
-		material = utilities_color.get_material(i)
-		if material:
-			print("tweak color {}".format(i))
-			material.diffuse_color = utilities_color.get_color(i)
-
-	# Assign existing materials
-
-	print("Color: "+",".join(hex_colors))
+		utilities_color.assign_material_color(i)
 
 
 
@@ -376,6 +370,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 			update=on_color_changed
 		)#, update=update_color_1
 
+	# 10 Color ID's
 	color_ID_color_0 = get_color()
 	color_ID_color_1 = get_color()
 	color_ID_color_2 = get_color()
@@ -384,11 +379,12 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	color_ID_color_5 = get_color()
 	color_ID_color_6 = get_color()
 	color_ID_color_7 = get_color()
-	# color_ID_color_8 = get_color()
-	
+	color_ID_color_8 = get_color()
+	color_ID_color_9 = get_color()
+
 	color_ID_templates = bpy.props.EnumProperty(items= 
 		[	
-			('000000,656565,a0a0a0,d1d1d1,ffffff', '5 Gray', '...'), 
+			('3d3d3d,7f7f7f,b8b8b8,ffffff', '4 Gray', '...'), 
 			('143240,209d8c,fed761,ffab56,fb6941', '5 Sunset', '...'), 
 			('ff0000,0000ff,00ff00,ffff00,00ffff', '5 Code', '...'),
 			('3a4342,2e302f,242325,d5cc9e,d6412b', '5 Sea Wolf', '...'),
@@ -404,7 +400,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		description="Number of color IDs",
 		default = 3,
 		min = 2,
-		max = 8
+		max = 10
 	)
 
 	# bake_do_save = bpy.props.BoolProperty(
@@ -837,22 +833,60 @@ class Panel_Colors(bpy.types.Panel):
 		row = col.row(align=True)
 		row.prop(context.scene.texToolsSettings, "color_ID_count", text="Colors", expand=False)
 
-		row.operator(op_uv_size_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+		row.operator(op_uv_size_get.op.bl_idname, text="Get", icon = 'EYEDROPPER')
+		row.operator(op_color_clear.op.bl_idname, text="", icon = 'X')
 
+		
 		# col = row.column()
 		# col.alignment = 'RIGHT'
 		# 
 		# Color rows
-		row = box.row(align=True)
-		for i in range(context.scene.texToolsSettings.color_ID_count):
+
+		max_columns = 5
+		if context.scene.texToolsSettings.color_ID_count < max_columns:
+			max_columns = context.scene.texToolsSettings.color_ID_count
+
+		count = math.ceil(context.scene.texToolsSettings.color_ID_count / max_columns)*max_columns
+
+		for i in range(count):
+
+			if i%max_columns == 0:
+				row = box.row(align=True)
+
 			col = row.column(align=True)
-			col.prop(context.scene.texToolsSettings, "color_ID_color_{}".format(i), text="")
-			col.operator(op_color_assign.op.bl_idname, text="", icon = "FILE_TICK").index = i
+			if i < context.scene.texToolsSettings.color_ID_count:
+				col.prop(context.scene.texToolsSettings, "color_ID_color_{}".format(i), text="")
+				col.operator(op_color_assign.op.bl_idname, text="", icon = "FILE_TICK").index = i
+				
+				if bpy.context.active_object:
+					if bpy.context.active_object.type == 'MESH':
+						if bpy.context.active_object.mode == 'EDIT':
+							col.operator(op_color_select.op.bl_idname, text="", icon = "FACESEL").index = i
+			else:
+				col.label(text=" ")
+
+
+		if bpy.app.debug_value != 0:
+			col = layout.column(align=True)
+			col.alert = True
+			col.operator(op_color_clear.op.bl_idname, text="Pack Texture", icon = 'X')
+			col.operator(op_color_clear.op.bl_idname, text="Tex 2 Colors", icon = 'X')
+
+
+
+		# row = box.row(align=True)
+		# for i in range(context.scene.texToolsSettings.color_ID_count):
+
+
+
+		# 	col = row.column(align=True)
+		# 	col.prop(context.scene.texToolsSettings, "color_ID_color_{}".format(i), text="")
+		# 	col.operator(op_color_assign.op.bl_idname, text="", icon = "FILE_TICK").index = i
 			
-			if bpy.context.active_object:
-				if bpy.context.active_object.type == 'MESH':
-					if bpy.context.active_object.mode == 'EDIT':
-						col.operator(op_color_select.op.bl_idname, text="", icon = "FACESEL").index = i
+		# 	if bpy.context.active_object:
+		# 		if bpy.context.active_object.type == 'MESH':
+		# 			if bpy.context.active_object.mode == 'EDIT':
+		# 				col.operator(op_color_select.op.bl_idname, text="", icon = "FACESEL").index = i
 
 		
 

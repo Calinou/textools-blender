@@ -29,6 +29,7 @@ if "bpy" in locals():
 	imp.reload(op_bake_explode)
 	imp.reload(op_bake_organize_names)
 	imp.reload(op_color_assign)
+	imp.reload(op_color_elements_setup)
 	imp.reload(op_color_select)
 	imp.reload(op_color_clear)
 	imp.reload(op_island_align_edge)
@@ -67,6 +68,7 @@ else:
 	from . import op_bake_explode
 	from . import op_bake_organize_names
 	from . import op_color_assign
+	from . import op_color_elements_setup
 	from . import op_color_select
 	from . import op_color_clear
 	from . import op_island_align_edge
@@ -249,16 +251,16 @@ def on_color_changed(self, context):
 			utilities_color.assign_material_color(i)
 
 
+
 def on_color_dropdown_template(self, context):
 	# Change Mesh UV Channel
 	hex_colors = bpy.context.scene.texToolsSettings.color_ID_templates.split(',')
-	context.scene.texToolsSettings.color_ID_count = len(hex_colors)
+	bpy.context.scene.texToolsSettings.color_ID_count = len(hex_colors)
 
 	# Assign color slots
 	for i in range(0, len(hex_colors)):
 		color = utilities_color.hex_to_color("#"+hex_colors[i])
 		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), color)
-
 		utilities_color.assign_material_color(i)
 
 
@@ -359,23 +361,23 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	)
 
 
-	def get_color():
+	def get_color(hex = "808080"):
 		return bpy.props.FloatVectorProperty(
 			name="Color1", 
 			description="Set Color 1 for the Palette", 
 			subtype="COLOR", 
-			default=(0.5, 0.5, 0.5), 
+			default=utilities_color.hex_to_color(hex), 
 			size=3, 
 			max=1.0, min=0.0,
 			update=on_color_changed
 		)#, update=update_color_1
 
 	# 10 Color ID's
-	color_ID_color_0 = get_color()
-	color_ID_color_1 = get_color()
-	color_ID_color_2 = get_color()
-	color_ID_color_3 = get_color()
-	color_ID_color_4 = get_color()
+	color_ID_color_0 = get_color(hex="ff0000")
+	color_ID_color_1 = get_color(hex="0000ff")
+	color_ID_color_2 = get_color(hex="00ff00")
+	color_ID_color_3 = get_color(hex="ffff00")
+	color_ID_color_4 = get_color(hex="00ffff")
 	color_ID_color_5 = get_color()
 	color_ID_color_6 = get_color()
 	color_ID_color_7 = get_color()
@@ -398,7 +400,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	color_ID_count = bpy.props.IntProperty(
 		name = "Count",
 		description="Number of color IDs",
-		default = 3,
+		default = 5,
 		min = 2,
 		max = 10
 	)
@@ -815,32 +817,17 @@ class Panel_Colors(bpy.types.Panel):
 		# layout.label(text="Select face and color")
 		
 		box = layout.box()
-		
 
-		icon_assign = 'OBJECT_DATA'
-		if bpy.context.active_object:
-			if bpy.context.active_object.type == 'MESH':
-				if bpy.context.active_object.mode == 'EDIT':
-					icon_assign = 'FACESEL'
-
-
-		# bpy.context.scene.texToolsSettings
-		# row.prop(context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
-		# row.prop(bpy.context.scene.texToolsSettings, "color_ID_palette", text="COLOR PALETTE")
 		col = box.column(align=True)
+		
 		row = col.row(align=True)
 		row.prop(context.scene.texToolsSettings, "color_ID_templates", text="")
+		
 		row = col.row(align=True)
 		row.prop(context.scene.texToolsSettings, "color_ID_count", text="Colors", expand=False)
+		row.operator(op_color_clear.op.bl_idname, text="Clear", icon = 'X')
 
-		row.operator(op_uv_size_get.op.bl_idname, text="Get", icon = 'EYEDROPPER')
-		row.operator(op_color_clear.op.bl_idname, text="", icon = 'X')
 
-		
-		# col = row.column()
-		# col.alignment = 'RIGHT'
-		# 
-		# Color rows
 
 		max_columns = 5
 		if context.scene.texToolsSettings.color_ID_count < max_columns:
@@ -857,11 +844,12 @@ class Panel_Colors(bpy.types.Panel):
 			if i < context.scene.texToolsSettings.color_ID_count:
 				col.prop(context.scene.texToolsSettings, "color_ID_color_{}".format(i), text="")
 				col.operator(op_color_assign.op.bl_idname, text="", icon = "FILE_TICK").index = i
-				
+	
 				if bpy.context.active_object:
-					if bpy.context.active_object.type == 'MESH':
-						if bpy.context.active_object.mode == 'EDIT':
-							col.operator(op_color_select.op.bl_idname, text="", icon = "FACESEL").index = i
+					if bpy.context.active_object in bpy.context.selected_objects:
+						if len(bpy.context.selected_objects) == 1:
+							if bpy.context.active_object.type == 'MESH':
+								col.operator(op_color_select.op.bl_idname, text="", icon = "FACESEL").index = i
 			else:
 				col.label(text=" ")
 
@@ -869,8 +857,10 @@ class Panel_Colors(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
 			col.alert = True
+			col.operator(op_color_elements_setup.op.bl_idname, text="Setup Elements", icon = 'X')
 			col.operator(op_color_clear.op.bl_idname, text="Pack Texture", icon = 'X')
 			col.operator(op_color_clear.op.bl_idname, text="Tex 2 Colors", icon = 'X')
+			col.operator(op_color_clear.op.bl_idname, text="Vertex Colors", icon = 'X')
 
 
 
@@ -945,7 +935,6 @@ def register():
 	for icon in icons:
 		utilities_ui.icon_register(icon)
 	
-
 	# #Key Maps
 	# wm = bpy.context.window_manager
 	# if wm.keyconfigs.addon is not None:

@@ -258,7 +258,7 @@
 			</div>
             
             <div class="Info"><h3>Bake Types  </h3></div>
-				<div class="Columns3">
+				<div class="Columns4">
 					<div class="Content">
 						<h2>Normal Tangent</h2>
 						<p><img src="images/bake_normal.png" width="128" height="128" alt=""/></p>
@@ -270,12 +270,17 @@
 						<p>...</p>
 					</div>
 					<div class="Content">
-						<h2>IDiffuse<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2>Diffuse<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>&nbsp;</p>
 						<p>A...</p>
 					</div>
 					<div class="Content">
-						<h2>ID Mesh Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					  <h2>Face Selection<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					  <p>&nbsp;</p>
+					  <p>A...</p>
+				  </div>
+					<div class="Content">
+						<h2>ID  Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p><img src="images/bake_mode_id.png" width="128" height="128" alt=""/></p>
 						<p>Assigns a unique color to each mesh element. This map is often used to quickly select elements in Texture editing Applications such as Photoshop or Substance Painter.    </p>
 					</div>
@@ -392,11 +397,7 @@
 					  <p><img src="images/demo_color_id_colors.gif" alt=""/></p>
 			      </div>
 					<div class="Content">
-					  <h2><img src="images/op_texel_density_get.png" width="32" height="32" alt=""/> Get <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>Get color slots from existing material slots of the selected object.</p>
-				  </div>
-					<div class="Content">
-						<h2>Clear<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					  <h2><img src="images/op_color_clear.png" width="32" height="32" alt=""/> Clear<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>Clears the multi material setup of the selected objects.</p>
 					</div>
 				  <div class="Content">
@@ -415,7 +416,7 @@
 						  <tbody>
 							  <tr>
 								  <td valign="top"><strong> <img class="Icon" src="images/show_selection_view_face.png" alt=""/> Select</strong></td>
-								  <td valign="top">Only in edit mode: Select faces by color.</td>
+								  <td valign="top"><strong>Only in edit mode</strong>: Select faces by color.</td>
 							  </tr>
 						  </tbody>
 				    </table>
@@ -428,13 +429,14 @@
 			<div class="Panel">
 				<div class="Columns2">
 					<div class="Content">
-						<h2>Using GIT source version in Blender</h2>
+					  <h2>Using GIT source version in Blender</h2>
+						<p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a></p>
 						<p>Quite often the latest GIT source code version is not very stable. To run the GIT version I recommend setting up the '<strong>Scripts</strong>' path in the user preferences to point to the GIT folder.</p>
 						<ol>
-							<li>Goto user preferences (<strong>Ctrl</strong> + <strong>Alt</strong> + <strong>U</strong>) </li>
+						  <li>Goto user preferences (<strong>Ctrl</strong> + <strong>Alt</strong> + <strong>U</strong>) </li>
 							<li>In the '<strong>File</strong>' tab set the '<strong>Scripts</strong>' path to '{GIT Path}\' so that blender will pick up 'addons' folder </li>
 							<li>In the 'Add-ons' tab enable TexTools</li>
-						</ol>
+					  </ol>
 					</div>
 					<div class="Content">
 						<h2>Debug mode</h2>
@@ -447,11 +449,12 @@
 						<p><img src="images/demo_enable_debug.gif" alt=""/></p>
 						<p>Additional tools should now be highlighted in red inside the interface.</p>
 					</div>
-					<div class="Content">
+				  <div class="Content">
 						<h2>Code Structure</h2>
-						<p>Each operator for the tools has it's own python package file. Should you want to inspect or change the code this should make it easy to look for the right code. All code is commented fairly thorough and to my best ability simplified.</p>
-						<p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
-						<p>Materials used for baking are stored in the resources folder as *.blend file.</p>
+						<p>Each operator for the tools has it's own <strong>python module file</strong>. Should you want to inspect or change the code this should make it easy to look for the right code. All code is commented fairly thorough and to my best ability simplified.</p>
+					<p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
+					  <p><strong>Materials</strong> used for baking are stored in the resources folder as *.blend file.</p>
+						<p><strong>Icons</strong> are stored in the 'icons' folder and reflect the operator python  module names.</p>
 					</div>
 					<div class="Content">
 						<h2>Release Log</h2>

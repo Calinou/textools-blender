@@ -100,6 +100,11 @@ a.NoButton:link, a.NoButton:visited, a.NoButton:hover, a.NoButton:active {
 	column-gap: 40px;
 	column-rule: 1px solid #202020;
 }
+.Columns4 {
+	column-count: 4;
+	column-gap: 40px;
+	column-rule: 1px solid #202020;
+}
 
 .Content:not(:last-child):after {
 	/*background-color: #333;*/

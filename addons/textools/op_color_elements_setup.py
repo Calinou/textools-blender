@@ -8,7 +8,7 @@ from math import pi
 from . import utilities_color
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_color_clear"
+	bl_idname = "uv.textools_color_elements_setup"
 	bl_label = "Clear Colors"
 	bl_description = "Clear color materials on model"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -37,7 +37,7 @@ class op(bpy.types.Operator):
 
 
 
-def clear_colors(self, context):
+def setup_elements(self, context):
 	obj = bpy.context.active_object
 	
 	# Store previous mode
@@ -47,21 +47,16 @@ def clear_colors(self, context):
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 
-	# Set all faces
-	for face in bm.faces:
-		face.material_index = 0
 
-	# Clear all material slots
-	bpy.ops.object.mode_set(mode='OBJECT')
-	count = len(obj.material_slots)
-	for i in range(count):
-		bpy.ops.object.material_slot_remove()
 
-	# Clear all colors
-	bpy.context.scene.texToolsSettings.color_ID_count = 100
-	for i in range(bpy.context.scene.texToolsSettings.color_ID_count):
-		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), (0.5,0.5,0.5))
-	bpy.context.scene.texToolsSettings.color_ID_count = 4
+	faces_processed = []
+	# bpy.ops.mesh.select_linked_pick(deselect=False, delimit={'NORMAL'}, index=208)
+	# bpy.ops.mesh.select_similar(type='AREA', threshold=0.01)
 
-	# Restore previous mode
+
+
+	# for face in bm.faces:
+	# 	face.material_index = 0
+
+
 	bpy.ops.object.mode_set(mode=previous_mode)

@@ -10,7 +10,7 @@ from . import utilities_color
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_color_select"
 	bl_label = "Assign Color"
-	bl_description = "Select faces by color material"
+	bl_description = "Select faces by this color"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	index = bpy.props.IntProperty(description="Color Index", default=0)
@@ -21,6 +21,10 @@ class op(bpy.types.Operator):
 			return False
 
 		if bpy.context.active_object not in bpy.context.selected_objects:
+			return False
+
+		# Allow only 1 object selected
+		if len(bpy.context.selected_objects) != 1:
 			return False
 
 		if bpy.context.active_object.type != 'MESH':
@@ -46,3 +50,10 @@ def select_color(self, context, index):
 	if bpy.context.active_object.mode != 'EDIT':
 		bpy.ops.object.mode_set(mode='EDIT')
 
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+
+
+	bpy.ops.mesh.select_all(action='DESELECT')
+	for face in bm.faces:
+		if face.material_index == index:
+			face.select = True

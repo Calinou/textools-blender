@@ -34,6 +34,21 @@ h3{
 	text-align: center;
 }
 
+
+.Info{
+	background-color: #333333;
+	padding: 8px;
+	/*background-color: #464646;*/
+	border-radius: 4px;
+	box-shadow: 0px -2px #2a2a2a;
+	/*border: 1px solid  #636363;*/
+	margin-top:12px;
+	margin-bottom:12px;
+	padding-top:2px;
+	padding-bottom:2px;
+}
+
+
 .New {
 	float: right;
 }
@@ -137,4 +152,3 @@ a.NoButton:link, a.NoButton:visited, a.NoButton:hover, a.NoButton:active {
 .Icon{
 	
 }
-

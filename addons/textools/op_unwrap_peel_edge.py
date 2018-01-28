@@ -81,8 +81,7 @@ def unwrap_edges_pipe(self, context):
 
 	bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.0226216)
 	bpy.ops.uv.select_all(action='SELECT')
-	bpy.ops.uv.uv_squares_by_shape()
-
+	bpy.ops.uv.textools_rectify()
 
 	# TODO: Restore initial selection
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')

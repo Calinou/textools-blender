@@ -11,7 +11,7 @@ from . import utilities_ui
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_smoothing_uv_islands"
-	bl_label = "Smooth UV Islands"
+	bl_label = "Apply smooth normals and hard edges for UV Island borders."
 	bl_description = "Set mesh smoothing by uv islands"
 	bl_options = {'REGISTER', 'UNDO'}
 	

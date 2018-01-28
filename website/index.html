@@ -30,13 +30,14 @@
 				<div class="Content">
 					<h2>Download</h2>
 					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a>      </p>
-					<p><strong>What's new</strong></p>
+					<p><strong>What's new</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
 					<ul>
-						<li>Color ID tools</li>
+					  <li>Color ID tools</li>
 						<li>Smooth by UV</li>
 						<li>Peel Edge unwrapping</li>
 						<li>Diffuse Bake type</li>
 						<li>World Normal Bake type</li>
+						<li>Rectify</li>
 					</ul>
 				</div>
 				<div class="Content">
@@ -59,8 +60,7 @@
 				<div class="Content">
 					<h2>Links</h2>
 					<p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a>
-					<br><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donation</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist BBS</a><a href="http://renderhjs.net/textools/">3dsMax Version</a></p>
-					<p>Personal links</p>
+					<br><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donation</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist BBS</a><a href="http://polycount.com/discussion/197226/textools-for-blender">Polycount BBS</a><a href="http://renderhjs.net/textools/">TexTools for 3dsMax</a>					</p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tbody>
 							<tr>
@@ -75,7 +75,7 @@
 			</div>
 		</div><h1>Size Panel</h1>
 		<div class="Panel">
-			<div class="Columns2">
+			<div class="Columns3">
 				<div class="Content">
 					<h2>Size &amp; Padding</h2>
 					<p>Set the texture size in pixels for baking and checker maps. Use the dropdown menu to quickly assign common  texture sizes. </p>
@@ -97,7 +97,7 @@
 				</div>
 				<div class="Content">
 					<h2>UV Channel</h2>
-					<p>Cycle through existing UV channel via this dropdown menu. If no UV map exists a button to create one will appear instead.      </p>
+					<p>Cycle through existing UV channel via this dropdown menu. If no UV map exists a button to <strong>Add</strong> one will appear instead. </p>
 					<p><img src="images/demo_uv_channel.gif" alt=""/></p>
 					<p>The up and down arrow allow you to swap UV channels up or down.</p>
 				</div>
@@ -109,25 +109,30 @@
 			</div>
 		</div><h1>UV Layout Panel</h1>
 		<div class="Panel">
-			<div class="Columns2">
+			<div class="Columns3">
 				<div class="Content">
-					<h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
+				  <h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
+				  <p>Aligns the UV island of the selected UV edge <img class="Icon" src="images/show_selection_uv_edge.png" alt=""/> to the closest 90 degree angle.</p>
+				  <p><img src="images/demo_align_edge_islands.gif" alt=""/></p>
+				  <p><strong>Tip</strong>: You can align mutliple UV islands by edge at once.</p>
+			  </div>
+				<div class="Content">
+				  <h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by Reslav Hollos.</p>
+			  </div>
+				<div class="Content">
+				  <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
+				  <p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
+			  </div>
+				<div class="Content">
+				  <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
 					<p>This tool has 4 directions to align UV islands or UV vertices to. </p>
 					<p>In UV vertex mode <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. </p>
 					<p><img src="images/demo_align.gif" alt=""/></p>
 					<p> In the UV face mode <img src="images/show_selection_uv_face.png" alt="" class="Icon"/>  selected UV islands are aligned to either side of the initial selection bounds.    </p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
-					<p>Aligns the UV island of the selected UV edge <img class="Icon" src="images/show_selection_uv_edge.png" alt=""/>  to the closest 90 degree angle.</p>
-					<p><strong>Tip</strong>: You can align mutliple UV islands by edge at once.</p>
-				</div>
-				<div class="Content">
-					<h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
-					<p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
-				</div>
-				<div class="Content">
-					<h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
+				  <h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
 					<p>Sorts the selected UV islands by longest side and aligns them <strong>vertically</strong> or <strong>horizontally</strong> in a row.</p>
 				</div>
 				<div class="Content">
@@ -145,7 +150,7 @@
 			
 			<div class="Info"><h3>Selection Tools</h3>
 			</div>
-			<div class="Columns2">
+			<div class="Columns3">
 				<div class="Content">
 					<h2> <img src="images/op_select_islands_identical.png" width="32" height="32" alt=""/> Select Similar</h2>
 					<p>Selects similar UV islands based on the UV island input selection and matching UV Island topology.</p>
@@ -232,7 +237,7 @@
 		<h1>Texture Baking Panel</h1>
 		<p>To bake textures in TexTools just select your objects and press Bake. High  low poly and cageobject pairs are detected via object names. You can bake just with a <strong>single </strong>objects,  <strong>high</strong> <strong>poly </strong>to <strong>low poly</strong> or in addition that with a custom <strong>cage</strong> object. </p>
 		<div class="Panel">
-			<div class="Columns2">
+			<div class="Columns3">
 				<div class="Content">
 					<h2><img src="images/op_bake.png" width="32" height="32" alt=""/> Bake</h2>
 					<p>Bakes the current texture type with the current selected object set. Baked images will appear in UV/Image Editor <img class="Icon" src="images/show_uv_image_editor.png" width="107" height="16" alt=""/>.          </p>
@@ -407,7 +412,8 @@
 					  <table width="100%" border="0" cellspacing="10" cellpadding="0">
 						  <tr>
 						    <td valign="top"><strong><img class="Icon" src="images/color_id_color.png" alt=""/> Color</strong></td>
-						    <td valign="top">Change the global color for this swatch. You can change colors before or after you assigned them.</td>
+						    <td valign="top"><p>Change the global color for this swatch. You can change colors before or after you assigned them.</p>
+					        <p><strong>Tip:</strong> You can hover over color swatches in blender and press <strong>Ctrl</strong> + <strong>C</strong> and <strong>Ctrl</strong> + <strong>V</strong> to copy and paste within Blender.</p></td>
 					    </tr>
 						  <tr>
 							  <td width="164" valign="top"><strong><img class="Icon" src="images/op_color_assign.png" alt=""/> Assign</strong></td>

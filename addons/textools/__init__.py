@@ -29,14 +29,15 @@ if "bpy" in locals():
 	imp.reload(op_bake_explode)
 	imp.reload(op_bake_organize_names)
 	imp.reload(op_color_assign)
+	imp.reload(op_color_clear)
 	imp.reload(op_color_elements_setup)
 	imp.reload(op_color_select)
-	imp.reload(op_color_clear)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
 	imp.reload(op_island_mirror)
 	imp.reload(op_island_rotate_90)
 	imp.reload(op_island_straighten_edge_loops)
+	imp.reload(op_rectify)
 	imp.reload(op_select_islands_identical)
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_select_islands_overlap)
@@ -68,14 +69,15 @@ else:
 	from . import op_bake_explode
 	from . import op_bake_organize_names
 	from . import op_color_assign
+	from . import op_color_clear
 	from . import op_color_elements_setup
 	from . import op_color_select
-	from . import op_color_clear
 	from . import op_island_align_edge
 	from . import op_island_align_sort
 	from . import op_island_mirror
 	from . import op_island_rotate_90
 	from . import op_island_straighten_edge_loops
+	from . import op_rectify
 	from . import op_select_islands_identical
 	from . import op_select_islands_outline
 	from . import op_select_islands_overlap
@@ -122,13 +124,19 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 
 		box = layout.box()
 		box.label(text="Visit the TexTools website for in debth documentation.")
-		box.operator("wm.url_open", text="Official Website", icon='HELP').url = "http://renderhjs.net/textools/blender/"
 		
+		row = box.row()
+		row.label(text=" ")
+		row.operator("wm.url_open", text="Official Website", icon='HELP').url = "http://renderhjs.net/textools/blender/"
+		row.label(text=" ")
+
 		box.label(text="Additional Links")
 		col = box.column(align=True)
 		col.operator("wm.url_open", text="Donate", icon='HELP').url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"
-		col.operator("wm.url_open", text="GIT Source", icon='WORDWRAP_ON').url = "https://bitbucket.org/renderhjs/textools-blender/src"
-		col.operator("wm.url_open", text="BlederArtist BBS", icon='BLENDER').url = "https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender"
+		col.operator("wm.url_open", text="GIT Code", icon='WORDWRAP_ON').url = "https://bitbucket.org/renderhjs/textools-blender/src"
+		row = col.row(align=True)
+		row.operator("wm.url_open", text="BlederArtist BBS", icon='BLENDER').url = "https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender"
+		row.operator("wm.url_open", text="Polycount BBS", icon='COLOR_GREEN').url = "http://polycount.com/discussion/197226/textools-for-blender"
 
 
 
@@ -383,6 +391,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	color_ID_color_7 = get_color()
 	color_ID_color_8 = get_color()
 	color_ID_color_9 = get_color()
+	color_ID_color_10 = get_color()
+	color_ID_color_11 = get_color()
+	color_ID_color_12 = get_color()
+	color_ID_color_13 = get_color()
+	color_ID_color_14 = get_color()
 
 	color_ID_templates = bpy.props.EnumProperty(items= 
 		[	
@@ -390,7 +403,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 			('143240,209d8c,fed761,ffab56,fb6941', '5 Sunset', '...'), 
 			('ff0000,0000ff,00ff00,ffff00,00ffff', '5 Code', '...'),
 			('3a4342,2e302f,242325,d5cc9e,d6412b', '5 Sea Wolf', '...'),
-			('9b59b6,3498db,2ecc71,f1c40f,e67e22,e74c3c,ecf0f1,95a5a6', '8 Rainbow', '...')
+			('9e00af,7026b9,4f44b5,478bf4,39b7d5,229587,47b151,9dcf46,f7f235,f7b824,f95f1e,c5513c,78574a,4d4b4b,9d9d9d', '15 Rainbow', '...')
 		], 
 		name = "Preset", 
 		update = on_color_dropdown_template,
@@ -402,7 +415,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		description="Number of color IDs",
 		default = 5,
 		min = 2,
-		max = 10
+		max = 15
 	)
 
 	# bake_do_save = bpy.props.BoolProperty(
@@ -524,6 +537,12 @@ class Panel_Layout(bpy.types.Panel):
 		col = box.column(align=True)
 		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
+
+
+		row = col.row(align=True)
+		row.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
+	
+
 
 		row = col.row(align=True)
 		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("op_island_rotate_90_left")).angle = -math.pi / 2
@@ -921,6 +940,7 @@ def register():
 		"op_island_rotate_90_left.png", 
 		"op_island_rotate_90_right.png", 
 		"op_island_straighten_edge_loops.png", 
+		"op_rectify.png", 
 		"op_select_islands_identical.png", 
 		"op_select_islands_outline.png", 
 		"op_select_islands_overlap.png", 

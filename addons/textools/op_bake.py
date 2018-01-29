@@ -11,25 +11,18 @@ from . import settings
 from . import utilities_bake
 
 
-class op_setup_material(bpy.types.Operator):
-	bl_idname = "uv.textools_bake_setup_material"
-	bl_label = "Setup Material"
-	bl_description = "Setup Bake materials"
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		execute_setup_material(context)
-		return {'FINISHED'}
-
-
-
-def execute_setup_material(context):
-	print("Executing operator_bake_render main()")
-	print("Mode: "+str(context.scene.texToolsSettings.baking_mode))
-
+# Notes: https://docs.blender.org/manual/en/dev/render/blender_render/bake.html
+modes={
+	'normal_tangent':	utilities_bake.BakeMode('',					type='NORMAL', color=(0.5, 0.5, 1, 1)),
+	'normal_object': 	utilities_bake.BakeMode('',					type='NORMAL', color=(0.5, 0.5, 1, 1), normal_space='OBJECT' ),
+	'cavity': 			utilities_bake.BakeMode('bake_cavity',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
+	'dust': 			utilities_bake.BakeMode('bake_dust',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
+	'worn':				utilities_bake.BakeMode('bake_worn',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
+	'gradient_z':		utilities_bake.BakeMode('bake_gradient_z',	type='EMIT', ),
+	'id_element':		utilities_bake.BakeMode('bake_id_element',	type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
+	'diffuse':			utilities_bake.BakeMode('',					type='DIFFUSE'),
+	'ao':				utilities_bake.BakeMode('',					type='AO')
+}
 
 
 class op(bpy.types.Operator):
@@ -41,33 +34,35 @@ class op(bpy.types.Operator):
 	def poll(cls, context):
 		if len(settings.sets) == 0:
 			return False
-
 		return True
 
 	def execute(self, context):
-		
 
 
-		print("--->: "+str())
+		if settings.bake_mode not in modes:
+			self.report({'ERROR_INVALID_INPUT'}, "Uknown mode '{}' only available: '{}'".format(settings.bake_mode, ", ".join(modes.keys() )) )
+			return
+
 		# Store Selection
 		selected_objects 	= [obj for obj in bpy.context.selected_objects]
 		active_object 		= bpy.context.scene.objects.active
+		utilities_bake.store_bake_settings()
 
 		# Render sets
-		utilities_bake.store_bake_settings()
 		execute_render(
-			self, context, settings.bake_mode, 
-			bpy.context.scene.texToolsSettings.size[0], bpy.context.scene.texToolsSettings.size[1], 
-			bpy.context.scene.texToolsSettings.bake_force_single,
+			self = self, 
+			mode = settings.bake_mode,
 
-			int(bpy.context.scene.texToolsSettings.bake_sampling),
+			size = bpy.context.scene.texToolsSettings.size, 
 
-			bpy.context.scene.texToolsSettings.bake_samples,
-			bpy.context.scene.texToolsSettings.bake_ray_distance
+			bake_single = bpy.context.scene.texToolsSettings.bake_force_single,
+			sampling_scale = int(bpy.context.scene.texToolsSettings.bake_sampling),
+			samples = bpy.context.scene.texToolsSettings.bake_samples,
+			ray_distance = bpy.context.scene.texToolsSettings.bake_ray_distance
 		)
-		utilities_bake.restore_bake_settings()
-
+		
 		# Restore selection
+		utilities_bake.restore_bake_settings()
 		bpy.ops.object.select_all(action='DESELECT')
 		for obj in selected_objects:
 			obj.select = True
@@ -78,7 +73,9 @@ class op(bpy.types.Operator):
 
 
 
-def execute_render(self, context, mode, width, height, bake_single, sampling_scale, samples, ray_distance):
+def execute_render(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
+
+	print("Bake '{}'".format(mode))
 
 	# Setup
 	if bpy.context.scene.render.engine != 'CYCLES':
@@ -94,8 +91,8 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 
 	# print("________________________________\nBake {}x '{}' at {} x {}".format(len(sets), mode, width, height))
 
-	render_width = sampling_scale * width
-	render_height = sampling_scale * height
+	render_width = sampling_scale * size[0]
+	render_height = sampling_scale * size[1]
 
 	for s in range(0,len(sets)):
 		set = sets[s]
@@ -134,7 +131,8 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		if (len(set.objects_high) + len(set.objects_float)) == 0:
 			# Assign material to lowpoly
 			for obj in set.objects_low:
-				assign_vertex_colors(obj, mode)
+				if modes[mode].setVertexColor:
+					modes[mode].setVertexColor(obj)
 				assign_material(obj, material if material != None else material_empty)
 		else:
 			# Low poly require empty material to bake into image
@@ -143,13 +141,14 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 
 			# Assign material to highpoly
 			for obj in (set.objects_high+set.objects_float):
-				assign_vertex_colors(obj, mode)
+				if modes[mode].setVertexColor:
+					modes[mode].setVertexColor(obj)
 				assign_material(obj, material)
 
 
 		# Setup Image
-		clear = (not bake_single) or (bake_single and s==0)
-		image = setup_image(mode, name_texture, render_width, render_height, path, clear)
+		is_clear = (not bake_single) or (bake_single and s==0)
+		image = setup_image(mode, name_texture, render_width, render_height, path, is_clear)
 
 		# Setup Material
 		if len(set.objects_low[0].data.materials) <= 0:
@@ -210,21 +209,30 @@ def execute_render(self, context, mode, width, height, bake_single, sampling_sca
 		# Downsample image?
 		if not bake_single or (bake_single and s == len(sets)-1):
 			# When baking single, only downsample on last bake
-			if render_width != width or render_height != height:
+			if render_width != size[0] or render_height != size[1]:
 				image.scale(width,height)
 			
 			# image.save()
 		
 
 
-def setup_image(mode, name, width, height, path, clear):#
+def setup_image(mode, name, width, height, path, is_clear):#
 	image = None
 
+	print("Path "+path)
+	# if name in bpy.data.images and bpy.data.images[name].has_data == False:
+	# 	# Previous image does not have data, remove first
+	# 	print("Image pointer exists but no data "+name)
+	# 	image = bpy.data.images[name]
+	# 	image.update()
+		# image.generated_height = height
+
+		# bpy.data.images.remove(bpy.data.images[name])
 
 	if name not in bpy.data.images:
 		# Create new image
 		image = bpy.data.images.new(name, width=width, height=height)
-		
+
 	else:
 		# Reuse existing Image
 		image = bpy.data.images[name]
@@ -235,16 +243,15 @@ def setup_image(mode, name, width, height, path, clear):#
 			image.scale(width, height)
 
 	# Fill with plain color
-	if clear:
-		if mode == 'normal':
-			image.generated_color = (0.5, 0.5, 1, 1)
-		else:
-			image.generated_color = (0.23, 0.23, 0.23, 1)
+	if is_clear:
+		image.generated_color = modes[mode].color
 		image.generated_type = 'BLANK'
 
 
 	image.file_format = 'TARGA'
-	image.filepath_raw = path
+
+	# TODO: Verify that the path exists
+	# image.filepath_raw = path
 
 	return image
 
@@ -252,40 +259,36 @@ def setup_image(mode, name, width, height, path, clear):#
 
 def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, obj_cage):
 	# Set samples
-	if mode == 'ao' or mode == 'normal':
-		bpy.context.scene.cycles.samples = samples
-	else:
-		bpy.context.scene.cycles.samples = 1
+	# if mode == 'ao' or mode == 'normal':
+	bpy.context.scene.cycles.samples = samples
+	# else:
+	# 	bpy.context.scene.cycles.samples = 1
 
 	# Pixel Padding
 	bpy.context.scene.render.bake.margin = padding * sampling_scale
 
-	# Bake Type
-	bake_type = 'EMIT' #DEFAULT
-	if mode == 'ao':
-		bake_type = 'AO'
-	elif mode == 'normal':
-		bake_type = 'NORMAL'
-
-	# Normal
-	normal_space = 'TANGENT' #'OBJECT'
-
-	
-
 	# Bake with Cage?
 	if obj_cage is None:
-		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_selected_to_active=is_multi, normal_space=normal_space)
+		bpy.ops.object.bake(
+			type=modes[mode].type, 
+			use_clear=False, 
+			cage_extrusion=ray_distance, 
+
+			use_selected_to_active=is_multi, 
+			normal_space=modes[mode].normal_space
+		)
 	else:
-		bpy.ops.object.bake(type=bake_type, use_clear=False, cage_extrusion=ray_distance, use_cage=True, cage_object=obj_cage.name, use_selected_to_active=is_multi, normal_space=normal_space)
+		bpy.ops.object.bake(
+			type=modes[mode].type, 
+			use_clear=False, 
+			cage_extrusion=ray_distance, 
 
+			use_selected_to_active=is_multi, 
+			normal_space=modes[mode].normal_space,
 
-
-def assign_vertex_colors(obj, mode):
-	# Assign Vertex Colors
-	if mode == 'worn' or mode == 'cavity' or mode == 'dust':
-		setup_vertex_color_dirty(obj)
-	elif mode == 'id':
-		setup_vertex_color_ids(obj)
+			use_cage=True, 	#Use Cage!
+			cage_object=obj_cage.name
+		)
 
 
 
@@ -302,77 +305,19 @@ def assign_material(obj, material):
 
 
 def get_material(mode):
-	if mode == 'normal' or mode == 'ao':
+	if modes[mode].material == "":
 		return None # No material setup requires
 
-	name_material = "bake_{}".format(mode)
+	# Find or load material
+	name = modes[mode].material
 	path = os.path.join(os.path.dirname(__file__), "resources/materials.blend")+"\\Material\\"
-	if bpy.data.materials.get(name_material) is None:
+	if bpy.data.materials.get(name) is None:
 		print("Material not yet loaded: "+mode)
-		bpy.ops.wm.append(filename=name_material, directory=path, link=False, autoselect=False)
+		bpy.ops.wm.append(filename=name, directory=path, link=False, autoselect=False)
 
-	return bpy.data.materials.get(name_material)
-
-
-
-
-def setup_vertex_color_dirty(obj):
-	bpy.ops.object.select_all(action='DESELECT')
-	obj.select = True
-	bpy.context.scene.objects.active = obj
-	bpy.ops.object.mode_set(mode='EDIT')
-
-	# Fill white then, 
-	bm = bmesh.from_edit_mesh(obj.data)
-	colorLayer = bm.loops.layers.color.verify()
-
-	color = (1, 1, 1)
-	for face in bm.faces:
-		for loop in face.loops:
-				loop[colorLayer] = color
-	obj.data.update()
-
-	# Back to object mode
-	bpy.ops.object.mode_set(mode='OBJECT')
-	bpy.ops.paint.vertex_color_dirt()
+	return bpy.data.materials.get(name)
 
 
 
-def setup_vertex_color_ids(obj):
-	bpy.ops.object.select_all(action='DESELECT')
-	obj.select = True
-	bpy.context.scene.objects.active = obj
-	bpy.ops.object.mode_set(mode='EDIT')
 
-	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
 
-	bm = bmesh.from_edit_mesh(obj.data)
-	colorLayer = bm.loops.layers.color.verify()
-
-	# Collect elements
-	processed = set([])
-	groups = []
-	for face in bm.faces:
-
-		if face not in processed:
-			bpy.ops.mesh.select_all(action='DESELECT')
-			face.select = True
-			bpy.ops.mesh.select_linked(delimit={'NORMAL'})
-			linked = [face for face in bm.faces if face.select]
-
-			for link in linked:
-				processed.add(link)
-			groups.append(linked)
-
-	# Color each group
-	for i in range(0,len(groups)):
-		color = Color()
-		color.hsv = ( i / (len(groups)) ), 0.9, 1.0
-
-		for face in groups[i]:
-			for loop in face.loops:
-				loop[colorLayer] = color
-	obj.data.update()
-
-	# Back to object mode
-	bpy.ops.object.mode_set(mode='OBJECT')

@@ -17,8 +17,25 @@ keywords_float = ['floater','float','f']
 split_chars = [' ','_','.','-']
 
 
+class BakeMode:
+	material = ""
+	type = 'EMIT'
+	normal_space = 'TANGENT'
+	setVertexColor = None
+	color = (0.23, 0.23, 0.23, 1)
+
+	def __init__(self, material="", type='EMIT', normal_space='TANGENT', setVertexColor=None, color= (0.23, 0.23, 0.23, 1)):
+		self.material = material
+		self.type = type
+		self.normal_space = normal_space
+		self.setVertexColor = None
+		self.color = color
+
+
+
+
+
 def store_bake_settings():
-	print("store_bake_settings")
 	# Render Settings
 	settings.bake_render_engine = bpy.context.scene.render.engine
 
@@ -54,8 +71,6 @@ def store_bake_settings():
 
 
 def restore_bake_settings():
-	print("restore_bake_settings")
-	
 	# Render Settings
 	if settings.bake_render_engine != '':
 		bpy.context.scene.render.engine = settings.bake_render_engine
@@ -232,3 +247,66 @@ class BakeSet:
 			if len(obj.data.uv_layers) == 0:
 				self.has_issues = True
 				break
+
+
+
+def setup_vertex_color_dirty(obj):
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
+	bpy.ops.object.mode_set(mode='EDIT')
+
+	# Fill white then, 
+	bm = bmesh.from_edit_mesh(obj.data)
+	colorLayer = bm.loops.layers.color.verify()
+
+	color = (1, 1, 1)
+	for face in bm.faces:
+		for loop in face.loops:
+				loop[colorLayer] = color
+	obj.data.update()
+
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.paint.vertex_color_dirt()
+
+
+
+def setup_vertex_color_ids(obj):
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
+	bpy.ops.object.mode_set(mode='EDIT')
+
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+
+	bm = bmesh.from_edit_mesh(obj.data)
+	colorLayer = bm.loops.layers.color.verify()
+
+	# Collect elements
+	processed = set([])
+	groups = []
+	for face in bm.faces:
+
+		if face not in processed:
+			bpy.ops.mesh.select_all(action='DESELECT')
+			face.select = True
+			bpy.ops.mesh.select_linked(delimit={'NORMAL'})
+			linked = [face for face in bm.faces if face.select]
+
+			for link in linked:
+				processed.add(link)
+			groups.append(linked)
+
+	# Color each group
+	for i in range(0,len(groups)):
+		color = Color()
+		color.hsv = ( i / (len(groups)) ), 0.9, 1.0
+
+		for face in groups[i]:
+			for loop in face.loops:
+				loop[colorLayer] = color
+	obj.data.update()
+
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='OBJECT')

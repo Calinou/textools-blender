@@ -38,7 +38,7 @@ def get_material_name(index):
 def get_color(index):
 	if index < bpy.context.scene.texToolsSettings.color_ID_count:
 		return getattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(index))
-	return None
+	return (0, 0, 0)
 
 
 
@@ -51,7 +51,7 @@ def get_material(index):
 
 	# Create new image instead
 	material = bpy.data.materials.new(name)
-	assign_material_color(material, get_color(index))
+	assign_material_color(index)
 
 	return material
 

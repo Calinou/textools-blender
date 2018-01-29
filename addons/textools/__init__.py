@@ -103,22 +103,21 @@ import math
 import string
 import bpy.utils.previews
 
-from bpy.props import (StringProperty,
-					   BoolProperty,
-					   IntProperty,
-					   FloatProperty,
-					   FloatVectorProperty,
-					   EnumProperty,
-					   PointerProperty,
-					   )
+from bpy.props import (
+	StringProperty,
+	BoolProperty,
+	IntProperty,
+	FloatProperty,
+	FloatVectorProperty,
+	EnumProperty,
+	PointerProperty,
+)
+
 
 
 class Panel_Preferences(bpy.types.AddonPreferences):
 	bl_idname = __name__
-	# here you define the addons customizable props
-	# some_prop = bpy.props.FloatProperty(default=1.0)
 
-	# here you specify how they are drawn
 	def draw(self, context):
 		layout = self.layout
 
@@ -252,6 +251,7 @@ def on_dropdown_uv_channel(self, context):
 					bpy.context.object.data.uv_textures.active_index = index
 
 
+
 def on_color_changed(self, context):
 	for i in range(0, context.scene.texToolsSettings.color_ID_count):
 		material = utilities_color.get_material(i)
@@ -292,7 +292,6 @@ def get_dropdown_uv_values(self, context):
 
 
 
-
 class TexToolsSettings(bpy.types.PropertyGroup):
 	#Width and Height
 	size = bpy.props.IntVectorProperty(
@@ -302,21 +301,17 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default = (512,512),
 		subtype = "XYZ"
 	)
-
 	size_dropdown = bpy.props.EnumProperty(
 		items = utilities_ui.size_textures, 
 		name = "Texture Size", 
 		update = on_dropdown_size, 
 		default = '1024'
 	)
-
 	uv_channel = bpy.props.EnumProperty(
 		items = get_dropdown_uv_values, 
 		name = "UV", 
 		update = on_dropdown_uv_channel
 	)
-
-	#Padding
 	padding = bpy.props.IntProperty(
 		name = "Padding",
 		description="padding size in pixels",
@@ -324,7 +319,6 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 0,
 		max = 256
 	)
-	
 	bake_samples = bpy.props.FloatProperty(
 		name = "Samples",
 		description = "Samples in Cycles for Baking. The higher the less noise. Default: 64",
@@ -368,7 +362,6 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		# max = 100.00
 	)
 
-
 	def get_color(hex = "808080"):
 		return bpy.props.FloatVectorProperty(
 			name="Color1", 
@@ -381,11 +374,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		)#, update=update_color_1
 
 	# 10 Color ID's
-	color_ID_color_0 = get_color(hex="ff0000")
-	color_ID_color_1 = get_color(hex="0000ff")
-	color_ID_color_2 = get_color(hex="00ff00")
-	color_ID_color_3 = get_color(hex="ffff00")
-	color_ID_color_4 = get_color(hex="00ffff")
+	color_ID_color_0 = get_color(hex="#ff0000")
+	color_ID_color_1 = get_color(hex="#0000ff")
+	color_ID_color_2 = get_color(hex="#00ff00")
+	color_ID_color_3 = get_color(hex="#ffff00")
+	color_ID_color_4 = get_color(hex="#00ffff")
 	color_ID_color_5 = get_color()
 	color_ID_color_6 = get_color()
 	color_ID_color_7 = get_color()
@@ -403,6 +396,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 			('143240,209d8c,fed761,ffab56,fb6941', '5 Sunset', '...'), 
 			('ff0000,0000ff,00ff00,ffff00,00ffff', '5 Code', '...'),
 			('3a4342,2e302f,242325,d5cc9e,d6412b', '5 Sea Wolf', '...'),
+			('7f87a0,2d3449,000000,ffffff,f99c21', '5 Mustang', '...'),
+			('003153,345d4b,688a42,9db63a,d1e231', '5 Greens', '...'),
 			('9e00af,7026b9,4f44b5,478bf4,39b7d5,229587,47b151,9dcf46,f7f235,f7b824,f95f1e,c5513c,78574a,4d4b4b,9d9d9d', '15 Rainbow', '...')
 		], 
 		name = "Preset", 
@@ -672,7 +667,7 @@ class Panel_Bake(bpy.types.Panel):
 			settings.sets = utilities_bake.get_bake_sets()
 
 
-		# Bake Button, Samples, Single option
+		# Bake Button
 		count = 0
 		if bpy.context.scene.texToolsSettings.bake_force_single and len(settings.sets) > 0:
 			count = 1
@@ -681,6 +676,7 @@ class Panel_Bake(bpy.types.Panel):
 		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
+		# Force Single
 		row = col.row(align=True)
 		row.active = len(settings.sets) > 0
 		row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single")
@@ -703,8 +699,14 @@ class Panel_Bake(bpy.types.Panel):
 
 		# Bake Mode
 		col.template_icon_view(context.scene, "TT_bake_mode")
-		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").replace("bake_" ,"").lower()
+		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").lower()
 		
+		if bpy.app.debug_value != 0:
+			row = col.row()
+			row.label(text="--> Mode: '{}'".format(settings.bake_mode))
+
+
+
 
 		# Optional Parameters
 		col.separator()

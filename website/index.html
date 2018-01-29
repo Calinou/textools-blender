@@ -118,7 +118,7 @@
 			  </div>
 				<div class="Content">
 				  <h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-				  <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by Reslav Hollos.</p>
+				  <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.</p>
 			  </div>
 				<div class="Content">
 				  <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
@@ -267,22 +267,22 @@
 					<div class="Content">
 						<h2>Normal Tangent</h2>
 						<p><img src="images/bake_normal.png" width="128" height="128" alt=""/></p>
-						<p>A normal map with a local Tangent space.</p>
+						<p>A normal map in tangent space.</p>
 					</div>
 					<div class="Content">
-						<h2>Normal World <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2>Normal Object <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<p>&nbsp;</p>
+						<p>A normal map in object space </p>
+					</div>
+					<div class="Content">
+						<h2>Diffuse Color<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>&nbsp;</p>
 						<p>...</p>
 					</div>
 					<div class="Content">
-						<h2>Diffuse<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>&nbsp;</p>
-						<p>A...</p>
-					</div>
-					<div class="Content">
 					  <h2>Face Selection<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 					  <p>&nbsp;</p>
-					  <p>A...</p>
+					  <p>...</p>
 				  </div>
 					<div class="Content">
 						<h2>ID  Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
@@ -395,10 +395,11 @@
 					<h2>Color templates<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>Choose from a collection of color themes. Once selected this will replace your previous colors but maintain your material ID's.</p>
 						<p><img src="images/demo_color_id_templates.gif" alt=""/></p>
+						<p><strong>Tip</strong>: Hold down <strong>Ctrl</strong> and <strong>scroll</strong> the mouse wheel while hovering the dropdown UI element to quickly cycle between the values.</p>
 					</div>
 					<div class="Content">
 					  <h2> Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					  <p>The amount of colors to display and use. Choose <strong>between 2 and 10</strong>.</p>
+					  <p>The amount of colors to display and use. Choose <strong>between 2 and 15</strong>.</p>
 					  <p><img src="images/demo_color_id_colors.gif" alt=""/></p>
 			      </div>
 					<div class="Content">
@@ -412,8 +413,7 @@
 					  <table width="100%" border="0" cellspacing="10" cellpadding="0">
 						  <tr>
 						    <td valign="top"><strong><img class="Icon" src="images/color_id_color.png" alt=""/> Color</strong></td>
-						    <td valign="top"><p>Change the global color for this swatch. You can change colors before or after you assigned them.</p>
-					        <p><strong>Tip:</strong> You can hover over color swatches in blender and press <strong>Ctrl</strong> + <strong>C</strong> and <strong>Ctrl</strong> + <strong>V</strong> to copy and paste within Blender.</p></td>
+						    <td valign="top"><p>Change the global color for this swatch. You can change colors before or after you assigned them.</p></td>
 					    </tr>
 						  <tr>
 							  <td width="164" valign="top"><strong><img class="Icon" src="images/op_color_assign.png" alt=""/> Assign</strong></td>
@@ -426,6 +426,7 @@
 							  </tr>
 						  </tbody>
 				    </table>
+					  <p><strong>Tip:</strong> You can hover over color swatches in blender and press <strong>Ctrl</strong> + <strong>C</strong> and <strong>Ctrl</strong> + <strong>V</strong> to copy and paste within Blender.</p>
 					</div>
 					
 				</div>

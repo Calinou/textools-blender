@@ -47,12 +47,20 @@ def select_color(self, context, index):
 
 	obj = bpy.context.active_object
 	
+	# Check for missing slots, materials,..
+	if index >= len(obj.material_slots):
+		self.report({'ERROR_INVALID_INPUT'}, "No material slot for color '{}' found".format(index) )
+		return
+
+	if not obj.material_slots[index].material:
+		self.report({'ERROR_INVALID_INPUT'}, "No material found for material slot '{}'".format(index) )
+		return		
+
 	if bpy.context.active_object.mode != 'EDIT':
 		bpy.ops.object.mode_set(mode='EDIT')
 
+	# Select faces
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-
-
 	bpy.ops.mesh.select_all(action='DESELECT')
 	for face in bm.faces:
 		if face.material_index == index:

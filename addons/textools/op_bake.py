@@ -49,7 +49,7 @@ class op(bpy.types.Operator):
 		utilities_bake.store_bake_settings()
 
 		# Render sets
-		execute_render(
+		render(
 			self = self, 
 			mode = settings.bake_mode,
 
@@ -73,7 +73,7 @@ class op(bpy.types.Operator):
 
 
 
-def execute_render(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
+def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
 	print("Bake '{}'".format(mode))
 
@@ -114,57 +114,43 @@ def execute_render(self, mode, size, bake_single, sampling_scale, samples, ray_d
 				self.report({'ERROR_INVALID_INPUT'}, "No UV map available for '{}'".format(obj.name))
 				return
 
+		# Check for cage inconsistencies
 		if len(set.objects_cage) > 0 and (len(set.objects_low) != len(set.objects_cage)):
 			self.report({'ERROR_INVALID_INPUT'}, "{}x cage objects do not match {}x low poly objects for '{}'".format(len(set.objects_cage), len(set.objects_low), obj.name))
 			return
 
-		# Assign Material(s))
-		material = get_material(mode)
+		# Get Materials
+		material_loaded = get_material(mode)
 		material_empty = None
 		if "TT_bake_node" in bpy.data.materials:
-			material_empty = material_empty = bpy.data.materials["TT_bake_node"]
+			material_empty = bpy.data.materials["TT_bake_node"]
 		else:
 			material_empty = bpy.data.materials.new(name="TT_bake_node")
-		material_empty.use_nodes = True
 
-
+		# Assign Materials to Objects
 		if (len(set.objects_high) + len(set.objects_float)) == 0:
-			# Assign material to lowpoly
+			# Low poly bake: Assign material to lowpoly
 			for obj in set.objects_low:
-				if modes[mode].setVertexColor:
-					modes[mode].setVertexColor(obj)
-				assign_material(obj, material if material != None else material_empty)
+				assign_vertex_color(mode, obj)
+				assign_material(obj, [material_loaded, material_empty])
 		else:
-			# Low poly require empty material to bake into image
+			# High to low poly: Low poly require empty material to bake into image
 			for obj in set.objects_low:
-				assign_material(obj, material_empty)
+				assign_material(obj, [material_empty])
 
 			# Assign material to highpoly
 			for obj in (set.objects_high+set.objects_float):
-				if modes[mode].setVertexColor:
-					modes[mode].setVertexColor(obj)
-				assign_material(obj, material)
+				assign_vertex_color(mode, obj)
+				assign_material(obj, [material_loaded])
 
 
 		# Setup Image
 		is_clear = (not bake_single) or (bake_single and s==0)
 		image = setup_image(mode, name_texture, render_width, render_height, path, is_clear)
 
-		# Setup Material
-		if len(set.objects_low[0].data.materials) <= 0:
-			print("ERROR, need spare material to setup active image texture to bake!!!")
-		else:
-			tree = set.objects_low[0].data.materials[0].node_tree
-			node = None
-			if "checkermap" in tree.nodes:
-				node = tree.nodes["checkermap"]
-			else:
-				node = tree.nodes.new("ShaderNodeTexImage")
-			node.name = "checkermap"
-			node.select = True
-			node.image = image
-			tree.nodes.active = node
-
+		# Assign bake node to Material
+		setup_image_bake_node(set.objects_low[0], image)
+		
 
 		print("Bake '{}' = {}".format(set.name, path))
 
@@ -257,50 +243,42 @@ def setup_image(mode, name, width, height, path, is_clear):#
 
 
 
-def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, obj_cage):
-	# Set samples
-	# if mode == 'ao' or mode == 'normal':
-	bpy.context.scene.cycles.samples = samples
-	# else:
-	# 	bpy.context.scene.cycles.samples = 1
-
-	# Pixel Padding
-	bpy.context.scene.render.bake.margin = padding * sampling_scale
-
-	# Bake with Cage?
-	if obj_cage is None:
-		bpy.ops.object.bake(
-			type=modes[mode].type, 
-			use_clear=False, 
-			cage_extrusion=ray_distance, 
-
-			use_selected_to_active=is_multi, 
-			normal_space=modes[mode].normal_space
-		)
+def setup_image_bake_node(obj, image):
+	if len(obj.data.materials) <= 0:
+			print("ERROR, need spare material to setup active image texture to bake!!!")
 	else:
-		bpy.ops.object.bake(
-			type=modes[mode].type, 
-			use_clear=False, 
-			cage_extrusion=ray_distance, 
+		for slot in obj.material_slots:
+			if slot.material:
+				slot.material.use_nodes = True
 
-			use_selected_to_active=is_multi, 
-			normal_space=modes[mode].normal_space,
+				# Assign bake node
+				tree = slot.material.node_tree
+				node = None
+				if "bake" in tree.nodes:
+					node = tree.nodes["bake"]
+				else:
+					node = tree.nodes.new("ShaderNodeTexImage")
+				node.name = "bake"
+				node.select = True
+				node.image = image
+				tree.nodes.active = node
 
-			use_cage=True, 	#Use Cage!
-			cage_object=obj_cage.name
-		)
+
+
+def assign_vertex_color(mode, obj):
+	if modes[mode].setVertexColor:
+		modes[mode].setVertexColor(obj)
 
 
 
-def assign_material(obj, material):
-	if material is None:
-		return
-
-	# Assign material
+def assign_material(obj, preferred_materials):
 	if len(obj.data.materials) == 0:
-		obj.data.materials.append(material)
-	else:
-		obj.data.materials[0] = material
+		for material in preferred_materials:
+			if material:
+				# Take the first available material
+				obj.data.materials.append(material)
+				obj.active_material_index = len(obj.data.materials)-1
+				return
 
 
 
@@ -319,5 +297,47 @@ def get_material(mode):
 
 
 
+
+def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, obj_cage):
+	# Set samples
+	bpy.context.scene.cycles.samples = samples
+
+	# Speed up samples for simple render modes
+	if modes[mode].type == 'EMIT' or modes[mode].type == 'DIFFUSE':
+		bpy.context.scene.cycles.samples = 1
+
+	# Pixel Padding
+	bpy.context.scene.render.bake.margin = padding * sampling_scale
+
+	# Disable Direct and Indirect for all 'DIFFUSE' bake types
+	if modes[mode].type == 'DIFFUSE':
+		bpy.context.scene.render.bake.use_pass_direct = False
+		bpy.context.scene.render.bake.use_pass_indirect = False
+		bpy.context.scene.render.bake.use_pass_color = True
+
+	if obj_cage is None:
+		# Bake with Cage
+		bpy.ops.object.bake(
+			type=modes[mode].type, 
+			use_clear=False, 
+			cage_extrusion=ray_distance, 
+
+			use_selected_to_active=is_multi, 
+			normal_space=modes[mode].normal_space
+		)
+	else:
+		# Bake without Cage
+		bpy.ops.object.bake(
+			type=modes[mode].type, 
+			use_clear=False, 
+			cage_extrusion=ray_distance, 
+
+			use_selected_to_active=is_multi, 
+			normal_space=modes[mode].normal_space,
+
+			#Use Cage and assign object
+			use_cage=True, 	
+			cage_object=obj_cage.name
+		)
 
 

@@ -58,10 +58,10 @@ def clear_colors(self, context):
 		bpy.ops.object.material_slot_remove()
 
 	# Clear all colors
-	bpy.context.scene.texToolsSettings.color_ID_count = 100
-	for i in range(bpy.context.scene.texToolsSettings.color_ID_count):
-		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), (0.5,0.5,0.5))
-	bpy.context.scene.texToolsSettings.color_ID_count = 4
+	# bpy.context.scene.texToolsSettings.color_ID_count = 100
+	# for i in range(bpy.context.scene.texToolsSettings.color_ID_count):
+	# 	setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), (0.5,0.5,0.5))
+	# bpy.context.scene.texToolsSettings.color_ID_count = 4
 
 	# Restore previous mode
 	bpy.ops.object.mode_set(mode=previous_mode)

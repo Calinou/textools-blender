@@ -30,8 +30,9 @@ if "bpy" in locals():
 	imp.reload(op_bake_organize_names)
 	imp.reload(op_color_assign)
 	imp.reload(op_color_clear)
-	imp.reload(op_color_elements_setup)
+	imp.reload(op_color_elements)
 	imp.reload(op_color_select)
+	imp.reload(op_color_pack_texture)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
 	imp.reload(op_island_mirror)
@@ -70,8 +71,9 @@ else:
 	from . import op_bake_organize_names
 	from . import op_color_assign
 	from . import op_color_clear
-	from . import op_color_elements_setup
+	from . import op_color_elements
 	from . import op_color_select
+	from . import op_color_pack_texture
 	from . import op_island_align_edge
 	from . import op_island_align_sort
 	from . import op_island_mirror
@@ -849,7 +851,7 @@ class Panel_Colors(bpy.types.Panel):
 		row.operator(op_color_clear.op.bl_idname, text="Clear", icon = 'X')
 
 
-
+		
 		max_columns = 5
 		if context.scene.texToolsSettings.color_ID_count < max_columns:
 			max_columns = context.scene.texToolsSettings.color_ID_count
@@ -874,14 +876,16 @@ class Panel_Colors(bpy.types.Panel):
 			else:
 				col.label(text=" ")
 
+		box.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
+
 
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
 			col.alert = True
-			col.operator(op_color_elements_setup.op.bl_idname, text="Setup Elements", icon = 'X')
-			col.operator(op_color_clear.op.bl_idname, text="Pack Texture", icon = 'X')
+			col.operator(op_color_pack_texture.op.bl_idname, text="Pack Texture", icon_value = icon_get('op_color_pack_texture'))
+			col.operator(op_color_clear.op.bl_idname, text="Pack Vertex Colors", icon = 'X')
 			col.operator(op_color_clear.op.bl_idname, text="Tex 2 Colors", icon = 'X')
-			col.operator(op_color_clear.op.bl_idname, text="Vertex Colors", icon = 'X')
+			
 
 
 
@@ -934,6 +938,8 @@ def register():
 		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
+		"op_color_pack_texture.png", 
+		"op_color_elements.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 
 		"op_island_align_sort_h.png", 

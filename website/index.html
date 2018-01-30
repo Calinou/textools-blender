@@ -32,8 +32,8 @@
 					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a>      </p>
 					<p><strong>What's new</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
 					<ul>
-					  <li>Color ID tools</li>
-						<li>Smooth by UV</li>
+						<li>Color ID tools</li>
+						<li>UV Smoothing</li>
 						<li>Peel Edge unwrapping</li>
 						<li>Diffuse Bake type</li>
 						<li>World Normal Bake type</li>
@@ -111,28 +111,28 @@
 		<div class="Panel">
 			<div class="Columns3">
 				<div class="Content">
-				  <h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
-				  <p>Aligns the UV island of the selected UV edge <img class="Icon" src="images/show_selection_uv_edge.png" alt=""/> to the closest 90 degree angle.</p>
-				  <p><img src="images/demo_align_edge_islands.gif" alt=""/></p>
-				  <p><strong>Tip</strong>: You can align mutliple UV islands by edge at once.</p>
-			  </div>
+					<h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
+					<p>Aligns the UV island of the selected UV edge <img class="Icon" src="images/show_selection_uv_edge.png" alt=""/> to the closest 90 degree angle.</p>
+					<p><img src="images/demo_align_edge_islands.gif" alt=""/></p>
+					<p><strong>Tip</strong>: You can align mutliple UV islands by edge at once.</p>
+				</div>
 				<div class="Content">
-				  <h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-				  <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.</p>
-			  </div>
+					<h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.</p>
+				</div>
 				<div class="Content">
-				  <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
-				  <p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
-			  </div>
+					<h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
+					<p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
+				</div>
 				<div class="Content">
-				  <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
+					<h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
 					<p>This tool has 4 directions to align UV islands or UV vertices to. </p>
 					<p>In UV vertex mode <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. </p>
 					<p><img src="images/demo_align.gif" alt=""/></p>
 					<p> In the UV face mode <img src="images/show_selection_uv_face.png" alt="" class="Icon"/>  selected UV islands are aligned to either side of the initial selection bounds.    </p>
 				</div>
 				<div class="Content">
-				  <h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
+					<h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
 					<p>Sorts the selected UV islands by longest side and aligns them <strong>vertically</strong> or <strong>horizontally</strong> in a row.</p>
 				</div>
 				<div class="Content">
@@ -140,8 +140,8 @@
 					<p>Unwraps selected viewport faces Face <img src="images/show_selection_view_face.png" alt="" class="Icon"/> mode into a single UV island. This approach can be quicker than marking edges for UV seams before unwrapping.</p>
 					<p><img src="images/demo_iron_faces.gif" alt=""/></p>
 				</div>
-			  <div class="Content">
-				<h2><img src="images/op_unwrap_peel_edge.png" width="32" height="32" alt=""/> Peel Edge <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				<div class="Content">
+					<h2><img src="images/op_unwrap_peel_edge.png" width="32" height="32" alt=""/> Peel Edge <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 					<p>Select an edge <img src="images/show_selection_view_edge.png" alt="" class="Icon"/> or edge loop and unwrap linked geometry to a rectified UV island.</p>
 					<p><strong>Note: </strong>Works best with pipe shapes</p>
 				</div>
@@ -166,11 +166,11 @@
 			</div>
 			
 			<div class="Info">
-			  <h3>Mesh Tools</h3></div>
+			<h3>Mesh Tools</h3></div>
 			<div class="Columns2">
 				<div class="Content">
-				  <h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> Smooth by UV<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					<p>Applies smoothing normals to the object except at the UV island edge bounds.This tools is often used for normal map baking.</p>
+					<h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.</p>
 					<p>&nbsp;</p>
 				</div>
 			</div>
@@ -261,57 +261,57 @@
 				</div>
 				
 			</div>
-            
-            <div class="Info"><h3>Bake Types  </h3></div>
-				<div class="Columns4">
-					<div class="Content">
-						<h2>Normal Tangent</h2>
-						<p><img src="images/bake_normal.png" width="128" height="128" alt=""/></p>
-						<p>A normal map in tangent space.</p>
-					</div>
-					<div class="Content">
-						<h2>Normal Object <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>&nbsp;</p>
-						<p>A normal map in object space </p>
-					</div>
-					<div class="Content">
-						<h2>Diffuse Color<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>&nbsp;</p>
-						<p>...</p>
-					</div>
-					<div class="Content">
-					  <h2>Face Selection<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					  <p>&nbsp;</p>
-					  <p>...</p>
-				  </div>
-					<div class="Content">
-						<h2>ID  Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p><img src="images/bake_mode_id.png" width="128" height="128" alt=""/></p>
-						<p>Assigns a unique color to each mesh element. This map is often used to quickly select elements in Texture editing Applications such as Photoshop or Substance Painter.    </p>
-					</div>
-					<div class="Content">
-						<h2>AO / Ambient Occlusion</h2>
-						<p><img src="images/bake_mode_ao.png" width="128" height="128" alt=""/></p>
-						<p>An Ambient Occlusion bake in Cycles. </p>
-						<p>Parameters: <strong>Samples</strong></p>
-					</div>
-					<div class="Content">
-						<h2>Cavity</h2>
-						<p><img src="images/bake_mode_cavity.png" width="128" height="128" alt=""/></p>
-						<p>Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node.    </p>
-					</div>
-					<div class="Content">
-						<h2>Dust</h2>
-						<p><img src="images/bake_mode_dust.png" width="128" height="128" alt=""/></p>
-						<p>Dust is similar to the cavity map but adds additional Z top normals to the mix. Use this mask for dust and dirt masks in your texturing process.    </p>
-					</div>
-					<div class="Content">
-						<h2>Gradient Z</h2>
-						<p><img src="images/bake_mode_gradient_z.png" width="128" height="128" alt=""/></p>
-						<p>A linear gradient from top to bottom of the object in world space.    </p>
-					</div>
+			
+			<div class="Info"><h3>Bake Types  </h3></div>
+			<div class="Columns4">
+				<div class="Content">
+					<h2>Normal Tangent</h2>
+					<p><img src="images/bake_normal.png" width="128" height="128" alt=""/></p>
+					<p>A normal map in tangent space.</p>
 				</div>
-            
+				<div class="Content">
+					<h2>Normal Object <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>&nbsp;</p>
+					<p>A normal map in object space </p>
+				</div>
+				<div class="Content">
+					<h2>Diffuse Color<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>&nbsp;</p>
+					<p>...</p>
+				</div>
+				<div class="Content">
+					<h2>Face Selection<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>&nbsp;</p>
+					<p>...</p>
+				</div>
+				<div class="Content">
+					<h2>ID  Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p><img src="images/bake_mode_id.png" width="128" height="128" alt=""/></p>
+					<p>Assigns a unique color to each mesh element. This map is often used to quickly select elements in Texture editing Applications such as Photoshop or Substance Painter.    </p>
+				</div>
+				<div class="Content">
+					<h2>AO / Ambient Occlusion</h2>
+					<p><img src="images/bake_mode_ao.png" width="128" height="128" alt=""/></p>
+					<p>An Ambient Occlusion bake in Cycles. </p>
+					<p>Parameters: <strong>Samples</strong></p>
+				</div>
+				<div class="Content">
+					<h2>Cavity</h2>
+					<p><img src="images/bake_mode_cavity.png" width="128" height="128" alt=""/></p>
+					<p>Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node.    </p>
+				</div>
+				<div class="Content">
+					<h2>Dust</h2>
+					<p><img src="images/bake_mode_dust.png" width="128" height="128" alt=""/></p>
+					<p>Dust is similar to the cavity map but adds additional Z top normals to the mix. Use this mask for dust and dirt masks in your texturing process.    </p>
+				</div>
+				<div class="Content">
+					<h2>Gradient Z</h2>
+					<p><img src="images/bake_mode_gradient_z.png" width="128" height="128" alt=""/></p>
+					<p>A linear gradient from top to bottom of the object in world space.    </p>
+				</div>
+			</div>
+			
 			<div class="Info"><h3>Bake Sets</h3>
 				<p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection into bake sets. Objects with a common name  are grouped into a set, keywords  are used to differenciate between specific object types such as highpoly, floating geometry or cage objects.</p></div>
 				<div class="Columns2">
@@ -392,43 +392,46 @@
 			<div class="Panel">
 				<div class="Columns2">
 				  <div class="Content">
-					<h2>Color templates<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				    <h2>Color templates<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>Choose from a collection of color themes. Once selected this will replace your previous colors but maintain your material ID's.</p>
 						<p><img src="images/demo_color_id_templates.gif" alt=""/></p>
 						<p><strong>Tip</strong>: Hold down <strong>Ctrl</strong> and <strong>scroll</strong> the mouse wheel while hovering the dropdown UI element to quickly cycle between the values.</p>
 					</div>
 					<div class="Content">
-					  <h2> Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					  <p>The amount of colors to display and use. Choose <strong>between 2 and 15</strong>.</p>
-					  <p><img src="images/demo_color_id_colors.gif" alt=""/></p>
-			      </div>
+						<h2> Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<p>The amount of colors to display and use. Choose <strong>between 2 and 15</strong>.</p>
+						<p><img src="images/demo_color_id_colors.gif" alt=""/></p>
+					</div>
 					<div class="Content">
-					  <h2><img src="images/op_color_clear.png" width="32" height="32" alt=""/> Clear<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2><img src="images/op_color_clear.png" width="32" height="32" alt=""/> Clear<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>Clears the multi material setup of the selected objects.</p>
 					</div>
-				  <div class="Content">
-				    <h2>Color Controls<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<div class="Content">
+						<h2>Color Controls<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 						<p>The main interface to assign and select colors on selected objects or faces in edit mode.</p>
 						<p><img src="images/color_id_swatches.png" alt=""/></p>
-					  <table width="100%" border="0" cellspacing="10" cellpadding="0">
-						  <tr>
-						    <td valign="top"><strong><img class="Icon" src="images/color_id_color.png" alt=""/> Color</strong></td>
-						    <td valign="top"><p>Change the global color for this swatch. You can change colors before or after you assigned them.</p></td>
-					    </tr>
-						  <tr>
-							  <td width="164" valign="top"><strong><img class="Icon" src="images/op_color_assign.png" alt=""/> Assign</strong></td>
-							  <td width="700" valign="top">Assigns the color to the selected Objects in object mode <strong><img class="Icon" src="images/show_selection_object.png" alt=""/></strong> or selected faces<strong><img class="Icon" src="images/show_selection_view_face.png" alt=""/></strong> in edit mode.</td>
-					    </tr>
-						  <tbody>
-							  <tr>
-								  <td valign="top"><strong> <img class="Icon" src="images/show_selection_view_face.png" alt=""/> Select</strong></td>
-								  <td valign="top"><strong>Only in edit mode</strong>: Select faces by color.</td>
-							  </tr>
-						  </tbody>
-				    </table>
-					  <p><strong>Tip:</strong> You can hover over color swatches in blender and press <strong>Ctrl</strong> + <strong>C</strong> and <strong>Ctrl</strong> + <strong>V</strong> to copy and paste within Blender.</p>
+						<table width="100%" border="0" cellspacing="10" cellpadding="0">
+							<tr>
+								<td valign="top"><strong><img class="Icon" src="images/color_id_color.png" alt=""/> Color</strong></td>
+								<td valign="top"><p>Change the global color for this swatch. You can change colors before or after you assigned them.</p></td>
+							</tr>
+							<tr>
+								<td width="164" valign="top"><strong><img class="Icon" src="images/op_color_assign.png" alt=""/> Assign</strong></td>
+								<td width="700" valign="top">Assigns the color to the selected Objects in object mode <strong><img class="Icon" src="images/show_selection_object.png" alt=""/></strong> or selected faces<strong><img class="Icon" src="images/show_selection_view_face.png" alt=""/></strong> in edit mode.</td>
+							</tr>
+							<tbody>
+								<tr>
+									<td valign="top"><strong> <img class="Icon" src="images/show_selection_view_face.png" alt=""/> Select</strong></td>
+									<td valign="top"><strong>Only in edit mode</strong>: Select faces by color.</td>
+								</tr>
+							</tbody>
+						</table>
+						<p><strong>Tip:</strong> You can hover over color swatches in blender and press <strong>Ctrl</strong> + <strong>C</strong> and <strong>Ctrl</strong> + <strong>V</strong> to copy and paste within Blender.</p>
 					</div>
-					
+						<div class="Content">
+					      <h2> <img src="images/op_color_elements.png" width="32" height="32" alt=""/> Color Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					      <p>Automatically assign colors to unique mesh elements.</p>
+				      </div>
 				</div>
 			</div>
 			<hr>
@@ -436,14 +439,14 @@
 			<div class="Panel">
 				<div class="Columns2">
 					<div class="Content">
-					  <h2>Using GIT source version in Blender</h2>
+						<h2>Using GIT source version in Blender</h2>
 						<p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a></p>
 						<p>Quite often the latest GIT source code version is not very stable. To run the GIT version I recommend setting up the '<strong>Scripts</strong>' path in the user preferences to point to the GIT folder.</p>
 						<ol>
-						  <li>Goto user preferences (<strong>Ctrl</strong> + <strong>Alt</strong> + <strong>U</strong>) </li>
+							<li>Goto user preferences (<strong>Ctrl</strong> + <strong>Alt</strong> + <strong>U</strong>) </li>
 							<li>In the '<strong>File</strong>' tab set the '<strong>Scripts</strong>' path to '{GIT Path}\' so that blender will pick up 'addons' folder </li>
 							<li>In the 'Add-ons' tab enable TexTools</li>
-					  </ol>
+						</ol>
 					</div>
 					<div class="Content">
 						<h2>Debug mode</h2>
@@ -456,11 +459,11 @@
 						<p><img src="images/demo_enable_debug.gif" alt=""/></p>
 						<p>Additional tools should now be highlighted in red inside the interface.</p>
 					</div>
-				  <div class="Content">
+					<div class="Content">
 						<h2>Code Structure</h2>
 						<p>Each operator for the tools has it's own <strong>python module file</strong>. Should you want to inspect or change the code this should make it easy to look for the right code. All code is commented fairly thorough and to my best ability simplified.</p>
-					<p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
-					  <p><strong>Materials</strong> used for baking are stored in the resources folder as *.blend file.</p>
+						<p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
+						<p><strong>Materials</strong> used for baking are stored in the resources folder as *.blend file.</p>
 						<p><strong>Icons</strong> are stored in the 'icons' folder and reflect the operator python  module names.</p>
 					</div>
 					<div class="Content">

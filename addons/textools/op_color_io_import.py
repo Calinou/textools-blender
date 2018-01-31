@@ -1,6 +1,7 @@
 import bpy
 import bmesh
 import operator
+import string
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
@@ -34,7 +35,7 @@ def import_colors(self, context):
 
 	for i in range(len(hex_strings)):
 		hex_strings[i] = hex_strings[i].strip().strip('#')
-		if len(hex_strings[i]) != 6:
+		if len(hex_strings[i]) != 6 or not all(c in string.hexdigits for c in hex_strings[i]):
 			# Incorrect format
 			self.report({'ERROR_INVALID_INPUT'}, "Incorrect hex format '{}' use a #RRGGBB pattern".format(hex_strings[i]))
 			return

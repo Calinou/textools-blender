@@ -14,18 +14,7 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if not bpy.context.active_object:
-			return False
-
-		if bpy.context.active_object not in bpy.context.selected_objects:
-			return False
-
-		if len(bpy.context.selected_objects) != 1:
-			return False
-
-		if bpy.context.active_object.type != 'MESH':
-			return False
-
+		
 		#Only in UV editor mode
 		if bpy.context.area.type != 'IMAGE_EDITOR':
 			return False
@@ -50,7 +39,4 @@ def export_colors(self, context):
 	
 	# popup panel https://b3d.interplanety.org/en/creating-pop-up-panels-with-user-ui-in-blender-add-on/
 	# 2n option: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Interface#A_popup_dialog
-
-	# 		#00070C, #025744, #FCffff, #FF6917, #F6240C
-
 

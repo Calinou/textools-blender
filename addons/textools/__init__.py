@@ -513,7 +513,8 @@ class Panel_Layout(bpy.types.Panel):
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = get_tab_name()
-	
+	bl_options = {'DEFAULT_CLOSED'}
+
 	# def draw_header(self, _):
 	# 	layout = self.layout
 	# 	layout.label(text="", icon_value=icon("logo"))
@@ -864,6 +865,9 @@ class Panel_Colors(bpy.types.Panel):
 
 		row = box.row(align=True)
 		row.operator(op_color_clear.op.bl_idname, text="Clear", icon = 'X')
+		# 	Drop down menu for import export? 
+		# 	https://blender.stackexchange.com/questions/46496/how-do-i-make-a-custom-drop-down-menu-with-custom-items-in-blender
+		# 	http://elfnor.com/drop-down-and-button-select-menus-for-blender-operator-add-ons.html
 		row.operator(op_color_io_export.op.bl_idname, text="", icon = 'EXPORT')
 		row.operator(op_color_io_import.op.bl_idname, text="", icon = 'IMPORT')
 		

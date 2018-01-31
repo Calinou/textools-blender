@@ -14,17 +14,7 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if not bpy.context.active_object:
-			return False
-
-		if bpy.context.active_object not in bpy.context.selected_objects:
-			return False
-
-		if len(bpy.context.selected_objects) != 1:
-			return False
-
-		if bpy.context.active_object.type != 'MESH':
-			return False
+		
 
 		#Only in UV editor mode
 		if bpy.context.area.type != 'IMAGE_EDITOR':
@@ -44,18 +34,22 @@ def import_colors(self, context):
 
 	for i in range(len(hex_strings)):
 		hex_strings[i] = hex_strings[i].strip().strip('#')
-
-		name = "color_ID_color_{}".format(i)
-		if hasattr(bpy.context.scene.texToolsSettings, name):
-			# Color Index exists
-			color = utilities_color.hex_to_color( hex_strings[i] )
-			setattr(bpy.context.scene.texToolsSettings, name, color)
-		else:
-			# More colors imported than supported
-			self.report({'ERROR_INVALID_INPUT'}, "Only {}x colors have been imported instead of {}x".format(
-				i,len(hex_strings)
-			))
+		if len(hex_strings[i]) != 6:
+			# Incorrect format
+			self.report({'ERROR_INVALID_INPUT'}, "Incorrect hex format '{}' use a #RRGGBB pattern".format(hex_strings[i]))
 			return
+		else:
+			name = "color_ID_color_{}".format(i)
+			if hasattr(bpy.context.scene.texToolsSettings, name):
+				# Color Index exists
+				color = utilities_color.hex_to_color( hex_strings[i] )
+				setattr(bpy.context.scene.texToolsSettings, name, color)
+			else:
+				# More colors imported than supported
+				self.report({'ERROR_INVALID_INPUT'}, "Only {}x colors have been imported instead of {}x".format(
+					i,len(hex_strings)
+				))
+				return
 	
 	# Set number of colors
 	bpy.context.scene.texToolsSettings.color_ID_count = len(hex_strings)

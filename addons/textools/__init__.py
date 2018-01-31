@@ -31,8 +31,10 @@ if "bpy" in locals():
 	imp.reload(op_color_assign)
 	imp.reload(op_color_clear)
 	imp.reload(op_color_elements)
-	imp.reload(op_color_select)
+	imp.reload(op_color_io_export)
+	imp.reload(op_color_io_import)
 	imp.reload(op_color_pack_texture)
+	imp.reload(op_color_select)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
 	imp.reload(op_island_mirror)
@@ -72,8 +74,10 @@ else:
 	from . import op_color_assign
 	from . import op_color_clear
 	from . import op_color_elements
-	from . import op_color_select
+	from . import op_color_io_export
+	from . import op_color_io_import
 	from . import op_color_pack_texture
+	from . import op_color_select
 	from . import op_island_align_edge
 	from . import op_island_align_sort
 	from . import op_island_mirror
@@ -427,7 +431,7 @@ class Panel_Units(bpy.types.Panel):
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = get_tab_name()
-	
+	bl_options = {'HIDE_HEADER'}
 
 	def draw_header(self, _):
 		layout = self.layout
@@ -655,7 +659,8 @@ class Panel_Bake(bpy.types.Panel):
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = get_tab_name()
-	
+	bl_options = {'DEFAULT_CLOSED'}
+
 	def draw(self, context):
 		layout = self.layout
 		
@@ -833,6 +838,7 @@ class Panel_Colors(bpy.types.Panel):
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = get_tab_name()
+	bl_options = {'DEFAULT_CLOSED'}
 
 	def draw(self, context):
 		layout = self.layout
@@ -843,14 +849,23 @@ class Panel_Colors(bpy.types.Panel):
 
 		col = box.column(align=True)
 		
+
+
 		row = col.row(align=True)
 		row.prop(context.scene.texToolsSettings, "color_ID_templates", text="")
 		
+
 		row = col.row(align=True)
 		row.prop(context.scene.texToolsSettings, "color_ID_count", text="Colors", expand=False)
+		
+		
+
+		box = layout.box()
+
+		row = box.row(align=True)
 		row.operator(op_color_clear.op.bl_idname, text="Clear", icon = 'X')
-
-
+		row.operator(op_color_io_export.op.bl_idname, text="", icon = 'EXPORT')
+		row.operator(op_color_io_import.op.bl_idname, text="", icon = 'IMPORT')
 		
 		max_columns = 5
 		if context.scene.texToolsSettings.color_ID_count < max_columns:
@@ -876,8 +891,13 @@ class Panel_Colors(bpy.types.Panel):
 			else:
 				col.label(text=" ")
 
-		box.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
-
+		
+		# split = row.split(percentage=0.25, align=True)
+		# c = split.column(align=True)
+		# c.operator(op_color_clear.op.bl_idname, text="", icon = 'X')
+		# c = split.column(align=True)
+		# c.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
+		
 
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
@@ -889,7 +909,9 @@ class Panel_Colors(bpy.types.Panel):
 
 
 
-		# row = box.row(align=True)
+		row = box.row(align=True)
+		row.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
+
 		# for i in range(context.scene.texToolsSettings.color_ID_count):
 
 

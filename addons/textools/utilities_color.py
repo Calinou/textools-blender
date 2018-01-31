@@ -28,7 +28,12 @@ def hex_to_color(hex):
 	# fin.append(1.0)
 	return tuple(fin)
 
+def color_to_hex(color):
+	r = int(color[0]*255)
+	g = int(color[1]*255)
+	b = int(color[2]*255)
 
+	return "#{:02X}{:02X}{:02X}".format(r,g,b)
 
 def get_material_name(index):
 	return material_prefix+str(index)

@@ -53,10 +53,9 @@ def setup_elements(self, context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 
 
-	# Collect elements
+	# Collect groups
 	faces_processed = []
 	groups = []
-
 
 	for face in bm.faces:
 		if face not in faces_processed:

@@ -65,7 +65,7 @@ def assign_color(self, context, index):
 	name_material = utilities_color.get_material_name(index)
 
 
-	# Verify console slots
+	# Verify material slots
 	for i in range(index+1):
 		if index >= len(obj.material_slots):
 			bpy.ops.object.material_slot_add()

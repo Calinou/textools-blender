@@ -57,6 +57,8 @@ def get_texel_density(self, context):
 		self.report({'ERROR_INVALID_INPUT'}, "No UV maps or meshes selected" )
 		return
 
+	print("obj faces groups {}".format(len(object_faces)))
+
 	# Collect Images / textures
 	object_images = {}
 	for obj in object_faces:

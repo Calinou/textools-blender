@@ -47,6 +47,10 @@ def get_object_texture_image(obj):
 
 	print("Get img for '{}'".format(obj.name))
 
+	previous_mode = bpy.context.active_object.mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+
 	# Search in material & texture slots
 	for slot_mat in obj.material_slots:
 		# Check for traditional texture slots in material

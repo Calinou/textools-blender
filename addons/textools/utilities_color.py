@@ -10,13 +10,13 @@ from . import settings
 
 
 material_prefix = "TT_color_"
-
+gamma = 2.2
 
 
 def assign_slot(obj, index):
 	if index < len(obj.material_slots):
 		obj.material_slots[index].material = get_material(index)
-		
+
 		# Verify color
 		assign_color(index)
 
@@ -38,24 +38,6 @@ def assign_color(index):
 			# Legacy render engine, not suited for baking
 			material.diffuse_color = rgb
 			material.use_shadeless = True
-
-
-
-		# if material.use_nodes:
-
-		# else:
-		# 	material.diffuse_color = get_color(index)
-
-
-		
-			# These viewports require lights or unlit shading to be visible
-			
-		# elif  bpy.context.scene.render.engine == 'CYCLES':
-			#Prevents bug where after a color bake would not bake updated color 
-			# material.use_nodes = True 
-
-		# material.update_tag(refresh='OBJECT')
-		# material.tag = True
 
 
 
@@ -92,7 +74,6 @@ def replace_material(index):
 	name = get_name(index)
 
 	print("Replace material and create new")
-	# ....Clear exisitng matierals and replace in all objects that use it (e.g. material slots)
 
 	# Check if material exists
 	if name in bpy.data.materials:
@@ -109,7 +90,7 @@ def replace_material(index):
 		material.user_clear()
 		bpy.data.materials.remove(material)
 		
-		# Re-assign new material
+		# Re-assign new material to all previous slots
 		material = get_material(index)
 		for slot in slots:
 			slot.material = material;
@@ -139,12 +120,14 @@ def get_name(index):
 def get_color(index):
 	if index < bpy.context.scene.texToolsSettings.color_ID_count:
 		return getattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(index))
+
+	# Default return (Black)
 	return (0, 0, 0)
 
 
 
 def hex_to_color(hex):
-	gamma = 2.2
+	
 	hex = hex.strip('#')
 	lv = len(hex)
 	fin = list(int(hex[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
@@ -155,13 +138,17 @@ def hex_to_color(hex):
 	fin.append(r)
 	fin.append(g)
 	fin.append(b)
-	# fin.append(1.0)
 	return tuple(fin)
 
 
 
 def color_to_hex(color):
-	r = int(color[0]*255)
-	g = int(color[1]*255)
-	b = int(color[2]*255)
+	rgb = []
+	for i in range(3):
+		rgb.append( pow(color[i] , 1.0/gamma) )
+
+	r = int(rgb[0]*255)
+	g = int(rgb[1]*255)
+	b = int(rgb[2]*255)
+
 	return "#{:02X}{:02X}{:02X}".format(r,g,b)

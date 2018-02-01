@@ -17,8 +17,6 @@ modes={
 	'normal_object': 	utilities_bake.BakeMode('',					type='NORMAL', color=(0.5, 0.5, 1, 1), normal_space='OBJECT' ),
 	'cavity': 			utilities_bake.BakeMode('bake_cavity',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'dust': 			utilities_bake.BakeMode('bake_dust',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
-	'worn':				utilities_bake.BakeMode('bake_worn',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
-	# 'gradient_z':		utilities_bake.BakeMode('bake_gradient_z',	type='EMIT', ),
 	'id_element':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
 	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
 	'diffuse':			utilities_bake.BakeMode('',					type='DIFFUSE'),

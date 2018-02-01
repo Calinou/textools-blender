@@ -22,22 +22,27 @@
 					</tr>
 				</tbody>
 			</table>
-			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texture  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. Current features  include: Easy <strong>Texture Baking</strong>, <strong>UV Align</strong> and <strong>Selection</strong> tools and <strong>Texel Density</strong> tools. </p><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texture  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. There are 3 panels in TexTools: <strong>UV Layout</strong>, <strong>Texture Baking</strong> and <strong>ID Colors</strong>. </p><table width="100%" border="0" cellspacing="0" cellpadding="0">
 			
 		</table></p>
 		<div class="Panel">
 			<div class="Columns2">
 				<div class="Content">
 					<h2>Download</h2>
-					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a>      </p>
-					<p><strong>What's new</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
+					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip">Blender_TexTools_0.9.5.zip </a>      </p>
+					<p><strong>What's new in 0.9.5</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
 					<ul>
 						<li>Color ID tools</li>
-						<li>UV Smoothing</li>
+						<li>UV normal Smoothing</li>
 						<li>Peel Edge unwrapping</li>
-						<li>Diffuse Bake type</li>
-						<li>World Normal Bake type</li>
+						<li>Bake mode: Diffuse</li>
+						<li>Bake mode: Face selection</li>
+						<li>Bake mode: object normal</li>
 						<li>Rectify</li>
+						<li>2x Checker map styles</li>
+						<li>7x Color ID templates</li>
+                        <li>Color Elements</li>
+                        <li>Export &amp; Import Color IDs</li>
 					</ul>
 				</div>
 				<div class="Content">
@@ -108,6 +113,7 @@
 				</div>
 			</div>
 		</div><h1>UV Layout Panel</h1>
+		<p>These UV layout tools are used to unwrap or transform your UV layout.</p>
 		<div class="Panel">
 			<div class="Columns3">
 				<div class="Content">
@@ -175,15 +181,19 @@
 				</div>
 			</div>
 			
-			<div class="Info"><h3> Texel Density Tools   </h3></div>
+			<div class="Info"><h3> Texel Density Tools   </h3>
+			  <p>Texel Densities are used to apply the same size of pixels in 3D (texel) to the surface of your objects or selected faces.</p>
+			</div>
 			<div class="Columns2">
 				<div class="Content">
 					<h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
-					<p>Assigns a checker map texture (blender render) or material (cycles) to the objects. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to <strong>texture mode</strong>. </p>
+					<p>Assigns a checker map texture (blender render) or material (cycles) to the objects. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to <strong>texture mode</strong>.					</p>
+					<p><img src="images/show_checkermap_swap.png" alt=""/></p>
+					<p><strong>Tip:</strong> Assign a checker map again and the checker map will change from <strong>UV Grid</strong> to <strong>Color Grid</strong></p>
 				</div>
 				<div class="Content">
 					<h2><img src="images/texel_density.png" width="32" height="32" alt=""/> Texel Density</h2>
-					<p>Texel density is a value that describes how many pixels from a texture are visible per 1 unit or 1 meter. </p>
+					<p>Texel density is a value that describes how many <strong>pixels</strong> from a texture are visible <strong>per 1 unit</strong> or 1 meter. </p>
 					<p><img src="images/demo_texel_density.gif" alt=""/></p>
 				</div>
 				<div class="Content">
@@ -265,29 +275,31 @@
 			<div class="Info"><h3>Bake Types  </h3></div>
 			<div class="Columns4">
 				<div class="Content">
-					<h2>Normal Tangent</h2>
-					<p><img src="images/bake_normal.png" width="128" height="128" alt=""/></p>
+					<h2>Tangent Normal </h2>
+					<p><img src="images/bake_mode_normal_tangent.png" width="128" height="128" alt=""/></p>
 					<p>A normal map in tangent space.</p>
 				</div>
 				<div class="Content">
-					<h2>Normal Object <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					<p>&nbsp;</p>
-					<p>A normal map in object space </p>
+					<h2> Object Normal<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p><img src="images/bake_mode_normal_object.png" width="128" height="128" alt=""/></p>
+					<p>A normal map in object space. </p>
+					<p><strong>Tip:</strong> Use this map for vertical gradients.</p>
 				</div>
 				<div class="Content">
 					<h2>Diffuse<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					<p>&nbsp;</p>
-					<p>...</p>
+					<p><img src="images/bake_mode_diffuse.png" width="128" height="128" alt=""/></p>
+					<p>Renders the diffuse colors of all Cycles materials of the object.</p>
+					<p><strong>Tip: </strong>Color ID setups are baked in this 'Diffuse' mode.</p>
 				</div>
 				<div class="Content">
 					<h2>Selection<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					<p>&nbsp;</p>
-					<p>...</p>
+					<p><img src="images/bake_mode_selection.png" width="128" height="128" alt=""/></p>
+					<p>Renders your current mesh face selection as a black and white mask.</p>
 				</div>
 				<div class="Content">
-					<h2>ID  Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					<p><img src="images/bake_mode_id.png" width="128" height="128" alt=""/></p>
-					<p>Assigns a unique color to each mesh element. This map is often used to quickly select elements in Texture editing Applications such as Photoshop or Substance Painter.    </p>
+					<h2>ID  Element</h2>
+					<p><img src="images/bake_mode_id_element.png" width="128" height="128" alt=""/></p>
+					<p>Assigns a unique color to each mesh element. </p>
 				</div>
 				<div class="Content">
 					<h2>AO</h2>
@@ -303,14 +315,11 @@
 				<div class="Content">
 					<h2>Dust</h2>
 					<p><img src="images/bake_mode_dust.png" width="128" height="128" alt=""/></p>
-					<p>Dust is similar to the cavity map but adds additional Z top normals to the mix. Use this mask for dust and dirt masks in your texturing process.    </p>
+					<p>Dust is similar to the cavity map but adds additional Z top normals to the mix.</p>
+					<p><strong>Tip: </strong> Use this mask for dust and dirt masks in your texturing process. </p>
 				</div>
-				<div class="Content">
-					<h2>Gradient Z</h2>
-					<p><img src="images/bake_mode_gradient_z.png" width="128" height="128" alt=""/></p>
-					<p>A linear gradient from top to bottom of the object in world space.    </p>
-				</div>
-			</div>
+				
+		  </div>
 			
 			<div class="Info"><h3>Bake Sets</h3>
 				<p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection into bake sets. Objects with a common name  are grouped into a set, keywords  are used to differenciate between specific object types such as highpoly, floating geometry or cage objects.</p></div>
@@ -389,6 +398,7 @@
 			</div>
 			<h1>Color ID Panel</h1>
 			<p>Color ID's are a quick way to block out your model with a set of colors or face groups. Colors are global accross your blend file and can be adjusted at any time.</p>
+			<p><strong>Tip:</strong> For baking use the <strong>Diffuse</strong> bake mode and setup the materials in the <strong>Cycles</strong> render mode.</p>
 			<div class="Panel">
 				<div class="Columns2">
 				  <div class="Content">
@@ -399,17 +409,17 @@
 					</div>
 					<div class="Content">
 						<h2> Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>The amount of colors to display and use. Choose <strong>between 2 and 15</strong>.</p>
+						<p>The amount of colors to display and use. Choose between <strong>2</strong> and <strong>15</strong>.</p>
 						<p><img src="images/demo_color_id_colors.gif" alt=""/></p>
 					</div>
 					<div class="Content">
 						<h2><img src="images/op_color_clear.png" width="32" height="32" alt=""/> Clear<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-						<p>Clears the multi material setup of the selected objects.</p>
+						<p>Clears the multi material setup of the selected objects and materials from the scene.</p>
 					</div>
 				  <div class="Content">
-					  <h2>Export &amp; Import</h2>
-					  <p>Exports or Imports current colors as hex strings to your clipboard. Hex colors need to be comma seperated and use a #RRGGBB format</p>
-					  <p><strong>Tip:</strong> Use the <a href="https://github.com/naumovs/vscode-ext-color-highlight.git" class="NoButton">Color Highlight extension</a> with <a href="https://code.visualstudio.com/" class="NoButton">Visual Studio Code</a> to preview your colors in a text editor.</p>
+					  <h2>Export &amp; Import<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					  <p>Exports or Imports current colors as hex strings to your clipboard. Hex colors need to be comma seperated and use a <strong>#RRGGBB</strong> format</p>
+					  <p><strong>Tip:</strong> Use the <a href="https://github.com/naumovs/vscode-ext-color-highlight.git" class="NoButton">Color Highlight</a> extension with <strong>Visual Studio Code</strong> to preview your colors in a text editor.</p>
 			      </div>
 					<div class="Content">
 					  <h2>Color Controls<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
@@ -475,7 +485,7 @@
 						<h2>Release Log</h2>
 						<p>Having issues with the latest version? Try an older version from the list below:</p>
 						
-						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip"> TexTools 1.0.0.zip</a>
+						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip"> TexTools 0.9.5.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.0.zip"> TexTools 0.9.0.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip"> TexTools 0.8.0.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.2.zip">TexTools 0.7.2.zip</a>

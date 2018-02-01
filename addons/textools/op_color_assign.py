@@ -41,12 +41,8 @@ class op(bpy.types.Operator):
 def assign_color(self, context, index):
 	obj = bpy.context.active_object
 	
-
-
 	previous_mode = bpy.context.active_object.mode
-	# uvLayer = bm.loops.layers.uv.verify();
 
-	print("...")
 	bpy.ops.object.mode_set(mode='EDIT')
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	faces = []
@@ -62,7 +58,7 @@ def assign_color(self, context, index):
 		bpy.ops.mesh.select_all(action='SELECT')
 	
 
-	name_material = utilities_color.get_material_name(index)
+	
 
 
 	# Verify material slots
@@ -70,19 +66,11 @@ def assign_color(self, context, index):
 		if index >= len(obj.material_slots):
 			bpy.ops.object.material_slot_add()
 
-	# Assign material to slot
-	if index < len(obj.material_slots):
-		slot = obj.material_slots[index]
-		if not slot.material or slot.material.name != name_material:
-			print("Assign material")
-			slot.material = utilities_color.get_material(index)
-		
-		# Verify color
-		utilities_color.assign_material_color(index)
+	utilities_color.assign_slot(obj, index)
 
-		# Assign to selection
-		bpy.context.object.active_material_index = index
-		bpy.ops.object.material_slot_assign()
+	# Assign to selection
+	bpy.context.object.active_material_index = index
+	bpy.ops.object.material_slot_assign()
 
 
 	#Change View mode to MATERIAL

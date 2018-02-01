@@ -57,6 +57,12 @@ def clear_colors(self, context):
 	for i in range(count):
 		bpy.ops.object.material_slot_remove()
 
+	# Clear all materials
+	for material in bpy.data.materials:
+		if utilities_color.material_prefix in material.name:
+			material.user_clear()
+			bpy.data.materials.remove(material)
+
 	# Clear all colors
 	# bpy.context.scene.texToolsSettings.color_ID_count = 100
 	# for i in range(bpy.context.scene.texToolsSettings.color_ID_count):

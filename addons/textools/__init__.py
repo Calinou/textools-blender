@@ -262,7 +262,7 @@ def on_color_changed(self, context):
 	for i in range(0, context.scene.texToolsSettings.color_ID_count):
 		material = utilities_color.get_material(i)
 		if material:
-			utilities_color.assign_material_color(i)
+			utilities_color.assign_color(i)
 
 
 
@@ -275,7 +275,7 @@ def on_color_dropdown_template(self, context):
 	for i in range(0, len(hex_colors)):
 		color = utilities_color.hex_to_color("#"+hex_colors[i])
 		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), color)
-		utilities_color.assign_material_color(i)
+		utilities_color.assign_color(i)
 
 
 

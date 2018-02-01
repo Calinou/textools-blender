@@ -18,11 +18,13 @@ modes={
 	'cavity': 			utilities_bake.BakeMode('bake_cavity',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'dust': 			utilities_bake.BakeMode('bake_dust',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'worn':				utilities_bake.BakeMode('bake_worn',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
-	'gradient_z':		utilities_bake.BakeMode('bake_gradient_z',	type='EMIT', ),
-	'id_element':		utilities_bake.BakeMode('bake_id_element',	type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
+	# 'gradient_z':		utilities_bake.BakeMode('bake_gradient_z',	type='EMIT', ),
+	'id_element':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
+	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
 	'diffuse':			utilities_bake.BakeMode('',					type='DIFFUSE'),
 	'ao':				utilities_bake.BakeMode('',					type='AO')
 }
+
 
 
 class op(bpy.types.Operator):
@@ -37,8 +39,6 @@ class op(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
-
-
 		if settings.bake_mode not in modes:
 			self.report({'ERROR_INVALID_INPUT'}, "Uknown mode '{}' only available: '{}'".format(settings.bake_mode, ", ".join(modes.keys() )) )
 			return
@@ -52,7 +52,6 @@ class op(bpy.types.Operator):
 		render(
 			self = self, 
 			mode = settings.bake_mode,
-
 			size = bpy.context.scene.texToolsSettings.size, 
 
 			bake_single = bpy.context.scene.texToolsSettings.bake_force_single,
@@ -71,7 +70,7 @@ class op(bpy.types.Operator):
 
 		return {'FINISHED'}
 
-
+restore_maps_use_nodes = []
 
 def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
@@ -85,6 +84,8 @@ def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance)
 	# Disable edit mode
 	if bpy.context.scene.objects.active != None and bpy.context.object.mode != 'OBJECT':
 	 	bpy.ops.object.mode_set(mode='OBJECT')
+
+	restore_maps_use_nodes.clear()
 
 	# Get the baking sets / pairs
 	sets = settings.sets
@@ -196,10 +197,14 @@ def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance)
 		if not bake_single or (bake_single and s == len(sets)-1):
 			# When baking single, only downsample on last bake
 			if render_width != size[0] or render_height != size[1]:
-				image.scale(width,height)
+				image.scale(size[0],size[1])
 			
 			# image.save()
-		
+
+	# Restore non node materials
+	for material in restore_maps_use_nodes:
+		print("__restore {}".format(material.name))
+		material.use_nodes = False	
 
 
 def setup_image(mode, name, width, height, path, is_clear):#
@@ -211,9 +216,8 @@ def setup_image(mode, name, width, height, path, is_clear):#
 	# 	print("Image pointer exists but no data "+name)
 	# 	image = bpy.data.images[name]
 	# 	image.update()
-		# image.generated_height = height
-
-		# bpy.data.images.remove(bpy.data.images[name])
+	# image.generated_height = height
+	# bpy.data.images.remove(bpy.data.images[name])
 
 	if name not in bpy.data.images:
 		# Create new image
@@ -249,7 +253,10 @@ def setup_image_bake_node(obj, image):
 	else:
 		for slot in obj.material_slots:
 			if slot.material:
-				slot.material.use_nodes = True
+
+				if(slot.material.use_nodes == False):
+					restore_maps_use_nodes.append(slot.material)
+					slot.material.use_nodes = True
 
 				# Assign bake node
 				tree = slot.material.node_tree

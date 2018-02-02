@@ -39,35 +39,46 @@ class op(bpy.types.Operator):
 
 
 def assign_color(self, context, index):
-	obj = bpy.context.active_object
 	
-	previous_mode = bpy.context.active_object.mode
+	selected_obj = bpy.context.selected_objects.copy()
 
-	bpy.ops.object.mode_set(mode='EDIT')
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	faces = []
+	previous_mode = 'OBJECT'
+	if len(selected_obj) == 1:
+		previous_mode = bpy.context.active_object.mode
 
 
-	#Assign to all or just selected faces?
-	if bpy.context.active_object.mode == 'EDIT':
-		faces = [face for face in bm.faces if face.select]
-	else:
-		faces = [face for face in bm.faces]		
+	for obj in selected_obj:
+		# Select object
+		bpy.ops.object.mode_set(mode='OBJECT')
+		bpy.ops.object.select_all(action='DESELECT')
+		obj.select = True
+		bpy.context.scene.objects.active = obj
 
-	if previous_mode == 'OBJECT':
-		bpy.ops.mesh.select_all(action='SELECT')
-	
+		# Enter Edit mode
+		bpy.ops.object.mode_set(mode='EDIT')
+		bm = bmesh.from_edit_mesh(obj.data);
+		faces = []
 
-	# Verify material slots
-	for i in range(index+1):
-		if index >= len(obj.material_slots):
-			bpy.ops.object.material_slot_add()
+		#Assign to all or just selected faces?
+		if previous_mode == 'EDIT':
+			faces = [face for face in bm.faces if face.select]
+		else:
+			faces = [face for face in bm.faces]		
 
-	utilities_color.assign_slot(obj, index)
+		if previous_mode == 'OBJECT':
+			bpy.ops.mesh.select_all(action='SELECT')
+		
 
-	# Assign to selection
-	bpy.context.object.active_material_index = index
-	bpy.ops.object.material_slot_assign()
+		# Verify material slots
+		for i in range(index+1):
+			if index >= len(obj.material_slots):
+				bpy.ops.object.material_slot_add()
+
+		utilities_color.assign_slot(obj, index)
+
+		# Assign to selection
+		obj.active_material_index = index
+		bpy.ops.object.material_slot_assign()
 
 
 	#Change View mode to MATERIAL
@@ -78,4 +89,10 @@ def assign_color(self, context, index):
 					space.viewport_shade = 'MATERIAL'
 
 	# restore mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.select_all(action='DESELECT')
+	for obj in selected_obj:
+		obj.select = True
 	bpy.ops.object.mode_set(mode=previous_mode)
+
+	

@@ -124,7 +124,7 @@ def get_object_type(obj):
 	# Detect by modifiers
 	if obj.modifiers:
 		for modifier in obj.modifiers:
-			if modifier.type == 'SUBSURF':
+			if modifier.type == 'SUBSURF' and modifier.render_levels > 0:
 				return 'high'
 			elif modifier.type == 'BEVEL':
 				return 'high'

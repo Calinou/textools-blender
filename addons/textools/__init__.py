@@ -395,6 +395,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	color_ID_color_12 = get_color()
 	color_ID_color_13 = get_color()
 	color_ID_color_14 = get_color()
+	color_ID_color_15 = get_color()
+	color_ID_color_16 = get_color()
+	color_ID_color_17 = get_color()
+	color_ID_color_18 = get_color()
+	color_ID_color_19 = get_color()
 
 	color_ID_templates = bpy.props.EnumProperty(items= 
 		[	
@@ -416,7 +421,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		description="Number of color IDs",
 		default = 5,
 		min = 2,
-		max = 15
+		max = 20
 	)
 
 	# bake_do_save = bpy.props.BoolProperty(
@@ -834,6 +839,34 @@ class Panel_Bake(bpy.types.Panel):
 
 
 
+
+class op_color_dropdown_io(bpy.types.Menu):
+	bl_idname = "ui.textools_color_dropdown_io"
+	bl_label = "IO"
+
+	def draw(self, context):
+		layout = self.layout
+
+		layout.operator(op_color_io_export.op.bl_idname, text="Export", icon = 'EXPORT')
+		layout.operator(op_color_io_import.op.bl_idname, text="Import", icon = 'IMPORT')
+
+		# layout.operator("wm.open_mainfile")
+		# layout.operator("wm.save_as_mainfile").copy = True
+
+		# layout.operator("object.shade_smooth")
+
+		# layout.label(text="Hello world!", icon='WORLD_DATA')
+
+		# # use an operator enum property to populate a sub-menu
+		# layout.operator_menu_enum("object.select_by_type",
+		# 						  property="type",
+		# 						  text="Select All by Type...",
+		# 						  )
+
+		# # call another menu
+		# layout.operator("wm.call_menu", text="Unwrap").name = "VIEW3D_MT_uv_map"
+
+
 class Panel_Colors(bpy.types.Panel):
 	bl_label = "Color ID"
 	bl_space_type = 'IMAGE_EDITOR'
@@ -865,12 +898,18 @@ class Panel_Colors(bpy.types.Panel):
 
 		row = box.row(align=True)
 		row.operator(op_color_clear.op.bl_idname, text="Clear", icon = 'X')
+		row.menu(op_color_dropdown_io.bl_idname, '', icon='SCRIPTWIN')
 		# 	Drop down menu for import export? 
 		# 	https://blender.stackexchange.com/questions/46496/how-do-i-make-a-custom-drop-down-menu-with-custom-items-in-blender
 		# 	http://elfnor.com/drop-down-and-button-select-menus-for-blender-operator-add-ons.html
-		row.operator(op_color_io_export.op.bl_idname, text="", icon = 'EXPORT')
-		row.operator(op_color_io_import.op.bl_idname, text="", icon = 'IMPORT')
 		
+		
+		# row = box.row(align=True)
+		
+
+
+
+
 		max_columns = 5
 		if context.scene.texToolsSettings.color_ID_count < max_columns:
 			max_columns = context.scene.texToolsSettings.color_ID_count

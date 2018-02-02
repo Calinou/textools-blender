@@ -1,11 +1,15 @@
 import bpy
 import os
 import bmesh
+import operator
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
 
 from . import utilities_texel
+
+
+texture_modes = ['UV_GRID','COLOR_GRID']
 
 
 class op(bpy.types.Operator):
@@ -37,7 +41,6 @@ class op(bpy.types.Operator):
 
 	def execute(self, context):
 		assign_checker_map(
-			context,
 			bpy.context.scene.texToolsSettings.size[0], 
 			bpy.context.scene.texToolsSettings.size[1]
 		)
@@ -45,16 +48,15 @@ class op(bpy.types.Operator):
 
 
 
-def assign_checker_map(context, size_x, size_y):
-	# Disable edit mode
+def assign_checker_map(size_x, size_y):
+	# Force Object mode
 	if bpy.context.scene.objects.active != None and bpy.context.object.mode != 'OBJECT':
 		bpy.ops.object.mode_set(mode='OBJECT')
 
 	# Collect Objects
 	objects = []
 	for obj in bpy.context.selected_objects:
-		if obj.type == 'MESH':
-			if obj.data.uv_layers:
+		if obj.type == 'MESH' and obj.data.uv_layers:
 				objects.append(obj)
 
 	#Change View mode to TEXTURED
@@ -66,9 +68,37 @@ def assign_checker_map(context, size_x, size_y):
 
 
 	if len(objects) > 0:
-		name = utilities_texel.get_checker_name(size_x, size_y)
-		image = get_image(name, size_x, size_y)
 
+		# Detect current Checker modes
+		mode_count = {}
+		for mode in texture_modes:
+			mode_count[mode] = 0
+		for obj in objects:
+			image = utilities_texel.get_object_texture_image(obj)
+			if image and image.generated_type in texture_modes:
+				mode_count[image.generated_type]+=1
+
+		# Sort by count (returns tuple list of key,value)
+		mode_max_count = sorted(mode_count.items(), key=operator.itemgetter(1))
+		mode_max_count.reverse()
+
+		mode = None
+		if mode_max_count[0][1] == 0:
+			mode = texture_modes[0]
+		elif mode_max_count[0][0] in texture_modes:
+			if mode_max_count[-1][1] > 0:
+				# Complete existing mode first
+				mode = mode_max_count[0][0]
+			else:
+				# Switch to next checker mode
+				index = texture_modes.index(mode_max_count[0][0])
+				mode = texture_modes[ (index+1)%len(texture_modes) ]
+
+
+		name = utilities_texel.get_checker_name(mode, size_x, size_y)
+		image = get_image(name, mode, size_x, size_y)
+
+		# Assig to all objects
 		for obj in objects:
 			apply_faces_image(obj, image)
 	
@@ -126,94 +156,17 @@ def apply_faces_image(obj, image):
 
 
 
-def get_image(name, size_x, size_y):
+def get_image(name, mode, size_x, size_y):
 	# Image already exists?
 	if name in bpy.data.images:
+		# Update texture UV checker mode
+		bpy.data.images[name].generated_type = mode
 		return bpy.data.images[name];
 
 	# Create new image instead
 	image = bpy.data.images.new(name, width=size_x, height=size_y)
-	image.generated_type = 'UV_GRID' #COLOR_GRID
+	image.generated_type = mode #UV_GRID or COLOR_GRID
 	image.generated_width = int(size_x)
 	image.generated_height = int(size_y)
 
 	return image
-
-
-
-# def main(context):
-
-# 	if bpy.context.scene.render.engine != 'CYCLES':
-# 		bpy.context.scene.render.engine = 'CYCLES'
-
-	
-# 	#Change View mode to TEXTURED
-# 	for area in bpy.context.screen.areas: # iterate through areas in current screen
-# 		if area.type == 'VIEW_3D':
-# 			for space in area.spaces: # iterate through spaces in current VIEW_3D area
-# 				if space.type == 'VIEW_3D': # check if space is a 3D view
-# 					space.viewport_shade = 'TEXTURED' # set the viewport shading to rendered
-# 					# space.show_textured_shadeless = True
-
-
-
-
-# 	# Setup Material
-# 	material = None
-# 	if name_material in bpy.data.materials:
-# 		material = bpy.data.materials[name_material]
-# 	else:
-# 		material = bpy.data.materials.new(name_material)
-# 		material.use_nodes = True
-
-# 	if material == None:
-# 		return
-
-# 	# Assign material
-# 	if len(bpy.context.object.data.materials) > 0:
-# 		bpy.context.object.data.materials[0] = material
-# 	else:
-# 		bpy.context.object.data.materials.append(material)
-
-
-# 	# Setup Node
-# 	tree = material.node_tree
-# 	node = None
-# 	if name_node in tree.nodes:
-# 		node = tree.nodes[name_node]
-# 	else:
-# 		node = tree.nodes.new("ShaderNodeTexImage")
-# 	node.name = name_node
-# 	node.select = True
-# 	tree.nodes.active = node
-
-	
-# 	# Setup Image
-# 	if node.image == None:
-# 		node.image = get_image( names_checkermap[0] )
-
-# 	else:
-# 		print("Current image? {}".format(node.image.name))
-# 		if node.image.name not in names_checkermap:
-# 			node.image = get_image( names_checkermap[0] )
-# 		else:
-# 			# Cycle to next image
-# 			index = (names_checkermap.index(node.image.name)+ 1) % len(names_checkermap)
-# 			node.image = get_image( names_checkermap[index] )
-
-
-
-# def get_image(name):
-
-# 	#Get Image
-# 	image = None
-# 	if bpy.data.images.get(name) is not None:
-#   		image = bpy.data.images[name];
-# 	else:
-# 		#Load image
-# 		pathTexture = icons_dir = os.path.join(os.path.dirname(__file__), "resources/{}.png".format(name))
-# 		image = bpy.ops.image.open(filepath=pathTexture, relative_path=False)
-# 		bpy.data.images["{}.png".format(name)].name = name #remove extension in name
-# 		image = bpy.data.images[name];
-	
-# 	return image

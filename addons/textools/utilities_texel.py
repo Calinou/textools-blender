@@ -88,22 +88,32 @@ def image_resize(image, size_x, size_y):
 def checker_images_cleanup():
 	# Clean up unused images
 	for image in bpy.data.images:
-		if image_material_prefix in image.name:
+		if image and image_material_prefix in image.name:
+			# Remove unused images
 			if not image.users:
-				print("Remove unused image {}".format(image.name))
+				image.user_clear()
 				bpy.data.images.remove(image)
+				return
 
 			# Check if name missmatches size
-			name = get_checker_name(image.size[0], image.size[1])
+			name = get_checker_name(image.generated_type , image.size[0], image.size[1])
 			if image.name != name:
 				# In cycles find related material as well
 				if image.name in bpy.data.materials:
 					bpy.data.materials[image.name].name = name
 				image.name = name
 
+	for material in bpy.data.materials:
+		if material and image_material_prefix in material.name:
+			# Remove unused images
+			if not material.users:
+				material.user_clear()
+				bpy.data.materials.remove(material)
 
-def get_checker_name(size_x, size_y):
-	return (image_material_prefix+"{}x{}").format(size_x, size_y)
+
+
+def get_checker_name(mode, size_x, size_y):
+	return (image_material_prefix+"{1}x{2}_{0}").format(mode, size_x, size_y)
 
 
 

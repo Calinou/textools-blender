@@ -55,6 +55,9 @@ def import_colors(self, context):
 	# Set number of colors
 	bpy.context.scene.texToolsSettings.color_ID_count = len(hex_strings)
 
+	bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="{}x colors imported from clipboard".format( len(hex_strings) ))
+
+
 
 	
 	

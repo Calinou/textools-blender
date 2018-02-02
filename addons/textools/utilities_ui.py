@@ -1,8 +1,8 @@
 import bpy
-from bpy.types import Panel, EnumProperty, WindowManager
 import bpy.utils.previews
-
 import os
+from bpy.types import Panel, EnumProperty, WindowManager
+from bpy.props import StringProperty
 
 preview_collections = {}
 preview_icons = bpy.utils.previews.new()
@@ -22,6 +22,7 @@ size_textures = [
 
 def icon_get(name):
 	return preview_icons[name].icon_id
+
 
 
 def icon_register(fileName):
@@ -57,15 +58,35 @@ def generate_previews():
 	
 
 
+class op_popup(bpy.types.Operator):
+	bl_idname = "ui.textools_popup"
+	bl_label = "Message"
+
+	message = StringProperty()
+ 
+	def execute(self, context):
+		self.report({'INFO'}, self.message)
+		print(self.message)
+		return {'FINISHED'}
+ 
+	def invoke(self, context, event):
+		wm = context.window_manager
+		return wm.invoke_popup(self, width=200, height=200)
+ 
+	def draw(self, context):
+		self.layout.label(self.message)
+
+
+
 def register():
 	from bpy.types import Scene
 	from bpy.props import StringProperty, EnumProperty
 	
+	# Operators
+	# bpy.utils.register_class(op_popup)
 
 	# global preview_icons
 	preview_icons = bpy.utils.previews.new()
-
-
 
 	# Create a new preview collection (only upon register)
 	preview_collection = bpy.utils.previews.new()

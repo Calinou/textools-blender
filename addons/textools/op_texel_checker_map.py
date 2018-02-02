@@ -84,10 +84,11 @@ def assign_checker_map(size_x, size_y):
 
 		mode = None
 		if mode_max_count[0][1] == 0:
+			# There are no checker maps
 			mode = texture_modes[0]
 		elif mode_max_count[0][0] in texture_modes:
 			if mode_max_count[-1][1] > 0:
-				# Complete existing mode first
+				# There is more than 0 of another mode, complete existing mode first
 				mode = mode_max_count[0][0]
 			else:
 				# Switch to next checker mode

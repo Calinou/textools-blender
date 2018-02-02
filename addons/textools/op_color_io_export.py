@@ -7,6 +7,7 @@ from math import pi
 
 from . import utilities_color
 
+
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_color_io_export"
 	bl_label = "Export"
@@ -35,8 +36,6 @@ def export_colors(self, context):
 		hex_colors.append( utilities_color.color_to_hex( color) )
 
 	bpy.context.window_manager.clipboard = ", ".join(hex_colors)
-	
-	
-	# popup panel https://b3d.interplanety.org/en/creating-pop-up-panels-with-user-ui-in-blender-add-on/
-	# 2n option: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Interface#A_popup_dialog
+	bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="{}x colors copied to clipboard".format(len(hex_colors)))
+
 

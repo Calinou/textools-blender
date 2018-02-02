@@ -58,9 +58,6 @@ def assign_color(self, context, index):
 		bpy.ops.mesh.select_all(action='SELECT')
 	
 
-	
-
-
 	# Verify material slots
 	for i in range(index+1):
 		if index >= len(obj.material_slots):

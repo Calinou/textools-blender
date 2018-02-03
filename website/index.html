@@ -29,19 +29,10 @@
 			<div class="Columns2">
 				<div class="Content">
 					<h2>Download</h2>
-					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip">Blender_TexTools_0.9.5.zip </a>      </p>
-					<p><strong>What's new in 0.9.5</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
+					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a>      </p>
+					<p><strong>What's new in 1.0.0</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
 					<ul>
-						<li>Color ID tools</li>
-						<li>UV normal Smoothing</li>
-						<li>Peel Edge unwrapping</li>
-						<li>Bake mode: Diffuse</li>
-						<li>Bake mode: object normals</li>
-						<li>Rectify</li>
-						<li>2x Checker map styles</li>
-						<li>7x Color ID templates</li>
-                        <li>Color Elements</li>
-                        <li>Export &amp; Import Color IDs</li>
+						<li>Create Color ID Atlas</li>
 					</ul>
 				</div>
 				<div class="Content">
@@ -122,7 +113,7 @@
 					<p><strong>Tip</strong>: You can align mutliple UV islands by edge at once.</p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify</h2>
 					<p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.</p>
 					<p><img src="images/demo_rectify.gif" alt=""/></p>
 				</div>
@@ -148,7 +139,7 @@
 					<p><img src="images/demo_iron_faces.gif" alt=""/></p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_unwrap_peel_edge.png" width="32" height="32" alt=""/> Peel Edge <img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2><img src="images/op_unwrap_peel_edge.png" width="32" height="32" alt=""/> Peel Edge </h2>
 					<p>Select an edge <img src="images/show_selection_view_edge.png" alt="" class="Icon"/> or edge loop and unwrap linked geometry to a rectified UV island. Works best with pipe shapes.	</p>
 					<p><img src="images/demo_peel_edge.gif" alt=""/></p>
 				</div>
@@ -176,7 +167,7 @@
 			<h3>Mesh Tools</h3></div>
 			<div class="Columns2">
 				<div class="Content">
-					<h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing</h2>
 					<p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.</p>
 					<p>&nbsp;</p>
 				</div>
@@ -282,13 +273,13 @@
 					<p>A normal map in tangent space.</p>
 				</div>
 				<div class="Content">
-					<h2> Object Normal<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2> Object Normal</h2>
 					<p><img src="images/bake_mode_normal_object.png" width="128" height="128" alt=""/></p>
 					<p>A normal map in object space. </p>
 					<p><strong>Tip:</strong> Use this map for vertical gradients.</p>
 				</div>
 				<div class="Content">
-					<h2>Diffuse<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2>Diffuse</h2>
 					<p><img src="images/bake_mode_diffuse.png" width="128" height="128" alt=""/></p>
 					<p>Renders the diffuse colors of all Cycles materials of the object.</p>
 					<p><strong>Tip: </strong>Color ID setups are baked in this 'Diffuse' mode.</p>
@@ -399,29 +390,29 @@
 			<div class="Panel">
 				<div class="Columns2">
 				  <div class="Content">
-				    <h2>Color templates<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				    <h2>Color templates</h2>
 						<p>Choose from a collection of color themes. Once selected this will replace your previous colors but maintain your material ID's.</p>
 						<p><img src="images/demo_color_id_templates.gif" alt=""/></p>
 						<p><strong>Tip</strong>: Hold down <strong>Ctrl</strong> and <strong>scroll</strong> the mouse wheel while hovering the dropdown UI element to quickly cycle between the values.</p>
 					</div>
 					<div class="Content">
-						<h2> Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2> Colors</h2>
 						<p>The amount of colors to display and use. Choose between <strong>2</strong> and <strong>20</strong>.</p>
 						<p><img src="images/demo_color_id_colors.gif" alt=""/></p>
 					</div>
 					<div class="Content">
-						<h2><img src="images/op_color_clear.png" width="32" height="32" alt=""/> Clear<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2><img src="images/op_color_clear.png" width="32" height="32" alt=""/> Clear</h2>
 						<p>Clears the multi material setup of the selected objects and materials from the scene.</p>
 					</div>
 				  <div class="Content">
-					  <h2><img src="images/op_color_io_export.png" width="32" height="32" alt=""/> Export &amp; Import<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					  <h2><img src="images/op_color_io_export.png" width="32" height="32" alt=""/> Export &amp; Import</h2>
 					  <p>Exports or Imports current colors as hex strings to your <strong>clipboard</strong>. Hex colors need to be comma seperated and use a <strong>#RRGGBB</strong> format</p>
 					  <p><img src="images/show_color_id_export_import.png" alt=""/></p>
 					  <p><strong>Tip:</strong> Use the <a href="https://github.com/naumovs/vscode-ext-color-highlight.git" class="NoButton">Color Highlight</a> extension with <strong>Visual Studio Code</strong> to preview your colors in a text editor.</p>
 					  <p><img src="images/show_color_id_text_edit.png" alt=""/></p>
 			      </div>
 					<div class="Content">
-					  <h2>Color Controls<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					  <h2>Color Controls</h2>
 						<p>The main interface to assign and select colors on selected objects or faces in edit mode.</p>
 						<p><img src="images/color_id_swatches.png" alt=""/></p>
 						<table width="100%" border="0" cellspacing="10" cellpadding="0">
@@ -448,11 +439,20 @@
                 <div class="Info">
 			  <h3>Color ID Tools</h3></div>
               
-              <div class="Columns1">
+              <div class="Columns2">
 					<div class="Content">
-					      <h2> <img src="images/op_color_elements.png" width="32" height="32" alt=""/> Color Elements<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					      <h2> <img src="images/op_color_elements.png" width="32" height="32" alt=""/> Color Elements</h2>
 					      <p>Assigns colors in sequence to each mesh element.</p>
 				      </div>
+                <div class="Content">
+					      <h2> <img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Create Atlas<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+			        <p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
+					      <p><img src="images/show_create_atlas.png" alt=""/></p>
+			      </div>
+                <div class="Content">
+			      <h2>  Read Atlas<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		          <p>...			      </p>
+                  </div>
      		 </div>
               
 			</div>
@@ -491,7 +491,7 @@
 					<div class="Content">
 						<h2>Release Log</h2>
 						<p>Having issues with the latest version? Try an older version from the list below:</p>
-						
+						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip"> TexTools 1.0.0.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip"> TexTools 0.9.5.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.0.zip"> TexTools 0.9.0.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip"> TexTools 0.8.0.zip</a>

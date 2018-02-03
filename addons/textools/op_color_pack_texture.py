@@ -7,6 +7,7 @@ from collections import defaultdict
 
 from . import utilities_color
 
+material_prefix = "TT_atlas_"
 gamma = 2.2
 
 class op(bpy.types.Operator):
@@ -44,6 +45,11 @@ class op(bpy.types.Operator):
 
 def pack_texture(self, context):
 	obj = bpy.context.active_object
+	name = material_prefix+obj.name
+
+	if obj.mode != 'OBJECT':
+		bpy.ops.object.mode_set(mode='OBJECT')
+
 
 	# Determine size
 	size_pixel = 8
@@ -63,7 +69,7 @@ def pack_texture(self, context):
 	))
 
 	# Create image
-	image = bpy.data.images.new("Atlas", width=size_image_pow, height=size_image_pow)
+	image = bpy.data.images.new(name, width=size_image_pow, height=size_image_pow)
 	pixels = [None] * size_image_pow * size_image_pow
 
 	# Black pixels
@@ -90,15 +96,72 @@ def pack_texture(self, context):
 	pixels = [chan for px in pixels for chan in px]
 	image.pixels = pixels
 
-	# Remove Slots
-	# bpy.ops.uv.textools_color_clear()
-	# bpy.ops.object.material_slot_add()
-	# bpy.ops.material.new()
-
 	# Set background image
 	for area in bpy.context.screen.areas:
 		if area.type == 'IMAGE_EDITOR':
 			area.spaces[0].image = image
-			print("{} type {}".format(area.spaces[0], type(area.spaces[0])))
 
 	# Edit mesh
+	bpy.ops.object.mode_set(mode='EDIT')
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+	bpy.ops.mesh.select_all(action='SELECT')
+	bpy.ops.uv.smart_project(angle_limit=1)
+
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+	uvLayer = bm.loops.layers.uv.verify();
+
+	for face in bm.faces:
+		index = face.material_index
+
+		# Get UV coordinates for index
+		x = index%size_square
+		y = math.floor(index/size_square)
+
+		x*= (size_pixel / size_image_pow) 
+		y*= (size_pixel / size_image_pow)
+		x+= size_pixel/size_image_pow/2
+		y+= size_pixel/size_image_pow/2
+
+		for loop in face.loops:
+			loop[uvLayer].uv = (x, y)
+
+	# Remove Slots & add one
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.uv.textools_color_clear()
+	bpy.ops.object.material_slot_add()
+	
+	#Create material with image
+	obj.material_slots[0].material = get_material(image)
+
+	#Display UVs
+	bpy.ops.object.mode_set(mode='EDIT')
+
+
+
+def get_material(image):
+
+	if bpy.context.scene.render.engine == 'CYCLES':
+		# Get Material
+		material = None
+		if image.name in bpy.data.materials:
+			material = bpy.data.materials[image.name]
+		else:
+			material = bpy.data.materials.new(image.name)
+			material.use_nodes = True
+
+		tree = material.node_tree
+
+		node_image = tree.nodes.new("ShaderNodeTexImage")
+		node_image.name = "bake"
+		node_image.select = True
+		node_image.image = image
+		tree.nodes.active = node_image
+
+		node_diffuse = tree.nodes['Diffuse BSDF']
+
+
+		tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
+
+		return material
+
+	return None

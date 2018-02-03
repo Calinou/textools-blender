@@ -953,7 +953,9 @@ class Panel_Colors(bpy.types.Panel):
 
 		col = box.column(align=True)
 		col.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
-		col.operator(op_color_pack_texture.op.bl_idname, text="Pack Texture", icon_value = icon_get('op_color_pack_texture'))
+		# row = col.row(align=True)
+		col.operator(op_color_pack_texture.op.bl_idname, text="Create Atlas", icon_value = icon_get('op_color_pack_texture'))
+		# row.operator(op_color_pack_texture.op.bl_idname, text="From Atlas", icon_value = icon_get('op_color_pack_texture'))
 			
 
 

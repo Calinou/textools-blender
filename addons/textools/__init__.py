@@ -945,15 +945,17 @@ class Panel_Colors(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
 			col.alert = True
-			col.operator(op_color_pack_texture.op.bl_idname, text="Pack Texture", icon_value = icon_get('op_color_pack_texture'))
 			col.operator(op_color_clear.op.bl_idname, text="Pack Vertex Colors", icon = 'X')
 			col.operator(op_color_clear.op.bl_idname, text="Tex 2 Colors", icon = 'X')
 			
 
 
 
-		row = box.row(align=True)
-		row.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
+		col = box.column(align=True)
+		col.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
+		col.operator(op_color_pack_texture.op.bl_idname, text="Pack Texture", icon_value = icon_get('op_color_pack_texture'))
+			
+
 
 		# for i in range(context.scene.texToolsSettings.color_ID_count):
 

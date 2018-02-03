@@ -1,11 +1,13 @@
 import bpy
 import bmesh
 import operator
+import math
 from mathutils import Vector
 from collections import defaultdict
-from math import pi
 
 from . import utilities_color
+
+gamma = 2.2
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_color_pack_texture"
@@ -20,6 +22,9 @@ class op(bpy.types.Operator):
 			return False
 
 		if bpy.context.active_object not in bpy.context.selected_objects:
+			return False
+
+		if len(bpy.context.selected_objects) != 1:
 			return False
 
 		if bpy.context.active_object.type != 'MESH':
@@ -39,4 +44,61 @@ class op(bpy.types.Operator):
 
 def pack_texture(self, context):
 	obj = bpy.context.active_object
-	
+
+	# Determine size
+	size_pixel = 8
+	size_square = math.ceil(math.sqrt( context.scene.texToolsSettings.color_ID_count ))
+	size_image = size_square * size_pixel
+	size_image_pow = int(math.pow(2, math.ceil(math.log(size_image, 2))))
+
+	# Maximize pixel size
+	size_pixel = math.floor(size_image_pow/size_square)
+
+	print("{0} colors = {1} x {1} = ({2}pix)  {3} x {3}  | {4} x {4}".format(
+		context.scene.texToolsSettings.color_ID_count, 
+		size_square,
+		size_pixel,
+		size_image,
+		size_image_pow
+	))
+
+	# Create image
+	image = bpy.data.images.new("Atlas", width=size_image_pow, height=size_image_pow)
+	pixels = [None] * size_image_pow * size_image_pow
+
+	# Black pixels
+	for x in range(size_image_pow):
+		for y in range(size_image_pow):
+			pixels[(y * size_image_pow) + x] = [0, 0, 0, 1]
+
+	# Pixels
+	for c in range(context.scene.texToolsSettings.color_ID_count):
+		x = c % size_square
+		y = math.floor(c/size_square)
+		color = utilities_color.get_color(c).copy()
+		for i in range(3):
+			color[i] = pow(color[i] , 1.0/gamma)
+
+		for sx in range(size_pixel):
+			for sy in range(size_pixel):
+				_x = x*size_pixel + sx
+				_y = y*size_pixel + sy
+				pixels[(_y * size_image_pow) + _x] = [color[0], color[1], color[2], 1]
+
+
+	# flatten list & assign pixels
+	pixels = [chan for px in pixels for chan in px]
+	image.pixels = pixels
+
+	# Remove Slots
+	# bpy.ops.uv.textools_color_clear()
+	# bpy.ops.object.material_slot_add()
+	# bpy.ops.material.new()
+
+	# Set background image
+	for area in bpy.context.screen.areas:
+		if area.type == 'IMAGE_EDITOR':
+			area.spaces[0].image = image
+			print("{} type {}".format(area.spaces[0], type(area.spaces[0])))
+
+	# Edit mesh

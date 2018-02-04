@@ -103,8 +103,6 @@ def store_materials(obj):
 
 
 def restore_materials():
-	
-
 	print("Restore materials {} objects".format(len(stored_materials)))
 	for obj in stored_materials:
 		# Remove slots
@@ -416,32 +414,48 @@ def setup_vertex_color_ids(obj):
 
 
 def get_image_material(image):
+
+	material = None
+	if image.name in bpy.data.materials:
+		material = bpy.data.materials[image.name]
+	else:
+		material = bpy.data.materials.new(image.name)
+
+
 	if bpy.context.scene.render.engine == 'CYCLES':
-		# Get Material
-		material = None
-		if image.name in bpy.data.materials:
-			material = bpy.data.materials[image.name]
-		else:
-			material = bpy.data.materials.new(image.name)
-			material.use_nodes = True
+		material.use_nodes = True
 
 		tree = material.node_tree
-
 		node_image = tree.nodes.new("ShaderNodeTexImage")
-		node_image.name = "bake"
+		node_image.name = "image"
 		node_image.select = True
 		node_image.image = image
 		tree.nodes.active = node_image
 
 		node_diffuse = tree.nodes['Diffuse BSDF']
 
-
+		# Make link
 		tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
 
 		return material
 
 	elif bpy.context.scene.render.engine == 'BLENDER_RENDER' or bpy.context.scene.render.engine == 'BLENDER_GAME':
-		# TODO implement blender render mateiral
-		return None
+		material.use_nodes = False
+		
+		texture = None
+		if image.name in bpy.data.textures:
+			texture = bpy.data.textures[image.name]
+		else:
+			texture = bpy.data.textures.new(image.name, 'IMAGE')
 
-	return None
+		texture.image = image
+		slot = material.texture_slots.add()
+		slot.texture = texture
+		slot.mapping = 'FLAT' 
+
+		material.use_shadeless = True
+
+
+		# return None/
+
+	return material

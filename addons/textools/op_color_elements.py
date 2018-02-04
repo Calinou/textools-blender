@@ -54,89 +54,60 @@ def setup_elements(self, context):
 
 
 	# Collect groups
-	faces_processed = []
+	faces_indices_processed = []
 	groups = []
 
 	for face in bm.faces:
-		if face not in faces_processed:
+		if face.index not in faces_indices_processed:
 			# Select face & extend
 			bpy.ops.mesh.select_all(action='DESELECT')
 			face.select = True
 			bpy.ops.mesh.select_linked(delimit={'NORMAL'})
 
-			faces = [f for f in bm.faces if (f.select and f not in faces_processed)]
+			faces = [f.index for f in bm.faces if (f.select and f.index not in faces_indices_processed)]
 			for f in faces:
-				faces_processed.append(f)
+				faces_indices_processed.append(f)
 			groups.append(faces)
 
 
+	print("Groups {}x".format(len(groups)))
+	# return
 
-
-	index = 0
+	index_color = 0
 	for group in groups:
+		# rebuild bmesh data (e.g. left edit mode previous loop)
+		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+		if hasattr(bm.faces, "ensure_lookup_table"): 
+			bm.faces.ensure_lookup_table()
+
 		# Select group
 		bpy.ops.mesh.select_all(action='DESELECT')
-		for face in group:
-			face.select = True
+		for index_face in group:
+			bm.faces[index_face].select = True
 
-		bpy.ops.uv.textools_color_assign(index=index)
-		index = (index+1) % bpy.context.scene.texToolsSettings.color_ID_count
+		# Assign to selection
+		bpy.ops.uv.textools_color_assign(index=index_color)
 
-	# for face in bm.faces:
-	# 	if face not in faces_processed:
-	# 		# Select face & extend
-	# 		bpy.ops.mesh.select_all(action='DESELECT')
-	# 		face.select = True
-	# 		bpy.ops.mesh.select_linked(delimit={'NORMAL'})
-
-	# 		#Select similar by perimeter
-	# 		bpy.ops.mesh.select_similar(type='PERIMETER', threshold=0.01)
-	# 		bpy.ops.mesh.select_linked(delimit={'NORMAL'})
-
-	# 		faces = [f for f in bm.faces if (f.select and f not in faces_processed)]
-
-	# 		for f in faces:
-	# 			faces_processed.append(f)
-
-	# 		groups.append(faces)
-
-	# print("Elements {}x".format(len(groups)))
-
-	
-
+		index_color = (index_color+1) % bpy.context.scene.texToolsSettings.color_ID_count
 
 	bpy.ops.object.mode_set(mode='OBJECT')
 
-	# bpy.ops.mesh.select_linked_pick(deselect=False, delimit={'NORMAL'}, index=208)
-	# bpy.ops.mesh.select_similar(type='AREA', threshold=0.01)
 
 
+# def get_bounds(faces):
+# 	boundsMin = Vector((99999999.0,99999999.0))
+# 	boundsMax = Vector((-99999999.0,-99999999.0))
+# 	for face in faces:
+# 		center = face.calc_center_bounds
+# 		boundsMin.x = min(boundsMin.x, center.x)
+# 		boundsMin.y = min(boundsMin.y, center.y)
+# 		boundsMax.x = max(boundsMax.x, center.x)
+# 		boundsMax.y = max(boundsMax.y, center.y)
 
-	# for face in bm.faces:
-	# 	face.material_index = 0
+# 	bbox = {}
+# 	bbox['min'] = boundsMin
+# 	bbox['max'] = boundsMax
+# 	bbox['width'] = (boundsMax - boundsMin).x
+# 	bbox['height'] = (boundsMax - boundsMin).y
 
-
-
-
-
-
-
-
-
-def get_bounds(faces):
-	boundsMin = Vector((99999999.0,99999999.0))
-	boundsMax = Vector((-99999999.0,-99999999.0))
-	for face in faces:
-		center = face.calc_center_bounds
-		boundsMin.x = min(boundsMin.x, center.x)
-		boundsMin.y = min(boundsMin.y, center.y)
-		boundsMax.x = max(boundsMax.x, center.x)
-		boundsMax.y = max(boundsMax.y, center.y)
-
-	bbox = {}
-	bbox['min'] = boundsMin
-	bbox['max'] = boundsMax
-	bbox['width'] = (boundsMax - boundsMin).x
-	bbox['height'] = (boundsMax - boundsMin).y
-
-	return bbox;
+# 	return bbox;

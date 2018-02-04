@@ -85,7 +85,7 @@ def preview_texture(self, context):
 			if area.type == 'VIEW_3D':
 				for space in area.spaces:
 					if space.type == 'VIEW_3D':
-						space.viewport_shade = 'TEXTURED'
+						space.viewport_shade = 'MATERIAL'
 
 		'''
 		# Get Material

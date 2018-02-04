@@ -48,12 +48,8 @@ def setup_elements(self, context):
 		bpy.ops.object.mode_set(mode='EDIT')
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
 	
-
-
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-
-
 	# Collect groups
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	faces_indices_processed = []
 	groups = []
 
@@ -70,9 +66,7 @@ def setup_elements(self, context):
 			groups.append(faces)
 
 
-	print("Groups {}x".format(len(groups)))
-	# return
-
+	# Assign Groups to colors
 	index_color = 0
 	for group in groups:
 		# rebuild bmesh data (e.g. left edit mode previous loop)

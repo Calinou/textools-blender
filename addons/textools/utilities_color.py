@@ -68,6 +68,7 @@ def get_material(index):
 	return material
 
 
+
 # Replaace an existing material with a new one
 # This is sometimes necessary after switching the render engine
 def replace_material(index):
@@ -91,7 +92,7 @@ def replace_material(index):
 		bpy.data.materials.remove(material)
 		
 		# Re-assign new material to all previous slots
-		material = get_material(index)
+		material = create_material(index)
 		for slot in slots:
 			slot.material = material;
 

@@ -87,32 +87,7 @@ def preview_texture(self, context):
 					if space.type == 'VIEW_3D':
 						space.viewport_shade = 'MATERIAL'
 
-		'''
-		# Get Material
-		material = None
-		if image.name in bpy.data.materials:
-			material = bpy.data.materials[image.name]
-		else:
-			material = bpy.data.materials.new(image.name)
-			material.use_nodes = True
-
-		tree = material.node_tree
-
-		node_image = tree.nodes.new("ShaderNodeTexImage")
-		node_image.name = "bake"
-		node_image.select = True
-		node_image.image = image
-		tree.nodes.active = node_image
-
-		node_diffuse = tree.nodes['Diffuse BSDF']
-
-
-		tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
-
-		return material
-		'''
-
-
+		
 	#Display UVs
 	# bpy.ops.object.mode_set(mode='EDIT')
 

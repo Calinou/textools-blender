@@ -7,6 +7,7 @@ from collections import defaultdict
 
 from . import utilities_color
 from . import utilities_bake
+from . import utilities_ui
 
 material_prefix = "TT_atlas_"
 gamma = 2.2
@@ -106,7 +107,9 @@ def pack_texture(self, context):
 	bpy.ops.object.mode_set(mode='EDIT')
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
 	bpy.ops.mesh.select_all(action='SELECT')
-	bpy.ops.uv.smart_project(angle_limit=1)
+	# bpy.ops.uv.smart_project(angle_limit=1)
+	bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.0078)
+
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify();
@@ -136,3 +139,5 @@ def pack_texture(self, context):
 
 	#Display UVs
 	bpy.ops.object.mode_set(mode='EDIT')
+
+	bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="Packed texture with {} color IDs".format( context.scene.texToolsSettings.color_ID_count ))

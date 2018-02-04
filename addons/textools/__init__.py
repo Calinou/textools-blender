@@ -478,7 +478,7 @@ class Panel_Units(bpy.types.Panel):
 		row = layout.row()
 
 		has_uv_channel = False
-		if bpy.context.active_object != None and len(bpy.context.selected_objects) == 1:
+		if bpy.context.active_object and len(bpy.context.selected_objects) == 1:
 			if bpy.context.active_object in bpy.context.selected_objects:
 				if bpy.context.active_object.type == 'MESH':
 					
@@ -641,7 +641,7 @@ class Panel_Layout(bpy.types.Panel):
 		col = box.column(align=True)
 		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
 		row = col.row(align=True)
-		if bpy.context.object.mode == 'EDIT':
+		if bpy.context.object and bpy.context.object.mode == 'EDIT':
 			row.enabled  = False
 		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
 

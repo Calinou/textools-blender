@@ -6,6 +6,7 @@ from mathutils import Vector
 from collections import defaultdict
 
 from . import utilities_color
+from . import utilities_bake
 
 material_prefix = "TT_atlas_"
 gamma = 2.2
@@ -131,37 +132,7 @@ def pack_texture(self, context):
 	bpy.ops.object.material_slot_add()
 	
 	#Create material with image
-	obj.material_slots[0].material = get_material(image)
+	obj.material_slots[0].material = utilities_bake.get_image_material(image)
 
 	#Display UVs
 	bpy.ops.object.mode_set(mode='EDIT')
-
-
-
-def get_material(image):
-
-	if bpy.context.scene.render.engine == 'CYCLES':
-		# Get Material
-		material = None
-		if image.name in bpy.data.materials:
-			material = bpy.data.materials[image.name]
-		else:
-			material = bpy.data.materials.new(image.name)
-			material.use_nodes = True
-
-		tree = material.node_tree
-
-		node_image = tree.nodes.new("ShaderNodeTexImage")
-		node_image.name = "bake"
-		node_image.select = True
-		node_image.image = image
-		tree.nodes.active = node_image
-
-		node_diffuse = tree.nodes['Diffuse BSDF']
-
-
-		tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
-
-		return material
-
-	return None

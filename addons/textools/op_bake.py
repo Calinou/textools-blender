@@ -5,7 +5,7 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 from random import random
-from mathutils import Color
+
 
 from . import settings
 from . import utilities_bake
@@ -18,7 +18,7 @@ modes={
 	'cavity': 			utilities_bake.BakeMode('bake_cavity',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'dust': 			utilities_bake.BakeMode('bake_dust',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'id_element':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
-	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
+	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', color=(0, 0, 0, 1), setVertexColor=utilities_bake.setup_vertex_color_mask),
 	'diffuse':			utilities_bake.BakeMode('',					type='DIFFUSE'),
 	'ao':				utilities_bake.BakeMode('',					type='AO')
 }

@@ -5,6 +5,7 @@ import time
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
+from mathutils import Color
 
 from . import settings
 
@@ -113,16 +114,17 @@ def restore_materials():
 		# Restore slots
 		for index in range(len(stored_materials[obj])):
 			material = stored_materials[obj][index]
-			material.name = material.name.replace("backup_","")
+			if material:
+				material.name = material.name.replace("backup_","")
 
-			obj.material_slots[index].material = material
+				obj.material_slots[index].material = material
 
-			# obj.data.materials.append(material)
-			print("- Restore {} : {} = {}".format(
-				obj.name, 
-				index, 
-				material.name
-			))
+				# obj.data.materials.append(material)
+				print("- Restore {} : {} = {}".format(
+					obj.name, 
+					index, 
+					material.name
+				))
 
 
 def get_bake_name(name):
@@ -292,6 +294,58 @@ class BakeSet:
 
 
 
+def setup_vertex_color_mask(obj):
+
+	print("setup_vertex_color_dirty {}".format(obj.name))
+
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
+	# bpy.ops.object.mode_set(mode='EDIT')
+
+
+	# bpy.ops.object.editmode_toggle()
+	# bpy.ops.paint.vertex_paint_toggle()
+	# bpy.data.brushes["Draw"].color = (0, 0, 0)
+	# bpy.ops.paint.vertex_color_set()
+	# bpy.data.brushes["Draw"].color = (1, 1, 1)
+	# bpy.context.object.data.use_paint_mask = True
+	# bpy.ops.paint.vertex_color_set()
+	# bpy.context.object.data.use_paint_mask = False
+
+	bpy.ops.object.mode_set(mode='VERTEX_PAINT')
+
+	bpy.data.brushes["Draw"].color = (0, 0, 0)
+	bpy.context.object.data.use_paint_mask = False
+	bpy.ops.paint.vertex_color_set()
+
+	bpy.data.brushes["Draw"].color = (1, 1, 1)
+	bpy.context.object.data.use_paint_mask = True
+	bpy.ops.paint.vertex_color_set()
+
+	bpy.context.object.data.use_paint_mask = False
+
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+	# Fill white then, 
+	# bm = bmesh.from_edit_mesh(obj.data)
+	# colorLayer = bm.loops.layers.color.verify()
+
+	# color = (1, 1, 1)
+	# for face in bm.faces:
+	# 	for loop in face.loops:
+	# 			loop[colorLayer] = color
+	# obj.data.update()
+
+	
+
+
+
+
+
 def setup_vertex_color_dirty(obj):
 
 	print("setup_vertex_color_dirty {}".format(obj.name))
@@ -357,3 +411,37 @@ def setup_vertex_color_ids(obj):
 
 	# Back to object mode
 	bpy.ops.object.mode_set(mode='OBJECT')
+
+
+
+
+def get_image_material(image):
+	if bpy.context.scene.render.engine == 'CYCLES':
+		# Get Material
+		material = None
+		if image.name in bpy.data.materials:
+			material = bpy.data.materials[image.name]
+		else:
+			material = bpy.data.materials.new(image.name)
+			material.use_nodes = True
+
+		tree = material.node_tree
+
+		node_image = tree.nodes.new("ShaderNodeTexImage")
+		node_image.name = "bake"
+		node_image.select = True
+		node_image.image = image
+		tree.nodes.active = node_image
+
+		node_diffuse = tree.nodes['Diffuse BSDF']
+
+
+		tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
+
+		return material
+
+	elif bpy.context.scene.render.engine == 'BLENDER_RENDER' or bpy.context.scene.render.engine == 'BLENDER_GAME':
+		# TODO implement blender render mateiral
+		return None
+
+	return None

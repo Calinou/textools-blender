@@ -68,7 +68,7 @@ class op(bpy.types.Operator):
 
 		return {'FINISHED'}
 
-restore_maps_use_nodes = []
+
 
 def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
@@ -83,7 +83,7 @@ def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance)
 	if bpy.context.scene.objects.active != None and bpy.context.object.mode != 'OBJECT':
 	 	bpy.ops.object.mode_set(mode='OBJECT')
 
-	restore_maps_use_nodes.clear()
+	utilities_bake.store_materials_clear()
 
 	# Get the baking sets / pairs
 	sets = settings.sets
@@ -126,21 +126,22 @@ def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance)
 		else:
 			material_empty = bpy.data.materials.new(name="TT_bake_node")
 
+
 		# Assign Materials to Objects
 		if (len(set.objects_high) + len(set.objects_float)) == 0:
 			# Low poly bake: Assign material to lowpoly
 			for obj in set.objects_low:
 				assign_vertex_color(mode, obj)
-				assign_material(obj, [material_loaded, material_empty])
+				assign_material(obj, material_loaded, material_empty)
 		else:
 			# High to low poly: Low poly require empty material to bake into image
 			for obj in set.objects_low:
-				assign_material(obj, [material_empty])
+				assign_material(obj, None, material_empty)
 
 			# Assign material to highpoly
 			for obj in (set.objects_high+set.objects_float):
 				assign_vertex_color(mode, obj)
-				assign_material(obj, [material_loaded])
+				assign_material(obj, material_loaded)
 
 
 		# Setup Image
@@ -200,9 +201,7 @@ def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance)
 			# image.save()
 
 	# Restore non node materials
-	for material in restore_maps_use_nodes:
-		print("__restore {}".format(material.name))
-		material.use_nodes = False	
+	utilities_bake.restore_materials()
 
 
 def setup_image(mode, name, width, height, path, is_clear):#
@@ -246,14 +245,13 @@ def setup_image(mode, name, width, height, path, is_clear):#
 
 
 def setup_image_bake_node(obj, image):
+
 	if len(obj.data.materials) <= 0:
 			print("ERROR, need spare material to setup active image texture to bake!!!")
 	else:
 		for slot in obj.material_slots:
 			if slot.material:
-
 				if(slot.material.use_nodes == False):
-					restore_maps_use_nodes.append(slot.material)
 					slot.material.use_nodes = True
 
 				# Assign bake node
@@ -271,19 +269,52 @@ def setup_image_bake_node(obj, image):
 
 
 def assign_vertex_color(mode, obj):
+	print("Set vertex colors?? {} {}".format(mode, obj.name))
 	if modes[mode].setVertexColor:
 		modes[mode].setVertexColor(obj)
 
 
 
-def assign_material(obj, preferred_materials):
-	if len(obj.data.materials) == 0:
-		for material in preferred_materials:
-			if material:
-				# Take the first available material
-				obj.data.materials.append(material)
-				obj.active_material_index = len(obj.data.materials)-1
-				return
+def assign_material(obj, material_bake, material_empty):
+	print("Assign material: {}".format(obj.name))
+	
+
+	utilities_bake.store_materials(obj)
+
+	if material_bake:
+		# Override with material_bake
+		if len(obj.material_slots) == 0:
+			obj.data.materials.append(material_bake)
+		else:
+			obj.material_slots[0].material = material_bake
+
+	elif material_empty:
+		#Assign material_empty if no material available
+		if len(obj.material_slots) == 0:
+			obj.data.materials.append(material_empty)
+		elif not obj.material_slots[0].material:
+			obj.material_slots[0].material = material
+
+
+
+			
+
+	'''
+	material
+
+	# Assign to first material slot
+	if len(obj.material_slots) == 0:
+		obj.data.materials.append(material_bake if material_bake not None else material_empty)
+	else:
+		obj.material_slots[0].material = material
+	return
+
+	# if len(obj.data.materials) == 0:
+	for material in preferred_materials:
+		if material:
+			# store a backup	
+	'''
+			
 
 
 

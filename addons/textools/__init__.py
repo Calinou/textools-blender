@@ -28,6 +28,7 @@ if "bpy" in locals():
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
 	imp.reload(op_bake_organize_names)
+	imp.reload(op_bake_preview_texture)
 	imp.reload(op_color_assign)
 	imp.reload(op_color_clear)
 	imp.reload(op_color_elements)
@@ -71,6 +72,7 @@ else:
 	from . import op_bake
 	from . import op_bake_explode
 	from . import op_bake_organize_names
+	from . import op_bake_preview_texture
 	from . import op_color_assign
 	from . import op_color_clear
 	from . import op_color_elements
@@ -311,7 +313,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		items = utilities_ui.size_textures, 
 		name = "Texture Size", 
 		update = on_dropdown_size, 
-		default = '1024'
+		default = '512'
 	)
 	uv_channel = bpy.props.EnumProperty(
 		items = get_dropdown_uv_values, 
@@ -675,6 +677,9 @@ class Panel_Bake(bpy.types.Panel):
 		box = row.box()
 		col = box.column(align=True)
 
+
+
+
 		if not (bpy.context.scene.texToolsSettings.bake_freeze_selection and len(settings.sets) > 0):
 			# Update sets
 			settings.sets = utilities_bake.get_bake_sets()
@@ -686,9 +691,17 @@ class Panel_Bake(bpy.types.Panel):
 			count = 1
 		else:
 			count = len(settings.sets)
-		col.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
+		
+		row = col.row(align=True)
+		row.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
+		
+		
+
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
+
+
+
 		# Force Single
 		row = col.row(align=True)
 		row.active = len(settings.sets) > 0
@@ -711,6 +724,7 @@ class Panel_Bake(bpy.types.Panel):
 
 
 		# Bake Mode
+		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon = 'TEXTURE_SHADED');
 		col.template_icon_view(context.scene, "TT_bake_mode")
 		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").lower()
 		

@@ -33,6 +33,8 @@
 					<p><strong>What's new in 1.0.0</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
 					<ul>
 						<li>Create Color ID Atlas</li>
+						<li>Read Atlas</li>
+						<li>Preview Texture</li>
 					</ul>
 				</div>
 				<div class="Content">
@@ -246,23 +248,28 @@
 					<p><strong>Note: </strong>Baked textures are not saved but require to be saved manually (<strong>F3 key</strong> in Image/UV editor)</p>
 				</div>
 				<div class="Content">
-					<h2> Bake Mode</h2>
+				  <h2><img src="images/bake_anti_alias.png" width="32" height="32" alt=""/> AA / Anti Alias</h2>
+				  <p>Anti Aliasing level, choose from: <strong>None</strong>, <strong>2x</strong> and <strong>4x</strong>. When you enable Anti Aliasing the bake render is rendered at a scaled resulution and afterwards down scaled. Anti Aliasing works on <strong>any baking mode</strong>.</p>
+				  <p><img src="images/demo_anit_alias.gif" alt=""/></p>
+			  </div>
+				
+				<div class="Content">
+				  <h2>Single</h2>
+				  <p>Bakes selected objects into a single texture as opposed to one texture per set. It uses the name or ID from the first item in the baked image name.</p>
+				  <p><img src="images/bake_single.png" width="144" height="22" alt=""/></p>
+				  <p>This options is useful for multi part objects that belong to the same texture.</p>
+			  </div>
+				<div class="Content">
+				  <h2>Preview<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <p>Preview the baked texture onto the selected object.</p>
+			  </div>
+                <div class="Content">
+				  <h2> Bake Mode</h2>
 					<p>Press the big thumnail button to change the current <strong>bake mode</strong>. Additional parameters are listed below the bake mode thumbnail.</p>
 					<p><img src="images/demo_bake_modes.gif" alt=""/></p>
-				</div>
-				<div class="Content">
-					<h2><img src="images/bake_anti_alias.png" width="32" height="32" alt=""/> AA / Anti Alias</h2>
-					<p>Anti Aliasing level, choose from: <strong>None</strong>, <strong>2x</strong> and <strong>4x</strong>. When you enable Anti Aliasing the bake render is rendered at a scaled resulution and afterwards down scaled. Anti Aliasing works on <strong>any baking mode</strong>.</p>
-					<p><img src="images/demo_anit_alias.gif" alt=""/></p>
-				</div>
-				<div class="Content">
-					<h2>Single</h2>
-					<p>Bakes selected objects into a single texture as opposed to one texture per set. It uses the name or ID from the first item in the baked image name.</p>
-					<p><img src="images/bake_single.png" width="144" height="22" alt=""/></p>
-					<p>This options is useful for multi part objects that belong to the same texture.</p>
-				</div>
+			  </div>
 				
-			</div>
+		  </div>
 			
 			<div class="Info">
 			  <h3>Bake Modes  </h3></div>

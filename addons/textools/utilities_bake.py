@@ -28,7 +28,7 @@ class BakeMode:
 		self.material = material
 		self.type = type
 		self.normal_space = normal_space
-		self.setVertexColor = None
+		self.setVertexColor = setVertexColor
 		self.color = color
 
 
@@ -81,6 +81,48 @@ def restore_bake_settings():
 			obj.hide_render = False
 			# obj.cycles_visibility.shadow = True
 
+
+stored_materials = {}
+def store_materials_clear():
+	print("-------- Restore materials clear")
+	stored_materials.clear()
+
+
+def store_materials(obj):
+	stored_materials[obj] = []
+
+	# for each slot backup the material 
+	for slot in obj.material_slots:
+		stored_materials[obj].append(slot.material)
+
+		if slot and slot.material:
+			slot.material.name = "backup_"+slot.material.name
+			print("- Store {} = {}".format(obj.name,slot.material.name))
+
+
+
+def restore_materials():
+	
+
+	print("Restore materials {} objects".format(len(stored_materials)))
+	for obj in stored_materials:
+		# Remove slots
+		# for i in range(len(obj.material_slots)):
+		# 	bpy.ops.object.material_slot_remove()
+
+		# Restore slots
+		for index in range(len(stored_materials[obj])):
+			material = stored_materials[obj][index]
+			material.name = material.name.replace("backup_","")
+
+			obj.material_slots[index].material = material
+
+			# obj.data.materials.append(material)
+			print("- Restore {} : {} = {}".format(
+				obj.name, 
+				index, 
+				material.name
+			))
 
 
 def get_bake_name(name):
@@ -251,6 +293,9 @@ class BakeSet:
 
 
 def setup_vertex_color_dirty(obj):
+
+	print("setup_vertex_color_dirty {}".format(obj.name))
+
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True
 	bpy.context.scene.objects.active = obj
@@ -268,7 +313,9 @@ def setup_vertex_color_dirty(obj):
 
 	# Back to object mode
 	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.paint.vertex_color_dirt(dirt_angle=pi/2)
 	bpy.ops.paint.vertex_color_dirt()
+
 
 
 

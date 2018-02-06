@@ -275,7 +275,7 @@ def assign_vertex_color(mode, obj):
 
 
 
-def assign_material(obj, material_bake, material_empty):
+def assign_material(obj, material_bake=None, material_empty=None):
 	print("Assign material: {}".format(obj.name))
 	
 

@@ -5,6 +5,7 @@ import math
 from mathutils import Vector
 from collections import defaultdict
 
+from . import settings
 from . import utilities_color
 from . import utilities_bake
 
@@ -23,23 +24,9 @@ class op(bpy.types.Operator):
 		if not bpy.context.active_object:
 			return False
 
-		if bpy.context.active_object not in bpy.context.selected_objects:
+		if len(settings.sets) == 0:
 			return False
-
-		if len(bpy.context.selected_objects) != 1:
-			return False
-
-		if bpy.context.active_object.type != 'MESH':
-			return False
-
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
-			return False
-
-			#Requires UV map
-		if not bpy.context.object.data.uv_layers:
-			return False 
-
+		
 		# Only when we have a background image
 		for area in bpy.context.screen.areas:
 			if area.type == 'IMAGE_EDITOR':
@@ -54,12 +41,10 @@ class op(bpy.types.Operator):
 
 
 def preview_texture(self, context):
-	obj = bpy.context.active_object
 
-	if obj.mode != 'OBJECT':
-		bpy.ops.object.mode_set(mode='OBJECT')
-	
-	print("Preview texture")
+	# Collect all low objects from bake sets
+	objects = [obj for s in settings.sets for obj in s.objects_low if obj.data.uv_layers]
+
 
 
 	image = None
@@ -69,16 +54,6 @@ def preview_texture(self, context):
 			break
 
 	if image:
-		print("Assign image {}".format(image.name))
-
-		for i in range(len(obj.material_slots)):
-			bpy.ops.object.material_slot_remove()
-
-
-		#Create material with image
-		bpy.ops.object.material_slot_add()
-		obj.material_slots[0].material = utilities_bake.get_image_material(image)
-		
 
 		#Change View mode to TEXTURED
 		for area in bpy.context.screen.areas:
@@ -86,6 +61,30 @@ def preview_texture(self, context):
 				for space in area.spaces:
 					if space.type == 'VIEW_3D':
 						space.viewport_shade = 'MATERIAL'
+
+		for obj in objects:
+			print("Map {}".format(obj.name))
+
+			bpy.ops.object.mode_set(mode='OBJECT')
+			bpy.ops.object.select_all(action='DESELECT')
+			obj.select = True
+			bpy.context.scene.objects.active = obj
+
+			
+			print("Preview texture")
+
+			print("Assign image {}".format(image.name))
+
+			for i in range(len(obj.material_slots)):
+				bpy.ops.object.material_slot_remove()
+
+
+			#Create material with image
+			bpy.ops.object.material_slot_add()
+			obj.material_slots[0].material = utilities_bake.get_image_material(image)
+			
+
+		
 
 		
 	#Display UVs

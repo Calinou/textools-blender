@@ -750,10 +750,6 @@ class Panel_Bake(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 
-		col = box.column(align=True)
-		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize {}x".format(len(bpy.context.selected_objects)), icon = 'BOOKMARKS')
-		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
-		
 		# if bpy.app.debug_value != 0:
 		# 	row = box.row(align=True)
 		# 	row.alert = True
@@ -761,12 +757,7 @@ class Panel_Bake(bpy.types.Panel):
 			
 		# Freeze Selection
 		col = box.column(align=True)
-		row = col.row(align=True)
-		row.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
-		icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
-		row.prop(context.scene.texToolsSettings, "bake_freeze_selection",text="Lock {}x".format(len(settings.sets)), icon=icon)
-
-
+		
 		# Select by type
 		if len(settings.sets) > 0:
 			row = col.row(align=True)
@@ -787,7 +778,18 @@ class Panel_Bake(bpy.types.Panel):
 				if len(set.objects_float) > 0:
 					count_types['float']+=1
 
-			row.label(text="Select")
+			# row.label(text="Select")
+
+			c = row.column(align=True)
+			c.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
+			icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
+			c.prop(context.scene.texToolsSettings, "bake_freeze_selection",text="Lock {}x".format(len(settings.sets)), icon=icon)
+
+
+
+
+
+
 			if count_types['issue'] > 0:
 				row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
 
@@ -851,6 +853,11 @@ class Panel_Bake(bpy.types.Panel):
 				elif count_types['cage'] > 0:
 					r.label(text="")
 
+		
+		col = box.column(align=True)
+		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize {}x".format(len(bpy.context.selected_objects)), icon = 'BOOKMARKS')
+		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
+		
 
 
 

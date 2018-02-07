@@ -125,9 +125,25 @@ def restore_materials():
 				))
 
 
-def get_bake_name(name):
-	name = name.lower()
-	
+
+def get_bake_name_base(obj):
+	# Reference parent as base name
+	if obj.parent:
+		return obj.parent.name.lower()
+
+	# Reference group name as base name
+	elif len(obj.users_group) == 1:
+		return obj.users_group[0].name.lower()
+
+	# Use Object name
+	else:
+		return obj.name.lower()
+
+
+
+def get_bake_name(obj):
+	name = get_bake_name_base(obj)
+
 	# Split by ' ','_','.' etc.
 	split = name.lower()
 	for char in split_chars:
@@ -151,8 +167,11 @@ def get_bake_name(name):
 
 
 def get_object_type(obj):
+
+	name = get_bake_name_base(obj)
+
 	# Detect by name pattern
-	split = obj.name.lower()
+	split = name.lower()
 	for char in split_chars:
 		split = split.replace(char,' ')
 	strings = split.split(' ')
@@ -206,30 +225,30 @@ def get_bake_sets():
 	
 	groups = []
 	# Group by names
-	for key in filtered:
-		name = get_bake_name(key.name)
+	for obj in filtered:
+		name = get_bake_name(obj)
 
 		if len(groups)==0:
-			groups.append([key])
+			groups.append([obj])
 		else:
 			isFound = False
 			for group in groups:
-				groupName = get_bake_name(group[0].name)
+				groupName = get_bake_name(group[0])
 				if name == groupName:
-					group.append(key)
+					group.append(obj)
 					isFound = True
 					break
 
 			if not isFound:
-				groups.append([key])
+				groups.append([obj])
 
 	# Sort groups alphabetically
-	keys = [get_bake_name(group[0].name) for group in groups]
+	keys = [get_bake_name(group[0]) for group in groups]
 	keys.sort()
 	sorted_groups = []
 	for key in keys:
 		for group in groups:
-			if key == get_bake_name(group[0].name):
+			if key == get_bake_name(group[0]):
 				sorted_groups.append(group)
 				break
 				
@@ -254,7 +273,7 @@ def get_bake_sets():
 				float.append(obj)
 
 
-		name = get_bake_name(group[0].name)
+		name = get_bake_name(group[0])
 		bake_sets.append(BakeSet(name, low, cage, high, float))
 
 	return bake_sets

@@ -32,10 +32,8 @@
 					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a>      </p>
 					<p><strong>What's new in 1.0.0</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
 					<ul>
-						<li> Color ID: CreateAtlas</li>
-						<li>Color ID: Read Atlas</li>
-						<li>Preview Texture</li>
-						<li>Bake mode: Selection</li>
+						<li>Bug Fix: Bake high to low</li>
+						<li>Grouped bake set objects</li>
 					</ul>
 				</div>
 				<div class="Content">
@@ -323,10 +321,10 @@
 		  </div>
 			
 			<div class="Info"><h3>Bake Sets</h3>
-				<p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection into bake sets. Objects with a common name  are grouped into a set, keywords  are used to differenciate between specific object types such as highpoly, floating geometry or cage objects.</p></div>
+				<p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection into bake sets based on their names, grouping or parenting. </p></div>
 				<div class="Columns2">
-					<div class="Content">
-						<h2>Bake Sets List</h2>
+				  <div class="Content">
+					  <h2>Bake Sets </h2>
 						<p>This area displays the selected bake sets. Each bake set can contain 4 different type of objects. They are</p>
 						<table width="100%" border="0" cellspacing="10" cellpadding="0">
 							<tr>
@@ -370,8 +368,15 @@
 						<p><strong>Tip</strong>: Expand the tool panel width to see the amount of objects for each type.</p>
 						<p><img src="images/demo_resize_panel_bake_sets.gif" width="234" height="56" alt=""/></p>
 					</div>
+				 
 					<div class="Content">
-						<h2>Lock Selection</h2>
+					  <h2>Grouping objects</h2>
+					  <p>Objects with a common name  are grouped into a set, keywords  are used to differenciate between different types such as highpoly, floating geometry or cage objects.</p>
+					  <p><strong>Grouping objects</strong></p>
+					  <p>You can parent or group objects detect them as single entities.</p>
+				  </div>
+					<div class="Content">
+					  <h2>Lock Selection</h2>
 						<p>Lock or unlock the current bake selection. When locked scene selection changes won't affect the baking list. This is great for tweaking meshes, cages or other settings while baking.</p>
 						<p><img src="images/bake_lock_selection.png" width="133" height="28" alt=""/></p>
 					</div>
@@ -462,10 +467,7 @@
 			        <p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
 					      <p><img src="images/show_create_atlas.png" alt=""/></p>
 			      </div>
-                <div class="Content">
-			      <h2>  Read Atlas<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		          <p>...			      </p>
-                  </div>
+                
      		 </div>
               
 			</div>
@@ -505,6 +507,7 @@
 						<h2>Release Log</h2>
 						<p>Having issues with the latest version? Try an older version from the list below:</p>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip"> TexTools 1.0.0.zip</a>
+						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.7.zip"> TexTools 0.9.7.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip"> TexTools 0.9.5.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.0.zip"> TexTools 0.9.0.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip"> TexTools 0.8.0.zip</a>

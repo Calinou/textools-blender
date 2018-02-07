@@ -13,7 +13,7 @@ material_prefix = "TT_atlas_"
 gamma = 2.2
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_color_pack_texture"
+	bl_idname = "uv.textools_color_convert_texture"
 	bl_label = "Pack Texture"
 	bl_description = "Pack ID Colors into single texture and UVs"
 	bl_options = {'REGISTER', 'UNDO'}

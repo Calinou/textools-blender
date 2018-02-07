@@ -34,7 +34,8 @@ if "bpy" in locals():
 	imp.reload(op_color_elements)
 	imp.reload(op_color_io_export)
 	imp.reload(op_color_io_import)
-	imp.reload(op_color_pack_texture)
+	imp.reload(op_color_convert_texture)
+	imp.reload(op_color_convert_vertex_colors)
 	imp.reload(op_color_select)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
@@ -78,7 +79,8 @@ else:
 	from . import op_color_elements
 	from . import op_color_io_export
 	from . import op_color_io_import
-	from . import op_color_pack_texture
+	from . import op_color_convert_texture
+	from . import op_color_convert_vertex_colors
 	from . import op_color_select
 	from . import op_island_align_edge
 	from . import op_island_align_sort
@@ -975,8 +977,14 @@ class Panel_Colors(bpy.types.Panel):
 		col = box.column(align=True)
 		col.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
 		# row = col.row(align=True)
-		col.operator(op_color_pack_texture.op.bl_idname, text="Create Atlas", icon_value = icon_get('op_color_pack_texture'))
-		# row.operator(op_color_pack_texture.op.bl_idname, text="From Atlas", icon_value = icon_get('op_color_pack_texture'))
+		col.operator(op_color_convert_texture.op.bl_idname, text="Create Atlas", icon_value = icon_get('op_color_convert_texture'))
+
+
+		if bpy.app.debug_value != 0:
+			r = col.row(align=True)
+			r.alert = True
+			r.operator(op_color_convert_vertex_colors.op.bl_idname, text="Convert VColor", icon_value = icon_get('op_color_convert_texture'))
+		# row.operator(op_color_convert_texture.op.bl_idname, text="From Atlas", icon_value = icon_get('op_color_convert_texture'))
 			
 
 
@@ -1028,7 +1036,7 @@ def register():
 		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
-		"op_color_pack_texture.png", 
+		"op_color_convert_texture.png", 
 		"op_color_elements.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 

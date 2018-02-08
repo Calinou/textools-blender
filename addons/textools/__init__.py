@@ -34,6 +34,7 @@ if "bpy" in locals():
 	imp.reload(op_color_convert_texture)
 	imp.reload(op_color_convert_vertex_colors)
 	imp.reload(op_color_from_elements)
+	imp.reload(op_color_from_materials)
 	imp.reload(op_color_io_export)
 	imp.reload(op_color_io_import)
 	imp.reload(op_color_select)
@@ -79,6 +80,7 @@ else:
 	from . import op_color_convert_texture
 	from . import op_color_convert_vertex_colors
 	from . import op_color_from_elements
+	from . import op_color_from_materials
 	from . import op_color_io_export
 	from . import op_color_io_import
 	from . import op_color_select
@@ -267,9 +269,7 @@ def on_dropdown_uv_channel(self, context):
 
 def on_color_changed(self, context):
 	for i in range(0, context.scene.texToolsSettings.color_ID_count):
-		material = utilities_color.get_material(i)
-		if material:
-			utilities_color.assign_color(i)
+		utilities_color.assign_color(i)
 
 
 
@@ -281,7 +281,7 @@ def on_color_dropdown_template(self, context):
 	# Assign color slots
 	for i in range(0, len(hex_colors)):
 		color = utilities_color.hex_to_color("#"+hex_colors[i])
-		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), color)
+		utilities_color.set_color(i, color)
 		utilities_color.assign_color(i)
 
 
@@ -889,6 +889,7 @@ class op_color_dropdown_convert_from(bpy.types.Menu):
 	def draw(self, context):
 		layout = self.layout
 		layout.operator(op_color_from_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_from_elements'))
+		layout.operator(op_color_from_materials.op.bl_idname, text="Materials")
 
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)

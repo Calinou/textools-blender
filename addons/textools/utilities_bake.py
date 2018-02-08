@@ -8,6 +8,7 @@ from math import pi
 from mathutils import Color
 
 from . import settings
+from . import utilities_color
 
 
 keywords_low = ['lowpoly','low','lowp','lp','l']
@@ -418,8 +419,7 @@ def setup_vertex_color_ids(obj):
 
 	# Color each group
 	for i in range(0,len(groups)):
-		color = Color()
-		color.hsv = ( i / (len(groups)) ), 0.9, 1.0
+		color = utilities_color.get_color_id(i, len(groups))
 
 		for face in groups[i]:
 			for loop in face.loops:

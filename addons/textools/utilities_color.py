@@ -5,6 +5,7 @@ import time
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
+from mathutils import Color
 
 from . import settings
 
@@ -127,6 +128,12 @@ def get_color(index):
 
 
 
+def set_color(index, color):
+	if index < bpy.context.scene.texToolsSettings.color_ID_count:
+		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(index), color)
+
+
+
 def hex_to_color(hex):
 	
 	hex = hex.strip('#')
@@ -158,11 +165,7 @@ def color_to_hex(color):
 
 def get_color_id(index, count):
 	# Get unique color
-
-	# for i in range(0,len(groups)):
-	# 	color = Color()
-	# 	color.hsv = ( i / (len(groups)) ), 0.9, 1.0
-
-
+	color = Color()
+	color.hsv = ( index / (count) ), 0.9, 1.0
 	
-	return (0,0,0,1)
+	return color

@@ -40,6 +40,8 @@ class op(bpy.types.Operator):
 def clear_colors(self, context):
 	obj = bpy.context.active_object
 	
+
+
 	# Store previous mode
 	previous_mode = bpy.context.active_object.mode
 	if bpy.context.active_object.mode != 'EDIT':
@@ -51,25 +53,40 @@ def clear_colors(self, context):
 	for face in bm.faces:
 		face.material_index = 0
 
-	# Clear all material slots
+	# Clear material slots
 	bpy.ops.object.mode_set(mode='OBJECT')
 	count = len(obj.material_slots)
 	for i in range(count):
 		bpy.ops.object.material_slot_remove()
 
-	# Clear all materials
+	# Delete materials
 	for material in bpy.data.materials:
 		if utilities_color.material_prefix in material.name:
 			material.user_clear()
 			bpy.data.materials.remove(material)
 
-	# Clear all colors
-	# bpy.context.scene.texToolsSettings.color_ID_count = 100
-	# for i in range(bpy.context.scene.texToolsSettings.color_ID_count):
-	# 	setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(i), (0.5,0.5,0.5))
-	# bpy.context.scene.texToolsSettings.color_ID_count = 4
-
 	# Restore previous mode
 	bpy.ops.object.mode_set(mode=previous_mode)
-	# bpy.context.space_data.viewport_shade = 'SOLID'
-	# bpy.context.space_data.context = 'MATERIAL'
+
+
+	for area in bpy.context.screen.areas:
+		print("area: {}".format(area.type))
+		if area.type == 'PROPERTIES':
+			for space in area.spaces:
+				if space.type == 'PROPERTIES':
+					# space.viewport_shade = 'MATERIAL'
+					space.context = 'MATERIAL'
+
+	# Show Material Tab
+	for area in bpy.context.screen.areas:
+		if area.type == 'PROPERTIES':
+			for space in area.spaces:
+				if space.type == 'PROPERTIES':
+					space.context = 'MATERIAL'
+
+	# Switch Solid shading
+	for area in bpy.context.screen.areas:
+		if area.type == 'VIEW_3D':
+			for space in area.spaces:
+				if space.type == 'VIEW_3D':
+					space.viewport_shade = 'SOLID'

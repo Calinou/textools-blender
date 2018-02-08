@@ -35,12 +35,12 @@ class op(bpy.types.Operator):
 		return True
 	
 	def execute(self, context):
-		setup_elements(self, context)
+		color_elements(self, context)
 		return {'FINISHED'}
 
 
 
-def setup_elements(self, context):
+def color_elements(self, context):
 	obj = bpy.context.active_object
 	
 	# Setup Edit & Face mode
@@ -65,6 +65,18 @@ def setup_elements(self, context):
 				faces_indices_processed.append(f)
 			groups.append(faces)
 
+	
+	# Assign color count (caps automatically e.g. max 20)
+	bpy.context.scene.texToolsSettings.color_ID_count = len(groups)
+	gamma = 2.2
+
+	for i in range(bpy.context.scene.texToolsSettings.color_ID_count):
+		color = utilities_color.get_color_id(i, bpy.context.scene.texToolsSettings.color_ID_count)
+		# Fix Gamma
+		color[0] = pow(color[0] , gamma)
+		color[1] = pow(color[1] , gamma)
+		color[2] = pow(color[2], gamma)
+		utilities_color.set_color(i, color)
 
 	# Assign Groups to colors
 	index_color = 0
@@ -85,23 +97,3 @@ def setup_elements(self, context):
 		index_color = (index_color+1) % bpy.context.scene.texToolsSettings.color_ID_count
 
 	bpy.ops.object.mode_set(mode='OBJECT')
-
-
-
-# def get_bounds(faces):
-# 	boundsMin = Vector((99999999.0,99999999.0))
-# 	boundsMax = Vector((-99999999.0,-99999999.0))
-# 	for face in faces:
-# 		center = face.calc_center_bounds
-# 		boundsMin.x = min(boundsMin.x, center.x)
-# 		boundsMin.y = min(boundsMin.y, center.y)
-# 		boundsMax.x = max(boundsMax.x, center.x)
-# 		boundsMax.y = max(boundsMax.y, center.y)
-
-# 	bbox = {}
-# 	bbox['min'] = boundsMin
-# 	bbox['max'] = boundsMax
-# 	bbox['width'] = (boundsMax - boundsMin).x
-# 	bbox['height'] = (boundsMax - boundsMin).y
-
-# 	return bbox;

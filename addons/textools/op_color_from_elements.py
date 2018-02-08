@@ -8,9 +8,9 @@ from math import pi
 from . import utilities_color
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_color_elements_setup"
+	bl_idname = "uv.textools_color_from_elements"
 	bl_label = "Color Elements"
-	bl_description = "Color unique mesh elements with ID Colors."
+	bl_description = "Assign a color ID to each mesh element"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 

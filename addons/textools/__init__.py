@@ -31,11 +31,11 @@ if "bpy" in locals():
 	imp.reload(op_bake_preview_texture)
 	imp.reload(op_color_assign)
 	imp.reload(op_color_clear)
-	imp.reload(op_color_elements)
+	imp.reload(op_color_convert_texture)
+	imp.reload(op_color_convert_vertex_colors)
+	imp.reload(op_color_from_elements)
 	imp.reload(op_color_io_export)
 	imp.reload(op_color_io_import)
-	imp.reload(op_color_convert_to_texture)
-	imp.reload(op_color_convert_to_vertex_colors)
 	imp.reload(op_color_select)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
@@ -76,11 +76,11 @@ else:
 	from . import op_bake_preview_texture
 	from . import op_color_assign
 	from . import op_color_clear
-	from . import op_color_elements
+	from . import op_color_convert_texture
+	from . import op_color_convert_vertex_colors
+	from . import op_color_from_elements
 	from . import op_color_io_export
 	from . import op_color_io_import
-	from . import op_color_convert_to_texture
-	from . import op_color_convert_to_vertex_colors
 	from . import op_color_select
 	from . import op_island_align_edge
 	from . import op_island_align_sort
@@ -888,7 +888,7 @@ class op_color_dropdown_convert_from(bpy.types.Menu):
 
 	def draw(self, context):
 		layout = self.layout
-		layout.operator(op_color_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_elements'))
+		layout.operator(op_color_from_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_from_elements'))
 
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
@@ -905,8 +905,8 @@ class op_color_dropdown_convert_to(bpy.types.Menu):
 
 	def draw(self, context):
 		layout = self.layout
-		layout.operator(op_color_convert_to_texture.op.bl_idname, text="Texture Atlas", icon_value = icon_get('op_color_convert_to_texture'))
-		layout.operator(op_color_convert_to_vertex_colors.op.bl_idname, text="Vertex Colors", icon = 'COLOR')
+		layout.operator(op_color_convert_texture.op.bl_idname, text="Texture Atlas", icon_value = icon_get('op_color_convert_texture'))
+		layout.operator(op_color_convert_vertex_colors.op.bl_idname, text="Vertex Colors", icon = 'COLOR')
 
 
 
@@ -991,7 +991,7 @@ class Panel_Colors(bpy.types.Panel):
 		# c = split.column(align=True)
 		# c.operator(op_color_clear.op.bl_idname, text="", icon = 'X')
 		# c = split.column(align=True)
-		# c.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
+		# c.operator(op_color_from_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_from_elements'))
 		
 
 		
@@ -1003,7 +1003,7 @@ class Panel_Colors(bpy.types.Panel):
 
 
 		# row = col.row(align=True)
-		# row.operator(op_color_convert_to_texture.op.bl_idname, text="From Atlas", icon_value = icon_get('op_color_convert_to_texture'))
+		# row.operator(op_color_convert_texture.op.bl_idname, text="From Atlas", icon_value = icon_get('op_color_convert_texture'))
 			
 
 
@@ -1055,8 +1055,8 @@ def register():
 		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
-		"op_color_convert_to_texture.png", 
-		"op_color_elements.png", 
+		"op_color_convert_texture.png", 
+		"op_color_from_elements.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 
 		"op_island_align_sort_h.png", 

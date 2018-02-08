@@ -133,12 +133,10 @@ def set_color(index, color):
 		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(index), color)
 
 
+
 def validate_face_colors(obj):
-	print("Validate...")
-
-
+	# Validate face colors and material slots
 	previous_mode = bpy.context.object.mode;
-
 	count = bpy.context.scene.texToolsSettings.color_ID_count
 
 	# Verify enough material slots
@@ -172,19 +170,6 @@ def validate_face_colors(obj):
 
 	# Restore previous mode
 	bpy.ops.object.mode_set(mode=previous_mode)
-
-
-
-
-
-	# if bpy.context.scene.texToolsSettings.color_ID_count != len(obj.material_slots):
-	# 	print("Yes update slots")
-	# 	# for s in 
-	# 	TODO: Increase slots if needed 
-
-	# 	TODO: or remove slots if to many
-
-
 
 
 

@@ -34,8 +34,8 @@ if "bpy" in locals():
 	imp.reload(op_color_elements)
 	imp.reload(op_color_io_export)
 	imp.reload(op_color_io_import)
-	imp.reload(op_color_convert_texture)
-	imp.reload(op_color_convert_vertex_colors)
+	imp.reload(op_color_convert_to_texture)
+	imp.reload(op_color_convert_to_vertex_colors)
 	imp.reload(op_color_select)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
@@ -79,8 +79,8 @@ else:
 	from . import op_color_elements
 	from . import op_color_io_export
 	from . import op_color_io_import
-	from . import op_color_convert_texture
-	from . import op_color_convert_vertex_colors
+	from . import op_color_convert_to_texture
+	from . import op_color_convert_to_vertex_colors
 	from . import op_color_select
 	from . import op_island_align_edge
 	from . import op_island_align_sort
@@ -415,6 +415,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 			('003153,345d4b,688a42,9db63a,d1e231', '5 Greens', '...'),
 			('9e00af,7026b9,4f44b5,478bf4,39b7d5,229587,47b151,9dcf46,f7f235,f7b824,f95f1e,c5513c,78574a,4d4b4b,9d9d9d', '15 Rainbow', '...')
 		], 
+		description="Color template",
 		name = "Preset", 
 		update = on_color_dropdown_template,
 		default = 'ff0000,0000ff,00ff00,ffff00,00ffff'
@@ -870,24 +871,38 @@ class op_color_dropdown_io(bpy.types.Menu):
 	def draw(self, context):
 		layout = self.layout
 
-		layout.operator(op_color_io_export.op.bl_idname, text="Export", icon = 'EXPORT')
-		layout.operator(op_color_io_import.op.bl_idname, text="Import", icon = 'IMPORT')
+		layout.operator(op_color_io_export.op.bl_idname, text="Export Colors", icon = 'EXPORT')
+		layout.operator(op_color_io_import.op.bl_idname, text="Import Colors", icon = 'IMPORT')
 
-		# layout.operator("wm.open_mainfile")
-		# layout.operator("wm.save_as_mainfile").copy = True
 
-		# layout.operator("object.shade_smooth")
 
-		# layout.label(text="Hello world!", icon='WORLD_DATA')
+class op_color_dropdown_convert_from(bpy.types.Menu):
+	bl_idname = "ui.textools_color_dropdown_convert_from"
+	bl_label = "From"
+	bl_description = "Create Color IDs from ..."
 
-		# # use an operator enum property to populate a sub-menu
-		# layout.operator_menu_enum("object.select_by_type",
-		# 						  property="type",
-		# 						  text="Select All by Type...",
-		# 						  )
+	def draw(self, context):
+		layout = self.layout
+		layout.operator(op_color_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_elements'))
 
-		# # call another menu
-		# layout.operator("wm.call_menu", text="Unwrap").name = "VIEW3D_MT_uv_map"
+		if bpy.app.debug_value != 0:
+			col = layout.column(align=True)
+			col.alert = True
+			col.operator(op_color_clear.op.bl_idname, text="Texture map", icon = 'CANCEL')
+			col.operator(op_color_clear.op.bl_idname, text="Vertex Colors", icon = 'CANCEL')
+			
+
+
+class op_color_dropdown_convert_to(bpy.types.Menu):
+	bl_idname = "ui.textools_color_dropdown_convert_to"
+	bl_label = "Convert"
+	bl_description = "Convert Color IDs into ..."
+
+	def draw(self, context):
+		layout = self.layout
+		layout.operator(op_color_convert_to_texture.op.bl_idname, text="Texture Atlas", icon_value = icon_get('op_color_convert_to_texture'))
+		layout.operator(op_color_convert_to_vertex_colors.op.bl_idname, text="Vertex Colors", icon = 'COLOR')
+
 
 
 class Panel_Colors(bpy.types.Panel):
@@ -909,11 +924,14 @@ class Panel_Colors(bpy.types.Panel):
 
 
 		row = col.row(align=True)
-		row.prop(context.scene.texToolsSettings, "color_ID_templates", text="")
+		split = row.split(percentage=0.60, align=True)
+		c = split.column(align=True)
+		c.prop(context.scene.texToolsSettings, "color_ID_templates", text="")
+		c = split.column(align=True)
+		c.prop(context.scene.texToolsSettings, "color_ID_count", text="", expand=False)
 		
 
-		row = col.row(align=True)
-		row.prop(context.scene.texToolsSettings, "color_ID_count", text="Colors", expand=False)
+		# row = col.row(align=True)
 		
 		
 
@@ -965,26 +983,16 @@ class Panel_Colors(bpy.types.Panel):
 		# c.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
 		
 
-		if bpy.app.debug_value != 0:
-			col = layout.column(align=True)
-			col.alert = True
-			col.operator(op_color_clear.op.bl_idname, text="Pack Vertex Colors", icon = 'X')
-			col.operator(op_color_clear.op.bl_idname, text="Tex 2 Colors", icon = 'X')
-			
+		
+		col = box.row(align=True)
+		col.menu(op_color_dropdown_convert_from.bl_idname)#, icon='IMPORT'
+		col.menu(op_color_dropdown_convert_to.bl_idname,)# icon='EXPORT'
+		
 
 
 
-		col = box.column(align=True)
-		col.operator(op_color_elements.op.bl_idname, text="Color Elements", icon_value = icon_get('op_color_elements'))
 		# row = col.row(align=True)
-		col.operator(op_color_convert_texture.op.bl_idname, text="Create Atlas", icon_value = icon_get('op_color_convert_texture'))
-
-
-		if bpy.app.debug_value != 0:
-			r = col.row(align=True)
-			r.alert = True
-			r.operator(op_color_convert_vertex_colors.op.bl_idname, text="Convert VColor", icon_value = icon_get('op_color_convert_texture'))
-		# row.operator(op_color_convert_texture.op.bl_idname, text="From Atlas", icon_value = icon_get('op_color_convert_texture'))
+		# row.operator(op_color_convert_to_texture.op.bl_idname, text="From Atlas", icon_value = icon_get('op_color_convert_to_texture'))
 			
 
 
@@ -1036,7 +1044,7 @@ def register():
 		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
-		"op_color_convert_texture.png", 
+		"op_color_convert_to_texture.png", 
 		"op_color_elements.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 

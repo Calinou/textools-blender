@@ -11,7 +11,7 @@ from . import utilities_ui
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_color_convert_vertex_colors"
+	bl_idname = "uv.textools_color_convert_to_vertex_colors"
 	bl_label = "Pack Texture"
 	bl_description = "Pack ID Colors into single texture and UVs"
 	bl_options = {'REGISTER', 'UNDO'}

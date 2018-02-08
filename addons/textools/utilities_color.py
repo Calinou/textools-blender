@@ -153,3 +153,16 @@ def color_to_hex(color):
 	b = int(rgb[2]*255)
 
 	return "#{:02X}{:02X}{:02X}".format(r,g,b)
+
+
+
+def get_color_id(index, count):
+	# Get unique color
+
+	# for i in range(0,len(groups)):
+	# 	color = Color()
+	# 	color.hsv = ( i / (len(groups)) ), 0.9, 1.0
+
+
+	
+	return (0,0,0,1)

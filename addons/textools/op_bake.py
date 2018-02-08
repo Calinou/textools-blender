@@ -18,6 +18,7 @@ modes={
 	'cavity': 			utilities_bake.BakeMode('bake_cavity',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'dust': 			utilities_bake.BakeMode('bake_dust',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'id_element':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
+	'id_material':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
 	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', color=(0, 0, 0, 1), setVertexColor=utilities_bake.setup_vertex_color_mask),
 	'diffuse':			utilities_bake.BakeMode('',					type='DIFFUSE'),
 	'ao':				utilities_bake.BakeMode('',					type='AO')

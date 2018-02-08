@@ -2,7 +2,7 @@ bl_info = {
 	"name": "TexTools",
 	"description": "Professional UV and Texture tools for Blender.",
 	"author": "renderhjs",
-	"version": (0, 9, 75),
+	"version": (1, 0, 00),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
@@ -143,10 +143,13 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 		col = box.column(align=True)
 		col.operator("wm.url_open", text="Donate", icon='HELP').url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6"
 		col.operator("wm.url_open", text="GIT Code", icon='WORDWRAP_ON').url = "https://bitbucket.org/renderhjs/textools-blender/src"
+		
+		col.label(text="Discussions")
 		row = col.row(align=True)
-		row.operator("wm.url_open", text="BlederArtist BBS", icon='BLENDER').url = "https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender"
-		row.operator("wm.url_open", text="Polycount BBS", icon='COLOR_GREEN').url = "http://polycount.com/discussion/197226/textools-for-blender"
-
+		row.operator("wm.url_open", text="BlenderArtists", icon='BLENDER').url = "https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender"
+		row.operator("wm.url_open", text="Polycount").url = "http://polycount.com/discussion/197226/textools-for-blender"
+		row.operator("wm.url_open", text="Twitter").url = "https://twitter.com/search?q=%23textools"
+		
 
 
 class op_debug(bpy.types.Operator):
@@ -519,11 +522,17 @@ class Panel_Units(bpy.types.Panel):
 			
 
 class Panel_Layout(bpy.types.Panel):
-	bl_label = "UV Layout"
+	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = get_tab_name()
 	bl_options = {'DEFAULT_CLOSED'}
+
+	def draw_header(self, _):
+		layout = self.layout
+		row = layout.row(align=True)
+		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#uvlayout"
+		row.label(text ="UV Layout")
 
 	# def draw_header(self, _):
 	# 	layout = self.layout
@@ -666,11 +675,17 @@ class Panel_Layout(bpy.types.Panel):
 
 
 class Panel_Bake(bpy.types.Panel):
-	bl_label = "Texture Baking"
+	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = get_tab_name()
 	bl_options = {'DEFAULT_CLOSED'}
+
+	def draw_header(self, _):
+		layout = self.layout
+		row = layout.row(align=True)
+		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#texturebaking"
+		row.label(text ="Texture Baking")
 
 	def draw(self, context):
 		layout = self.layout
@@ -679,9 +694,6 @@ class Panel_Bake(bpy.types.Panel):
 		row = layout.row()
 		box = row.box()
 		col = box.column(align=True)
-
-
-
 
 		if not (bpy.context.scene.texToolsSettings.bake_freeze_selection and len(settings.sets) > 0):
 			# Update sets
@@ -750,14 +762,8 @@ class Panel_Bake(bpy.types.Panel):
 		
 		
 
-		row = layout.row()
-		box = row.box()
+		box = layout.box()
 
-		# if bpy.app.debug_value != 0:
-		# 	row = box.row(align=True)
-		# 	row.alert = True
-
-			
 		# Freeze Selection
 		col = box.column(align=True)
 		
@@ -863,7 +869,6 @@ class Panel_Bake(bpy.types.Panel):
 		
 
 
-
 class op_color_dropdown_io(bpy.types.Menu):
 	bl_idname = "ui.textools_color_dropdown_io"
 	bl_label = "IO"
@@ -906,11 +911,17 @@ class op_color_dropdown_convert_to(bpy.types.Menu):
 
 
 class Panel_Colors(bpy.types.Panel):
-	bl_label = "Color ID"
+	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
 	bl_category = get_tab_name()
 	bl_options = {'DEFAULT_CLOSED'}
+
+	def draw_header(self, _):
+		layout = self.layout
+		row = layout.row(align=True)
+		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#colorid"
+		row.label(text ="Color ID")
 
 	def draw(self, context):
 		layout = self.layout
@@ -935,11 +946,11 @@ class Panel_Colors(bpy.types.Panel):
 		
 		
 
-		box = layout.box()
+		# box = layout.box()
 
 		row = box.row(align=True)
 		row.operator(op_color_clear.op.bl_idname, text="Clear", icon = 'X')
-		row.menu(op_color_dropdown_io.bl_idname, '', icon='SCRIPTWIN')
+		row.menu(op_color_dropdown_io.bl_idname, '', icon='COLOR')
 		# 	Drop down menu for import export? 
 		# 	https://blender.stackexchange.com/questions/46496/how-do-i-make-a-custom-drop-down-menu-with-custom-items-in-blender
 		# 	http://elfnor.com/drop-down-and-button-select-menus-for-blender-operator-add-ons.html

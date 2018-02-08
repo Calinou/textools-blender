@@ -10,7 +10,7 @@ from . import utilities_color
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_color_clear"
 	bl_label = "Clear Colors"
-	bl_description = "Clear color materials on model"
+	bl_description = "Clears the Color IDs and materials on the selected model"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 

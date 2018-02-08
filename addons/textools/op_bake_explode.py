@@ -18,7 +18,7 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if len(settings.sets) == 0:
+		if len(settings.sets) <= 1:
 			return False
 
 		return True

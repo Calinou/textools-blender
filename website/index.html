@@ -34,6 +34,10 @@
 					<ul>
 						<li>Bug Fix: Bake high to low</li>
 						<li>Grouped bake set objects</li>
+						<li>Color ID: Convert to vertex colors</li>
+						<li>Improved Color ID UI</li>
+						<li>Improved Bake UI</li>
+						<li>Help buttons for UI Panels</li>
 					</ul>
 				</div>
 				<div class="Content">
@@ -69,7 +73,9 @@
 					
 				</div>
 			</div>
-		</div><h1>Size Panel</h1>
+		</div>
+        <a class="NoButton" id="size"></a>
+        <h1>Size Panel</h1>
 		<div class="Panel">
 			<div class="Columns3">
 				<div class="Content">
@@ -103,7 +109,9 @@
 					<p><strong>Note</strong>: Blender only fully removes unused items the next time you open the file, press <strong>Ctrl + Shift + O</strong> to quickly re-open your blend file and clear unsused items.</p>
 				</div>
 			</div>
-		</div><h1>UV Layout Panel</h1>
+		</div>
+        <a class="NoButton" id="uvlayout"></a>
+        <h1>UV Layout Panel</h1>
 		<p>These UV layout tools are used to unwrap or transform your UV layout.</p>
 		<div class="Panel">
 			<div class="Columns3">
@@ -237,7 +245,8 @@
 				</div>
 			</div>
 		</div>
-		<h1>Texture Baking Panel</h1>
+		<a class="NoButton" id="texturebaking"></a>
+        <h1>Texture Baking Panel</h1>
 		<p>To bake textures in TexTools just select your objects and press Bake. High  low poly and cageobject pairs are detected via object names. You can bake just with a <strong>single </strong>objects,  <strong>high</strong> <strong>poly </strong>to <strong>low poly</strong> or in addition that with a custom <strong>cage</strong> object. </p>
 		<div class="Panel">
 			<div class="Columns3">
@@ -402,6 +411,7 @@
 				</div>
 				
 			</div>
+            <a class="NoButton" id="colorid"></a>
 			<h1>Color ID Panel</h1>
 			<p>Color ID's are a quick way to block out your model with a set of colors or face groups. Colors are global accross your blend file and can be adjusted at any time.</p>
 			<p><strong>Tip:</strong> For baking use the <strong>Diffuse bake</strong> mode and setup the materials in the <strong>Cycles</strong> render mode.</p>
@@ -415,8 +425,7 @@
 					</div>
 					<div class="Content">
 						<h2> Colors</h2>
-						<p>The amount of colors to display and use. Choose between <strong>2</strong> and <strong>20</strong>.</p>
-						<p><img src="images/demo_color_id_colors.gif" alt=""/></p>
+						<p>The amount of colors to display and use. Choose between <strong>2</strong> and <strong>20</strong>.					</p>
 					</div>
 					<div class="Content">
 						<h2><img src="images/op_color_clear.png" width="32" height="32" alt=""/> Clear</h2>
@@ -455,23 +464,47 @@
 				</div>
                 
                 <div class="Info">
-			  <h3>Color ID Tools</h3></div>
+					            <h3>From</h3>
+	          </div>
               
               <div class="Columns2">
 					<div class="Content">
-					      <h2> <img src="images/op_color_elements.png" width="32" height="32" alt=""/> Color Elements</h2>
-					      <p>Assigns colors in sequence to each mesh element.</p>
-				      </div>
+					      <h2><img src="images/op_color_elements.png" width="32" height="32" alt=""/> Mesh Elements</h2>
+                      <p>Assigns a color ID to each mesh element.</p>
+                      
+					</div>
+                    <div class="Content">
+                      <h2> Material Slots<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+                      <p>Assigns a color ID to each material slot and assigned faces.</p>
+                </div>
+     		 </div>
+  
+              
+              
+              <div class="Info">
+	            <h3>Convert to</h3>
+	          </div>
+              
+              <div class="Columns2">
+					<div class="Content">
+					      <h2><img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Texture Atlas</h2>
+                      <p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
+                      <p><img src="images/show_create_atlas.png" alt=""/></p>
+                      
+				</div>
                 <div class="Content">
-					      <h2> <img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Create Atlas<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-			        <p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
-					      <p><img src="images/show_create_atlas.png" alt=""/></p>
-			      </div>
+					     <h2><img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Vertex Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+                      <p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
+		        </div>
                 
      		 </div>
               
-			</div>
+              
+              
+              
+		  </div>
 			<hr>
+            <a class="NoButton" id="developer"></a>
 			<h1>Developer Notes</h1>
 			<div class="Panel">
 				<div class="Columns2">

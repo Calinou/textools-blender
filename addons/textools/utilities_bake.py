@@ -70,8 +70,6 @@ def store_bake_settings():
 
 
 
-
-
 def restore_bake_settings():
 	# Render Settings
 	if settings.bake_render_engine != '':
@@ -84,39 +82,69 @@ def restore_bake_settings():
 			# obj.cycles_visibility.shadow = True
 
 
+
 stored_materials = {}
+stored_material_faces = {}
 def store_materials_clear():
 	print("-------- Restore materials clear")
 	stored_materials.clear()
+	stored_material_faces.clear()
+
 
 
 def store_materials(obj):
 	stored_materials[obj] = []
+	stored_material_faces[obj] = []
+
+	# Enter edit mode
+	bpy.context.scene.objects.active = obj
+	bpy.ops.object.mode_set(mode='EDIT')
+	bm = bmesh.from_edit_mesh(obj.data);
 
 	# for each slot backup the material 
-	for slot in obj.material_slots:
+	for s in range(len(obj.material_slots)):
+		slot = obj.material_slots[s]
+
 		stored_materials[obj].append(slot.material)
+		stored_material_faces[obj].append( [face.index for face in bm.faces if face.material_index == s] )
+		
+		# print("Faces: {}x".format( len(stored_material_faces[obj][-1])  ))
 
 		if slot and slot.material:
 			slot.material.name = "backup_"+slot.material.name
 			print("- Store {} = {}".format(obj.name,slot.material.name))
 
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='OBJECT')
 
 
 def restore_materials():
+
 	print("Restore materials {} objects".format(len(stored_materials)))
 	for obj in stored_materials:
 		# Remove slots
 		# for i in range(len(obj.material_slots)):
 		# 	bpy.ops.object.material_slot_remove()
 
+		# Enter edit mode
+		bpy.context.scene.objects.active = obj
+		bpy.ops.object.mode_set(mode='EDIT')
+		bm = bmesh.from_edit_mesh(obj.data);
+
+
 		# Restore slots
 		for index in range(len(stored_materials[obj])):
 			material = stored_materials[obj][index]
+			faces = stored_material_faces[obj][index]
+			
 			if material:
 				material.name = material.name.replace("backup_","")
-
 				obj.material_slots[index].material = material
+
+				# Face material indexies
+				for face in bm.faces:
+					if face.index in faces:
+						face.material_index = index
 
 				# obj.data.materials.append(material)
 				print("- Restore {} : {} = {}".format(
@@ -124,6 +152,9 @@ def restore_materials():
 					index, 
 					material.name
 				))
+
+		# Back to object mode
+		bpy.ops.object.mode_set(mode='OBJECT')
 
 
 
@@ -312,26 +343,13 @@ class BakeSet:
 
 
 
-def setup_vertex_color_mask(obj):
-
-	print("setup_vertex_color_dirty {}".format(obj.name))
-
+def setup_vertex_color_selection(obj):
 	bpy.ops.object.mode_set(mode='OBJECT')
 
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True
 	bpy.context.scene.objects.active = obj
-	# bpy.ops.object.mode_set(mode='EDIT')
-
-
-	# bpy.ops.object.editmode_toggle()
-	# bpy.ops.paint.vertex_paint_toggle()
-	# bpy.data.brushes["Draw"].color = (0, 0, 0)
-	# bpy.ops.paint.vertex_color_set()
-	# bpy.data.brushes["Draw"].color = (1, 1, 1)
-	# bpy.context.object.data.use_paint_mask = True
-	# bpy.ops.paint.vertex_color_set()
-	# bpy.context.object.data.use_paint_mask = False
+	
 
 	bpy.ops.object.mode_set(mode='VERTEX_PAINT')
 
@@ -347,18 +365,6 @@ def setup_vertex_color_mask(obj):
 
 	# Back to object mode
 	bpy.ops.object.mode_set(mode='OBJECT')
-
-	# Fill white then, 
-	# bm = bmesh.from_edit_mesh(obj.data)
-	# colorLayer = bm.loops.layers.color.verify()
-
-	# color = (1, 1, 1)
-	# for face in bm.faces:
-	# 	for loop in face.loops:
-	# 			loop[colorLayer] = color
-	# obj.data.update()
-
-	
 
 
 
@@ -391,7 +397,47 @@ def setup_vertex_color_dirty(obj):
 
 
 
-def setup_vertex_color_ids(obj):
+def setup_vertex_color_id_material(obj):
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
+
+
+	bpy.ops.object.mode_set(mode='EDIT')
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+
+	bm = bmesh.from_edit_mesh(obj.data)
+	# colorLayer = bm.loops.layers.color.verify()
+
+	for i in range(len(obj.material_slots)):
+		slot = obj.material_slots[i]
+		if slot.material:
+
+			# Select related faces
+			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.ops.mesh.select_all(action='DESELECT')
+
+			bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+			for face in bm.faces:
+				if face.material_index == i:
+					face.select = True
+
+			color = utilities_color.get_color_id(i, len(obj.material_slots))
+
+			bpy.ops.object.mode_set(mode='VERTEX_PAINT')
+			bpy.data.brushes["Draw"].color = color
+			bpy.context.object.data.use_paint_mask = True
+			bpy.ops.paint.vertex_color_set()
+
+	obj.data.update()
+
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+
+
+
+def setup_vertex_color_id_element(obj):
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True
 	bpy.context.scene.objects.active = obj

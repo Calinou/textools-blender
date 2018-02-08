@@ -17,13 +17,12 @@ modes={
 	'normal_object': 	utilities_bake.BakeMode('',					type='NORMAL', color=(0.5, 0.5, 1, 1), normal_space='OBJECT' ),
 	'cavity': 			utilities_bake.BakeMode('bake_cavity',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
 	'dust': 			utilities_bake.BakeMode('bake_dust',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
-	'id_element':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
-	'id_material':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_ids),
-	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', color=(0, 0, 0, 1), setVertexColor=utilities_bake.setup_vertex_color_mask),
+	'id_element':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_id_element),
+	'id_material':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_id_material),
+	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', color=(0, 0, 0, 1), setVertexColor=utilities_bake.setup_vertex_color_selection),
 	'diffuse':			utilities_bake.BakeMode('',					type='DIFFUSE'),
 	'ao':				utilities_bake.BakeMode('',					type='AO')
 }
-
 
 
 class op(bpy.types.Operator):
@@ -48,7 +47,7 @@ class op(bpy.types.Operator):
 		utilities_bake.store_bake_settings()
 
 		# Render sets
-		render(
+		bake(
 			self = self, 
 			mode = settings.bake_mode,
 			size = bpy.context.scene.texToolsSettings.size, 
@@ -71,7 +70,7 @@ class op(bpy.types.Operator):
 
 
 
-def render(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
+def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
 	print("Bake '{}'".format(mode))
 
@@ -282,21 +281,38 @@ def assign_material(obj, material_bake=None, material_empty=None):
 
 	utilities_bake.store_materials(obj)
 
+
+	bpy.context.scene.objects.active = obj
+	obj.select = True
+	bpy.ops.object.mode_set(mode='EDIT')
+	bpy.ops.mesh.select_all(action='SELECT')
+	# bpy.ops.object.select_all(action='DESELECT')
+	# for obj_high in (set.objects_high):
+	# 	obj_high.select = True
+
+
 	if material_bake:
 		# Override with material_bake
 		if len(obj.material_slots) == 0:
 			obj.data.materials.append(material_bake)
+
 		else:
 			obj.material_slots[0].material = material_bake
+			obj.active_material_index = 0
+			bpy.ops.object.material_slot_assign()
 
 	elif material_empty:
 		#Assign material_empty if no material available
 		if len(obj.material_slots) == 0:
 			obj.data.materials.append(material_empty)
+
 		elif not obj.material_slots[0].material:
 			obj.material_slots[0].material = material
+			obj.active_material_index = 0
+			bpy.ops.object.material_slot_assign()
 
 
+	bpy.ops.object.mode_set(mode='OBJECT')
 
 			
 

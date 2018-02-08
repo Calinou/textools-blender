@@ -71,5 +71,5 @@ def clear_colors(self, context):
 
 	# Restore previous mode
 	bpy.ops.object.mode_set(mode=previous_mode)
-	bpy.context.space_data.viewport_shade = 'SOLID'
-	bpy.context.space_data.context = 'MATERIAL'
+	# bpy.context.space_data.viewport_shade = 'SOLID'
+	# bpy.context.space_data.context = 'MATERIAL'

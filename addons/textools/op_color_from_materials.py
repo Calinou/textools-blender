@@ -43,6 +43,7 @@ class op(bpy.types.Operator):
 def color_materials(self, context):
 	obj = bpy.context.active_object
 	
-
-
-
+	for s in range(len(obj.material_slots)):
+		slot = obj.material_slots[s]
+		if slot.material:
+			utilities_color.assign_slot(obj, s)

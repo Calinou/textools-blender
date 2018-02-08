@@ -889,7 +889,7 @@ class op_color_dropdown_convert_from(bpy.types.Menu):
 	def draw(self, context):
 		layout = self.layout
 		layout.operator(op_color_from_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_from_elements'))
-		layout.operator(op_color_from_materials.op.bl_idname, text="Materials")
+		layout.operator(op_color_from_materials.op.bl_idname, text="Materials", icon_value = icon_get('op_color_from_materials'))
 
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
@@ -1058,6 +1058,7 @@ def register():
 		"op_bake_explode.png", 
 		"op_color_convert_texture.png", 
 		"op_color_from_elements.png", 
+		"op_color_from_materials.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 
 		"op_island_align_sort_h.png", 

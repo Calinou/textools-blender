@@ -9,6 +9,7 @@ from . import utilities_color
 from . import utilities_bake
 from . import utilities_ui
 
+gamma = 2.2
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_color_convert_to_vertex_colors"
@@ -45,43 +46,38 @@ class op(bpy.types.Operator):
 
 def convert_vertex_colors(self, context):
 	obj = bpy.context.active_object
-	name = material_prefix+obj.name
 
-	if obj.mode != 'OBJECT':
-		bpy.ops.object.mode_set(mode='OBJECT')
+	for i in range(len(obj.material_slots)):
+		slot = obj.material_slots[i]
+		if slot.material:
 
-	'''
+			# Select related faces
+			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.ops.mesh.select_all(action='DESELECT')
 
-	# Edit mesh
-	bpy.ops.object.mode_set(mode='EDIT')
-	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
-	bpy.ops.mesh.select_all(action='SELECT')
-	# bpy.ops.uv.smart_project(angle_limit=1)
-	bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.0078)
+			bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+			for face in bm.faces:
+				if face.material_index == i:
+					face.select = True
 
+			color = utilities_color.get_color(i).copy()
+			# Fix Gamma
+			color[0] = pow(color[0],1/gamma)
+			color[1] = pow(color[1],1/gamma)
+			color[2] = pow(color[2],1/gamma)
 
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify();
+			bpy.ops.object.mode_set(mode='VERTEX_PAINT')
+			bpy.data.brushes["Draw"].color = color
+			bpy.context.object.data.use_paint_mask = True
+			bpy.ops.paint.vertex_color_set()
 
-	for face in bm.faces:
-		index = face.material_index
+	# Back to object mode
+	bpy.ops.object.mode_set(mode='VERTEX_PAINT')
+	bpy.context.object.data.use_paint_mask = False
 
-		# Get UV coordinates for index
-		x = index%size_square
-		y = math.floor(index/size_square)
-
-		x*= (size_pixel / size_image_pow) 
-		y*= (size_pixel / size_image_pow)
-		x+= size_pixel/size_image_pow/2
-		y+= size_pixel/size_image_pow/2
-
-		for loop in face.loops:
-			loop[uvLayer].uv = (x, y)
-
-	# Remove Slots & add one
-	bpy.ops.object.mode_set(mode='OBJECT')
-	bpy.ops.uv.textools_color_clear()
-	bpy.ops.object.material_slot_add()
-
-
-	'''
+	# Switch textured shading
+	for area in bpy.context.screen.areas:
+		if area.type == 'VIEW_3D':
+			for space in area.spaces:
+				if space.type == 'VIEW_3D':
+					space.viewport_shade = 'TEXTURED'

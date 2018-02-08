@@ -286,6 +286,11 @@ def on_color_dropdown_template(self, context):
 
 
 
+def on_color_count_changed(self, context):
+	if bpy.context.active_object != None:
+		utilities_color.validate_face_colors(bpy.context.active_object)
+
+
 def get_dropdown_uv_values(self, context):
 	# Dynamic Dropdowns: https://blender.stackexchange.com/questions/35223/whats-the-correct-way-of-implementing-dynamic-dropdown-menus-in-python
 	
@@ -428,6 +433,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name = "Count",
 		description="Number of color IDs",
 		default = 5,
+		update = on_color_count_changed,
 		min = 2,
 		max = 20
 	)

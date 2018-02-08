@@ -47,3 +47,5 @@ def color_materials(self, context):
 		slot = obj.material_slots[s]
 		if slot.material:
 			utilities_color.assign_slot(obj, s)
+
+	utilities_color.validate_face_colors(obj)

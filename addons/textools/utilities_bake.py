@@ -119,13 +119,7 @@ def store_materials(obj):
 
 
 def restore_materials():
-
-	print("Restore materials {} objects".format(len(stored_materials)))
 	for obj in stored_materials:
-		# Remove slots
-		# for i in range(len(obj.material_slots)):
-		# 	bpy.ops.object.material_slot_remove()
-
 		# Enter edit mode
 		bpy.context.scene.objects.active = obj
 		bpy.ops.object.mode_set(mode='EDIT')
@@ -147,11 +141,11 @@ def restore_materials():
 						face.material_index = index
 
 				# obj.data.materials.append(material)
-				print("- Restore {} : {} = {}".format(
-					obj.name, 
-					index, 
-					material.name
-				))
+				# print("- Restore {} : {} = {}".format(
+				# 	obj.name, 
+				# 	index, 
+				# 	material.name
+				# ))
 
 		# Back to object mode
 		bpy.ops.object.mode_set(mode='OBJECT')

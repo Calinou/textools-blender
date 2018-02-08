@@ -97,3 +97,4 @@ def color_elements(self, context):
 		index_color = (index_color+1) % bpy.context.scene.texToolsSettings.color_ID_count
 
 	bpy.ops.object.mode_set(mode='OBJECT')
+	utilities_color.validate_face_colors(obj)

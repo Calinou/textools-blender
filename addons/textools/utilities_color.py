@@ -133,6 +133,60 @@ def set_color(index, color):
 		setattr(bpy.context.scene.texToolsSettings, "color_ID_color_{}".format(index), color)
 
 
+def validate_face_colors(obj):
+	print("Validate...")
+
+
+	previous_mode = bpy.context.object.mode;
+
+	count = bpy.context.scene.texToolsSettings.color_ID_count
+
+	# Verify enough material slots
+	if len(obj.material_slots) < count:
+		for i in range(count):
+			if len(obj.material_slots) < count:
+				bpy.ops.object.material_slot_add()
+				assign_slot(obj, len(obj.material_slots)-1)
+			else:
+				break
+
+
+	# TODO: Check face.material_index
+	bpy.ops.object.mode_set(mode='EDIT')
+	bm = bmesh.from_edit_mesh(obj.data);
+	for face in bm.faces:
+		face.material_index%= count
+	obj.data.update()
+
+	# Remove material slots that are not used
+	if len(obj.material_slots) > count:
+		bpy.ops.object.mode_set(mode='OBJECT')
+		for i in range(len(obj.material_slots) - count):
+			if len(obj.material_slots) > count:
+				# Remove last
+				bpy.context.object.active_material_index = len(obj.material_slots)-1
+				bpy.ops.object.material_slot_remove()
+
+
+
+
+	# Restore previous mode
+	bpy.ops.object.mode_set(mode=previous_mode)
+
+
+
+
+
+	# if bpy.context.scene.texToolsSettings.color_ID_count != len(obj.material_slots):
+	# 	print("Yes update slots")
+	# 	# for s in 
+	# 	TODO: Increase slots if needed 
+
+	# 	TODO: or remove slots if to many
+
+
+
+
 
 def hex_to_color(hex):
 	

@@ -164,7 +164,13 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 				# Assign image to texture faces
 				bpy.ops.object.mode_set(mode='EDIT')
 				bpy.ops.mesh.select_all(action='SELECT')
-				bpy.data.screens['UV Editing'].areas[1].spaces[0].image = image
+
+				for area in bpy.context.screen.areas:
+					if area.type == 'IMAGE_EDITOR':
+						area.spaces[0].image = image
+				# bpy.data.screens['UV Editing'].areas[1].spaces[0].image = image
+
+
 				bpy.ops.object.mode_set(mode='OBJECT')
 
 			for obj_high in (set.objects_high):
@@ -365,7 +371,8 @@ def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, 
 
 	if modes[mode].engine == 'BLENDER_RENDER':
 		# Snippet: https://gist.github.com/AndrewRayCode/760c4634a77551827de41ed67585064b
-		
+		bpy.context.scene.render.bake_margin = padding
+
 		# AO Settings
 		bpy.context.scene.render.bake_type = 'AO'
 		bpy.context.scene.render.use_bake_normalize = True

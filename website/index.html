@@ -30,18 +30,27 @@
 				<div class="Content">
 					<h2>Download</h2>
 					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a>      </p>
-					<p><strong>What's new in 1.0.0</strong><img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
+					<p><strong>What's new in 1.0.0</strong></p>
+					<p>General</p>
+					<ul>
+					  <li>Help buttons for UI Panels</li>
+				  </ul>
+					<p>Baking<img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
 					<ul>
 						<li>Bug Fix: Bake high to low</li>
-						<li>Grouped bake set objects</li>
-						<li>Color ID: Convert to vertex colors</li>
-						<li>Improved Color ID UI</li>
-						<li>Improved Bake UI</li>
-						<li>Help buttons for UI Panels</li>
-						<li>Updated bake icons</li>
-						<li>Bake mode: ID materials</li>
-						<li>Baking: Restore previous materials</li>
+						<li>Bake: Group bake sets by name, parent or group</li>
+						<li>New  <strong>ID materials</strong> bake mode</li>
+                        <li> Restore previous materials</li>
+                        <li>New <strong>AO Bake</strong> Mode</li>
+                        <li>Updated icons</li>
 					</ul>
+				  <p>Color ID</p>
+					<ul>
+					  <li> Convert to <strong>vertex colors</strong></li>
+					  <li>Create from <strong>materials</strong></li>
+					  <li>Create from  <strong>Mesh Elements</strong></li>
+					  <li>Improved  UI</li>
+		          </ul>
 				</div>
 				<div class="Content">
 					<h2>Requirements</h2>
@@ -293,34 +302,35 @@
 				<div class="Content">
 					<h2> Object Normal</h2>
 					<p><img src="images/bake_normal_object.png" width="128" height="128" alt=""/></p>
-					<p>A normal map in object space. </p>
-					<p><strong>Tip:</strong> Use this map for vertical gradients.</p>
+					<p>Bakes a normal map in object space. </p>
+					<p><strong>Tip:</strong> Use the green channel for vertical gradients.</p>
 				</div>
 				<div class="Content">
 					<h2>Diffuse</h2>
 					<p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
 					<p>Renders the diffuse colors of all Cycles materials of the object.</p>
-					<p><strong>Tip: </strong>Color ID setups are baked in this 'Diffuse' mode.</p>
+					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
 				</div>
 				<div class="Content">
 				  <h2>Face Selection<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 				  <p><img src="images/bake_selection.png" width="128" height="128" alt=""/></p>
-				  <p>Bakes the face selection as a black and white mask.</p>
+				  <p>Bakes a black and white <strong>mask</strong> of the the face selection of the object. This can be useful to generate quick masks for working with textures.</p>
 			  </div>
 				<div class="Content">
 				  <h2>Element ID</h2>
 					<p><img src="images/bake_id_element.png" width="128" height="128" alt=""/></p>
-					<p>Assigns a unique color to each mesh element. </p>
+					<p>Bakes a colored texture where each mesh element has a unique color. Use this map to isolate different parts of your model in the texture.</p>
 				</div>
                 <div class="Content">
-				  <h2>Material ID<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <h2>Material ID<img src="images/new.png" alt="" class="New"/></h2>
 					<p><img src="images/bake_id_material.png" width="128" height="128" alt=""/></p>
 					<p>Assigns a unique color to each sub material or material slot.</p>
 			  </div>
 				<div class="Content">
-					<h2>Ambient Occlusion</h2>
+					<h2>AO<img src="images/new.png" alt="" class="New"/></h2>
 					<p><img src="images/bake_ao.png" width="128" height="128" alt=""/></p>
-					<p>An Ambient Occlusion bake in Cycles. </p>
+					<p>Bakes an Ambient Occlusion map with the <strong>Blender render</strong> and <strong>normalized</strong> enabled. </p>
+					<p>Rendering in the Blender Render with normalized enabled gives better results compared to Cycles.</p>
 					<p>Parameters: <strong>Samples</strong></p>
 				</div>
 				<div class="Content">
@@ -541,8 +551,16 @@
 						<h2>Code Structure</h2>
 						<p>Each operator for the tools has it's own <strong>python module file</strong>. Should you want to inspect or change the code this should make it easy to look for the right code. All code is commented fairly thorough and to my best ability simplified.</p>
 						<p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
-						<p><strong>Materials</strong> used for baking are stored in the resources folder as *.blend file.</p>
-						<p><strong>Icons</strong> are stored in the 'icons' folder and reflect the operator python  module names.</p>
+						<p><strong>Materials</strong> used for baking are stored in the resources folder as *.blend file.						</p>
+						<p><strong>Operators</strong> are stored each in op_{type}.py modules. Whenever possible they are self contained.</p>
+						<p><strong>Utitlities</strong> modules are used for shared methods and consist of</p>
+						<ul>
+						  <li> utilities_bake.py</li>
+						  <li>utitlities_color.py</li>
+						  <li>utilities_texel.py</li>
+						  <li>utilities_uv.py</li>
+						  <li>utilities_ui.py</li>
+					  </ul>
 					</div>
 					<div class="Content">
 						<h2>Release Log</h2>

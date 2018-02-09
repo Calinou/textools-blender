@@ -23,15 +23,17 @@ class BakeMode:
 	material = ""
 	type = 'EMIT'
 	normal_space = 'TANGENT'
-	setVertexColor = None
+	setVColor = None
 	color = (0.23, 0.23, 0.23, 1)
+	engine = 'CYCLES'
 
-	def __init__(self, material="", type='EMIT', normal_space='TANGENT', setVertexColor=None, color= (0.23, 0.23, 0.23, 1)):
+	def __init__(self, material="", type='EMIT', normal_space='TANGENT', setVColor=None, color= (0.23, 0.23, 0.23, 1), engine='CYCLES'):
 		self.material = material
 		self.type = type
 		self.normal_space = normal_space
-		self.setVertexColor = setVertexColor
+		self.setVColor = setVColor
 		self.color = color
+		self.engine = engine
 
 
 
@@ -153,21 +155,29 @@ def restore_materials():
 
 
 def get_bake_name_base(obj):
+
+	def remove_digits(name):
+		# Remove blender naming digits, e.g. cube.001, cube.002,...
+		if name[-4] == '.' and name[-3].isdigit() and name[-2].isdigit() and name[-1].isdigit():
+			return name[:-4]
+		return name
+
 	# Reference parent as base name
 	if obj.parent:
-		return obj.parent.name.lower()
+		return remove_digits(obj.parent.name).lower()
 
 	# Reference group name as base name
 	elif len(obj.users_group) == 1:
-		return obj.users_group[0].name.lower()
+		return remove_digits(obj.users_group[0].name).lower()
 
 	# Use Object name
 	else:
-		return obj.name.lower()
+		return remove_digits(obj.name).lower()
 
 
 
 def get_bake_name(obj):
+	# Get Basic name
 	name = get_bake_name_base(obj)
 
 	# Split by ' ','_','.' etc.
@@ -477,6 +487,13 @@ def get_image_material(image):
 	material = None
 	if image.name in bpy.data.materials:
 		material = bpy.data.materials[image.name]
+
+		# Incorrect existing material, delete first and create new for cycles
+		if bpy.context.scene.render.engine == 'CYCLES' and 'Diffuse BSDF' not in material.node_tree.nodes:
+			material.user_clear()
+			bpy.data.materials.remove(material)
+			material = bpy.data.materials.new(image.name)
+		
 	else:
 		material = bpy.data.materials.new(image.name)
 

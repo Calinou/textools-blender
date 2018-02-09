@@ -340,7 +340,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	bake_samples = bpy.props.FloatProperty(
 		name = "Samples",
 		description = "Samples in Cycles for Baking. The higher the less noise. Default: 64",
-		default = 64,
+		default = 8,
 		min = 1,
 		max = 4000
 	)

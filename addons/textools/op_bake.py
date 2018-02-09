@@ -8,20 +8,20 @@ from random import random
 
 
 from . import settings
-from . import utilities_bake
+from . import utilities_bake as ub #Use shorthand ub = utitlites_bake
 
 
 # Notes: https://docs.blender.org/manual/en/dev/render/blender_render/bake.html
 modes={
-	'normal_tangent':	utilities_bake.BakeMode('',					type='NORMAL', color=(0.5, 0.5, 1, 1)),
-	'normal_object': 	utilities_bake.BakeMode('',					type='NORMAL', color=(0.5, 0.5, 1, 1), normal_space='OBJECT' ),
-	'cavity': 			utilities_bake.BakeMode('bake_cavity',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
-	'dust': 			utilities_bake.BakeMode('bake_dust',		type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_dirty),
-	'id_element':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_id_element),
-	'id_material':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', setVertexColor=utilities_bake.setup_vertex_color_id_material),
-	'selection':		utilities_bake.BakeMode('bake_vertex_color',type='EMIT', color=(0, 0, 0, 1), setVertexColor=utilities_bake.setup_vertex_color_selection),
-	'diffuse':			utilities_bake.BakeMode('',					type='DIFFUSE'),
-	'ao':				utilities_bake.BakeMode('',					type='AO')
+	'normal_tangent':	ub.BakeMode('',					type='NORMAL', 	color=(0.5, 0.5, 1, 1)),
+	'normal_object': 	ub.BakeMode('',					type='NORMAL', 	color=(0.5, 0.5, 1, 1), normal_space='OBJECT' ),
+	'cavity': 			ub.BakeMode('bake_cavity',		type='EMIT', 	setVColor=ub.setup_vertex_color_dirty),
+	'dust': 			ub.BakeMode('bake_dust',		type='EMIT', 	setVColor=ub.setup_vertex_color_dirty),
+	'id_element':		ub.BakeMode('bake_vertex_color',type='EMIT', 	setVColor=ub.setup_vertex_color_id_element),
+	'id_material':		ub.BakeMode('bake_vertex_color',type='EMIT', 	setVColor=ub.setup_vertex_color_id_material),
+	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
+	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
+	'ao':				ub.BakeMode('',					type='AO', engine='BLENDER_RENDER')
 }
 
 
@@ -44,7 +44,7 @@ class op(bpy.types.Operator):
 		# Store Selection
 		selected_objects 	= [obj for obj in bpy.context.selected_objects]
 		active_object 		= bpy.context.scene.objects.active
-		utilities_bake.store_bake_settings()
+		ub.store_bake_settings()
 
 		# Render sets
 		bake(
@@ -59,7 +59,7 @@ class op(bpy.types.Operator):
 		)
 		
 		# Restore selection
-		utilities_bake.restore_bake_settings()
+		ub.restore_bake_settings()
 		bpy.ops.object.select_all(action='DESELECT')
 		for obj in selected_objects:
 			obj.select = True
@@ -74,16 +74,13 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
 	print("Bake '{}'".format(mode))
 
-	# Setup
-	if bpy.context.scene.render.engine != 'CYCLES':
-		bpy.context.scene.render.engine = 'CYCLES'
-	bpy.context.scene.cycles.samples = samples
+	bpy.context.scene.render.engine = modes[mode].engine #Switch render engine
 
 	# Disable edit mode
 	if bpy.context.scene.objects.active != None and bpy.context.object.mode != 'OBJECT':
 	 	bpy.ops.object.mode_set(mode='OBJECT')
 
-	utilities_bake.store_materials_clear()
+	ub.store_materials_clear()
 
 	# Get the baking sets / pairs
 	sets = settings.sets
@@ -159,12 +156,20 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 			obj_low = set.objects_low[i]
 			obj_cage = None if i >= len(set.objects_cage) else set.objects_cage[i]
 
+			bpy.ops.object.select_all(action='DESELECT')
+			obj_low.select = True
 			bpy.context.scene.objects.active = obj_low
 
-			bpy.ops.object.select_all(action='DESELECT')
+			if modes[mode].engine == 'BLENDER_RENDER':
+				# Assign image to texture faces
+				bpy.ops.object.mode_set(mode='EDIT')
+				bpy.ops.mesh.select_all(action='SELECT')
+				bpy.data.screens['UV Editing'].areas[1].spaces[0].image = image
+				bpy.ops.object.mode_set(mode='OBJECT')
+
 			for obj_high in (set.objects_high):
 				obj_high.select = True
-			obj_low.select = True
+
 			cycles_bake(
 				mode, 
 				bpy.context.scene.texToolsSettings.padding,
@@ -191,6 +196,10 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 					 obj_cage
 				)
 
+			# Set background image (CYCLES & BLENDER_RENDER)
+			for area in bpy.context.screen.areas:
+				if area.type == 'IMAGE_EDITOR':
+					area.spaces[0].image = image
 
 		# Downsample image?
 		if not bake_single or (bake_single and s == len(sets)-1):
@@ -201,7 +210,7 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 			# image.save()
 
 	# Restore non node materials
-	utilities_bake.restore_materials()
+	ub.restore_materials()
 
 
 def setup_image(mode, name, width, height, path, is_clear):#
@@ -270,8 +279,8 @@ def setup_image_bake_node(obj, image):
 
 def assign_vertex_color(mode, obj):
 	print("Set vertex colors?? {} {}".format(mode, obj.name))
-	if modes[mode].setVertexColor:
-		modes[mode].setVertexColor(obj)
+	if modes[mode].setVColor:
+		modes[mode].setVColor(obj)
 
 
 
@@ -279,7 +288,7 @@ def assign_material(obj, material_bake=None, material_empty=None):
 	print("Assign material: {}".format(obj.name))
 	
 
-	utilities_bake.store_materials(obj)
+	ub.store_materials(obj)
 
 
 	bpy.context.scene.objects.active = obj
@@ -352,45 +361,65 @@ def get_material(mode):
 
 
 def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, obj_cage):
-	# Set samples
-	bpy.context.scene.cycles.samples = samples
+	
 
-	# Speed up samples for simple render modes
-	if modes[mode].type == 'EMIT' or modes[mode].type == 'DIFFUSE':
-		bpy.context.scene.cycles.samples = 1
+	if modes[mode].engine == 'BLENDER_RENDER':
+		# Snippet: https://gist.github.com/AndrewRayCode/760c4634a77551827de41ed67585064b
+		
+		# AO Settings
+		bpy.context.scene.render.bake_type = 'AO'
+		bpy.context.scene.render.use_bake_normalize = True
+		bpy.context.scene.world.light_settings.use_ambient_occlusion = True
+		bpy.context.scene.world.light_settings.gather_method = 'RAYTRACE'
+		bpy.context.scene.world.light_settings.samples = samples
 
-	# Pixel Padding
-	bpy.context.scene.render.bake.margin = padding * sampling_scale
+		bpy.context.scene.render.use_bake_selected_to_active = is_multi
+		bpy.context.scene.render.bake_distance = ray_distance
 
-	# Disable Direct and Indirect for all 'DIFFUSE' bake types
-	if modes[mode].type == 'DIFFUSE':
-		bpy.context.scene.render.bake.use_pass_direct = False
-		bpy.context.scene.render.bake.use_pass_indirect = False
-		bpy.context.scene.render.bake.use_pass_color = True
+		bpy.ops.object.bake_image()
 
-	if obj_cage is None:
-		# Bake with Cage
-		bpy.ops.object.bake(
-			type=modes[mode].type, 
-			use_clear=False, 
-			cage_extrusion=ray_distance, 
 
-			use_selected_to_active=is_multi, 
-			normal_space=modes[mode].normal_space
-		)
-	else:
-		# Bake without Cage
-		bpy.ops.object.bake(
-			type=modes[mode].type, 
-			use_clear=False, 
-			cage_extrusion=ray_distance, 
+	elif modes[mode].engine == 'CYCLES':
 
-			use_selected_to_active=is_multi, 
-			normal_space=modes[mode].normal_space,
+		# Set samples
+		bpy.context.scene.cycles.samples = samples
 
-			#Use Cage and assign object
-			use_cage=True, 	
-			cage_object=obj_cage.name
-		)
+		# Speed up samples for simple render modes
+		if modes[mode].type == 'EMIT' or modes[mode].type == 'DIFFUSE':
+			bpy.context.scene.cycles.samples = 1
+
+		# Pixel Padding
+		bpy.context.scene.render.bake.margin = padding * sampling_scale
+
+		# Disable Direct and Indirect for all 'DIFFUSE' bake types
+		if modes[mode].type == 'DIFFUSE':
+			bpy.context.scene.render.bake.use_pass_direct = False
+			bpy.context.scene.render.bake.use_pass_indirect = False
+			bpy.context.scene.render.bake.use_pass_color = True
+
+		if obj_cage is None:
+			# Bake with Cage
+			bpy.ops.object.bake(
+				type=modes[mode].type, 
+				use_clear=False, 
+				cage_extrusion=ray_distance, 
+
+				use_selected_to_active=is_multi, 
+				normal_space=modes[mode].normal_space
+			)
+		else:
+			# Bake without Cage
+			bpy.ops.object.bake(
+				type=modes[mode].type, 
+				use_clear=False, 
+				cage_extrusion=ray_distance, 
+
+				use_selected_to_active=is_multi, 
+				normal_space=modes[mode].normal_space,
+
+				#Use Cage and assign object
+				use_cage=True, 	
+				cage_object=obj_cage.name
+			)
 
 

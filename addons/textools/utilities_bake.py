@@ -120,6 +120,7 @@ def store_materials(obj):
 	bpy.ops.object.mode_set(mode='OBJECT')
 
 
+
 def restore_materials():
 	for obj in stored_materials:
 		# Enter edit mode

@@ -81,3 +81,8 @@ def convert_vertex_colors(self, context):
 			for space in area.spaces:
 				if space.type == 'VIEW_3D':
 					space.viewport_shade = 'TEXTURED'
+
+	# Clear any materials
+	bpy.ops.uv.textools_color_clear()
+
+	bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="Vertex colors assigned")

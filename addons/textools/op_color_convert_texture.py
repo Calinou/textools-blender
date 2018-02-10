@@ -140,4 +140,11 @@ def pack_texture(self, context):
 	#Display UVs
 	bpy.ops.object.mode_set(mode='EDIT')
 
+	# Switch textured shading
+	for area in bpy.context.screen.areas:
+		if area.type == 'VIEW_3D':
+			for space in area.spaces:
+				if space.type == 'VIEW_3D':
+					space.viewport_shade = 'MATERIAL'
+
 	bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="Packed texture with {} color IDs".format( context.scene.texToolsSettings.color_ID_count ))

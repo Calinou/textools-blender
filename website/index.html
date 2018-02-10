@@ -22,38 +22,40 @@
 					</tr>
 				</tbody>
 			</table>
-			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texture  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a>. There are 3 panels in TexTools: <strong><a href="#uvlayout" class="NoButton">UV Layout</a></strong>, <strong><a href="#texturebaking" class="NoButton">Texture Baking</a></strong> and <strong><a href="#colorid" class="NoButton">Color ID</a></strong>. </p><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texturing  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a> which has been very popular with many veteran realtime 3D artists. TexTools consists of 4 areas: <a href="#sizepanel" class="NoButton">Size Panel</a>, <strong><a href="#uvlayout" class="NoButton">UV Layout</a></strong>, <strong><a href="#texturebaking" class="NoButton">Texture Baking</a></strong> and <strong><a href="#colorid" class="NoButton">Color ID</a></strong>. </p><table width="100%" border="0" cellspacing="0" cellpadding="0">
 			
 		</table></p>
 		<div class="Panel">
 			<div class="Columns2">
 				<div class="Content">
 					<h2>Download</h2>
-					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a>      </p>
-					<p><strong>What's new in 1.0.0</strong></p>
-					<p>General</p>
-					<ul>
-					  <li>Help buttons for UI Panels</li>
-				  </ul>
-					<p>Baking<img src="images/new.png" alt="" width="53" height="22" class="New"/></p>
-					<ul>
-						<li>Bug Fix: Bake high to low</li>
-						<li>Bake: Group bake sets by name, parent or group</li>
-						<li>New  <strong>ID materials</strong> bake mode</li>
-                        <li> Restore previous materials</li>
-                        <li>New <strong>AO Bake</strong> Mode</li>
-                        <li>Updated icons</li>
-					</ul>
-				  <p>Color ID</p>
-					<ul>
-					  <li> Convert to <strong>vertex colors</strong></li>
-					  <li>Create from <strong>materials</strong></li>
-					  <li>Create from  <strong>Mesh Elements</strong></li>
-					  <li>Improved  UI</li>
-		          </ul>
+					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a></p>
 				</div>
 				<div class="Content">
-					<h2>Requirements</h2>
+				  <h2>What's new in  1.0.0<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <p>General</p>
+                  <ul>
+                    <li>Help buttons for UI Panels</li>
+                  </ul>
+                  <p>Baking</p>
+                  <ul>
+                    <li>Bug Fix: Bake high to low</li>
+                    <li>Bake: Group bake sets by name, parent or group</li>
+                    <li>New <strong>ID materials</strong> bake mode</li>
+                    <li> Restore previous materials</li>
+                    <li>New <strong>AO Bake</strong> Mode</li>
+                    <li>Updated icons</li>
+                  </ul>
+                  <p>Color ID</p>
+                  <ul>
+                    <li> Convert to <strong>vertex colors</strong></li>
+                    <li>Create from <strong>materials</strong></li>
+                    <li>Create from <strong>Mesh Elements</strong></li>
+                    <li>Improved  UI</li>
+                  </ul>
+		      </div>
+				<div class="Content">
+				  <h2>Requirements</h2>
 					<p><a href="https://www.blender.org/download/releases/2-79/" class="NoButton">Blender 2.79</a> for Windows, Mac or Linux</p>
 				</div>
 				
@@ -70,7 +72,7 @@
 					</ol>
 				</div>
 				<div class="Content">
-					<h2>Links</h2>
+					<h2>Additional links</h2>
 					<p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a>
 					<br><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donation</a><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blenderartist BBS</a><a href="http://polycount.com/discussion/197226/textools-for-blender">Polycount BBS</a><a href="http://renderhjs.net/textools/">TexTools for 3dsMax</a>					</p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -86,7 +88,7 @@
 				</div>
 			</div>
 		</div>
-        <a class="NoButton" id="size"></a>
+        <a name="sizepanel" class="NoButton" id="size"></a>
         <h1>Size Panel</h1>
 		<div class="Panel">
 			<div class="Columns3">
@@ -511,7 +513,7 @@
 				</div>
                 <div class="Content">
 					     <h2><img src="images/op_color_io_export.png" width="32" height="32" alt=""/> Vertex Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-                      <p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
+                      <p>Assings vertex colors for each face Color ID. Materials are removed and the vertex paint mode will be enabled.</p>
                       <p><img src="images/show_color_convert_vertex_color.png" alt=""/></p>
 		        </div>
                 
@@ -536,8 +538,12 @@
 							<li>In the 'Add-ons' tab enable TexTools</li>
 						</ol>
 					</div>
+				  <div class="Content">
+				    <h2>License</h2>
+				    <p>The license for TexTools is the GNU General Public License. TexTools for Blender © 2018 Hendrik-Jan Schoenmaker.			      </p>
+				  </div>
 					<div class="Content">
-						<h2>Debug mode</h2>
+					  <h2>Debug mode</h2>
 						<p>By default the public releases and the GIT source version hide development tools in the UI. To reveal them you have to set the debug panel value to other than '<strong>0</strong>'</p>
 						<ol>
 							<li> Press <strong>Ctrl</strong> + <strong>Alt</strong> + <strong>D</strong> for the debug value panel</li>
@@ -563,7 +569,7 @@
 					  </ul>
 					</div>
 					<div class="Content">
-						<h2>Release Log</h2>
+					  <h2>Release Log</h2>
 						<p>Having issues with the latest version? Try an older version from the list below:</p>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip"> TexTools 1.0.0.zip</a>
 						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.7.zip"> TexTools 0.9.7.zip</a>

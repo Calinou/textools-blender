@@ -19,23 +19,26 @@ keywords_float = ['floater','float','f']
 split_chars = [' ','_','.','-']
 
 
+
 class BakeMode:
-	material = ""
+	material = ""					#Material name from external blend file
 	type = 'EMIT'
 	normal_space = 'TANGENT'
-	setVColor = None
-	color = (0.23, 0.23, 0.23, 1)
-	engine = 'CYCLES'
+	setVColor = None				#Set Vertex color method
+	color = (0.23, 0.23, 0.23, 1)	#Background color
+	engine = 'CYCLES'				#render engine, by default CYCLES
+	composite = None				#use composite scene to process end result
+	params = []						#UI Parameters from scene settings
 
-	def __init__(self, material="", type='EMIT', normal_space='TANGENT', setVColor=None, color= (0.23, 0.23, 0.23, 1), engine='CYCLES'):
+	def __init__(self, material="", type='EMIT', normal_space='TANGENT', setVColor=None, color= (0.23, 0.23, 0.23, 1), engine='CYCLES', params = [], composite=None):
 		self.material = material
 		self.type = type
 		self.normal_space = normal_space
 		self.setVColor = setVColor
 		self.color = color
 		self.engine = engine
-
-
+		self.params = params
+		self.composite = composite
 
 
 
@@ -98,8 +101,14 @@ def store_materials(obj):
 	stored_materials[obj] = []
 	stored_material_faces[obj] = []
 
+
+	print("Store mat: {}".format(obj.name))
+
 	# Enter edit mode
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
 	bpy.context.scene.objects.active = obj
+
 	bpy.ops.object.mode_set(mode='EDIT')
 	bm = bmesh.from_edit_mesh(obj.data);
 

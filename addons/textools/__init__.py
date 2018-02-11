@@ -344,6 +344,13 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 1,
 		max = 4000
 	)
+	bake_curvature_size = bpy.props.FloatProperty(
+		name = "Curvature",
+		description = "Curvature offset in pixels to process",
+		default = 0.5,
+		min = 0.01,
+		max = 64
+	)
 	bake_ray_distance = bpy.props.FloatProperty(
 		name = "Ray Dist.",
 		description = "Ray distance when baking. When using cage used as extrude distance",
@@ -763,10 +770,14 @@ class Panel_Bake(bpy.types.Panel):
 				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
 				break		
 
-		if settings.bake_mode == 'ao':
-			col.prop(context.scene.texToolsSettings, "bake_samples")
-		
-		
+		# if settings.bake_mode == 'ao':
+		params = op_bake.modes[settings.bake_mode].params
+		if len(params) > 0:
+			for param in params:
+				col.prop(context.scene.texToolsSettings, param)
+		# col.prop(context.scene.texToolsSettings, "bake_samples")
+		# col.prop(context.scene.texToolsSettings, "bake_curvature_size")
+
 
 		box = layout.box()
 

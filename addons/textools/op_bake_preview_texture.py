@@ -83,10 +83,4 @@ def preview_texture(self, context):
 			bpy.ops.object.material_slot_add()
 			obj.material_slots[0].material = utilities_bake.get_image_material(image)
 			
-
-		
-
-		
-	#Display UVs
-	# bpy.ops.object.mode_set(mode='EDIT')
-
+			obj.draw_type = 'TEXTURED'

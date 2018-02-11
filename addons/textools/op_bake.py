@@ -21,7 +21,8 @@ modes={
 	'id_material':		ub.BakeMode('bake_vertex_color',type='EMIT', 	setVColor=ub.setup_vertex_color_id_material),
 	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
 	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
-	'ao':				ub.BakeMode('',					type='AO', engine='BLENDER_RENDER')
+	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
+	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature")
 }
 
 
@@ -212,11 +213,95 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 			# When baking single, only downsample on last bake
 			if render_width != size[0] or render_height != size[1]:
 				image.scale(size[0],size[1])
-			
-			# image.save()
+		
+		# Apply composite nodes on final image result
+		if modes[mode].composite:
+			composite_nodes(image, modes[mode].composite)
+		
+
+		# image.save()
 
 	# Restore non node materials
 	ub.restore_materials()
+
+
+
+
+def composite_nodes(image, scene_name):
+	print("----COMPOSITE \n '{}' at {}".format(scene_name, image.name))
+
+
+	previous_scene = bpy.context.screen.scene
+
+	# Get Scene with compositing nodes
+	scene = None
+	if scene_name in bpy.data.scenes:
+		scene = bpy.data.scenes["curvature"]
+	else:
+		path = os.path.join(os.path.dirname(__file__), "resources/compositing.blend")+"\\Scene\\"
+		bpy.ops.wm.append(filename=scene_name, directory=path, link=False, autoselect=False)
+		scene = bpy.data.scenes[scene_name]
+
+	if scene:
+		# Switch scene
+		bpy.context.screen.scene = scene
+
+
+		path = bpy.app.tempdir;#+""+image.name+".png"
+
+		#Find image node
+		if "Image" in scene.node_tree.nodes:
+			scene.node_tree.nodes["Image"].image = image
+
+		if "File Output" in scene.node_tree.nodes:
+			scene.node_tree.nodes["File Output"].base_path = path
+			scene.node_tree.nodes["File Output"].file_slots[0].path = image.name+"#" #Use only 1 digit (time = 0 in loaded scene)
+			# print("Path?? {}".format())
+
+
+		# Render & save image
+		bpy.ops.render.render(use_viewport=False)
+
+		# Load image
+		image.source = 'FILE'
+		image.filepath = path+image.name+"0.png"
+		image.reload()
+
+		#Restore scene & remove other scene
+		bpy.context.screen.scene = previous_scene
+		# Delte compositing scene
+		bpy.data.scenes[scene_name].user_clear()
+		bpy.data.scenes.remove(bpy.data.scenes[scene_name])
+
+		# for area in bpy.context.screen.areas:
+		# 	if area.type in ['IMAGE_EDITOR', 'VIEW_3D']:
+		# 		area.tag_redraw()
+
+
+
+		# Blender.Window.Redraw(Blender.Window.Types.IMAGE)
+		# bpy.context.scene.update()
+		print("image.filepath: {}".format(image.filepath))
+
+
+
+		# print("Temp file: {}".format(path))
+		# print("Image class {}".format(type(image)))
+	
+		# Render and save composite output
+		
+
+
+	print("Scene loaded? {}".format(scene.name))
+	# if bpy.data.materials.get(name) is None:
+	# 	print("Material not yet loaded: "+mode)
+	# 	bpy.ops.wm.append(filename=name, directory=path, link=False, autoselect=False)
+
+	# return bpy.data.materials.get(name)
+
+	#Append composite nodes to current blend
+
+
 
 
 def setup_image(mode, name, width, height, path, is_clear):#

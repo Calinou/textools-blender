@@ -294,27 +294,29 @@
 		  </div>
 			
 			<div class="Info">
-			  <h3>Bake Modes  </h3></div>
+			  <h3>Bake Modes  </h3>
+			  <p><img src="images/bake_icon_material_affected.png" alt="" class="Icon"/> marked bake modes incorporate existing materials. Other materials are only affected by the geometry of the input objects.</p>
+			</div>
 			<div class="Columns4">
 				<div class="Content">
 					<h2>Tangent Normal </h2>
 					<p><img src="images/bake_normal_tangent.png" width="128" height="128" alt=""/></p>
-					<p>A normal map in tangent space.</p>
+					<p>A normal map in tangent space.				</p>
 				</div>
 				<div class="Content">
 					<h2> Object Normal</h2>
 					<p><img src="images/bake_normal_object.png" width="128" height="128" alt=""/></p>
-					<p>Bakes a normal map in object space. </p>
+					<p>Bakes a normal map in object space.					</p>
 					<p><strong>Tip:</strong> Use the green channel for vertical gradients.</p>
 				</div>
 				<div class="Content">
 					<h2>Diffuse</h2>
-					<p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
-					<p>Renders the diffuse colors of all Cycles materials of the object.</p>
+				  <p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
+					<p>Renders the diffuse colors of all Cycles materials of the object.					</p>
 					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
 				</div>
 				<div class="Content">
-				  <h2>Face Selection<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <h2>Face Selection<img src="images/new.png" alt="" class="New"/></h2>
 				  <p><img src="images/bake_selection.png" width="128" height="128" alt=""/></p>
 				  <p>Bakes a black and white <strong>mask</strong> of the the face selection of the object. This can be useful to generate quick masks for working with textures.</p>
 			  </div>
@@ -331,9 +333,17 @@
 				<div class="Content">
 					<h2>AO<img src="images/new.png" alt="" class="New"/></h2>
 					<p><img src="images/bake_ao.png" width="128" height="128" alt=""/></p>
-					<p>Bakes an Ambient Occlusion map with the <strong>Blender render</strong> and <strong>normalized</strong> enabled. </p>
-					<p>Rendering in the Blender Render with normalized enabled gives better results compared to Cycles.</p>
-					<p>Parameters: <strong>Samples</strong></p>
+					<p>Bakes an Ambient Occlusion map with the <strong>Blender render</strong> and <strong>normalized</strong> enabled.</p>
+					<p>Rendering in the Blender Render with normalized enabled gives <a href="http://polycount.com/discussion/comment/2613136/#Comment_2613136" class="NoButton">better results</a> compared to Cycles.					</p>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					  <tr>
+					    <td valign="top"><strong>Samples</strong></td>
+					    <td width="16" valign="top"><p>&nbsp;</p></td>
+					    <td valign="top">The amount of global illunination samples. The higher the better the result but the more time it takes to render.<em><strong></strong></em></td>
+				      </tr>
+					  <tbody>
+				      </tbody>
+				  </table>
 				</div>
 				<div class="Content">
 					<h2>Cavity</h2>
@@ -346,6 +356,11 @@
 					<p>Dust is similar to the cavity map but adds additional Z top normals to the mix.</p>
 					<p><strong>Tip: </strong> Use this mask for dust and dirt masks in your texturing process. </p>
 				</div>
+              <div class="Content">
+					<h2>Curvature<img src="images/new.png" alt="" class="New"/></h2>
+					<p><img src="images/bake_curvature.png" width="128" height="128" alt=""/></p>
+				  <p>Renders a tangent normal map and converts it to a curvature map <a href="https://blender.stackexchange.com/questions/52902/how-to-convert-a-normal-map-into-a-curvature-map-cavity-map" class="NoButton">using compositing</a> nodes.                </p>
+              </div>
 				
 		  </div>
 			
@@ -399,7 +414,7 @@
 					</div>
 				 
 					<div class="Content">
-					  <h2>Grouping objects</h2>
+					  <h2>Grouping objects<img src="images/new.png" alt="" class="New"/></h2>
 					  <p>Objects with a common name  are grouped into a set, keywords  are used to differenciate between different types such as highpoly, floating geometry or cage objects.</p>
 					  <p><strong>Grouping objects</strong></p>
 					  <p>You can <strong>parent</strong> or <strong>group</strong> objects detect them as single entities.</p>
@@ -506,7 +521,7 @@
               
               <div class="Columns2">
 					<div class="Content">
-					      <h2><img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Texture Atlas</h2>
+					      <h2><img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Texture Atlas<img src="images/new.png" alt="" class="New"/></h2>
                       <p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
                       <p><img src="images/show_create_atlas.png" alt=""/></p>
                       

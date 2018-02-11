@@ -40,6 +40,7 @@ def selection_store():
 				settings.selection_uv_loops.append(loop[uvLayer])
 
 
+
 def selection_restore():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
@@ -82,6 +83,7 @@ def selection_restore():
 	bpy.context.scene.update()
 
 
+
 def getSelectedFaces():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	faces = [];
@@ -90,6 +92,7 @@ def getSelectedFaces():
 			faces.append(face)
 
 	return faces
+
 
 
 def setSelectedFaces(faces):
@@ -139,6 +142,7 @@ def getSelectionBBox():
 	bbox['minLength'] = min(bbox['width'], bbox['height'])
 				
 	return bbox;
+
 
 
 def getSelectionIslands():

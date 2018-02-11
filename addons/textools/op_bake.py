@@ -228,9 +228,6 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
 
 def composite_nodes(image, scene_name):
-	print("----COMPOSITE \n '{}' at {}".format(scene_name, image.name))
-
-
 	previous_scene = bpy.context.screen.scene
 
 	# Get Scene with compositing nodes
@@ -249,9 +246,12 @@ def composite_nodes(image, scene_name):
 
 		path = bpy.app.tempdir;#+""+image.name+".png"
 
-		#Find image node
+		#Setup composite nodes for Curvature
 		if "Image" in scene.node_tree.nodes:
 			scene.node_tree.nodes["Image"].image = image
+
+		if "Offset" in scene.node_tree.nodes:
+			scene.node_tree.nodes["Offset"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_curvature_size
 
 		if "File Output" in scene.node_tree.nodes:
 			scene.node_tree.nodes["File Output"].base_path = path
@@ -269,7 +269,7 @@ def composite_nodes(image, scene_name):
 
 		#Restore scene & remove other scene
 		bpy.context.screen.scene = previous_scene
-		# Delte compositing scene
+		# Delete compositing scene
 		bpy.data.scenes[scene_name].user_clear()
 		bpy.data.scenes.remove(bpy.data.scenes[scene_name])
 
@@ -279,37 +279,23 @@ def composite_nodes(image, scene_name):
 
 
 
-		# Blender.Window.Redraw(Blender.Window.Types.IMAGE)
-		# bpy.context.scene.update()
-		print("image.filepath: {}".format(image.filepath))
-
-
-
-		# print("Temp file: {}".format(path))
-		# print("Image class {}".format(type(image)))
-	
-		# Render and save composite output
-		
-
-
-	print("Scene loaded? {}".format(scene.name))
-	# if bpy.data.materials.get(name) is None:
-	# 	print("Material not yet loaded: "+mode)
-	# 	bpy.ops.wm.append(filename=name, directory=path, link=False, autoselect=False)
-
-	# return bpy.data.materials.get(name)
-
-	#Append composite nodes to current blend
-
-
-
 
 def setup_image(mode, name, width, height, path, is_clear):#
 	image = None
 
 	print("Path "+path)
-	# if name in bpy.data.images and bpy.data.images[name].has_data == False:
-	# 	# Previous image does not have data, remove first
+	if name in bpy.data.images:
+		image = bpy.data.images[name]
+		if image.source == 'FILE':
+			if not os.path.isfile(image.filepath):
+				image.user_clear()
+				bpy.data.images.remove(image)
+		# bpy.data.images[name].update()
+
+		# if bpy.data.images[name].has_data == False:
+			
+
+		# Previous image does not have data, remove first
 	# 	print("Image pointer exists but no data "+name)
 	# 	image = bpy.data.images[name]
 	# 	image.update()
@@ -406,8 +392,8 @@ def assign_material(obj, material_bake=None, material_empty=None):
 		if len(obj.material_slots) == 0:
 			obj.data.materials.append(material_empty)
 
-		elif not obj.material_slots[0].material:
-			obj.material_slots[0].material = material
+		else: # not obj.material_slots[0].material:
+			obj.material_slots[0].material = material_empty
 			obj.active_material_index = 0
 			bpy.ops.object.material_slot_assign()
 

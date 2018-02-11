@@ -347,8 +347,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	bake_curvature_size = bpy.props.FloatProperty(
 		name = "Curvature",
 		description = "Curvature offset in pixels to process",
-		default = 0.5,
-		min = 0.01,
+		default = 8,
+		min = 0.5,
 		max = 64
 	)
 	bake_ray_distance = bpy.props.FloatProperty(

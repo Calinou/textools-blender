@@ -34,6 +34,9 @@ class op(bpy.types.Operator):
 		if not bpy.context.object.data.uv_layers:
 			return False
 
+		#Not in Synced mode
+		if bpy.context.scene.tool_settings.use_uv_select_sync:
+			return False
 
 		return True
 

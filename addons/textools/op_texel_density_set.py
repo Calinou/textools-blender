@@ -90,6 +90,7 @@ def set_texel_density(self, context, mode, density):
 		image = object_images[obj]
 		if image:
 			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.context.scene.tool_settings.use_uv_select_sync = False
 
 			# Store selection
 			utilities_uv.selection_store()

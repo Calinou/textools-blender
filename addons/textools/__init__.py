@@ -171,6 +171,24 @@ class op_debug(bpy.types.Operator):
 
 
 
+class op_disable_uv_sync(bpy.types.Operator):
+	bl_idname = "uv.textools_debug"
+	bl_label = "Disable Sync"
+	bl_description = "Disable UV sync mode"
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		bpy.context.scene.tool_settings.use_uv_select_sync = False
+		bpy.ops.mesh.select_all(action='SELECT')
+
+		return {'FINISHED'}
+
+
+
+
 class op_select_bake_set(bpy.types.Operator):
 	bl_idname = "uv.textools_select_bake_set"
 	bl_label = "Select"
@@ -569,6 +587,14 @@ class Panel_Layout(bpy.types.Panel):
 		
 		box = layout.box()
 		col = box.column(align=True)
+
+		if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT' and bpy.context.scene.tool_settings.use_uv_select_sync:
+			
+			row = col.row(align=True)
+			row.alert = True
+			row.operator(op_disable_uv_sync.bl_idname, text="Disable sync", icon='CANCEL')#, icon='UV_SYNC_SELECT'
+
+
 		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
 
@@ -669,6 +695,7 @@ class Panel_Layout(bpy.types.Panel):
 		if bpy.context.object and bpy.context.object.mode == 'EDIT':
 			row.enabled  = False
 		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
+
 
 			
 		# 

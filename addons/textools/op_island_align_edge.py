@@ -16,6 +16,9 @@ class op(bpy.types.Operator):
 	
 	@classmethod
 	def poll(cls, context):
+		#Only in UV editor mode
+		if bpy.context.area.type != 'IMAGE_EDITOR':
+			return False
 
 		if not bpy.context.active_object:
 			return False
@@ -27,8 +30,7 @@ class op(bpy.types.Operator):
 		if bpy.context.active_object.mode != 'EDIT':
 			return False
 
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
+		if bpy.context.scene.tool_settings.use_uv_select_sync:
 			return False
 
 		#Requires UV map

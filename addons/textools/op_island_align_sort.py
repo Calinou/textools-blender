@@ -44,8 +44,8 @@ class op(bpy.types.Operator):
 			return False 	#self.report({'WARNING'}, "Object must have more than one UV map")
 
 		#Not in Synced mode
-		# if bpy.context.scene.tool_settings.use_uv_select_sync == True:
-		# 	return False
+		if bpy.context.scene.tool_settings.use_uv_select_sync:
+			return False
 
 		return True
 

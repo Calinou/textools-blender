@@ -53,13 +53,15 @@ def get_object_texture_image(obj):
 
 	# Search in material & texture slots
 	for slot_mat in obj.material_slots:
-		# Check for traditional texture slots in material
-		for slot_tex in slot_mat.material.texture_slots:
-			if slot_tex and slot_tex.texture and hasattr(slot_tex.texture , 'image'):
-				return slot_tex.texture.image
-		
-		# Check if material uses Nodes
+
 		if slot_mat.material:
+
+			# Check for traditional texture slots in material
+			for slot_tex in slot_mat.material.texture_slots:
+				if slot_tex and slot_tex.texture and hasattr(slot_tex.texture , 'image'):
+					return slot_tex.texture.image
+
+			# Check if material uses Nodes
 			if hasattr(slot_mat.material , 'node_tree'):
 				if slot_mat.material.node_tree:
 					for node in slot_mat.material.node_tree.nodes:

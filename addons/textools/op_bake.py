@@ -233,7 +233,7 @@ def composite_nodes(image, scene_name):
 	# Get Scene with compositing nodes
 	scene = None
 	if scene_name in bpy.data.scenes:
-		scene = bpy.data.scenes["curvature"]
+		scene = bpy.data.scenes[scene_name]
 	else:
 		path = os.path.join(os.path.dirname(__file__), "resources/compositing.blend")+"\\Scene\\"
 		bpy.ops.wm.append(filename=scene_name, directory=path, link=False, autoselect=False)
@@ -255,12 +255,13 @@ def composite_nodes(image, scene_name):
 
 
 
-			# Render & save image
+		# Render image
 		bpy.ops.render.render(use_viewport=False)
 		#Copy pixels
 		image.pixels = bpy.data.images["Viewer Node"].pixels[:]
 		image.update()
 
+		# Remove node related images
 		if "Render Result" in bpy.data.images:
 			bpy.data.images.remove(bpy.data.images["Render Result"])
 		

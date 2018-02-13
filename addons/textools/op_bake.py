@@ -217,7 +217,7 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 		# Apply composite nodes on final image result
 		if modes[mode].composite:
 			composite_nodes(image, modes[mode].composite)
-		
+			return
 
 		# image.save()
 
@@ -246,6 +246,9 @@ def composite_nodes(image, scene_name):
 
 		path = bpy.app.tempdir;#+""+image.name+".png"
 
+		name = "_composite_"+image.name
+
+
 		#Setup composite nodes for Curvature
 		if "Image" in scene.node_tree.nodes:
 			scene.node_tree.nodes["Image"].image = image
@@ -255,27 +258,39 @@ def composite_nodes(image, scene_name):
 
 		if "File Output" in scene.node_tree.nodes:
 			scene.node_tree.nodes["File Output"].base_path = path
-			scene.node_tree.nodes["File Output"].file_slots[0].path = image.name+"#" #Use only 1 digit (time = 0 in loaded scene)
+			scene.node_tree.nodes["File Output"].file_slots[0].path = name+"#" #Use only 1 digit (time = 0 in loaded scene)
 			# print("Path?? {}".format())
 
 
 		# Render & save image
 		bpy.ops.render.render(use_viewport=False)
 
+		bpy.data.images.load(path+name+"0.png")
+		if (name+"0.png") in bpy.data.images:
+			image_composite = bpy.data.images[name+"0.png"]
+			image.pixels = image_composite.pixels[:]
+			image.update()
+
+			# Remove composite image
+			
+			image_composite.user_clear()
+			bpy.data.images.remove(image_composite)
+			os.remove(path+name+"0.png")# delete file
+
+
 		# Load image
-		image.source = 'FILE'
-		image.filepath = path+image.name+"0.png"
-		image.reload()
+		# image.source = 'FILE'
+		# image.filepath = path+name+"0.png"
+		# image.reload()
 
 		#Restore scene & remove other scene
 		bpy.context.screen.scene = previous_scene
-		# Delete compositing scene
-		bpy.data.scenes[scene_name].user_clear()
-		bpy.data.scenes.remove(bpy.data.scenes[scene_name])
+		
 
-		# for area in bpy.context.screen.areas:
-		# 	if area.type in ['IMAGE_EDITOR', 'VIEW_3D']:
-		# 		area.tag_redraw()
+		# Delete compositing scene
+		# bpy.data.scenes[scene_name].user_clear()
+		# bpy.data.scenes.remove(bpy.data.scenes[scene_name])
+
 
 
 
@@ -287,6 +302,7 @@ def setup_image(mode, name, width, height, path, is_clear):#
 	if name in bpy.data.images:
 		image = bpy.data.images[name]
 		if image.source == 'FILE':
+			# Clear image if it was deleted outside
 			if not os.path.isfile(image.filepath):
 				image.user_clear()
 				bpy.data.images.remove(image)

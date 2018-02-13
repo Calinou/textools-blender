@@ -168,7 +168,7 @@ def get_bake_name_base(obj):
 
 	def remove_digits(name):
 		# Remove blender naming digits, e.g. cube.001, cube.002,...
-		if name[-4] == '.' and name[-3].isdigit() and name[-2].isdigit() and name[-1].isdigit():
+		if len(name)>= 4 and name[-4] == '.' and name[-3].isdigit() and name[-2].isdigit() and name[-1].isdigit():
 			return name[:-4]
 		return name
 

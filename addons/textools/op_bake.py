@@ -230,6 +230,10 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 def composite_nodes(image, scene_name):
 	previous_scene = bpy.context.screen.scene
 
+	previous_use_nodes = False
+	if "Viewer Node" in bpy.data.images:
+		previous_use_nodes = True
+
 	# Get Scene with compositing nodes
 	scene = None
 	if scene_name in bpy.data.scenes:
@@ -243,45 +247,35 @@ def composite_nodes(image, scene_name):
 		# Switch scene
 		bpy.context.screen.scene = scene
 
-
-		path = bpy.app.tempdir;#+""+image.name+".png"
-
 		#Setup composite nodes for Curvature
 		if "Image" in scene.node_tree.nodes:
 			scene.node_tree.nodes["Image"].image = image
 
 		if "Offset" in scene.node_tree.nodes:
 			scene.node_tree.nodes["Offset"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_curvature_size
-
-
+			print("Assign offset: {}".format(scene.node_tree.nodes["Offset"].outputs[0].default_value))
 
 		# Render image
 		bpy.ops.render.render(use_viewport=False)
+		
 		#Copy pixels
 		image.pixels = bpy.data.images["Viewer Node"].pixels[:]
 		image.update()
 
-		# Remove node related images
-		if "Render Result" in bpy.data.images:
-			bpy.data.images.remove(bpy.data.images["Render Result"])
-		
-		if "Viewer Node" in bpy.data.images:
-			bpy.data.images.remove(bpy.data.images["Viewer Node"])
+		print("Viewer node type: {}".format(type( scene.node_tree.nodes["Viewer"] ) ))
 
-		
-
-
-		# Load image
-		# image.source = 'FILE'
-		# image.filepath = path+name+"0.png"
-		# image.reload()
+		# Remove node related images that weren't there before
+		if not previous_use_nodes:
+			if "Render Result" in bpy.data.images:
+				bpy.data.images.remove(bpy.data.images["Render Result"])
+			
+			if "Viewer Node" in bpy.data.images:
+				bpy.data.images.remove(bpy.data.images["Viewer Node"])
 
 		#Restore scene & remove other scene
 		bpy.context.screen.scene = previous_scene
 		
-
 		# Delete compositing scene
-		# bpy.data.scenes[scene_name].user_clear()
 		bpy.data.scenes.remove(bpy.data.scenes[scene_name])
 
 

@@ -246,9 +246,6 @@ def composite_nodes(image, scene_name):
 
 		path = bpy.app.tempdir;#+""+image.name+".png"
 
-		name = "_composite_"+image.name
-
-
 		#Setup composite nodes for Curvature
 		if "Image" in scene.node_tree.nodes:
 			scene.node_tree.nodes["Image"].image = image
@@ -256,26 +253,21 @@ def composite_nodes(image, scene_name):
 		if "Offset" in scene.node_tree.nodes:
 			scene.node_tree.nodes["Offset"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_curvature_size
 
-		if "File Output" in scene.node_tree.nodes:
-			scene.node_tree.nodes["File Output"].base_path = path
-			scene.node_tree.nodes["File Output"].file_slots[0].path = name+"#" #Use only 1 digit (time = 0 in loaded scene)
-			# print("Path?? {}".format())
 
 
-		# Render & save image
+			# Render & save image
 		bpy.ops.render.render(use_viewport=False)
+		#Copy pixels
+		image.pixels = bpy.data.images["Viewer Node"].pixels[:]
+		image.update()
 
-		bpy.data.images.load(path+name+"0.png")
-		if (name+"0.png") in bpy.data.images:
-			image_composite = bpy.data.images[name+"0.png"]
-			image.pixels = image_composite.pixels[:]
-			image.update()
+		if "Render Result" in bpy.data.images:
+			bpy.data.images.remove(bpy.data.images["Render Result"])
+		
+		if "Viewer Node" in bpy.data.images:
+			bpy.data.images.remove(bpy.data.images["Viewer Node"])
 
-			# Remove composite image
-			
-			image_composite.user_clear()
-			bpy.data.images.remove(image_composite)
-			os.remove(path+name+"0.png")# delete file
+		
 
 
 		# Load image

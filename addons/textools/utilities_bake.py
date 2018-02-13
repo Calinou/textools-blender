@@ -101,9 +101,6 @@ def store_materials(obj):
 	stored_materials[obj] = []
 	stored_material_faces[obj] = []
 
-
-	print("Store mat: {}".format(obj.name))
-
 	# Enter edit mode
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True
@@ -151,13 +148,6 @@ def restore_materials():
 				for face in bm.faces:
 					if face.index in faces:
 						face.material_index = index
-
-				# obj.data.materials.append(material)
-				# print("- Restore {} : {} = {}".format(
-				# 	obj.name, 
-				# 	index, 
-				# 	material.name
-				# ))
 
 		# Back to object mode
 		bpy.ops.object.mode_set(mode='OBJECT')

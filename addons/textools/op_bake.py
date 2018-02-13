@@ -289,7 +289,7 @@ def composite_nodes(image, scene_name):
 
 		# Delete compositing scene
 		# bpy.data.scenes[scene_name].user_clear()
-		# bpy.data.scenes.remove(bpy.data.scenes[scene_name])
+		bpy.data.scenes.remove(bpy.data.scenes[scene_name])
 
 
 
@@ -371,18 +371,13 @@ def setup_image_bake_node(obj, image):
 
 
 def assign_vertex_color(mode, obj):
-	print("Set vertex colors?? {} {}".format(mode, obj.name))
 	if modes[mode].setVColor:
 		modes[mode].setVColor(obj)
 
 
 
 def assign_material(obj, material_bake=None, material_empty=None):
-	print("Assign material: {}".format(obj.name))
-	
-
 	ub.store_materials(obj)
-
 
 	bpy.context.scene.objects.active = obj
 	obj.select = True

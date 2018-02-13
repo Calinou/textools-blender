@@ -37,7 +37,7 @@ def selection_store():
 	for face in bm.faces:
 		for loop in face.loops:
 			if loop[uvLayer].select:
-				settings.selection_uv_loops.append(loop[uvLayer])
+				settings.selection_uv_loops.append( [face.index, loop.vert.index] )
 
 
 
@@ -59,17 +59,17 @@ def selection_restore():
 		# bm.edges.ensure_lookup_table()
 		bm.faces.ensure_lookup_table()
 
-	#VERT Selection
-	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
-	for index in settings.selection_vert_indexies:
-		if index < len(bm.verts):
-			bm.verts[index].select = True
-
 	#FACE selection
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
 	for index in settings.selection_face_indexies:
 		if index < len(bm.faces):
 			bm.faces[index].select = True
+
+	#VERT Selection
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+	for index in settings.selection_vert_indexies:
+		if index < len(bm.verts):
+			bm.verts[index].select = True
 
 	#Selection Mode
 	bpy.context.scene.tool_settings.mesh_select_mode = settings.selection_mode
@@ -77,8 +77,11 @@ def selection_restore():
 
 	#UV Face-UV Selections (Loops)
 	bpy.ops.uv.select_all(action='DESELECT')
-	for loop in settings.selection_uv_loops:
-		loop.select = True
+	for uv_set in settings.selection_uv_loops:
+		for loop in bm.faces[ uv_set[0] ].loops:
+			if loop.vert.index == uv_set[1]:
+				loop[uvLayer].select = True
+				break
 
 	bpy.context.scene.update()
 

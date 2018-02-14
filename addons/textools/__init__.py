@@ -362,11 +362,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 1,
 		max = 4000
 	)
-	bake_curvature_size = bpy.props.FloatProperty(
+	bake_curvature_size = bpy.props.IntProperty(
 		name = "Curvature",
 		description = "Curvature offset in pixels to process",
 		default = 8,
-		min = 0.5,
+		min = 1,
 		max = 64
 	)
 	bake_ray_distance = bpy.props.FloatProperty(
@@ -797,18 +797,14 @@ class Panel_Bake(bpy.types.Panel):
 				col.prop(context.scene.texToolsSettings, "bake_ray_distance")
 				break		
 
-		# if settings.bake_mode == 'ao':
+		# Display Bake mode properties / parameters
 		params = op_bake.modes[settings.bake_mode].params
 		if len(params) > 0:
 			for param in params:
 				col.prop(context.scene.texToolsSettings, param)
-		# col.prop(context.scene.texToolsSettings, "bake_samples")
-		# col.prop(context.scene.texToolsSettings, "bake_curvature_size")
 
 
 		box = layout.box()
-
-		# Freeze Selection
 		col = box.column(align=True)
 		
 		# Select by type
@@ -831,18 +827,13 @@ class Panel_Bake(bpy.types.Panel):
 				if len(set.objects_float) > 0:
 					count_types['float']+=1
 
-			# row.label(text="Select")
-
+			# Freeze Selection
 			c = row.column(align=True)
 			c.active = len(settings.sets) > 0 or bpy.context.scene.texToolsSettings.bake_freeze_selection
 			icon = 'LOCKED' if bpy.context.scene.texToolsSettings.bake_freeze_selection else 'UNLOCKED'
 			c.prop(context.scene.texToolsSettings, "bake_freeze_selection",text="Lock {}x".format(len(settings.sets)), icon=icon)
 
-
-
-
-
-
+			# Select by type
 			if count_types['issue'] > 0:
 				row.operator(op_select_bake_type.bl_idname, text = "", icon = 'ERROR').select_type = 'issue'
 

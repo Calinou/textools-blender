@@ -91,7 +91,6 @@ def restore_bake_settings():
 stored_materials = {}
 stored_material_faces = {}
 def store_materials_clear():
-	print("-------- Restore materials clear")
 	stored_materials.clear()
 	stored_material_faces.clear()
 
@@ -315,6 +314,7 @@ def get_bake_sets():
 	return bake_sets
 
 
+
 class BakeSet:
 	objects_low = []	#low poly geometry
 	objects_cage = []	#Cage low poly geometry
@@ -372,8 +372,6 @@ def setup_vertex_color_selection(obj):
 
 
 
-
-
 def setup_vertex_color_dirty(obj):
 
 	print("setup_vertex_color_dirty {}".format(obj.name))
@@ -397,7 +395,6 @@ def setup_vertex_color_dirty(obj):
 	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.paint.vertex_color_dirt(dirt_angle=pi/2)
 	bpy.ops.paint.vertex_color_dirt()
-
 
 
 
@@ -440,7 +437,6 @@ def setup_vertex_color_id_material(obj):
 
 
 
-
 def setup_vertex_color_id_element(obj):
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True
@@ -478,7 +474,6 @@ def setup_vertex_color_id_element(obj):
 
 	# Back to object mode
 	bpy.ops.object.mode_set(mode='OBJECT')
-
 
 
 
@@ -530,8 +525,5 @@ def get_image_material(image):
 		slot.mapping = 'FLAT' 
 
 		material.use_shadeless = True
-
-
-		# return None/
 
 	return material

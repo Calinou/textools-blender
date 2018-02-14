@@ -216,8 +216,7 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 		
 		# Apply composite nodes on final image result
 		if modes[mode].composite:
-			composite_nodes(image, modes[mode].composite)
-			return
+			apply_composite(image, modes[mode].composite, bpy.context.scene.texToolsSettings.bake_curvature_size)
 
 		# image.save()
 
@@ -227,12 +226,8 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
 
 
-def composite_nodes(image, scene_name):
+def apply_composite(image, scene_name, size):
 	previous_scene = bpy.context.screen.scene
-
-	previous_use_nodes = False
-	if "Viewer Node" in bpy.data.images:
-		previous_use_nodes = True
 
 	# Get Scene with compositing nodes
 	scene = None
@@ -252,37 +247,53 @@ def composite_nodes(image, scene_name):
 			scene.node_tree.nodes["Image"].image = image
 
 		if "Offset" in scene.node_tree.nodes:
-			scene.node_tree.nodes["Offset"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_curvature_size
+			scene.node_tree.nodes["Offset"].outputs[0].default_value = size
 			print("Assign offset: {}".format(scene.node_tree.nodes["Offset"].outputs[0].default_value))
 
 		# Render image
 		bpy.ops.render.render(use_viewport=False)
 		
+
+		# Get last images of viewer node and render result
+		image_viewer_node = get_last_item("Viewer Node", bpy.data.images)
+		image_render_result = get_last_item("Render Result", bpy.data.images)
+
 		#Copy pixels
-		image.pixels = bpy.data.images["Viewer Node"].pixels[:]
+		image.pixels = image_viewer_node.pixels[:]
 		image.update()
 
-		print("Viewer node type: {}".format(type( scene.node_tree.nodes["Viewer"] ) ))
-
-		# Remove node related images that weren't there before
-		if not previous_use_nodes:
-			if "Render Result" in bpy.data.images:
-				bpy.data.images.remove(bpy.data.images["Render Result"])
-			
-			if "Viewer Node" in bpy.data.images:
-				bpy.data.images.remove(bpy.data.images["Viewer Node"])
+		if image_viewer_node:
+			bpy.data.images.remove(image_viewer_node)
+		if image_render_result:
+			bpy.data.images.remove(image_render_result)
 
 		#Restore scene & remove other scene
 		bpy.context.screen.scene = previous_scene
 		
 		# Delete compositing scene
-		bpy.data.scenes.remove(bpy.data.scenes[scene_name])
+		bpy.data.scenes.remove(scene)
+
+
+
+def get_last_item(key_name, collection):
+	# bpy.data.images
+	# Get last image of a series, e.g. .001, .002, 003
+	keys = []
+	for item in collection:
+		if key_name in item.name:
+			keys.append(item.name)
+
+	print("Search for {}x : '{}'".format(len(keys), ",".join(keys) ) )
+
+	if len(keys) > 0:
+		return collection[keys[-1]]
+
+	return None
 
 
 
 
-
-def setup_image(mode, name, width, height, path, is_clear):#
+def setup_image(mode, name, width, height, path, is_clear):
 	image = None
 
 	print("Path "+path)

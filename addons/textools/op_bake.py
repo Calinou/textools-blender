@@ -22,6 +22,7 @@ modes={
 	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
 	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
 	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
+	'position':			ub.BakeMode('',					type='EMIT'),
 	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature")
 }
 
@@ -156,6 +157,9 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 		for i in range(len(set.objects_low)):
 			obj_low = set.objects_low[i]
 			obj_cage = None if i >= len(set.objects_cage) else set.objects_cage[i]
+
+			# Disable hide render
+			obj_low.hide_render = False
 
 			bpy.ops.object.select_all(action='DESELECT')
 			obj_low.select = True
@@ -467,6 +471,23 @@ def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, 
 
 
 	elif modes[mode].engine == 'CYCLES':
+
+		if modes[mode].normal_space == 'OBJECT':
+			#See: https://twitter.com/Linko_3D/status/963066705584054272
+			bpy.context.scene.render.bake.normal_r = 'POS_X'
+			bpy.context.scene.render.bake.normal_g = 'POS_Z'
+			bpy.context.scene.render.bake.normal_b = 'NEG_Y'
+
+		elif modes[mode].normal_space == 'TANGENT':
+			bpy.context.scene.render.bake.normal_r = 'POS_X'
+			bpy.context.scene.render.bake.normal_g = 'POS_Y'
+			bpy.context.scene.render.bake.normal_b = 'POS_Z'
+
+
+
+
+
+
 
 		# Set samples
 		bpy.context.scene.cycles.samples = samples

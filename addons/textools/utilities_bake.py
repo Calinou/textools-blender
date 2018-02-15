@@ -133,7 +133,6 @@ def restore_materials():
 		bpy.ops.object.mode_set(mode='EDIT')
 		bm = bmesh.from_edit_mesh(obj.data);
 
-
 		# Restore slots
 		for index in range(len(stored_materials[obj])):
 			material = stored_materials[obj][index]
@@ -150,6 +149,11 @@ def restore_materials():
 
 		# Back to object mode
 		bpy.ops.object.mode_set(mode='OBJECT')
+
+		# Remove material slots if none before
+		if len(stored_materials[obj]) == 0:
+			for i in range(len(obj.material_slots)):
+				bpy.ops.object.material_slot_remove()
 
 
 

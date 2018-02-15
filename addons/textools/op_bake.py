@@ -22,7 +22,7 @@ modes={
 	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
 	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
 	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
-	'position':			ub.BakeMode('',					type='EMIT'),
+	'position':			ub.BakeMode('bake_position',	type='EMIT'),
 	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature")
 }
 

@@ -130,16 +130,33 @@ from bpy.props import (
 class Panel_Preferences(bpy.types.AddonPreferences):
 	bl_idname = __name__
 
+	# Addon Preferences https://docs.blender.org/api/blender_python_api_2_67_release/bpy.types.AddonPreferences.html
+	swizzle_y_coordinate = bpy.props.EnumProperty(items= 
+		[	
+			('Y+', 'Y+ OpenGL', 'Used in Blender, Maya, Modo, Toolbag, Unity'), 
+			('Y-', 'Y- Direct X', 'Used in 3ds Max, CryENGINE, Source, Unreal Engine')
+		], 
+		description="Color template",
+		name = "Swizzle Coordinates", 
+		default = 'Y+'
+	)
+
+
 	def draw(self, context):
 		layout = self.layout
 
 		box = layout.box()
-		box.label(text="Visit the TexTools website for in debth documentation.")
-		
-		row = box.row()
-		row.label(text=" ")
-		row.operator("wm.url_open", text="Official Website", icon='HELP').url = "http://renderhjs.net/textools/blender/"
-		row.label(text=" ")
+		col = box.column(align=True)
+		col.prop(self, "swizzle_y_coordinate", icon='MANIPUL')
+		if self.swizzle_y_coordinate == 'Y+':
+			col.label(text="Y+ used in: Blender, Maya, Modo, Toolbag, Unity")
+		elif self.swizzle_y_coordinate == 'Y-':
+			col.label(text="Y- used in: 3ds Max, CryENGINE, Source, Unreal Engine")
+		# user_preferences.addons[__name__].preferences
+
+
+
+		box = layout.box()
 
 		box.label(text="Additional Links")
 		col = box.column(align=True)

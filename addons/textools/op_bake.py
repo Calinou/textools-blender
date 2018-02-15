@@ -480,8 +480,15 @@ def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, 
 
 		elif modes[mode].normal_space == 'TANGENT':
 			bpy.context.scene.render.bake.normal_r = 'POS_X'
-			bpy.context.scene.render.bake.normal_g = 'POS_Y'
 			bpy.context.scene.render.bake.normal_b = 'POS_Z'
+
+			# Adjust Y swizzle from Addon preferences
+			swizzle_y = bpy.context.user_preferences.addons["textools"].preferences.swizzle_y_coordinate
+			if swizzle_y == 'Y-':
+				bpy.context.scene.render.bake.normal_g = 'NEG_Y'
+			elif swizzle_y == 'Y+':
+				bpy.context.scene.render.bake.normal_g = 'POS_Y'
+			
 
 
 

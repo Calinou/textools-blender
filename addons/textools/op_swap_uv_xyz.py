@@ -45,104 +45,127 @@ class op(bpy.types.Operator):
 def swap_uv_xyz(context):
 	print("....")
 
-	
-	
-	obj = bpy.context.active_object
-
-	
-	bpy.ops.object.mode_set(mode='OBJECT')
 
 	# Add shape keys
 	# obj.shape_key_add(id_shape_key_mesh)
 	# obj.shape_key_add(id_shape_key_uv)
 	
-
+	obj = bpy.context.active_object
 	bpy.ops.object.mode_set(mode='EDIT')
 
-	obj = bpy.context.active_object;
-	bm = bmesh.from_edit_mesh(obj.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	bm = bmesh.from_edit_mesh(obj.data)
+	uvLayer = bm.loops.layers.uv.verify()
 
 	# bpy.data.shape_keys["Key"].key_blocks[id_shape_key_uv].value = 1
 
+	# Select all
+	bpy.ops.mesh.select_all(action='SELECT')
+	bpy.ops.uv.select_all(action='SELECT')
 
-	# Find unique UV verts
+
+
 	clusters = []
+	uv_to_clusters = {}
+	vert_to_clusters = {}
 
 	for face in bm.faces:
 		for loop in face.loops:
+			vert = loop.vert
 			uv = loop[uvLayer]
+			
+			# vert_to_uv
+			# if vert not in vert_to_uv:
+			# 	vert_to_uv[vert] = [uv];
+			# else:
+			# 	vert_to_uv[vert].append(uv)
 
-			is_merged = False
+			# uv_to_vert
+			# if uv not in uv_to_vert:
+			# 	uv_to_vert[ uv ] = vert;
+			# if uv not in uv_to_face:
+			# 	uv_to_face[ uv ] = face;
+
+			# clusters
+			isMerged = False
 			for cluster in clusters:
 				d = (uv.uv - cluster.uvs[0].uv).length
-				# print("{}:{}  d: {:d}   =  {:d}|{:d} - {:d}|{:d}  == {} ".format(
-				# 	loop.vert.index, cluster.vertex.index,
-				# 	int(d * 512),
-				# 	int((uv.uv*512).x), int((uv.uv*512).y),
-				# 	int((cluster.uvs[0].uv*512).x), int((cluster.uvs[0].uv*512).y), 
-				# 	d <= 0.001
-				# ))
-
-				if d <= 0.001:
-					# Merge
-					# print("merge {} at {} ".format(loop.vert.index, d))
+				if d <= 0.0000001:
+					#Merge
 					cluster.append(uv)
+					uv_to_clusters[uv] = cluster
+					if vert not in vert_to_clusters:
+						vert_to_clusters[vert] = cluster
 					isMerged = True;
 					break;
-
-			if not is_merged:
-				print("Add new {}".format(loop.vert.index))
-				# New cluster
-				clusters.append( 
-					UVCluster(loop.vert, [uv] )
-				)
-
-	print("UV clusters: {0}".format(len(clusters)))
-	for cluster in clusters:
-		print("C: {}  = {}x ".format(cluster.vertex.index, len(cluster.uvs)))
+			if not isMerged:
+				#New Group
+				clusters.append( UVCluster(vert, [uv]) )
+				uv_to_clusters[uv] = clusters[-1]
+				if vert not in vert_to_clusters:
+					vert_to_clusters[vert] = clusters[-1]
 
 
-	# clusters = []
-	# uv_to_clusters = {}
-	# vert_to_clusters = {}
+	#Collect UV islands
+	islands = utilities_uv.getSelectionIslands()
 
-	# for face in bm.faces:
-	# 	if face.select:
-	# 		for loop in face.loops:
-	# 			vert = loop.vert
-	# 			uv = loop[uvLayer]
-				
-	# 			# vert_to_uv
-	# 			if vert not in vert_to_uv:
-	# 				vert_to_uv[vert] = [uv];
-	# 			else:
-	# 				vert_to_uv[vert].append(uv)
+	print("Islands {}x".format(len(islands)))
 
-	# 			# uv_to_vert
-	# 			if uv not in uv_to_vert:
-	# 				uv_to_vert[ uv ] = vert;
-	# 			if uv not in uv_to_face:
-	# 				uv_to_face[ uv ] = face;
 
-	# 			# clusters
-	# 			isMerged = False
-	# 			for cluster in clusters:
-	# 				d = (uv.uv - cluster.uvs[0].uv).length
-	# 				if d <= 0.0000001:
-	# 					#Merge
-	# 					cluster.append(uv)
-	# 					uv_to_clusters[uv] = cluster
-	# 					if vert not in vert_to_clusters:
-	# 						vert_to_clusters[vert] = cluster
-	# 					isMerged = True;
-	# 					break;
-	# 			if not isMerged:
-	# 				#New Group
-	# 				clusters.append( UVCluster(vert, [uv]) )
-	# 				uv_to_clusters[uv] = clusters[-1]
-	# 				if vert not in vert_to_clusters:
-	# 						vert_to_clusters[vert] = clusters[-1]
+	m_vert_cluster = []
+	m_verts_org = []
+	m_verts = []
+	m_faces = []
+	
+
+	for island in islands:
+		print("Island,  {}x".format(len(island) ))
+
+		# c = []
+		# v = []
+		# f = []
+		# org_vert = []
+
+		for face in island:
+
+			f = []
+			for loop in face.loops:
+				# print("Loop {}".format( loop[uvLayer]) )
+
+				v = loop.vert
+
+				index = 0
+				if v in m_verts_org:
+					index = m_verts_org.index(v)
+
+				if v not in m_verts_org:
+					index = len(m_verts_org)
+					m_verts_org.append(v)
+					m_verts.append( v.co.copy() )
+					
+				f.append(index)
+
+			m_faces.append(f)
+			print("Face {}".format(f))
+
+
+	bpy.ops.object.mode_set(mode='OBJECT')
+	# bpy.ops.object.select_all(action='TOGGLE')
+
+
+	mesh = bpy.data.meshes.new("mesh_texture")
+	mesh.from_pydata(m_verts, [], m_faces)
+	mesh.update()
+
+	mesh_obj = bpy.data.objects.new("mesh_texture_obj", mesh)
+	bpy.context.scene.objects.link(mesh_obj)
+	mesh_obj.select = True
+	# bmesh.ops.split(bm, geom, dest, use_only_faces)
+	# Split Off Geometry.
+	# Disconnect geometry from adjacent edges and faces, optionally into a destination mesh.
+
+
+	
+	
 
 
 

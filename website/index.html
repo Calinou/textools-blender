@@ -32,31 +32,8 @@
 					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a></p>
 				</div>
 				<div class="Content">
-					<h2>What's new in  1.0.0<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					<p>General</p>
-					<ul>
-						<li>Help buttons for UI Panels</li>
-						<li>Align UV to edge: Restores UV selection</li>
-						<li>Preferences: Switch <strong>Swizze Coordinates</strong></li>
-					</ul>
-					<p>Baking</p>
-					<ul>
-						<li>Bug Fix: Bake high to low</li>
-						<li>Bake: Group bake sets by name, parent or group</li>
-						<li>New <strong>ID materials</strong> bake mode</li>
-						<li> Restore previous materials</li>
-						<li>New <strong>AO Bake</strong> Mode</li>
-						<li><strong>Curvature</strong> Bake Mode</li>
-						<li><strong>Position</strong> Bake Mode</li>
-						<li>Updated icons</li>
-					</ul>
-					<p>Color ID</p>
-					<ul>
-						<li> Convert to <strong>vertex colors</strong></li>
-						<li>Create from <strong>materials</strong></li>
-						<li>Create from <strong>Mesh Elements</strong></li>
-						<li>Improved  UI</li>
-					</ul>
+					<h2>What's new in  1.1.0<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>...</p>
 				</div>
 				<div class="Content">
 					<h2>Requirements</h2>
@@ -286,7 +263,7 @@
 					<p>This options is useful for multi part objects that belong to the same texture.</p>
 				</div>
 				<div class="Content">
-					<h2>Preview<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2>Preview</h2>
 					<p>Preview the current <strong>background image</strong> of the Image/UV Editor <img src="images/show_uv_image_editor.png" alt=""/>  as a texture on the selected object.</p>
 				</div>
 				<div class="Content">
@@ -330,7 +307,7 @@
 					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
 				</div>
 				<div class="Content">
-					<h2>Face Selection<img src="images/new.png" alt="" class="New"/></h2>
+					<h2>Face Selection</h2>
 					<p><img src="images/bake_selection.png" width="128" height="128" alt=""/></p>
 					<p>Bakes a black and white <strong>mask</strong> of the the face selection of the object. This can be useful to generate quick masks for working with textures.</p>
 				</div>
@@ -340,17 +317,17 @@
 					<p>Bakes a colored texture where each mesh element has a unique color. Use this map to isolate different parts of your model in the texture.</p>
 				</div>
 				<div class="Content">
-					<h2>Material ID<img src="images/new.png" alt="" class="New"/></h2>
+					<h2>Material ID</h2>
 					<p><img src="images/bake_id_material.png" width="128" height="128" alt=""/></p>
 					<p>Assigns a unique color to each sub material or material slot.</p>
 				</div>
 				<div class="Content">
-					<h2>Position<img src="images/new.png" alt="" class="New"/></h2>
+					<h2>Position</h2>
 					<p><img src="images/bake_position.png" width="128" height="128" alt=""/></p>
 					<p>Bakes a map with unique colors within the bounds of the object.</p>
 				</div>
 				<div class="Content">
-					<h2>AO<img src="images/new.png" alt="" class="New"/></h2>
+					<h2>AO</h2>
 					<p><img src="images/bake_ao.png" width="128" height="128" alt=""/></p>
 					<p>Bakes an Ambient Occlusion map with the <strong>Blender render</strong> and <strong>normalized</strong> enabled.</p>
 					<p>Rendering in the Blender Render with normalized enabled gives <a href="http://polycount.com/discussion/comment/2613136/#Comment_2613136" class="NoButton">better results</a> compared to Cycles.					</p>
@@ -364,19 +341,8 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="Content">
-					<h2>Cavity</h2>
-					<p><img src="images/bake_cavity.png" width="128" height="128" alt=""/></p>
-					<p>Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node.    </p>
-				</div>
-				<div class="Content">
-					<h2>Dust</h2>
-					<p><img src="images/bake_dust.png" width="128" height="128" alt=""/></p>
-					<p>Dust is similar to the cavity map but adds additional Z top normals to the mix.</p>
-					<p><strong>Tip: </strong> Use this mask for dust and dirt masks in your texturing process. </p>
-				</div>
-				<div class="Content">
-					<h2>Curvature<img src="images/new.png" alt="" class="New"/></h2>
+                <div class="Content">
+					<h2>Curvature</h2>
 					<p><img src="images/bake_curvature.png" width="128" height="128" alt=""/></p>
 					<p>Renders a tangent normal map and converts it to a curvature map <a href="https://blender.stackexchange.com/questions/52902/how-to-convert-a-normal-map-into-a-curvature-map-cavity-map" class="NoButton">using compositing</a> nodes.                </p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -390,6 +356,19 @@
 					</table>
 					<p><strong>Note:</strong> Curvature maps require a high and low poly object.</p>
 				</div>
+				<div class="Content">
+					<h2>Cavity</h2>
+					<p><img src="images/bake_cavity.png" width="128" height="128" alt=""/></p>
+					<p>Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node. </p>
+					<p><strong>Note: </strong>This node depends on the topology of the model.</p>
+				</div>
+				<div class="Content">
+					<h2>Dust</h2>
+					<p><img src="images/bake_dust.png" width="128" height="128" alt=""/></p>
+					<p>Dust is similar to the cavity map but adds additional Z top normals to the mix.</p>
+					<p><strong>Tip: </strong> Use this mask for dust and dirt masks in your texturing process. </p>
+				</div>
+				
 				
 			</div>
 			
@@ -443,7 +422,7 @@
 					</div>
 					
 					<div class="Content">
-						<h2>Grouping objects<img src="images/new.png" alt="" class="New"/></h2>
+						<h2>Grouping objects</h2>
 						<p>Objects with a common name  are grouped into a set but sometimes you want to treat multiple objects as part of a high poly object for example. You can detect objects together by <strong>parenting, grouping</strong> name them as <strong>sequence</strong>.</p>
 						<p><strong>Naming sequence</strong></p>
 						<p>Objects that are part of a name sequence e.g.: <strong>Cube, Cube.001, Cube.002</strong>, ... are grouped together. Essentially sequence numbers at the end of names are ignored.</p>
@@ -544,7 +523,7 @@
 						
 					</div>
 					<div class="Content">
-						<h2> <img src="images/op_color_from_materials.png" width="32" height="32" alt=""/> Materials<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2> <img src="images/op_color_from_materials.png" width="32" height="32" alt=""/> Materials</h2>
 						<p>Assigns a color ID to each material slot and assigned faces.</p>
 					</div>
 				</div>
@@ -557,13 +536,13 @@
 				
 				<div class="Columns2">
 					<div class="Content">
-						<h2><img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Texture Atlas<img src="images/new.png" alt="" class="New"/></h2>
+						<h2><img src="images/op_color_pack_texture.png" width="32" height="32" alt=""/> Texture Atlas</h2>
 						<p>Creates a single material with a texture atlas of each color. Each face's UV maps the color of the texture. This conversation is useful for realtime graphics such as Games or VR.</p>
 						<p><img src="images/show_create_atlas.png" alt=""/></p>
 						
 					</div>
 					<div class="Content">
-						<h2><img src="images/op_color_io_export.png" width="32" height="32" alt=""/> Vertex Colors<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2><img src="images/op_color_io_export.png" width="32" height="32" alt=""/> Vertex Colors</h2>
 						<p>Assings vertex colors for each face Color ID. Materials are removed and the vertex paint mode will be enabled.</p>
 						<p><img src="images/show_color_convert_vertex_color.png" alt=""/></p>
 					</div>

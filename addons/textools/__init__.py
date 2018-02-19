@@ -10,7 +10,7 @@ bl_info = {
 }
 
 def get_tab_name():
-	return "TexTools {}.{}".format(bl_info['version'][0], bl_info['version'][1])
+	return "TexTools" # {}.{}".format(bl_info['version'][0], bl_info['version'][1])
 
 
 # Import local modules
@@ -189,7 +189,7 @@ class op_debug(bpy.types.Operator):
 
 
 class op_disable_uv_sync(bpy.types.Operator):
-	bl_idname = "uv.textools_debug"
+	bl_idname = "uv.textools_disable_sync"
 	bl_label = "Disable Sync"
 	bl_description = "Disable UV sync mode"
 
@@ -504,7 +504,7 @@ class Panel_Units(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			row = layout.row()
 			row.alert =True
-			row.operator(op_debug.bl_idname, icon="CONSOLE")
+			row.operator(op_debug.bl_idname, text="DEBUG", icon="CONSOLE")
 		
 		#---------- Settings ------------
 		# row = layout.row()

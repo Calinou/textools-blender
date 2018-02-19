@@ -58,57 +58,86 @@ def swap_uv_xyz(context):
 
 	# bpy.data.shape_keys["Key"].key_blocks[id_shape_key_uv].value = 1
 
+
+
+
 	# Select all
 	bpy.ops.mesh.select_all(action='SELECT')
 	bpy.ops.uv.select_all(action='SELECT')
 
+	#Collect UV islands
+	islands = utilities_uv.getSelectionIslands(bm, uvLayer)
 
+	# Get object bounds
+	bounds = get_bbox(obj)
 
+	# Map clusters to 
+	uvs = {}
 	clusters = []
 	uv_to_clusters = {}
 	vert_to_clusters = {}
 
 	for face in bm.faces:
-		for loop in face.loops:
-			vert = loop.vert
-			uv = loop[uvLayer]
-			
-			# vert_to_uv
-			# if vert not in vert_to_uv:
-			# 	vert_to_uv[vert] = [uv];
-			# else:
-			# 	vert_to_uv[vert].append(uv)
 
-			# uv_to_vert
-			# if uv not in uv_to_vert:
-			# 	uv_to_vert[ uv ] = vert;
-			# if uv not in uv_to_face:
-			# 	uv_to_face[ uv ] = face;
+		print("Face {}".format(face.index))
+		# print("Loop 0 {}".format(face.loops[0] ))
 
-			# clusters
+		for i in range(len(face.loops)):
+			v = face.loops[i]
+			uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
+
+			# 	# clusters
 			isMerged = False
 			for cluster in clusters:
-				d = (uv.uv - cluster.uvs[0].uv).length
+				d = (uv.pos() - cluster.uvs[0].pos()).length
 				if d <= 0.0000001:
 					#Merge
 					cluster.append(uv)
 					uv_to_clusters[uv] = cluster
-					if vert not in vert_to_clusters:
-						vert_to_clusters[vert] = cluster
+					if v not in vert_to_clusters:
+						vert_to_clusters[v] = cluster
 					isMerged = True;
 					break;
 			if not isMerged:
 				#New Group
-				clusters.append( UVCluster(vert, [uv]) )
+				clusters.append( UVCluster(v, [uv]) )
 				uv_to_clusters[uv] = clusters[-1]
-				if vert not in vert_to_clusters:
-					vert_to_clusters[vert] = clusters[-1]
+				if v not in vert_to_clusters:
+					vert_to_clusters[v] = clusters[-1]
+
+		# for loop in face.loops:
+		# 	v = loop.vert
+		# 	uv = loop[uvLayer]
+		# 	uvset = UVSet(bm, uvLayer, face.index, )
+
+		# 	# clusters
+		# 	isMerged = False
+		# 	for cluster in clusters:
+		# 		d = (uv.uv - cluster.uvs[0].uv).length
+		# 		if d <= 0.0000001:
+		# 			#Merge
+		# 			cluster.append(uv)
+		# 			uv_to_clusters[uv] = cluster
+		# 			if v not in vert_to_clusters:
+		# 				vert_to_clusters[v] = cluster
+		# 			isMerged = True;
+		# 			break;
+		# 	if not isMerged:
+		# 		#New Group
+		# 		clusters.append( UVCluster(v, [uv]) )
+		# 		uv_to_clusters[uv] = clusters[-1]
+		# 		if v not in vert_to_clusters:
+		# 			vert_to_clusters[v] = clusters[-1]
 
 
-	#Collect UV islands
-	islands = utilities_uv.getSelectionIslands()
+	
 
 	print("Islands {}x".format(len(islands)))
+	print("Clusters {}x".format(len(clusters)))
+
+	# for key in uv_to_clusters.keys():
+	# 	print("Key {}".format(key))
+
 
 
 	m_vert_cluster = []
@@ -116,9 +145,8 @@ def swap_uv_xyz(context):
 	m_verts = []
 	m_faces = []
 	
-
 	for island in islands:
-		print("Island,  {}x".format(len(island) ))
+		print("\nIsland {}x".format(len(island) ))
 
 		# c = []
 		# v = []
@@ -127,18 +155,41 @@ def swap_uv_xyz(context):
 
 		for face in island:
 
+
+			# dbg = []
 			f = []
-			for loop in face.loops:
+			for i in range(len(face.loops)):
 				# print("Loop {}".format( loop[uvLayer]) )
 
-				v = loop.vert
+				
+
+
+				v = face.loops[i].vert
+				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
+				
+				
+
+				# if uvs not in uvs_to_clusters:
+				# 	idx = get_uv_index(face.index, i)
+				# 	print("Issue: {} idx {}".format(loop.vert.index, idx))
+				# 	# print("type: {} ".format(uv))
+				# 	i+=1
+				# 	continue
+				# if uv in uv_to_clusters:
+				c = uv_to_clusters[ uv ]
+
+				# index = get_uv_index(face.index, i)
+				# dbg.append( "{}>{}".format( index, index in uvs))
+				# dbg.append( "{}".format( m_vert_cluster.index(c) ))
+
 
 				index = 0
-				if v in m_verts_org:
-					index = m_verts_org.index(v)
+				if c in m_vert_cluster:
+					index = m_vert_cluster.index(c)
 
-				if v not in m_verts_org:
-					index = len(m_verts_org)
+				else:
+					index = len(m_vert_cluster)
+					m_vert_cluster.append(c)
 					m_verts_org.append(v)
 					m_verts.append( v.co.copy() )
 					
@@ -146,6 +197,11 @@ def swap_uv_xyz(context):
 
 			m_faces.append(f)
 			print("Face {}".format(f))
+
+
+
+
+
 
 
 	bpy.ops.object.mode_set(mode='OBJECT')
@@ -158,15 +214,84 @@ def swap_uv_xyz(context):
 
 	mesh_obj = bpy.data.objects.new("mesh_texture_obj", mesh)
 	bpy.context.scene.objects.link(mesh_obj)
+
+	bpy.ops.object.select_all(action='DESELECT')
+	bpy.context.scene.objects.active = mesh_obj
 	mesh_obj.select = True
+
+	mesh_obj.location += Vector((-2.5, 0, 0))
+	# bpy.ops.transform.translate(value=(-2, 0, 0))
+	# bpy.ops.transform.translate(value=(-2, 0, 0))
+
+
+
 	# bmesh.ops.split(bm, geom, dest, use_only_faces)
 	# Split Off Geometry.
 	# Disconnect geometry from adjacent edges and faces, optionally into a destination mesh.
 
 
-	
+
+def Get_UVSet(uvs, bm, layer, index_face, index_loop):
+	index = get_uv_index(index_face, index_loop)
+	if index not in uvs:
+		uvs[index] = UVSet(bm, layer, index_face, index_loop)
+
+	return uvs[index]
+
+
+
+class UVSet:
+	bm = None
+	layer = None
+	index_face = 0
+	index_loop = 0
+
+	def __init__(self, bm, layer, index_face, index_loop):
+		self.bm = bm
+		self.layer = layer
+		self.index_face = index_face
+		self.index_loop = index_loop
+		
+	def uv(self):
+		face = self.bm.faces[self.index_face]
+		return face.loops[self.index_loop][self.layer]
+
+	def pos(self):
+		return self.uv().uv
+
+	def vertex(self):
+		return face.loops[self.index_loop].vertex
+
+
+
+def get_uv_index(index_face, index_loop):
+	return (index_face*1000000)+index_loop
+	# return str(index_face)+"_"+str( index_loop)
+
 	
 
+def get_bbox(obj):
+	corners = [obj.matrix_world * Vector(corner) for corner in obj.bound_box]
+
+	# Get world space Min / Max
+	box_min = Vector((corners[0].x, corners[0].y, corners[0].z))
+	box_max = Vector((corners[0].x, corners[0].y, corners[0].z))
+	for corner in corners:
+		# box_min.x = -8
+		box_min.x = min(box_min.x, corner.x)
+		box_min.y = min(box_min.y, corner.y)
+		box_min.z = min(box_min.z, corner.z)
+		
+		box_max.x = max(box_max.x, corner.x)
+		box_max.y = max(box_max.y, corner.y)
+		box_max.z = max(box_max.z, corner.z)
+
+	return {
+		'min':box_min, 
+		'max':box_max, 
+		'size':(box_max-box_min),
+		'center':box_min+(box_max-box_min)/2
+	}
 
 
 class UVCluster:

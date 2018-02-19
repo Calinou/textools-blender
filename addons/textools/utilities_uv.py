@@ -148,11 +148,12 @@ def getSelectionBBox():
 
 
 
-def getSelectionIslands():
+def getSelectionIslands(bm=None, uvLayer=None):
 	time_A = time.time()
 
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	if bm == None:
+		bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
+		uvLayer = bm.loops.layers.uv.verify()
 
 	#Reference A: https://github.com/nutti/Magic-UV/issues/41
 	#Reference B: https://github.com/c30ra/uv-align-distribute/blob/v2.2/make_island.py

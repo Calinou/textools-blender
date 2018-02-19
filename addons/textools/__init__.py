@@ -9,9 +9,6 @@ bl_info = {
 	"wiki_url": "http://renderhjs.net/textools/blender/"
 }
 
-def get_tab_name():
-	return "TexTools" # {}.{}".format(bl_info['version'][0], bl_info['version'][1])
-
 
 # Import local modules
 # More info: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Multi-File_packages
@@ -491,7 +488,7 @@ class Panel_Units(bpy.types.Panel):
 	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_category = get_tab_name()
+	bl_category = "TexTools"
 	bl_options = {'HIDE_HEADER'}
 
 	def draw_header(self, _):
@@ -573,7 +570,7 @@ class Panel_Layout(bpy.types.Panel):
 	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_category = get_tab_name()
+	bl_category = "TexTools"
 	bl_options = {'DEFAULT_CLOSED'}
 
 	def draw_header(self, _):
@@ -735,7 +732,7 @@ class Panel_Bake(bpy.types.Panel):
 	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_category = get_tab_name()
+	bl_category = "TexTools"
 	bl_options = {'DEFAULT_CLOSED'}
 
 	def draw_header(self, _):
@@ -967,7 +964,7 @@ class Panel_Colors(bpy.types.Panel):
 	bl_label = " "
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_category = get_tab_name()
+	bl_category = "TexTools"
 	bl_options = {'DEFAULT_CLOSED'}
 
 	def draw_header(self, _):

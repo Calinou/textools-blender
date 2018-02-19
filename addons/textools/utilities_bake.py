@@ -61,6 +61,9 @@ def store_bake_settings():
 				objects_sets.append(obj)
 
 	settings.bake_objects_hide_render = []
+
+
+
 	for obj in bpy.context.scene.objects:
 		if obj.hide_render == False and obj not in objects_sets:
 			# Check if layer is active
@@ -80,7 +83,7 @@ def restore_bake_settings():
 	if settings.bake_render_engine != '':
 		bpy.context.scene.render.engine = settings.bake_render_engine
 
-	# Disable Objects that are meant to be hidden
+	# Restore Objects that were hidden for baking
 	for obj in settings.bake_objects_hide_render:
 		if obj:
 			obj.hide_render = False

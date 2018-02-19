@@ -87,8 +87,6 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 	# Get the baking sets / pairs
 	sets = settings.sets
 
-	# print("________________________________\nBake {}x '{}' at {} x {}".format(len(sets), mode, width, height))
-
 	render_width = sampling_scale * size[0]
 	render_height = sampling_scale * size[1]
 
@@ -153,6 +151,10 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
 		print("Bake '{}' = {}".format(set.name, path))
 
+		# Hide all cage objects i nrender
+		for obj_cage in set.objects_cage:
+			obj_cage.hide_render = True
+
 		# Bake each low poly object in this set
 		for i in range(len(set.objects_low)):
 			obj_low = set.objects_low[i]
@@ -191,12 +193,13 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 				 obj_cage
 			)
 
-			# Bake Floaters seperate?
+			# Bake Floaters seperate bake
 			if len(set.objects_float) > 0:
 				bpy.ops.object.select_all(action='DESELECT')
 				for obj_high in (set.objects_float):
 					obj_high.select = True
 				obj_low.select = True
+
 				cycles_bake(
 					mode, 
 					0,
@@ -204,13 +207,18 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 					samples, 
 					ray_distance, 
 					len(set.objects_float) > 0,
-					 obj_cage
+					obj_cage
 				)
 
 			# Set background image (CYCLES & BLENDER_RENDER)
 			for area in bpy.context.screen.areas:
 				if area.type == 'IMAGE_EDITOR':
 					area.spaces[0].image = image
+
+		# Restore renderable for cage objects
+		for obj_cage in set.objects_cage:
+			obj_cage.hide_render = False
+
 
 		# Downsample image?
 		if not bake_single or (bake_single and s == len(sets)-1):

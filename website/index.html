@@ -340,9 +340,9 @@
 						<tbody>
 						</tbody>
 					</table>
-					<p><strong>Note: </strong>Bblender Render does not support custom <strong>cages</strong>. Cages are ignored.</p>
+					<p><strong>Note: </strong>Uses Blender Render and does not support cages.</p>
 				</div>
-                <div class="Content">
+              <div class="Content">
 					<h2>Curvature</h2>
 					<p><img src="images/bake_curvature.png" width="128" height="128" alt=""/></p>
 					<p>Renders a tangent normal map and converts it to a curvature map <a href="https://blender.stackexchange.com/questions/52902/how-to-convert-a-normal-map-into-a-curvature-map-cavity-map" class="NoButton">using compositing</a> nodes.                </p>
@@ -358,7 +358,13 @@
 					<p><strong>Note:</strong> Curvature maps require a high and low poly object.</p>
 				</div>
 				<div class="Content">
-					<h2>Cavity</h2>
+				  <h2>Displacement<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
+				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
+				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
+			  </div>
+				<div class="Content">
+				  <h2>Cavity</h2>
 					<p><img src="images/bake_cavity.png" width="128" height="128" alt=""/></p>
 					<p>Assigns dirty vertex colors (convexity) to the source mesh and combines it with a 'pointiness' cycles render node. </p>
 					<p><strong>Note: </strong>This node depends on the topology of the model.</p>
@@ -371,7 +377,7 @@
 				</div>
 				
 				
-			</div>
+		  </div>
 			
 			<div class="Info"><h3>Bake Sets</h3>
 				<p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection <strong>automatically</strong> into bake sets based on their <strong>names</strong>, <strong>grouping</strong> or <strong>parenting</strong>. </p></div>

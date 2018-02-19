@@ -21,6 +21,7 @@ modes={
 	'id_material':		ub.BakeMode('bake_vertex_color',type='EMIT', 	setVColor=ub.setup_vertex_color_id_material),
 	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
 	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
+	'displacment':		ub.BakeMode('',					type='DISPLACEMENT', engine='BLENDER_RENDER'),
 	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
 	'position':			ub.BakeMode('bake_position',	type='EMIT'),
 	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature")
@@ -466,11 +467,13 @@ def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, 
 		bpy.context.scene.render.bake_margin = padding
 
 		# AO Settings
-		bpy.context.scene.render.bake_type = 'AO'
+		bpy.context.scene.render.bake_type = modes[mode].type
 		bpy.context.scene.render.use_bake_normalize = True
-		bpy.context.scene.world.light_settings.use_ambient_occlusion = True
-		bpy.context.scene.world.light_settings.gather_method = 'RAYTRACE'
-		bpy.context.scene.world.light_settings.samples = samples
+
+		if modes[mode].type == 'AO':
+			bpy.context.scene.world.light_settings.use_ambient_occlusion = True
+			bpy.context.scene.world.light_settings.gather_method = 'RAYTRACE'
+			bpy.context.scene.world.light_settings.samples = samples
 
 		bpy.context.scene.render.use_bake_selected_to_active = is_multi
 		bpy.context.scene.render.bake_distance = ray_distance

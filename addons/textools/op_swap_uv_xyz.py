@@ -78,10 +78,6 @@ def swap_uv_xyz(context):
 	vert_to_clusters = {}
 
 	for face in bm.faces:
-
-		print("Face {}".format(face.index))
-		# print("Loop 0 {}".format(face.loops[0] ))
-
 		for i in range(len(face.loops)):
 			v = face.loops[i]
 			uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
@@ -104,32 +100,6 @@ def swap_uv_xyz(context):
 				uv_to_clusters[uv] = clusters[-1]
 				if v not in vert_to_clusters:
 					vert_to_clusters[v] = clusters[-1]
-
-		# for loop in face.loops:
-		# 	v = loop.vert
-		# 	uv = loop[uvLayer]
-		# 	uvset = UVSet(bm, uvLayer, face.index, )
-
-		# 	# clusters
-		# 	isMerged = False
-		# 	for cluster in clusters:
-		# 		d = (uv.uv - cluster.uvs[0].uv).length
-		# 		if d <= 0.0000001:
-		# 			#Merge
-		# 			cluster.append(uv)
-		# 			uv_to_clusters[uv] = cluster
-		# 			if v not in vert_to_clusters:
-		# 				vert_to_clusters[v] = cluster
-		# 			isMerged = True;
-		# 			break;
-		# 	if not isMerged:
-		# 		#New Group
-		# 		clusters.append( UVCluster(v, [uv]) )
-		# 		uv_to_clusters[uv] = clusters[-1]
-		# 		if v not in vert_to_clusters:
-		# 			vert_to_clusters[v] = clusters[-1]
-
-
 	
 
 	print("Islands {}x".format(len(islands)))
@@ -138,50 +108,23 @@ def swap_uv_xyz(context):
 	# for key in uv_to_clusters.keys():
 	# 	print("Key {}".format(key))
 
-
+	uv_size = max(bounds['size'].x, bounds['size'].y)
+	print("Size: {}".format(uv_size))
 
 	m_vert_cluster = []
 	m_verts_org = []
-	m_verts = []
+	m_verts_A = []
+	m_verts_B = []
 	m_faces = []
 	
 	for island in islands:
-		print("\nIsland {}x".format(len(island) ))
-
-		# c = []
-		# v = []
-		# f = []
-		# org_vert = []
 
 		for face in island:
-
-
-			# dbg = []
 			f = []
 			for i in range(len(face.loops)):
-				# print("Loop {}".format( loop[uvLayer]) )
-
-				
-
-
 				v = face.loops[i].vert
 				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
-				
-				
-
-				# if uvs not in uvs_to_clusters:
-				# 	idx = get_uv_index(face.index, i)
-				# 	print("Issue: {} idx {}".format(loop.vert.index, idx))
-				# 	# print("type: {} ".format(uv))
-				# 	i+=1
-				# 	continue
-				# if uv in uv_to_clusters:
 				c = uv_to_clusters[ uv ]
-
-				# index = get_uv_index(face.index, i)
-				# dbg.append( "{}>{}".format( index, index in uvs))
-				# dbg.append( "{}".format( m_vert_cluster.index(c) ))
-
 
 				index = 0
 				if c in m_vert_cluster:
@@ -191,33 +134,52 @@ def swap_uv_xyz(context):
 					index = len(m_vert_cluster)
 					m_vert_cluster.append(c)
 					m_verts_org.append(v)
-					m_verts.append( v.co.copy() )
+
+					m_verts_A.append( Vector((uv.pos().x*uv_size, uv.pos().y*uv_size, 0)) )
+					m_verts_B.append( v.co.copy() )
 					
 				f.append(index)
 
 			m_faces.append(f)
-			print("Face {}".format(f))
 
 
 
 
-
+	# https://blender.stackexchange.com/questions/15593/how-to-change-shapekey-vertex-position-through-python
 
 
 	bpy.ops.object.mode_set(mode='OBJECT')
 	# bpy.ops.object.select_all(action='TOGGLE')
 
-
+	# Create Mesh
 	mesh = bpy.data.meshes.new("mesh_texture")
-	mesh.from_pydata(m_verts, [], m_faces)
+	mesh.from_pydata(m_verts_A, [], m_faces)
 	mesh.update()
-
 	mesh_obj = bpy.data.objects.new("mesh_texture_obj", mesh)
 	bpy.context.scene.objects.link(mesh_obj)
 
-	bpy.ops.object.select_all(action='DESELECT')
+	# Add shape keys
+	mesh_obj.shape_key_add(name="uv", from_mix=True)
+	mesh_obj.shape_key_add(name="model", from_mix=True)
+	mesh_obj.active_shape_key_index = 1
+
+	# Select
 	bpy.context.scene.objects.active = mesh_obj
 	mesh_obj.select = True
+	bpy.ops.object.mode_set(mode='EDIT')
+	bm = bmesh.from_edit_mesh(mesh_obj.data)
+	if hasattr(bm.faces, "ensure_lookup_table"): 
+		bm.faces.ensure_lookup_table()
+		bm.verts.ensure_lookup_table()
+
+	for i in range(len(m_verts_B)):
+		bm.verts[i].co = m_verts_B[i]
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+
+
+	bpy.ops.object.select_all(action='DESELECT')
+	
 
 	mesh_obj.location += Vector((-2.5, 0, 0))
 	# bpy.ops.transform.translate(value=(-2, 0, 0))
@@ -228,6 +190,11 @@ def swap_uv_xyz(context):
 	# bmesh.ops.split(bm, geom, dest, use_only_faces)
 	# Split Off Geometry.
 	# Disconnect geometry from adjacent edges and faces, optionally into a destination mesh.
+
+
+
+# def add_shape_key(bm, id, verts):
+
 
 
 

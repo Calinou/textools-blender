@@ -203,6 +203,9 @@ def get_bake_name(obj):
 				break
 		if not is_found:
 			new_strings.append(string)
+		else:
+			# No more strings once key is found
+			break
 
 	return "_".join(new_strings)
 

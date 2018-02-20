@@ -20,13 +20,6 @@ class op(bpy.types.Operator):
 		if not bpy.context.active_object:
 			return False
 
-		if bpy.context.active_object not in bpy.context.selected_objects:
-			return False
-
-		# Allow only 1 object selected
-		if len(bpy.context.selected_objects) != 1:
-			return False
-
 		if bpy.context.active_object.type != 'MESH':
 			return False
 
@@ -57,11 +50,6 @@ __vert_to_faces = defaultdict(set)
 
 
 def rectify(self, context):
-
-
-
-
-
 	obj = bpy.context.active_object
 	
 	bm = bmesh.from_edit_mesh(obj.data)

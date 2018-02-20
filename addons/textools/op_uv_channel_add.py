@@ -36,23 +36,27 @@ class op(bpy.types.Operator):
 	def execute(self, context):
 		print("Add UV")
 		
-		if bpy.context.active_object.mode != 'EDIT':
-			bpy.ops.object.mode_set(mode='EDIT')
+		if len( bpy.context.object.data.uv_layers ) == 0:
+			# Create first UV channel
+			if bpy.context.active_object.mode != 'EDIT':
+				bpy.ops.object.mode_set(mode='EDIT')
 
-		# Smart project UV's
-		bpy.ops.mesh.select_all(action='SELECT')
-		bpy.ops.uv.smart_project(
-			angle_limit=65, 
-			island_margin=0.5, 
-			user_area_weight=0, 
-			use_aspect=True, 
-			stretch_to_bounds=True
-		)
+			# Smart project UV's
+			bpy.ops.mesh.select_all(action='SELECT')
+			bpy.ops.uv.smart_project(
+				angle_limit=65, 
+				island_margin=0.5, 
+				user_area_weight=0, 
+				use_aspect=True, 
+				stretch_to_bounds=True
+			)
 
-		# Re-Apply padding as normalized values
-		bpy.ops.uv.select_all(action='SELECT')
-		bpy.ops.uv.pack_islands(margin=utilities_ui.get_padding())
-
+			# Re-Apply padding as normalized values
+			bpy.ops.uv.select_all(action='SELECT')
+			bpy.ops.uv.pack_islands(margin=utilities_ui.get_padding())
+		else:
+			# Add new UV channel based on last
+			bpy.ops.mesh.uv_texture_add()
 
 		return {'FINISHED'}
 

@@ -533,31 +533,33 @@ class Panel_Units(bpy.types.Panel):
 			if bpy.context.active_object in bpy.context.selected_objects:
 				if bpy.context.active_object.type == 'MESH':
 					
-					split = row.split(percentage=0.25)
-					c = split.column(align=True)
-					c.label(text="UV")#, icon='GROUP_UVS'
+					# split = row.split(percentage=0.25)
+					# c = row.column(align=True)
+					row.label(text="UV")#, icon='GROUP_UVS'
 
 					
 					if not bpy.context.object.data.uv_layers:
-						c = split.column(align=True)
-						row = c.row(align=True)
+						# c = split.column(align=True)
+						# row = c.row(align=True)
 						# row.label(text="None", icon= 'ERROR')
 
 						row.operator(op_uv_channel_add.op.bl_idname, text="Add", icon = 'ZOOMIN')
 					else:
-						c = split.column(align=True)
-						row = c.row(align=True)
-						row.prop(context.scene.texToolsSettings, "uv_channel", text="")
+						# c = split.column(align=True)
+						# row = c.row(align=True)
+						group = row.row(align=True)
+						group.prop(context.scene.texToolsSettings, "uv_channel", text="")
+						group.operator(op_uv_channel_add.op.bl_idname, text="", icon = 'ZOOMIN')
 
-						c = split.column(align=True)
-						row = c.row(align=True)
-						row.alignment = 'RIGHT'
-
-						r = row.row(align=True)
+						# c = split.column(align=True)
+						# row = c.row(align=True)
+						# row.alignment = 'RIGHT'
+						group = row.row(align=True)
+						r = group.column(align=True)
 						r.active = bpy.context.object.data.uv_textures.active_index > 0
 						r.operator(op_uv_channel_swap.op.bl_idname, text="", icon = 'TRIA_UP_BAR').is_down = False;
 						
-						r = row.row(align=True)
+						r = group.column(align=True)
 						r.active = bpy.context.object.data.uv_textures.active_index < (len(bpy.context.object.data.uv_textures)-1)
 						r.operator(op_uv_channel_swap.op.bl_idname, text="", icon = 'TRIA_DOWN_BAR').is_down = True;
 

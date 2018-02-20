@@ -177,23 +177,21 @@ def swap_uv_xyz(context):
 	bpy.ops.object.mode_set(mode='OBJECT')
 
 
+	# Display as edges only
+	mesh_obj.show_wire = True
+	mesh_obj.show_all_edges = True
+	mesh_obj.draw_type = 'WIRE'
 
-	bpy.ops.object.select_all(action='DESELECT')
-	
+	# Add solidify modifier
+	bpy.ops.object.modifier_add(type='SOLIDIFY')
+	bpy.context.object.modifiers["Solidify"].offset = 1
+	bpy.context.object.modifiers["Solidify"].thickness = 0.5
+	bpy.context.object.modifiers["Solidify"].use_even_offset = True
 
+
+
+	# bpy.ops.object.select_all(action='DESELECT')
 	mesh_obj.location += Vector((-2.5, 0, 0))
-	# bpy.ops.transform.translate(value=(-2, 0, 0))
-	# bpy.ops.transform.translate(value=(-2, 0, 0))
-
-
-
-	# bmesh.ops.split(bm, geom, dest, use_only_faces)
-	# Split Off Geometry.
-	# Disconnect geometry from adjacent edges and faces, optionally into a destination mesh.
-
-
-
-# def add_shape_key(bm, id, verts):
 
 
 

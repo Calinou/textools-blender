@@ -683,7 +683,7 @@ class Panel_Layout(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			row = col.row(align=True)
 			row.alert = True
-			row.operator(op_swap_uv_xyz.op.bl_idname, text="Swap UV/XYZ")
+			row.operator(op_swap_uv_xyz.op.bl_idname, text="Mesh Texture")
 			
 
 

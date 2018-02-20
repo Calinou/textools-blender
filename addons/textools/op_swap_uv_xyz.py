@@ -108,7 +108,7 @@ def swap_uv_xyz(context):
 	# for key in uv_to_clusters.keys():
 	# 	print("Key {}".format(key))
 
-	uv_size = max(bounds['size'].x, bounds['size'].y)
+	uv_size = max(bounds['size'].x, bounds['size'].y, bounds['size'].z)
 	print("Size: {}".format(uv_size))
 
 	m_vert_cluster = []
@@ -135,7 +135,7 @@ def swap_uv_xyz(context):
 					m_vert_cluster.append(c)
 					m_verts_org.append(v)
 
-					m_verts_A.append( Vector((uv.pos().x*uv_size, uv.pos().y*uv_size, 0)) )
+					m_verts_A.append( Vector((uv.pos().x*uv_size -uv_size/2, uv.pos().y*uv_size -uv_size/2, 0)) )
 					m_verts_B.append( v.co.copy() )
 					
 				f.append(index)
@@ -187,11 +187,19 @@ def swap_uv_xyz(context):
 	bpy.context.object.modifiers["Solidify"].offset = 1
 	bpy.context.object.modifiers["Solidify"].thickness = 0.5
 	bpy.context.object.modifiers["Solidify"].use_even_offset = True
+	bpy.context.object.modifiers["Solidify"].show_viewport = False
 
+	# Add empty cube
+	bpy.ops.object.empty_add(type='CUBE', location=obj.location)
+	cube = bpy.context.object
+	cube.empty_draw_size = uv_size/2
+	cube.scale = (1, 1, 0)
+	cube.parent = mesh_obj
 
-
-	# bpy.ops.object.select_all(action='DESELECT')
-	mesh_obj.location += Vector((-2.5, 0, 0))
+	bpy.ops.object.select_all(action='DESELECT')
+	mesh_obj.select = True
+	bpy.context.scene.objects.active = mesh_obj
+	# mesh_obj.location += Vector((-2.5, 0, 0))
 
 
 

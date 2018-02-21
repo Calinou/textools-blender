@@ -19,14 +19,15 @@ def find_uv_mesh(objects):
 		# Requires mesh & UV channel
 		if obj.type == 'MESH' and not obj.data.uv_layers:
 			if obj.data.shape_keys and len(obj.data.shape_keys.key_blocks) == 2:
-				return obj
-
+				if "uv" in obj.data.shape_keys.key_blocks:
+					if "model" in obj.data.shape_keys.key_blocks:
+						if "Solidify" in obj.modifiers:
+							return obj
 	return None
 
 
 
 def get_mode():
-
 	# Create UV mesh from face selection
 	if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT':
 		if bpy.context.active_object.data.uv_layers:
@@ -56,13 +57,11 @@ class op(bpy.types.Operator):
 	def poll(cls, context):
 		if get_mode() == 'UNDEFINED':
 			return False
-
 		return True
 
 
 	def execute(self, context):
 
-		#Determine if create UV mesh or wrap Mesh to UV
 		mode = get_mode()
 		if mode == 'CREATE_FACES' or mode == 'CREATE_OBJECT':
 			create_uv_mesh(self, bpy.context.active_object)	
@@ -97,23 +96,68 @@ def wrap_mesh_texture(self):
 
 	print("Wrap {} texture meshes".format(len(obj_textures)))
 
+	obj_uv.data.shape_keys.key_blocks["model"].value = 0
+	
+
+
+
+	min_z = 0
+	max_z = 0
+	for i in range(len(obj_textures)):
+		obj = obj_textures[i]
+		
+		# Min Max Z
+		if i == 0:
+			min_z = get_bbox(obj)['min'].z
+			max_z = get_bbox(obj)['max'].z
+		else:
+			min_z = min(min_z, get_bbox(obj)['min'].z)
+			max_z = max(max_z, get_bbox(obj)['max'].z)
+
+		# Check existing modifiers
+		for modifier in obj.modifiers:
+			print("M {}".format(modifier.type))
+			if modifier.type == 'MESH_DEFORM':
+				obj.modifiers.remove(modifier)
+				break
+		
+	# Set thickness
+	obj_uv.modifiers["Solidify"].thickness = (max_z - min_z)*1.1
 
 	for obj in obj_textures:
-		print("- Texture Mesh '{}'".format(obj.name))
-		# Set morph back to 0
-		# measure bounds (world) of mesh textures
-		# set solidify size to size + offset to capture fully
+		use_dynamic_bind = len(obj.modifiers) > 1
 
-		# unbind if already bind
-		# Apply mesh deform modifier (if not existing)
-		# enable dynamic bind if other modifiers
-		# Set morph to 1
-		
-		# bind
+		# Add mesh modifier
+		obj.select = True
+		bpy.context.scene.objects.active = obj
+		bpy.ops.object.modifier_add(type='MESH_DEFORM')
+		bpy.context.object.modifiers["MeshDeform"].object = obj_uv
+		bpy.context.object.modifiers["MeshDeform"].use_dynamic_bind = use_dynamic_bind
+		bpy.ops.object.meshdeform_bind(modifier="MeshDeform")
 
-		# use:
-		# bpy.context.object.modifiers["MeshDeform"].use_dynamic_bind = True
-		# bpy.context.object.modifiers["MeshDeform"].show_on_cage = True
+		print(">>>"+str(bpy.context.object.modifiers["MeshDeform"]))
+
+
+
+
+
+	
+	obj_uv.data.shape_keys.key_blocks["model"].value = 1
+
+	# Set morph back to 0
+	# measure bounds (world) of mesh textures
+	# set solidify size to size + offset to capture fully
+
+	# unbind if already bind
+	# Apply mesh deform modifier (if not existing)
+	# enable dynamic bind if other modifiers
+	# Set morph to 1
+	
+	# bind
+
+	# use:
+	# bpy.context.object.modifiers["MeshDeform"].use_dynamic_bind = True
+	# bpy.context.object.modifiers["MeshDeform"].show_on_cage = True
 
 
 
@@ -173,13 +217,12 @@ def create_uv_mesh(self, obj):
 	
 
 	print("Islands {}x".format(len(islands)))
-	print("Clusters {}x".format(len(clusters)))
+	print("UV Vert Clusters {}x".format(len(clusters)))
 
 	# for key in uv_to_clusters.keys():
 	# 	print("Key {}".format(key))
 
 	uv_size = max(bounds['size'].x, bounds['size'].y, bounds['size'].z)
-	print("Size: {}".format(uv_size))
 
 	m_vert_cluster = []
 	m_verts_org = []
@@ -188,7 +231,6 @@ def create_uv_mesh(self, obj):
 	m_faces = []
 	
 	for island in islands:
-
 		for face in island:
 			f = []
 			for i in range(len(face.loops)):
@@ -206,27 +248,23 @@ def create_uv_mesh(self, obj):
 					m_verts_org.append(v)
 
 					m_verts_A.append( Vector((uv.pos().x*uv_size -uv_size/2, uv.pos().y*uv_size -uv_size/2, 0)) )
-					m_verts_B.append( obj.matrix_world * v.co  )
+					m_verts_B.append( obj.matrix_world * v.co - bpy.context.scene.cursor_location  )
 					
 				f.append(index)
 
 			m_faces.append(f)
 
 
-
-
-	# https://blender.stackexchange.com/questions/15593/how-to-change-shapekey-vertex-position-through-python
-
-
 	bpy.ops.object.mode_set(mode='OBJECT')
-	# bpy.ops.object.select_all(action='TOGGLE')
 
 	# Create Mesh
 	mesh = bpy.data.meshes.new("mesh_texture")
 	mesh.from_pydata(m_verts_A, [], m_faces)
 	mesh.update()
 	mesh_obj = bpy.data.objects.new("mesh_texture_obj", mesh)
+	mesh_obj.location = bpy.context.scene.cursor_location
 	bpy.context.scene.objects.link(mesh_obj)
+
 
 	# Add shape keys
 	mesh_obj.shape_key_add(name="uv", from_mix=True)
@@ -236,6 +274,7 @@ def create_uv_mesh(self, obj):
 	# Select
 	bpy.context.scene.objects.active = mesh_obj
 	mesh_obj.select = True
+
 	bpy.ops.object.mode_set(mode='EDIT')
 	bm = bmesh.from_edit_mesh(mesh_obj.data)
 	if hasattr(bm.faces, "ensure_lookup_table"): 
@@ -260,11 +299,12 @@ def create_uv_mesh(self, obj):
 	bpy.context.object.modifiers["Solidify"].thickness_clamp = 0
 
 	# Add empty cube
-	bpy.ops.object.empty_add(type='CUBE', location=obj.location)
+	bpy.ops.object.empty_add(type='CUBE', location=mesh_obj.location)
 	cube = bpy.context.object
 	cube.empty_draw_size = uv_size/2
 	cube.scale = (1, 1, 0)
 	cube.parent = mesh_obj
+	cube.location = (0, 0, 0)
 
 	bpy.ops.object.select_all(action='DESELECT')
 	mesh_obj.select = True

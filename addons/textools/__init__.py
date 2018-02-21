@@ -726,13 +726,13 @@ class Panel_Mesh(bpy.types.Panel):
 		message = ""
 		mode = op_mesh_texture.get_mode()
 		if mode == 'CREATE_FACES':
-			message = "Create UV mesh from faces"
+			message = "Create UV mesh faces"
 
 		elif mode == 'CREATE_OBJECT':
 			message = "Create UV mesh"
 
 		elif mode == 'WRAP':
-			message = "Wrap meshes as texture" 
+			message = "Wrap texture meshe" 
 
 		col.label(text = message)
 		

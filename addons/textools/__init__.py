@@ -45,7 +45,7 @@ if "bpy" in locals():
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_select_islands_overlap)
 	imp.reload(op_smoothing_uv_islands)
-	imp.reload(op_swap_uv_xyz)
+	imp.reload(op_mesh_texture)
 	imp.reload(op_texel_checker_map)
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
@@ -91,7 +91,7 @@ else:
 	from . import op_select_islands_outline
 	from . import op_select_islands_overlap
 	from . import op_smoothing_uv_islands
-	from . import op_swap_uv_xyz
+	from . import op_mesh_texture
 	from . import op_texel_checker_map
 	from . import op_texel_density_get
 	from . import op_texel_density_set
@@ -672,22 +672,6 @@ class Panel_Layout(bpy.types.Panel):
 		col.operator(op_select_islands_outline.op.bl_idname, text="Island Bounds", icon_value = icon_get("op_select_islands_outline"))
 		
 
-
-		
-		#---------- Mesh ------------
-
-		layout.label(text="Mesh")
-		box = layout.box()
-		col = box.column(align=True)
-		col.operator(op_smoothing_uv_islands.op.bl_idname, text="Smooth by UV", icon_value = icon_get("op_smoothing_uv_islands"))
-		if bpy.app.debug_value != 0:
-			row = col.row(align=True)
-			row.alert = True
-			row.operator(op_swap_uv_xyz.op.bl_idname, text="Mesh Texture")
-			
-
-
-
 		#---------- Texel ------------
 
 		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
@@ -713,20 +697,33 @@ class Panel_Layout(bpy.types.Panel):
 		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
 
 
-			
-		# 
 		
-		#---------- ID Colors ------------
-		#Example custom UI list: https://blender.stackexchange.com/questions/47840/is-bpy-props-able-to-create-a-list-of-lists
-		#Example assign vertex colors: https://blender.stackexchange.com/questions/30841/how-to-view-vertex-colors
-		#Color Palette: https://blender.stackexchange.com/questions/73122/how-do-i-create-palette-ui-object
+class Panel_Mesh(bpy.types.Panel):
+	bl_label = " "
+	bl_space_type = 'IMAGE_EDITOR'
+	bl_region_type = 'TOOLS'
+	bl_category = "TexTools"
+	bl_options = {'DEFAULT_CLOSED'}
 
-		# row = layout.row()
-		# box = row.box()
-		# box.label(text="ID Colors")
-		# box.operator(bpy.ops.paint.sample_color.idname())
-		# box.template_palette(context.scene.texToolsSettings, "id_palette", color=True)
+	def draw_header(self, _):
+		layout = self.layout
+		row = layout.row(align=True)
+		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#mesh"
+		row.label(text ="Mesh")
+
+	def draw(self, context):
+		layout = self.layout
 		
+		
+		#---------- Mesh ------------
+
+		box = layout.box()
+		col = box.column()
+		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
+		col.separator()
+		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture")
+		col.label(text = "Mode {}".format(op_mesh_texture.get_mode()))
+
 
 
 
@@ -741,7 +738,7 @@ class Panel_Bake(bpy.types.Panel):
 		layout = self.layout
 		row = layout.row(align=True)
 		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#texturebaking"
-		row.label(text ="Texture Baking")
+		row.label(text ="Baking")
 
 	def draw(self, context):
 		layout = self.layout

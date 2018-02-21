@@ -11,8 +11,38 @@ from . import utilities_uv
 id_shape_key_mesh = "mesh"
 id_shape_key_uv = "uv"
 
+
+
+
+def find_uv_mesh(objects):
+	for obj in objects:
+		if obj.type == 'MESH' and obj.data.shape_keys:
+			if len(obj.data.shape_keys.key_blocks) == 2:
+				return obj
+
+	return None
+
+
+
+def get_mode():
+	if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT' and not find_uv_mesh(bpy.context.active_object):
+		# Create UV mesh from face selection
+		return 'CREATE'
+
+	if len(bpy.context.selected_objects) >= 2 and find_uv_mesh(bpy.context.selected_objects):
+		# for obj in bpy.context.selected_objects:
+		return 'WRAP'
+
+	if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
+		# if bpy.context.active_object
+		return 'CREATE'
+
+	return 'UNDEFINED'
+
+
+
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_swap_uv_xyz"
+	bl_idname = "uv.textools_mesh_texture"
 	bl_label = "Swap UV 2 XYZ"
 	bl_description = "Swap UV to XYZ coordinates"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -38,28 +68,74 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-		swap_uv_xyz(context)
+
+		#Determine if create UV mesh or wrap Mesh to UV
+		mode = get_mode()
+		if mode == 'CREATE':
+			create_uv_mesh(self, bpy.context.active_object)	
+				
+		elif mode == 'WRAP':
+			wrap_mesh_texture(self)
+
 		return {'FINISHED'}
 
 
-def swap_uv_xyz(context):
-	print("....")
+
+def wrap_mesh_texture(self):
+	# Wrap the mesh texture around the 
+	print("Wrap Mesh Texture :)")
+
+	# Collect UV mesh
+	obj_uv = find_uv_mesh(bpy.context.selected_objects)
+	if not obj_uv:
+		self.report({'ERROR_INVALID_INPUT'}, "No UV mesh found" )
+		return
+
+	# Collect texture meshes
+	obj_textures = []
+	for obj in bpy.context.selected_objects:
+		if obj != obj_uv:
+			obj_textures.append(obj)
+
+	if len(obj_textures) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No UV mesh found" )
+		return
+
+	print("Wrap {} texture meshes".format(len(obj_textures)))
 
 
-	# Add shape keys
-	# obj.shape_key_add(id_shape_key_mesh)
-	# obj.shape_key_add(id_shape_key_uv)
-	
-	obj = bpy.context.active_object
+	for obj in obj_textures:
+		print("Mesh {}".format(obj.name))
+		# Set morph back to 0
+		# measure bounds (world) of mesh textures
+		# set solidify size to size + offset to capture fully
+
+		# unbind if already bind
+		# Apply mesh deform modifier (if not existing)
+		# enable dynamic bind if other modifiers
+		# Set morph to 1
+		
+		# bind
+
+		# use:
+		# bpy.context.object.modifiers["MeshDeform"].use_dynamic_bind = True
+		# bpy.context.object.modifiers["MeshDeform"].show_on_cage = True
+
+
+
+
+
+
+def create_uv_mesh(self, obj):
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
+
+
 	bpy.ops.object.mode_set(mode='EDIT')
 
 	bm = bmesh.from_edit_mesh(obj.data)
 	uvLayer = bm.loops.layers.uv.verify()
-
-	# bpy.data.shape_keys["Key"].key_blocks[id_shape_key_uv].value = 1
-
-
-
 
 	# Select all
 	bpy.ops.mesh.select_all(action='SELECT')
@@ -185,7 +261,7 @@ def swap_uv_xyz(context):
 	# Add solidify modifier
 	bpy.ops.object.modifier_add(type='SOLIDIFY')
 	bpy.context.object.modifiers["Solidify"].offset = 1
-	bpy.context.object.modifiers["Solidify"].thickness = uv_size * 0.1
+	bpy.context.object.modifiers["Solidify"].thickness = 0 #uv_size * 0.1
 	bpy.context.object.modifiers["Solidify"].use_even_offset = True
 	bpy.context.object.modifiers["Solidify"].thickness_clamp = 0
 
@@ -200,7 +276,6 @@ def swap_uv_xyz(context):
 	mesh_obj.select = True
 	bpy.context.scene.objects.active = mesh_obj
 	# mesh_obj.location += Vector((-2.5, 0, 0))
-
 
 
 

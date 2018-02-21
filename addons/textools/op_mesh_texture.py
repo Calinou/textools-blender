@@ -13,11 +13,12 @@ id_shape_key_uv = "uv"
 
 
 
-
+# Find a mesh that contains UV mesh shape keys 
 def find_uv_mesh(objects):
 	for obj in objects:
-		if obj.type == 'MESH' and obj.data.shape_keys:
-			if len(obj.data.shape_keys.key_blocks) == 2:
+		# Requires mesh & UV channel
+		if obj.type == 'MESH' and not obj.data.uv_layers:
+			if obj.data.shape_keys and len(obj.data.shape_keys.key_blocks) == 2:
 				return obj
 
 	return None
@@ -25,17 +26,21 @@ def find_uv_mesh(objects):
 
 
 def get_mode():
-	if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT' and not find_uv_mesh(bpy.context.active_object):
-		# Create UV mesh from face selection
-		return 'CREATE'
 
+	# Create UV mesh from face selection
+	if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT':
+		if bpy.context.active_object.data.uv_layers:
+			if not find_uv_mesh([bpy.context.active_object]):
+				return 'CREATE_FACES'
+
+	# Wrap texture mesh around UV mesh
 	if len(bpy.context.selected_objects) >= 2 and find_uv_mesh(bpy.context.selected_objects):
-		# for obj in bpy.context.selected_objects:
 		return 'WRAP'
 
+	# Create UV mesh from whole object
 	if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
-		# if bpy.context.active_object
-		return 'CREATE'
+		if bpy.context.active_object.data.uv_layers:
+			return 'CREATE_OBJECT'
 
 	return 'UNDEFINED'
 
@@ -49,20 +54,8 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if not bpy.context.active_object:
+		if get_mode() == 'UNDEFINED':
 			return False
-		
-		if bpy.context.active_object.type != 'MESH':
-			return False
-
-		#One or more objects selected
-		if len(bpy.context.selected_objects) == 0:
-			return False
-
-		#Requires UV map
-		if not bpy.context.object.data.uv_layers:
-			return False 	#self.report({'WARNING'}, "Object must have more than one UV map")
-
 
 		return True
 
@@ -71,7 +64,7 @@ class op(bpy.types.Operator):
 
 		#Determine if create UV mesh or wrap Mesh to UV
 		mode = get_mode()
-		if mode == 'CREATE':
+		if mode == 'CREATE_FACES' or mode == 'CREATE_OBJECT':
 			create_uv_mesh(self, bpy.context.active_object)	
 				
 		elif mode == 'WRAP':
@@ -95,17 +88,18 @@ def wrap_mesh_texture(self):
 	obj_textures = []
 	for obj in bpy.context.selected_objects:
 		if obj != obj_uv:
-			obj_textures.append(obj)
+			if obj.type == 'MESH':
+				obj_textures.append(obj)
 
 	if len(obj_textures) == 0:
-		self.report({'ERROR_INVALID_INPUT'}, "No UV mesh found" )
+		self.report({'ERROR_INVALID_INPUT'}, "No meshes found for mesh textures" )
 		return
 
 	print("Wrap {} texture meshes".format(len(obj_textures)))
 
 
 	for obj in obj_textures:
-		print("Mesh {}".format(obj.name))
+		print("- Texture Mesh '{}'".format(obj.name))
 		# Set morph back to 0
 		# measure bounds (world) of mesh textures
 		# set solidify size to size + offset to capture fully

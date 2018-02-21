@@ -720,21 +720,27 @@ class Panel_Mesh(bpy.types.Panel):
 		box = layout.box()
 		col = box.column()
 		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
-		col.separator()
+		
+		box = layout.box()
+		col = box.column()
 		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture")
 		
 		message = ""
+		icon = ""
 		mode = op_mesh_texture.get_mode()
 		if mode == 'CREATE_FACES':
 			message = "Create UV mesh faces"
-
+			icon = "MESH_GRID"
 		elif mode == 'CREATE_OBJECT':
 			message = "Create UV mesh"
-
+			icon = "MESH_GRID"
 		elif mode == 'WRAP':
 			message = "Wrap texture meshe" 
+			icon = "POTATO"
+		elif bpy.context.active_object:
+			icon = "ERROR"
 
-		col.label(text = message)
+		col.label(text = message, icon= icon)
 		
 
 

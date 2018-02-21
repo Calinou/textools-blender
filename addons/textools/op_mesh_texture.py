@@ -30,9 +30,8 @@ def find_uv_mesh(objects):
 def get_mode():
 	# Create UV mesh from face selection
 	if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT':
-		if bpy.context.active_object.data.uv_layers:
-			if not find_uv_mesh([bpy.context.active_object]):
-				return 'CREATE_FACES'
+		if not find_uv_mesh([bpy.context.active_object]):
+			return 'CREATE_FACES'
 
 	# Wrap texture mesh around UV mesh
 	if len(bpy.context.selected_objects) >= 2 and find_uv_mesh(bpy.context.selected_objects):
@@ -40,8 +39,7 @@ def get_mode():
 
 	# Create UV mesh from whole object
 	if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
-		if bpy.context.active_object.data.uv_layers:
-			return 'CREATE_OBJECT'
+		return 'CREATE_OBJECT'
 
 	return 'UNDEFINED'
 
@@ -165,12 +163,18 @@ def wrap_mesh_texture(self):
 
 
 def create_uv_mesh(self, obj):
+	# Select
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True
 	bpy.context.scene.objects.active = obj
 
 
 	bpy.ops.object.mode_set(mode='EDIT')
+
+	if not obj.data.uv_layers:
+		# Create UV Map
+		print("Create uv map")
+
 
 	bm = bmesh.from_edit_mesh(obj.data)
 	uvLayer = bm.loops.layers.uv.verify()

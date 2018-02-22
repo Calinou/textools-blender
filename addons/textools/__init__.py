@@ -723,10 +723,10 @@ class Panel_Mesh(bpy.types.Panel):
 		
 		box = layout.box()
 		col = box.column()
-		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture")
+		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture", icon='GROUP_UVS')
 		
 		message = ""
-		icon = ""
+		icon = "NONE"
 		mode = op_mesh_texture.get_mode()
 		if mode == 'CREATE_FACES':
 			message = "Create UV mesh faces"

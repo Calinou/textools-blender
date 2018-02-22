@@ -34,7 +34,7 @@ class op(bpy.types.Operator):
 			return False
 
 		#Requires UV map
-		if not bpy.context.object.data.uv_layers:
+		if not bpy.context.object.data or not bpy.context.object.data.uv_layers:
 			return False
 
 		return True

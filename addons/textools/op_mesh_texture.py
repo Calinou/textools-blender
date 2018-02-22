@@ -71,6 +71,200 @@ class op(bpy.types.Operator):
 
 
 
+def create_uv_mesh(self, obj):
+	
+	mode = bpy.context.active_object.mode
+
+	# Select
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
+
+	
+	bpy.ops.object.mode_set(mode='EDIT')
+	bpy.ops.mesh.select_mode(type="FACE")
+	bpy.context.scene.tool_settings.use_uv_select_sync = False
+
+
+	# Select all if OBJECT mode
+	if mode == 'OBJECT':
+		bpy.ops.mesh.select_all(action='SELECT')
+		# bpy.ops.uv.select_all(action='SELECT')
+
+	# Create UV Map
+	if not obj.data.uv_layers:
+		if mode == 'OBJECT':
+			bpy.ops.uv.smart_project(
+				angle_limit=65, 
+				island_margin=0.5, 
+				user_area_weight=0, 
+				use_aspect=True, 
+				stretch_to_bounds=True
+			)
+		elif mode == 'EDIT':
+			bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0)
+			bpy.ops.uv.textools_unwrap_faces_iron()
+
+	bpy.ops.uv.select_all(action='SELECT')
+
+	bm = bmesh.from_edit_mesh(obj.data)
+	uvLayer = bm.loops.layers.uv.verify()
+
+	#Collect UV islands
+	islands = utilities_uv.getSelectionIslands(bm, uvLayer)
+
+	# Get object bounds
+	bounds = get_bbox(obj)
+
+	# Collect clusters 
+	uvs = {}
+	clusters = []
+	uv_to_clusters = {}
+	vert_to_clusters = {}
+	for face in bm.faces:
+		if face.select:
+			for i in range(len(face.loops)):
+				v = face.loops[i]
+				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
+
+				# 	# clusters
+				isMerged = False
+				for cluster in clusters:
+					d = (uv.pos() - cluster.uvs[0].pos()).length
+					if d <= 0.0000001:
+						#Merge
+						cluster.append(uv)
+						uv_to_clusters[uv] = cluster
+						if v not in vert_to_clusters:
+							vert_to_clusters[v] = cluster
+						isMerged = True;
+						break;
+				if not isMerged:
+					#New Group
+					clusters.append( UVCluster(v, [uv]) )
+					uv_to_clusters[uv] = clusters[-1]
+					if v not in vert_to_clusters:
+						vert_to_clusters[v] = clusters[-1]
+	
+
+	print("Islands {}x".format(len(islands)))
+	print("UV Vert Clusters {}x".format(len(clusters)))
+
+	# for key in uv_to_clusters.keys():
+	# 	print("Key {}".format(key))
+
+	uv_size = max(bounds['size'].x, bounds['size'].y, bounds['size'].z)
+
+	m_vert_cluster = []
+	m_verts_org = []
+	m_verts_A = []
+	m_verts_B = []
+	m_faces = []
+	
+	for island in islands:
+		for face in island:
+			f = []
+			for i in range(len(face.loops)):
+				v = face.loops[i].vert
+				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
+				c = uv_to_clusters[ uv ]
+
+				index = 0
+				if c in m_vert_cluster:
+					index = m_vert_cluster.index(c)
+
+				else:
+					index = len(m_vert_cluster)
+					m_vert_cluster.append(c)
+					m_verts_org.append(v)
+
+					m_verts_A.append( Vector((uv.pos().x*uv_size -uv_size/2, uv.pos().y*uv_size -uv_size/2, 0)) )
+					m_verts_B.append( obj.matrix_world * v.co - bpy.context.scene.cursor_location  )
+					
+				f.append(index)
+
+			m_faces.append(f)
+
+	# Add UV bounds as edges
+	# uv_size/2
+	verts = [
+		Vector((-uv_size/2, -uv_size/2, 0)),
+		Vector(( uv_size/2, -uv_size/2, 0)),
+		Vector(( uv_size/2, uv_size/2, 0)),
+		Vector((-uv_size/2, uv_size/2, 0)),
+	]
+	m_verts_A = m_verts_A+verts;
+	m_verts_B = m_verts_B+verts;
+
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+	# Create Mesh
+	mesh = bpy.data.meshes.new("mesh_texture")
+	mesh.from_pydata(m_verts_A, [], m_faces)
+	mesh.update()
+	mesh_obj = bpy.data.objects.new("mesh_texture_obj", mesh)
+	mesh_obj.location = bpy.context.scene.cursor_location
+	bpy.context.scene.objects.link(mesh_obj)
+
+
+	# Add shape keys
+	mesh_obj.shape_key_add(name="uv", from_mix=True)
+	mesh_obj.shape_key_add(name="model", from_mix=True)
+	mesh_obj.active_shape_key_index = 1
+
+	# Select
+	bpy.context.scene.objects.active = mesh_obj
+	mesh_obj.select = True
+
+	bpy.ops.object.mode_set(mode='EDIT')
+	bm = bmesh.from_edit_mesh(mesh_obj.data)
+	
+
+	if hasattr(bm.faces, "ensure_lookup_table"): 
+		bm.faces.ensure_lookup_table()
+		bm.verts.ensure_lookup_table()
+
+	bm.edges.new((bm.verts[-4], bm.verts[-3]))
+	bm.edges.new((bm.verts[-3], bm.verts[-2]))
+	bm.edges.new((bm.verts[-2], bm.verts[-1]))
+	bm.edges.new((bm.verts[-1], bm.verts[-4]))
+
+
+	for i in range(len(m_verts_B)):
+		bm.verts[i].co = m_verts_B[i]
+	bpy.ops.object.mode_set(mode='OBJECT')
+
+
+	# Display as edges only
+	mesh_obj.show_wire = True
+	mesh_obj.show_all_edges = True
+	mesh_obj.draw_type = 'WIRE'
+
+	# Add solidify modifier
+	bpy.ops.object.modifier_add(type='SOLIDIFY')
+	bpy.context.object.modifiers["Solidify"].offset = 1
+	bpy.context.object.modifiers["Solidify"].thickness = 0 #uv_size * 0.1
+	bpy.context.object.modifiers["Solidify"].use_even_offset = True
+	bpy.context.object.modifiers["Solidify"].thickness_clamp = 0
+
+	# Add empty cube
+	# bpy.ops.object.empty_add(type='CUBE', location=mesh_obj.location)
+	# cube = bpy.context.object
+	# cube.empty_draw_size = uv_size/2
+	# cube.scale = (1, 1, 0)
+	# cube.parent = mesh_obj
+	# cube.location = (0, 0, 0)
+
+	bpy.ops.object.select_all(action='DESELECT')
+	mesh_obj.select = True
+	bpy.context.scene.objects.active = mesh_obj
+	# mesh_obj.location += Vector((-2.5, 0, 0))
+
+
+
+
+
 def wrap_mesh_texture(self):
 	# Wrap the mesh texture around the 
 	print("Wrap Mesh Texture :)")
@@ -159,164 +353,6 @@ def wrap_mesh_texture(self):
 
 
 
-
-
-
-def create_uv_mesh(self, obj):
-	# Select
-	bpy.ops.object.select_all(action='DESELECT')
-	obj.select = True
-	bpy.context.scene.objects.active = obj
-
-
-	bpy.ops.object.mode_set(mode='EDIT')
-
-	if not obj.data.uv_layers:
-		# Create UV Map
-		print("Create uv map")
-
-
-	bm = bmesh.from_edit_mesh(obj.data)
-	uvLayer = bm.loops.layers.uv.verify()
-
-	# Select all
-	bpy.ops.mesh.select_all(action='SELECT')
-	bpy.ops.uv.select_all(action='SELECT')
-
-	#Collect UV islands
-	islands = utilities_uv.getSelectionIslands(bm, uvLayer)
-
-	# Get object bounds
-	bounds = get_bbox(obj)
-
-	# Map clusters to 
-	uvs = {}
-	clusters = []
-	uv_to_clusters = {}
-	vert_to_clusters = {}
-
-	for face in bm.faces:
-		for i in range(len(face.loops)):
-			v = face.loops[i]
-			uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
-
-			# 	# clusters
-			isMerged = False
-			for cluster in clusters:
-				d = (uv.pos() - cluster.uvs[0].pos()).length
-				if d <= 0.0000001:
-					#Merge
-					cluster.append(uv)
-					uv_to_clusters[uv] = cluster
-					if v not in vert_to_clusters:
-						vert_to_clusters[v] = cluster
-					isMerged = True;
-					break;
-			if not isMerged:
-				#New Group
-				clusters.append( UVCluster(v, [uv]) )
-				uv_to_clusters[uv] = clusters[-1]
-				if v not in vert_to_clusters:
-					vert_to_clusters[v] = clusters[-1]
-	
-
-	print("Islands {}x".format(len(islands)))
-	print("UV Vert Clusters {}x".format(len(clusters)))
-
-	# for key in uv_to_clusters.keys():
-	# 	print("Key {}".format(key))
-
-	uv_size = max(bounds['size'].x, bounds['size'].y, bounds['size'].z)
-
-	m_vert_cluster = []
-	m_verts_org = []
-	m_verts_A = []
-	m_verts_B = []
-	m_faces = []
-	
-	for island in islands:
-		for face in island:
-			f = []
-			for i in range(len(face.loops)):
-				v = face.loops[i].vert
-				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
-				c = uv_to_clusters[ uv ]
-
-				index = 0
-				if c in m_vert_cluster:
-					index = m_vert_cluster.index(c)
-
-				else:
-					index = len(m_vert_cluster)
-					m_vert_cluster.append(c)
-					m_verts_org.append(v)
-
-					m_verts_A.append( Vector((uv.pos().x*uv_size -uv_size/2, uv.pos().y*uv_size -uv_size/2, 0)) )
-					m_verts_B.append( obj.matrix_world * v.co - bpy.context.scene.cursor_location  )
-					
-				f.append(index)
-
-			m_faces.append(f)
-
-
-	bpy.ops.object.mode_set(mode='OBJECT')
-
-	# Create Mesh
-	mesh = bpy.data.meshes.new("mesh_texture")
-	mesh.from_pydata(m_verts_A, [], m_faces)
-	mesh.update()
-	mesh_obj = bpy.data.objects.new("mesh_texture_obj", mesh)
-	mesh_obj.location = bpy.context.scene.cursor_location
-	bpy.context.scene.objects.link(mesh_obj)
-
-
-	# Add shape keys
-	mesh_obj.shape_key_add(name="uv", from_mix=True)
-	mesh_obj.shape_key_add(name="model", from_mix=True)
-	mesh_obj.active_shape_key_index = 1
-
-	# Select
-	bpy.context.scene.objects.active = mesh_obj
-	mesh_obj.select = True
-
-	bpy.ops.object.mode_set(mode='EDIT')
-	bm = bmesh.from_edit_mesh(mesh_obj.data)
-	if hasattr(bm.faces, "ensure_lookup_table"): 
-		bm.faces.ensure_lookup_table()
-		bm.verts.ensure_lookup_table()
-
-	for i in range(len(m_verts_B)):
-		bm.verts[i].co = m_verts_B[i]
-	bpy.ops.object.mode_set(mode='OBJECT')
-
-
-	# Display as edges only
-	mesh_obj.show_wire = True
-	mesh_obj.show_all_edges = True
-	mesh_obj.draw_type = 'WIRE'
-
-	# Add solidify modifier
-	bpy.ops.object.modifier_add(type='SOLIDIFY')
-	bpy.context.object.modifiers["Solidify"].offset = 1
-	bpy.context.object.modifiers["Solidify"].thickness = 0 #uv_size * 0.1
-	bpy.context.object.modifiers["Solidify"].use_even_offset = True
-	bpy.context.object.modifiers["Solidify"].thickness_clamp = 0
-
-	# Add empty cube
-	bpy.ops.object.empty_add(type='CUBE', location=mesh_obj.location)
-	cube = bpy.context.object
-	cube.empty_draw_size = uv_size/2
-	cube.scale = (1, 1, 0)
-	cube.parent = mesh_obj
-	cube.location = (0, 0, 0)
-
-	bpy.ops.object.select_all(action='DESELECT')
-	mesh_obj.select = True
-	bpy.context.scene.objects.active = mesh_obj
-	# mesh_obj.location += Vector((-2.5, 0, 0))
-
-
-
 def Get_UVSet(uvs, bm, layer, index_face, index_loop):
 	index = get_uv_index(index_face, index_loop)
 	if index not in uvs:
@@ -352,7 +388,6 @@ class UVSet:
 
 def get_uv_index(index_face, index_loop):
 	return (index_face*1000000)+index_loop
-	# return str(index_face)+"_"+str( index_loop)
 
 	
 
@@ -378,6 +413,7 @@ def get_bbox(obj):
 		'size':(box_max-box_min),
 		'center':box_min+(box_max-box_min)/2
 	}
+
 
 
 class UVCluster:

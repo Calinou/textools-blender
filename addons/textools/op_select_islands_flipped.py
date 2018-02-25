@@ -71,7 +71,7 @@ def select_flipped(context):
 			if is_flipped:
 				break
 
-			# Using 'Sum of Edges' https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+			# Using 'Sum of Edges' to detect counter clockwise https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
 			sum = 0
 			count = len(face.loops)
 			for i in range(count):
@@ -84,6 +84,7 @@ def select_flipped(context):
 				is_flipped = True
 				break
 
+		# Select Island if flipped
 		if is_flipped:
 			for face in island:
 				for loop in face.loops:

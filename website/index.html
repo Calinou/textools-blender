@@ -22,7 +22,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texturing  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a> which has been very popular with many veteran realtime 3D artists. TexTools consists of 4 areas: <a href="#sizepanel" class="NoButton">Size Panel</a>, <strong><a href="#uvlayout" class="NoButton">UV Layout</a></strong>, <strong><a href="#texturebaking" class="NoButton">Texture Baking</a></strong> and <strong><a href="#colorid" class="NoButton">Color ID</a></strong>. </p><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texturing  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a> which has been very popular with many veteran realtime 3D artists. TexTools consists of 4 areas: <a href="#sizepanel" class="NoButton">Size Panel</a>, <strong><a href="#uvlayout" class="NoButton">UV Layout</a></strong>, <a href="#mesh" class="NoButton">Mesh Panel</a>, <strong><a href="#texturebaking" class="NoButton">Texture Baking</a></strong> and <strong><a href="#colorid" class="NoButton">Color ID</a></strong>. </p><table width="100%" border="0" cellspacing="0" cellpadding="0">
 			
 		</table></p>
 		<div class="Panel">
@@ -176,36 +176,9 @@
                 
 			</div>
 			
-			<div class="Info">
-			<h3>Mesh Tools</h3></div>
-			<div class="Columns2">
-				<div class="Content">
-					<h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing</h2>
-					<p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.</p>
-					<p>&nbsp;</p>
-				</div>
-				<div class="Content">
-					<h2> Mesh Texture<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-					<p>Wraps meshes as textures around 3D models. This tool consists of a 2 step process</p>
-					
-					<table width="100%" border="0" cellspacing="10" cellpadding="0">
-						<tr>
-							<td valign="top"><strong>Create</strong></td>
-							<td valign="top"><p>Create UV mesh from your active object with 2 shape keys: 1 mesh shape that reflects the UV map in 3D space and the 2nd shape reflecting the 3D model.</p>
-							<p> You can transition between the 2 states in the mesh tab in the properties panel.</p></td>
-						</tr>
-						<tbody>
-							<tr>
-								<td valign="top"><strong> Wrap</strong></td>
-								<td valign="top">Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.</td>
-							</tr>
-						</tbody>
-					</table>
-
-				</div>
-			</div>
 			
-			<div class="Info"><h3> Texel Density Tools   </h3>
+			
+		  <div class="Info"><h3> Texel Density Tools   </h3>
 				<p>Texel Densities are used to apply the same size of pixels in 3D (texel) to the surface of your objects or selected faces. This	is	common	for environment game assets or VR assets where texels require a consistent look.</p>
 			</div>
 			<div class="Columns2">
@@ -268,7 +241,35 @@
 				</div>
 			</div>
 		</div>
-		<a class="NoButton" id="texturebaking"></a>
+		<a name="mesh" class="NoButton" id="texturebaking"></a>
+		<h1>Mesh Panel</h1>
+		<p>Tools that modify the mesh instead of the UVs.</p>
+		<div class="Panel">
+		  <div class="Columns2">
+		    <div class="Content">
+		      <h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing</h2>
+		      <p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.	        </p>
+		    </div>
+		    <div class="Content">
+		      <h2> Mesh Texture<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		      <p>Wraps meshes as textures around 3D models. This tool consists of a 2 step process</p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><strong>Create</strong></td>
+		          <td valign="top"><p>Create UV mesh from your active object with 2 shape keys: 1 mesh shape that reflects the UV map in 3D space and the 2nd shape reflecting the 3D model.</p>
+		            <p> You can transition between the 2 states in the mesh tab in the properties panel.</p></td>
+	            </tr>
+		        <tbody>
+		          <tr>
+		            <td valign="top"><strong> Wrap</strong></td>
+		            <td valign="top">Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.</td>
+	              </tr>
+	            </tbody>
+	          </table>
+	        </div>
+	      </div>
+		  
+		  </div>
 		<h1>Texture Baking Panel</h1>
 		<p>To bake textures in TexTools just select your objects and press Bake. High  low poly and cageobject pairs are detected via object names. You can bake just with a <strong>single </strong>objects,  <strong>high</strong> <strong>poly </strong>to <strong>low poly</strong> or in addition that with a custom <strong>cage</strong> object. </p>
 		<div class="Panel">

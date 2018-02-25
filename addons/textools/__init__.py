@@ -457,11 +457,12 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	color_ID_templates = bpy.props.EnumProperty(items= 
 		[	
 			('3d3d3d,7f7f7f,b8b8b8,ffffff', '4 Gray', '...'), 
-			('143240,209d8c,fed761,ffab56,fb6941', '5 Sunset', '...'), 
+			('003153,345d4b,688a42,9db63a,d1e231', '5 Greens', '...'),
 			('ff0000,0000ff,00ff00,ffff00,00ffff', '5 Code', '...'),
 			('3a4342,2e302f,242325,d5cc9e,d6412b', '5 Sea Wolf', '...'),
 			('7f87a0,2d3449,000000,ffffff,f99c21', '5 Mustang', '...'),
-			('003153,345d4b,688a42,9db63a,d1e231', '5 Greens', '...'),
+			('143240,209d8c,fed761,ffab56,fb6941', '5 Sunset', '...'), 
+			('0087ed,23ca7a,eceb1d,e37a29,da1c2c', '5 Heat', '...'), 
 			('9e00af,7026b9,4f44b5,478bf4,39b7d5,229587,47b151,9dcf46,f7f235,f7b824,f95f1e,c5513c,78574a,4d4b4b,9d9d9d', '15 Rainbow', '...')
 		], 
 		description="Color template",

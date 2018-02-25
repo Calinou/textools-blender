@@ -10,9 +10,9 @@ import imp
 imp.reload(utilities_uv)
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_select_islands_overlap"
-	bl_label = "Select outline"
-	bl_description = "Select all overlapping UV islands"
+	bl_idname = "uv.textools_select_islands_flipped"
+	bl_label = "Select Flipped"
+	bl_description = "Select all flipped UV islands"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -44,58 +44,50 @@ class op(bpy.types.Operator):
 
 	def execute(self, context):
 		
-		selectOverlap(context)
+		select_flipped(context)
 		return {'FINISHED'}
 
 
 
-def selectOverlap(context):
-	print("Execute op_select_islands_overlap")
-
-	# https://developer.blender.org/D2865
-
+def select_flipped(context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
 	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 	bpy.ops.uv.select_all(action='SELECT')
 
-	islands_all = utilities_uv.getSelectionIslands()
-	# count = len(islands_all)
-
-	islands_bounds = []
-	for island in islands_all:
-		islands_bounds.append( Island_bounds( island ) )
+	islands = utilities_uv.getSelectionIslands()
 	
 
-	groups = []
-	unmatched = islands_bounds.copy()
-
-	for islandA in islands_bounds:
-		if islandA in unmatched:
-
-			group = [islandA]
-			for islandB in unmatched:
-				if islandA != islandB and islandA.isEqual(islandB):
-					group.append(islandB)
-
-			for item in group:
-				unmatched.remove(item)
-
-			groups.append(group)
-
-			print("Group: {} islands, unmatched: {}x".format(len(group), len(unmatched)))
-		# groups.append(  )
-
-
+	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
+	bpy.context.scene.tool_settings.use_uv_select_sync = False
 	bpy.ops.uv.select_all(action='DESELECT')
-	for group in groups:
-		if len(group) > 1:
-			for i in range(1, len(group)):
-				utilities_uv.setSelectedFaces( group[i].faces )
 
 
-	print("Groups: "+str(len(groups)))
+	for island in islands:
+
+		is_flipped = False
+		for face in island:
+			if is_flipped:
+				break
+
+			# Using 'Sum of Edges' https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+			sum = 0
+			count = len(face.loops)
+			for i in range(count):
+				uv_A = face.loops[i][uvLayer].uv
+				uv_B = face.loops[(i+1)%count][uvLayer].uv
+				sum += (uv_B.x - uv_A.x) * (uv_B.y + uv_A.y)
+
+			if sum > 0:
+				# Flipped
+				is_flipped = True
+				break
+
+		if is_flipped:
+			for face in island:
+				for loop in face.loops:
+					loop[uvLayer].select = True
 
 
 

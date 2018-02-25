@@ -169,7 +169,7 @@ def get_bake_name_base(obj):
 		return name
 
 	# Reference parent as base name
-	if obj.parent:
+	if obj.parent and obj.parent in bpy.context.selected_objects:
 		return remove_digits(obj.parent.name).lower()
 
 	# Reference group name as base name

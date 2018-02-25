@@ -44,6 +44,7 @@ if "bpy" in locals():
 	imp.reload(op_select_islands_identical)
 	imp.reload(op_select_islands_outline)
 	imp.reload(op_select_islands_overlap)
+	imp.reload(op_select_islands_flipped)
 	imp.reload(op_smoothing_uv_islands)
 	imp.reload(op_mesh_texture)
 	imp.reload(op_texel_checker_map)
@@ -90,6 +91,7 @@ else:
 	from . import op_select_islands_identical
 	from . import op_select_islands_outline
 	from . import op_select_islands_overlap
+	from . import op_select_islands_flipped
 	from . import op_smoothing_uv_islands
 	from . import op_mesh_texture
 	from . import op_texel_checker_map
@@ -669,7 +671,9 @@ class Panel_Layout(bpy.types.Panel):
 		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("op_select_islands_identical"))
 		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("op_select_islands_overlap"))
 		# aligned = box.row(align=True)
-		col.operator(op_select_islands_outline.op.bl_idname, text="Island Bounds", icon_value = icon_get("op_select_islands_outline"))
+		row = col.row(align=True)
+		row.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
+		row.operator(op_select_islands_flipped.op.bl_idname, text="Flipped")
 		
 
 		#---------- Texel ------------
@@ -720,10 +724,8 @@ class Panel_Mesh(bpy.types.Panel):
 		box = layout.box()
 		col = box.column()
 		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
-		
-		box = layout.box()
-		col = box.column()
-		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture", icon='GROUP_UVS')
+		col.separator()
+		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture")
 		
 		message = ""
 		icon = "NONE"

@@ -38,49 +38,51 @@ groups = {
 def test_op_uv_crop():
 	print("Testing")
 
-tests_size.append( TT_Test('size_dropdown', call=test_op_uv_crop))
-tests_size.append( TT_Test('op_uv_size_get', call=test_op_uv_crop))
-tests_size.append( TT_Test('op_uv_crop', call=test_op_uv_crop))
-tests_size.append( TT_Test('op_uv_resize', call=test_op_uv_crop))
-tests_size.append( TT_Test('op_texture_reload_all', call=test_op_uv_crop))
-tests_size.append( TT_Test('uv_channel', call=test_op_uv_crop))
-tests_size.append( TT_Test('op_uv_channel_add', call=test_op_uv_crop))
-tests_size.append( TT_Test('op_uv_channel_swap', call=test_op_uv_crop))
+tests_size.append( TT_Test('size_dropdown', call=None))
+tests_size.append( TT_Test('op_uv_size_get', call=None))
+tests_size.append( TT_Test('op_uv_crop', call=None))
+tests_size.append( TT_Test('op_uv_resize', call=None))
+tests_size.append( TT_Test('op_texture_reload_all', call=None))
+tests_size.append( TT_Test('uv_channel', call=None))
+tests_size.append( TT_Test('op_uv_channel_add', call=None))
+tests_size.append( TT_Test('op_uv_channel_swap', call=None))
 
-tests_layout.append( TT_Test('op_island_align_edge', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_rectify', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_island_rotate_90', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_align', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_island_align_sort', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_unwrap_faces_iron', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_unwrap_peel_edge', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_select_islands_identical', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_select_islands_overlap', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_select_islands_outline', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_select_islands_flipped', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_textools_texel_checker_map', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_texel_density_get', call=test_op_uv_crop))
-tests_layout.append( TT_Test('op_texel_density_set', call=test_op_uv_crop))
+tests_layout.append( TT_Test('op_island_align_edge', call=None))
+tests_layout.append( TT_Test('op_rectify', call=None))
+tests_layout.append( TT_Test('op_island_rotate_90', call=None))
+tests_layout.append( TT_Test('op_align', call=None))
+tests_layout.append( TT_Test('op_island_align_sort', call=None))
+tests_layout.append( TT_Test('op_unwrap_faces_iron', call=None))
+tests_layout.append( TT_Test('op_unwrap_peel_edge', call=None))
+tests_layout.append( TT_Test('op_select_islands_identical', call=None))
+tests_layout.append( TT_Test('op_select_islands_overlap', call=None))
+tests_layout.append( TT_Test('op_select_islands_outline', call=None))
+tests_layout.append( TT_Test('op_select_islands_flipped', call=None))
+tests_layout.append( TT_Test('op_textools_texel_checker_map', call=None))
+tests_layout.append( TT_Test('op_texel_density_get', call=None))
+tests_layout.append( TT_Test('op_texel_density_set', call=None))
 
-tests_baking.append( TT_Test('op_bake mode:ao', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:cavity', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:curvature', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:diffuse', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:displacment', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:dust', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:id_element', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:id_material', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:normal_object', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:normal_tangent', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:position', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake mode:selection', call=test_op_uv_crop))
+tests_baking.append( TT_Test('op_bake mode: ao', call=None))
+tests_baking.append( TT_Test('op_bake mode: cavity', call=None))
+tests_baking.append( TT_Test('op_bake mode: curvature', call=None))
+tests_baking.append( TT_Test('op_bake mode: diffuse', call=None))
+tests_baking.append( TT_Test('op_bake mode: displacment', call=None))
+tests_baking.append( TT_Test('op_bake mode: dust', call=None))
+tests_baking.append( TT_Test('op_bake mode: id_element', call=None))
+tests_baking.append( TT_Test('op_bake mode: id_material', call=None))
+tests_baking.append( TT_Test('op_bake mode: normal_object', call=None))
+tests_baking.append( TT_Test('op_bake mode: normal_tangent', call=None))
+tests_baking.append( TT_Test('op_bake mode: position', call=None))
+tests_baking.append( TT_Test('op_bake mode: selection', call=None))
+tests_baking.append( TT_Test('bake_sampling', call=None))
+tests_baking.append( TT_Test('bake_force_single', call=None))
+tests_baking.append( TT_Test('bake_force_single', call=None))
+tests_baking.append( TT_Test('op_select_bake_type', call=None))
+tests_baking.append( TT_Test('op_bake_organize_names', call=None))
+tests_baking.append( TT_Test('op_bake_explode', call=None))
 
-tests_baking.append( TT_Test('bake_sampling', call=test_op_uv_crop))
-tests_baking.append( TT_Test('bake_force_single', call=test_op_uv_crop))
-tests_baking.append( TT_Test('bake_force_single', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_select_bake_type', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake_organize_names', call=test_op_uv_crop))
-tests_baking.append( TT_Test('op_bake_explode', call=test_op_uv_crop))
+tests_mesh.append( TT_Test('op_smoothing_uv_islands', call=None))
+tests_mesh.append( TT_Test('op_mesh_texture', call=None))
 
 
 
@@ -123,19 +125,28 @@ class texTools_panel_testing(bpy.types.Panel):
 		layout.separator()
 
 		for key in groups:
+
+
+
 			row = layout.row(align=True)
 			row.label(text="{} {}x".format(key[2:], len(groups[key])))
 			row.operator(op_run_all.bl_idname, text="Run {}x".format(len(groups[key])), icon='PLAY')
-			box = layout.box()
 			
-			col = box.column(align=True)
-			for test in groups[key]:
-				row = col.row(align=True)
-				
-				# row.separator()
-				row.operator(op_run.bl_idname, text="", icon='RADIO')
-				row.label(test.name)
+			
+			
+			if len(groups[key]) > 0:
+				box = layout.box()
+				col = box.column(align=True)
+				for test in groups[key]:
+					row = col.row(align=True)
+					
+					# row.separator()
+					row.operator(op_run.bl_idname, text="", icon='PLAY')
 
+					row.label(test.name)
+					row.operator(op_run.bl_idname, text="", icon='BLENDER')
+					row.operator(op_run.bl_idname, text="", icon='FILE_TEXT')
+				layout.separator()
 
 
 		

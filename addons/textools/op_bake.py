@@ -24,7 +24,8 @@ modes={
 	'displacment':		ub.BakeMode('',					type='DISPLACEMENT', engine='BLENDER_RENDER'),
 	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
 	'position':			ub.BakeMode('bake_position',	type='EMIT'),
-	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature")
+	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature"),
+	'wireframe':		ub.BakeMode('bake_wireframe',	type='EMIT')
 }
 
 

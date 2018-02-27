@@ -2,9 +2,9 @@ bl_info = {
  "name": "TexTools Unit Testing",
  "description": "Automated testing for TexTools tools",
  "author": "renderhjs",
- "blender": (2, 7, 5),
+ "blender": (2, 7, 9),
  "version": (1, 0, 0),
- "category": "Testing",
+ "category": "UV",
  "location": "Viewport > Tool shelf"
 }
 
@@ -145,9 +145,9 @@ class texTools_panel_testing(bpy.types.Panel):
 
 	bl_idname = "textools_testing"
 	bl_label = "TexTools Testing"
-	bl_space_type = 'VIEW_3D'
+	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = 'TOOLS'
-	bl_context = "objectmode"
+	# bl_context = "objectmode"
 	bl_options = {'DEFAULT_CLOSED'}
 
 	def draw(self, context):

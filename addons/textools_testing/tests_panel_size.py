@@ -35,4 +35,10 @@ def test_op_uv_crop():
 	bpy.ops.uv.textools_uv_crop(override)
 	return True
 tests.append( utilities.Op_Test('op_uv_crop', python='op_uv_crop', blend="", test=test_op_uv_crop))
+tests.append( utilities.Op_Test('op_uv_resize', python='op_uv_resize', blend=""))
+tests.append( utilities.Op_Test('op_texture_reload_all', python='op_texture_reload_all', blend=""))
+tests.append( utilities.Op_Test('uv_channel', python='uv_channel', blend=""))
+tests.append( utilities.Op_Test('op_uv_channel_add', python='op_uv_channel_add', blend=""))
+tests.append( utilities.Op_Test('op_uv_channel_swap', python='op_uv_channel_swap', blend=""))
+tests.append( utilities.Op_Test('size_dropdown', python='', blend=""))
 

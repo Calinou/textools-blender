@@ -227,13 +227,14 @@ def get_object_type(obj):
 			if key == string:
 				return 'float'
 
-	# Detect by modifiers
-	if obj.modifiers:
-		for modifier in obj.modifiers:
-			if modifier.type == 'SUBSURF' and modifier.render_levels > 0:
-				return 'high'
-			elif modifier.type == 'BEVEL':
-				return 'high'
+	# Detect by modifiers (Only if more than 1 object selected)
+	if len(bpy.context.selected_objects) > 1:
+		if obj.modifiers:
+			for modifier in obj.modifiers:
+				if modifier.type == 'SUBSURF' and modifier.render_levels > 0:
+					return 'high'
+				elif modifier.type == 'BEVEL':
+					return 'high'
 
 
 	# Detect High first, more rare

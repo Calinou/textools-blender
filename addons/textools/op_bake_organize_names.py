@@ -97,18 +97,12 @@ def sort_objects(self):
 	for obj_A in pairs_low_high:
 		obj_B = pairs_low_high[obj_A]
 
-		obj_B.name = get_name_high(obj_A.name)
+		obj_B.name = utilities_bake.get_bake_name(obj_A)+" high"
 
 		obj_A.select = True
 		obj_B.select = True
 
 	print("Matched {}x".format(len(pairs_low_high)))
-
-
-
-def get_name_high(name_low):
-	name_safe = utilities_bake.get_bake_name(name_low)
-	return name_safe+" high"
 
 
 

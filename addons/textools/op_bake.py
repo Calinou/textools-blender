@@ -25,7 +25,7 @@ modes={
 	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
 	'position':			ub.BakeMode('bake_position',	type='EMIT'),
 	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature"),
-	'wireframe':		ub.BakeMode('bake_wireframe',	type='EMIT')
+	'wireframe':		ub.BakeMode('bake_wireframe',	type='EMIT', params=["bake_wireframe_size"])
 }
 
 

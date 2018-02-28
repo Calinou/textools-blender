@@ -32,6 +32,7 @@ if "bpy" in locals():
 	imp.reload(op_color_convert_vertex_colors)
 	imp.reload(op_color_from_elements)
 	imp.reload(op_color_from_materials)
+	imp.reload(op_color_from_directions)
 	imp.reload(op_color_io_export)
 	imp.reload(op_color_io_import)
 	imp.reload(op_color_select)
@@ -79,6 +80,7 @@ else:
 	from . import op_color_convert_vertex_colors
 	from . import op_color_from_elements
 	from . import op_color_from_materials
+	from . import op_color_from_directions
 	from . import op_color_io_export
 	from . import op_color_io_import
 	from . import op_color_select
@@ -381,6 +383,13 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	bake_curvature_size = bpy.props.IntProperty(
 		name = "Curvature",
 		description = "Curvature offset in pixels to process",
+		default = 1,
+		min = 1,
+		max = 64
+	)
+	bake_wireframe_size = bpy.props.IntProperty(
+		name = "Thickness",
+		description = "Wireframe Thickness in pixels",
 		default = 1,
 		min = 1,
 		max = 64
@@ -959,6 +968,7 @@ class op_color_dropdown_convert_from(bpy.types.Menu):
 		layout = self.layout
 		layout.operator(op_color_from_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_from_elements'))
 		layout.operator(op_color_from_materials.op.bl_idname, text="Materials", icon_value = icon_get('op_color_from_materials'))
+		layout.operator(op_color_from_directions.op.bl_idname, text="Directions", icon = 'SNAP_NORMAL')
 
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)

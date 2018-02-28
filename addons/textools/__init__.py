@@ -980,7 +980,7 @@ class op_color_dropdown_convert_from(bpy.types.Menu):
 
 class op_color_dropdown_convert_to(bpy.types.Menu):
 	bl_idname = "ui.textools_color_dropdown_convert_to"
-	bl_label = "Convert"
+	bl_label = "To"
 	bl_description = "Convert Color IDs into ..."
 
 	def draw(self, context):
@@ -1075,9 +1075,11 @@ class Panel_Colors(bpy.types.Panel):
 		
 
 		
-		col = box.row(align=True)
-		col.menu(op_color_dropdown_convert_from.bl_idname)#, icon='IMPORT'
-		col.menu(op_color_dropdown_convert_to.bl_idname,)# icon='EXPORT'
+		col = box.column(align=True)
+		col.label(text="Convert")
+		row = col.row(align=True)
+		row.menu(op_color_dropdown_convert_from.bl_idname)#, icon='IMPORT'
+		row.menu(op_color_dropdown_convert_to.bl_idname,)# icon='EXPORT'
 		
 
 

@@ -36,8 +36,10 @@
 					<ul>
 					  <li>Select flipped UV islands				</li>
 					  <li>Bake Displacement map</li>
+					  <li>Bake Wireframe map</li>
 					  <li>Mesh Texture</li>
-		          </ul>
+					  <li>Color ID from face directions</li>
+	              </ul>
 				</div>
 				<div class="Content">
 					<h2>Requirements</h2>
@@ -336,7 +338,21 @@
 					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
 				</div>
 				<div class="Content">
-					<h2>Face Selection</h2>
+				  <h2>Wireframe<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
+				  <p>Bakes a black and white wireframe<strong> mask</strong>.</p>
+				  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+				    <tr>
+				      <td valign="top"><strong>Thickness</strong></td>
+				      <td width="16" valign="top"><p>&nbsp;</p></td>
+				      <td valign="top">The thickness of the wireframe in pixels.<em><strong></strong></em></td>
+			        </tr>
+				    <tbody>
+			        </tbody>
+			      </table>
+		      </div>
+				<div class="Content">
+				  <h2>Face Selection</h2>
 					<p><img src="images/bake_selection.png" width="128" height="128" alt=""/></p>
 					<p>Bakes a black and white <strong>mask</strong> of the the face selection of the object. This can be useful to generate quick masks for working with textures.</p>
 				</div>
@@ -549,7 +565,7 @@
 					
 				</div>
 				<div class="Info">
-					<h3>Create <strong>From</strong></h3>
+					<h3>Convert <strong>From</strong></h3>
 				</div>
 				
 				<div class="Columns2">
@@ -562,12 +578,32 @@
 						<h2> <img src="images/op_color_from_materials.png" width="32" height="32" alt=""/> Materials</h2>
 						<p>Assigns a color ID to each material slot and assigned faces.</p>
 					</div>
+                    <div class="Content">
+						<h2>  Directions<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<p>Assigns a color ID to face within 3, 4 or 6 face directions.</p>
+						<table width="100%" border="0" cellspacing="10" cellpadding="0">
+						  <tr>
+						    <td valign="top"><p><strong> 3</strong> <strong>Directions</strong></p></td>
+						    <td valign="top"><p>Assigns 3 colors of: Top, all Sides, Bottom</p></td>
+					      </tr>
+						  <tr>
+						    <td width="164" valign="top"><strong> 4 Directions</strong></td>
+						    <td width="700" valign="top">Assigns 4 colors of: Top, Left &amp; Right, Front &amp; Back, Bottom</td>
+					      </tr>
+						  <tbody>
+						    <tr>
+						      <td valign="top"><strong> 6  Directions</strong></td>
+						      <td valign="top">Assigns all 6 colors of 6 directions</td>
+					        </tr>
+					      </tbody>
+					  </table>
+			      </div>
 				</div>
 				
 				
 				
 				<div class="Info">
-					<h3><strong>Convert</strong> to</h3>
+					<h3>Convert <strong>To</strong></h3>
 				</div>
 				
 				<div class="Columns2">

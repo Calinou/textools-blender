@@ -131,16 +131,16 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 			# Low poly bake: Assign material to lowpoly
 			for obj in set.objects_low:
 				assign_vertex_color(mode, obj)
-				assign_material(obj, material_loaded, material_empty)
+				assign_material(mode, obj, material_loaded, material_empty)
 		else:
 			# High to low poly: Low poly require empty material to bake into image
 			for obj in set.objects_low:
-				assign_material(obj, None, material_empty)
+				assign_material(mode, obj, None, material_empty)
 
 			# Assign material to highpoly
 			for obj in (set.objects_high+set.objects_float):
 				assign_vertex_color(mode, obj)
-				assign_material(obj, material_loaded)
+				assign_material(mode, obj, material_loaded)
 
 
 		# Setup Image
@@ -388,7 +388,7 @@ def assign_vertex_color(mode, obj):
 
 
 
-def assign_material(obj, material_bake=None, material_empty=None):
+def assign_material(mode, obj, material_bake=None, material_empty=None):
 	ub.store_materials(obj)
 
 	bpy.context.scene.objects.active = obj
@@ -420,26 +420,14 @@ def assign_material(obj, material_bake=None, material_empty=None):
 			obj.active_material_index = 0
 			bpy.ops.object.material_slot_assign()
 
-
+	if material_bake:
+		# Setup properties of bake materials
+		if mode == 'wireframe':
+			print("connect wireframe setting to material   bake_wireframe_size")
 	bpy.ops.object.mode_set(mode='OBJECT')
 
 			
 
-	'''
-	material
-
-	# Assign to first material slot
-	if len(obj.material_slots) == 0:
-		obj.data.materials.append(material_bake if material_bake not None else material_empty)
-	else:
-		obj.material_slots[0].material = material
-	return
-
-	# if len(obj.data.materials) == 0:
-	for material in preferred_materials:
-		if material:
-			# store a backup	
-	'''
 			
 
 

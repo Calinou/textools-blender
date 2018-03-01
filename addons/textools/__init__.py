@@ -387,7 +387,7 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 1,
 		max = 64
 	)
-	bake_wireframe_size = bpy.props.IntProperty(
+	bake_wireframe_size = bpy.props.FloatProperty(
 		name = "Thickness",
 		description = "Wireframe Thickness in pixels",
 		default = 1,

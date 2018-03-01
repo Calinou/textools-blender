@@ -683,7 +683,7 @@ class Panel_Layout(bpy.types.Panel):
 		# aligned = box.row(align=True)
 		row = col.row(align=True)
 		row.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
-		row.operator(op_select_islands_flipped.op.bl_idname, text="Flipped")
+		row.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
 		
 
 		#---------- Texel ------------
@@ -968,7 +968,7 @@ class op_color_dropdown_convert_from(bpy.types.Menu):
 		layout = self.layout
 		layout.operator(op_color_from_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_from_elements'))
 		layout.operator(op_color_from_materials.op.bl_idname, text="Materials", icon_value = icon_get('op_color_from_materials'))
-		layout.operator(op_color_from_directions.op.bl_idname, text="Directions", icon = 'SNAP_NORMAL')
+		layout.operator(op_color_from_directions.op.bl_idname, text="Directions", icon_value = icon_get('op_color_from_directions'))
 
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
@@ -1138,6 +1138,7 @@ def register():
 		"op_bake.png", 
 		"op_bake_explode.png", 
 		"op_color_convert_texture.png", 
+		"op_color_from_directions.png", 
 		"op_color_from_elements.png", 
 		"op_color_from_materials.png", 
 		"op_extend_canvas_open.png",
@@ -1152,6 +1153,7 @@ def register():
 		"op_select_islands_identical.png", 
 		"op_select_islands_outline.png", 
 		"op_select_islands_overlap.png", 
+		"op_select_islands_flipped.png", 
 		"op_smoothing_uv_islands.png", 
 		"op_texel_checker_map.png", 
 		"op_texture_reload_all.png",

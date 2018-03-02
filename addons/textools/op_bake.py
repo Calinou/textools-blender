@@ -109,7 +109,7 @@ def bake(self, mode, size, bake_single, sampling_scale, samples, ray_distance):
 
 		# Check for UV maps
 		for obj in set.objects_low:
-			if len(obj.data.uv_layers) == 0:
+			if not obj.data.uv_layers or len(obj.data.uv_layers) == 0:
 				self.report({'ERROR_INVALID_INPUT'}, "No UV map available for '{}'".format(obj.name))
 				return
 

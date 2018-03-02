@@ -300,6 +300,10 @@ def on_dropdown_uv_channel(self, context):
 				index = int(bpy.context.scene.texToolsSettings.uv_channel)
 				if index < len(bpy.context.object.data.uv_textures):
 					bpy.context.object.data.uv_textures.active_index = index
+					# print("TYPE {}".format(bpy.context.object.data.uv_layers[index]))
+				
+					bpy.context.object.data.uv_textures[index].active_render = True
+
 
 
 

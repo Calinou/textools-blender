@@ -339,7 +339,7 @@
 				</div>
 				<div class="Content">
 				  <h2>Wireframe<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
+				  <p><img src="images/bake_wireframe.png" width="128" height="128" alt=""/></p>
 				  <p>Bakes a black and white wireframe<strong> mask</strong>.</p>
 				  <table width="100%" border="0" cellspacing="0" cellpadding="0">
 				    <tr>
@@ -372,23 +372,37 @@
 					<p>Bakes a map with unique colors within the bounds of the object.</p>
 				</div>
 				<div class="Content">
-					<h2>AO</h2>
+					<h2>AO<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 					<p><img src="images/bake_ao.png" width="128" height="128" alt=""/></p>
-					<p>Bakes an Ambient Occlusion map with the <strong>Blender render</strong> and <strong>normalized</strong> enabled.</p>
-					<p>Rendering in the Blender Render with normalized enabled gives <a href="http://polycount.com/discussion/comment/2613136/#Comment_2613136" class="NoButton">better results</a> compared to Cycles.					</p>
+					<p>Bakes an Ambient Occlusion map with the <strong>Cycles Render</strong> and <strong>normalized</strong> enabled.					</p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td valign="top"><strong>Samples</strong></td>
 							<td width="16" valign="top"><p>&nbsp;</p></td>
-							<td valign="top">The amount of global illunination samples. The higher the better the result but the more time it takes to render.<em><strong></strong></em></td>
+							<td valign="top">The amount of global illunination samples. <em><strong></strong></em></td>
 						</tr>
 						<tbody>
 						</tbody>
 					</table>
-					<p><strong>Note: </strong>Uses Blender Render and does not support cages.</p>
 				</div>
+				<div class="Content">
+				  <h2>AO Legacy</h2>
+				  <p><img src="images/bake_ao_legacy.png" width="128" height="128" alt=""/></p>
+				  <p>Bakes an Ambient Occlusion map with the <strong>Blender Render</strong> and <strong>normalized</strong> enabled.</p>
+				  <p>Rendering in the Blender Render with normalized enabled gives <a href="http://polycount.com/discussion/comment/2613136/#Comment_2613136" class="NoButton">better results</a> compared to Cycles. </p>
+				  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+				    <tr>
+				      <td valign="top"><strong>Samples</strong></td>
+				      <td width="16" valign="top"><p>&nbsp;</p></td>
+				      <td valign="top">The amount of global illunination samples. <em><strong></strong></em></td>
+			        </tr>
+				    <tbody>
+			        </tbody>
+			      </table>
+				  <p><strong>Note: </strong>Uses Blender Render and does not support cages.</p>
+			  </div>
               <div class="Content">
-					<h2>Curvature</h2>
+				<h2>Curvature</h2>
 					<p><img src="images/bake_curvature.png" width="128" height="128" alt=""/></p>
 					<p>Renders a tangent normal map and converts it to a curvature map <a href="https://blender.stackexchange.com/questions/52902/how-to-convert-a-normal-map-into-a-curvature-map-cavity-map" class="NoButton">using compositing</a> nodes.                </p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">

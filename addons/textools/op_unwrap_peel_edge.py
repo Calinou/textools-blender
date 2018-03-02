@@ -26,6 +26,10 @@ class op(bpy.types.Operator):
 		if bpy.context.active_object.mode != 'EDIT':
 			return False
 
+		#Only in UV editor mode
+		if bpy.context.area.type != 'IMAGE_EDITOR':
+			return False
+
 		# Need view Face mode
 		if tuple(bpy.context.scene.tool_settings.mesh_select_mode)[1] == False:
 			return False

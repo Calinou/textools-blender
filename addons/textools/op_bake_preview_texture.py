@@ -94,3 +94,5 @@ def preview_texture(self, context):
 
 			# Enter local view
 			bpy.ops.view3d.localview({'area': view_area})
+
+			bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="Object is in isolated view")

@@ -58,5 +58,9 @@ class op(bpy.types.Operator):
 			# Add new UV channel based on last
 			bpy.ops.mesh.uv_texture_add()
 
+		# Get current index
+		index = len(bpy.context.object.data.uv_layers)-1
+		bpy.context.object.data.uv_layers.active_index = index
+		bpy.context.scene.texToolsSettings.uv_channel = str(index)
 		return {'FINISHED'}
 

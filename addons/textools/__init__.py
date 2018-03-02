@@ -391,8 +391,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		name = "Thickness",
 		description = "Wireframe Thickness in pixels",
 		default = 1,
-		min = 1,
-		max = 64
+		min = 0.1,
+		max = 4.0
 	)
 	bake_ray_distance = bpy.props.FloatProperty(
 		name = "Ray Dist.",

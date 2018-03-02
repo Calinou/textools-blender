@@ -22,10 +22,11 @@ modes={
 	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
 	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
 	'displacment':		ub.BakeMode('',					type='DISPLACEMENT', engine='BLENDER_RENDER'),
-	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
+	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='CYCLES'),
+	'ao_legacy':		ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
 	'position':			ub.BakeMode('bake_position',	type='EMIT'),
 	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature"),
-	'wireframe':		ub.BakeMode('bake_wireframe',	type='EMIT', params=["bake_wireframe_size"])
+	'wireframe':		ub.BakeMode('bake_wireframe',	type='EMIT', 	color=(0, 0, 0, 1), params=["bake_wireframe_size"])
 }
 
 
@@ -423,7 +424,11 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 	if material_bake:
 		# Setup properties of bake materials
 		if mode == 'wireframe':
-			print("connect wireframe setting to material   bake_wireframe_size")
+			print("________connect wireframe setting to material")
+			if "Value" in material_bake.node_tree.nodes:
+				material_bake.node_tree.nodes["Value"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_wireframe_size
+
+
 	bpy.ops.object.mode_set(mode='OBJECT')
 
 			

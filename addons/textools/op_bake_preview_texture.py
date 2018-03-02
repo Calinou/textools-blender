@@ -45,8 +45,19 @@ def preview_texture(self, context):
 	# Collect all low objects from bake sets
 	objects = [obj for s in settings.sets for obj in s.objects_low if obj.data.uv_layers]
 
+	# Get view 3D area
+	view_area = None
+	for area in bpy.context.screen.areas:
+		if area.type == 'VIEW_3D':
+			view_area = area
+
+	# Exit existing local view
+	if view_area and view_area.spaces[0].local_view:
+		bpy.ops.view3d.localview({'area': view_area})
+		return
 
 
+	# Get background image
 	image = None
 	for area in bpy.context.screen.areas:
 		if area.type == 'IMAGE_EDITOR':
@@ -54,14 +65,6 @@ def preview_texture(self, context):
 			break
 
 	if image:
-
-		#Change View mode to TEXTURED
-		for area in bpy.context.screen.areas:
-			if area.type == 'VIEW_3D':
-				for space in area.spaces:
-					if space.type == 'VIEW_3D':
-						space.viewport_shade = 'MATERIAL'
-
 		for obj in objects:
 			print("Map {}".format(obj.name))
 
@@ -70,17 +73,24 @@ def preview_texture(self, context):
 			obj.select = True
 			bpy.context.scene.objects.active = obj
 
-			
-			print("Preview texture")
-
-			print("Assign image {}".format(image.name))
-
 			for i in range(len(obj.material_slots)):
 				bpy.ops.object.material_slot_remove()
-
 
 			#Create material with image
 			bpy.ops.object.material_slot_add()
 			obj.material_slots[0].material = utilities_bake.get_image_material(image)
-			
 			obj.draw_type = 'TEXTURED'
+
+		# Re-Select objects
+		bpy.ops.object.select_all(action='DESELECT')
+		for obj in objects:
+			obj.select = True
+
+		if view_area:	
+			#Change View mode to TEXTURED
+			for space in view_area.spaces:
+				if space.type == 'VIEW_3D':
+					space.viewport_shade = 'MATERIAL'
+
+			# Enter local view
+			bpy.ops.view3d.localview({'area': view_area})

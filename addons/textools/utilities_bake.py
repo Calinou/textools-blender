@@ -492,14 +492,12 @@ def get_image_material(image):
 
 	material = None
 	if image.name in bpy.data.materials:
-		material = bpy.data.materials[image.name]
-
 		# Incorrect existing material, delete first and create new for cycles
-		if bpy.context.scene.render.engine == 'CYCLES' and 'Diffuse BSDF' not in material.node_tree.nodes:
+		material = bpy.data.materials[image.name]
+		if bpy.context.scene.render.engine == 'CYCLES' and (not material.node_tree or 'Diffuse BSDF' not in material.node_tree.nodes):
 			material.user_clear()
 			bpy.data.materials.remove(material)
 			material = bpy.data.materials.new(image.name)
-		
 	else:
 		material = bpy.data.materials.new(image.name)
 
@@ -507,17 +505,20 @@ def get_image_material(image):
 	if bpy.context.scene.render.engine == 'CYCLES':
 		material.use_nodes = True
 
-		tree = material.node_tree
-		node_image = tree.nodes.new("ShaderNodeTexImage")
+		node_image = None
+		if "image" in material.node_tree.nodes:
+			node_image = material.node_tree.nodes["image"]
+		else:
+			node_image = material.node_tree.nodes.new("ShaderNodeTexImage")
 		node_image.name = "image"
 		node_image.select = True
 		node_image.image = image
-		tree.nodes.active = node_image
+		material.node_tree.nodes.active = node_image
 
-		node_diffuse = tree.nodes['Diffuse BSDF']
+		node_diffuse = material.node_tree.nodes['Diffuse BSDF']
 
 		# Make link
-		tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
+		material.node_tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
 
 		return material
 

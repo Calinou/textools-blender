@@ -4,8 +4,9 @@ import operator
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
-
+import math
 from . import utilities_uv
+from . import utilities_texel
 
 
 id_shape_key_mesh = "mesh"
@@ -17,7 +18,7 @@ id_shape_key_uv = "uv"
 def find_uv_mesh(objects):
 	for obj in objects:
 		# Requires mesh & UV channel
-		if obj.type == 'MESH' and not obj.data.uv_layers:
+		if obj.type == 'MESH': # and not obj.data.uv_layers
 			if obj.data.shape_keys and len(obj.data.shape_keys.key_blocks) == 2:
 				if "uv" in obj.data.shape_keys.key_blocks:
 					if "model" in obj.data.shape_keys.key_blocks:
@@ -40,9 +41,6 @@ def get_mode():
 	# Create UV mesh from whole object
 	if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
 		if "MeshDeform" not in bpy.context.active_object.modifiers:
-			# if obj.data.shape_keys and len(obj.data.shape_keys.key_blocks) == 2:
-			# 	if "uv" in obj.data.shape_keys.key_blocks:
-			# 		if "model" in obj.data.shape_keys.key_blocks:
 			return 'CREATE_OBJECT'
 
 	return 'UNDEFINED'
@@ -63,7 +61,6 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-
 		mode = get_mode()
 		if mode == 'CREATE_FACES' or mode == 'CREATE_OBJECT':
 			create_uv_mesh(self, bpy.context.active_object)	
@@ -99,6 +96,7 @@ def create_uv_mesh(self, obj):
 	# Create UV Map
 	if not obj.data.uv_layers:
 		if mode == 'OBJECT':
+			# Smart UV project
 			bpy.ops.uv.smart_project(
 				angle_limit=65, 
 				island_margin=0.5, 
@@ -107,15 +105,16 @@ def create_uv_mesh(self, obj):
 				stretch_to_bounds=True
 			)
 		elif mode == 'EDIT':
+			# Iron Faces
 			bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0)
 			bpy.ops.uv.textools_unwrap_faces_iron()
 
-	bpy.ops.uv.select_all(action='SELECT')
-
+	
 	bm = bmesh.from_edit_mesh(obj.data)
 	uvLayer = bm.loops.layers.uv.verify()
 
 	#Collect UV islands
+	bpy.ops.uv.select_all(action='SELECT')
 	islands = utilities_uv.getSelectionIslands(bm, uvLayer)
 
 	# Get object bounds
@@ -126,8 +125,29 @@ def create_uv_mesh(self, obj):
 	clusters = []
 	uv_to_clusters = {}
 	vert_to_clusters = {}
+
+	face_area_view = 0
+	face_area_uv = 0
+
 	for face in bm.faces:
 		if face.select:
+			# Calculate triangle area for UV and View
+			# Triangle Verts
+			tri_uv = [loop[uvLayer].uv for loop in face.loops ]
+			tri_vt = [vert.co for vert in face.verts]
+
+			#Triangle Areas
+			face_area_view += math.sqrt(utilities_texel.get_area_triangle(
+				tri_vt[0], 
+				tri_vt[1], 
+				tri_vt[2] 
+			))
+			face_area_uv += math.sqrt(utilities_texel.get_area_triangle(
+				tri_uv[0], 
+				tri_uv[1], 
+				tri_uv[2]
+			))
+
 			for i in range(len(face.loops)):
 				v = face.loops[i]
 				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
@@ -151,14 +171,11 @@ def create_uv_mesh(self, obj):
 					if v not in vert_to_clusters:
 						vert_to_clusters[v] = clusters[-1]
 	
+	scale = face_area_view / face_area_uv
 
+	print("Scale {}x   {} | {}".format(scale, face_area_view, face_area_uv))
 	print("Islands {}x".format(len(islands)))
 	print("UV Vert Clusters {}x".format(len(clusters)))
-
-	# for key in uv_to_clusters.keys():
-	# 	print("Key {}".format(key))
-
-	uv_size = max(bounds['size'].x, bounds['size'].y, bounds['size'].z)
 
 	m_vert_cluster = []
 	m_verts_org = []
@@ -183,7 +200,7 @@ def create_uv_mesh(self, obj):
 					m_vert_cluster.append(c)
 					m_verts_org.append(v)
 
-					m_verts_A.append( Vector((uv.pos().x*uv_size -uv_size/2, uv.pos().y*uv_size -uv_size/2, 0)) )
+					m_verts_A.append( Vector((uv.pos().x*scale - scale/2, uv.pos().y*scale -scale/2, 0)) )
 					m_verts_B.append( obj.matrix_world * v.co - bpy.context.scene.cursor_location  )
 					
 				f.append(index)
@@ -191,12 +208,11 @@ def create_uv_mesh(self, obj):
 			m_faces.append(f)
 
 	# Add UV bounds as edges
-	# uv_size/2
 	verts = [
-		Vector((-uv_size/2, -uv_size/2, 0)),
-		Vector(( uv_size/2, -uv_size/2, 0)),
-		Vector(( uv_size/2, uv_size/2, 0)),
-		Vector((-uv_size/2, uv_size/2, 0)),
+		Vector((-scale/2, -scale/2, 0)),
+		Vector(( scale/2, -scale/2, 0)),
+		Vector(( scale/2, scale/2, 0)),
+		Vector((-scale/2, scale/2, 0)),
 	]
 	m_verts_A = m_verts_A+verts;
 	m_verts_B = m_verts_B+verts;
@@ -248,7 +264,7 @@ def create_uv_mesh(self, obj):
 	# Add solidify modifier
 	bpy.ops.object.modifier_add(type='SOLIDIFY')
 	bpy.context.object.modifiers["Solidify"].offset = 1
-	bpy.context.object.modifiers["Solidify"].thickness = 0 #uv_size * 0.1
+	bpy.context.object.modifiers["Solidify"].thickness = 0
 	bpy.context.object.modifiers["Solidify"].use_even_offset = True
 	bpy.context.object.modifiers["Solidify"].thickness_clamp = 0
 

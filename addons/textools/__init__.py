@@ -300,10 +300,7 @@ def on_dropdown_uv_channel(self, context):
 				index = int(bpy.context.scene.texToolsSettings.uv_channel)
 				if index < len(bpy.context.object.data.uv_textures):
 					bpy.context.object.data.uv_textures.active_index = index
-					# print("TYPE {}".format(bpy.context.object.data.uv_layers[index]))
-				
 					bpy.context.object.data.uv_textures[index].active_render = True
-
 
 
 
@@ -739,7 +736,7 @@ class Panel_Mesh(bpy.types.Panel):
 		col = box.column()
 		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
 		col.separator()
-		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture")
+		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture", icon_value = icon_get("op_mesh_texture"))
 		
 		message = ""
 		icon = "NONE"
@@ -1136,6 +1133,7 @@ def register():
 		"bake_obj_high.png", 
 		"bake_obj_low.png", 
 		"op_align_bottom.png", 
+		"op_mesh_texture.png", 
 		"op_align_left.png", 
 		"op_align_right.png", 
 		"op_align_top.png", 

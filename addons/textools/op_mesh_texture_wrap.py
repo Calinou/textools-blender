@@ -26,7 +26,6 @@ class op(bpy.types.Operator):
 
 		return False
 
-
 	def execute(self, context):
 		wrap_mesh_texture(self)
 		return {'FINISHED'}
@@ -55,14 +54,16 @@ def wrap_mesh_texture(self):
 		return
 
 	print("Wrap {} texture meshes".format(len(obj_textures)))
-
-	obj_uv.data.shape_keys.key_blocks["model"].value = 0
+	if obj_uv.data.shape_keys.key_blocks["model"].value > 0:
+		# Undo wrapping
+		obj_uv.data.shape_keys.key_blocks["model"].value = 0
+		return
 	
+	# Clear first shape transition
+	obj_uv.data.shape_keys.key_blocks["model"].value = 0
 
-
-
-	min_z = 0
-	max_z = 0
+	min_z = obj_uv.location.z
+	max_z = obj_uv.location.z
 	for i in range(len(obj_textures)):
 		obj = obj_textures[i]
 		
@@ -74,7 +75,7 @@ def wrap_mesh_texture(self):
 			min_z = min(min_z, get_bbox(obj)['min'].z)
 			max_z = max(max_z, get_bbox(obj)['max'].z)
 
-		# Check existing modifiers
+		# Removeexistingmesh form modifiers
 		for modifier in obj.modifiers:
 			print("M {}".format(modifier.type))
 			if modifier.type == 'MESH_DEFORM':
@@ -82,7 +83,11 @@ def wrap_mesh_texture(self):
 				break
 		
 	# Set thickness
-	obj_uv.modifiers["Solidify"].thickness = (max_z - min_z)*1.1
+	obj_uv.modifiers["Solidify"].thickness = (max_z - min_z) * 1.0
+
+	# Set offset
+	p_z = (obj_uv.location.z - min_z) / (max_z - min_z)
+	obj_uv.modifiers["Solidify"].offset = -(p_z-0.5)/0.5
 
 	for obj in obj_textures:
 		use_dynamic_bind = len(obj.modifiers) > 1

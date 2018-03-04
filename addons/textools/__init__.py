@@ -205,7 +205,6 @@ class op_disable_uv_sync(bpy.types.Operator):
 	def execute(self, context):
 		bpy.context.scene.tool_settings.use_uv_select_sync = False
 		bpy.ops.mesh.select_all(action='SELECT')
-
 		return {'FINISHED'}
 
 
@@ -622,7 +621,6 @@ class Panel_Layout(bpy.types.Panel):
 		col = box.column(align=True)
 
 		if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT' and bpy.context.scene.tool_settings.use_uv_select_sync:
-			
 			row = col.row(align=True)
 			row.alert = True
 			row.operator(op_disable_uv_sync.bl_idname, text="Disable sync", icon='CANCEL')#, icon='UV_SYNC_SELECT'
@@ -736,12 +734,12 @@ class Panel_Mesh(bpy.types.Panel):
 		box = layout.box()
 		col = box.column()
 		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
-		col.separator()
 
-		col.label(text = "Mesh Texture")
-		row = col.row(align=True)
-		row.operator(op_mesh_texture_create.op.bl_idname, text="Create", icon_value = icon_get("op_mesh_texture"))
-		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
+		layout.label(text = "Mesh Texture")
+		box = layout.box()
+		col = box.column(align=True)
+		col.operator(op_mesh_texture_create.op.bl_idname, text="Create", icon_value = icon_get("op_mesh_texture"))
+		col.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
 
 
 
@@ -780,14 +778,10 @@ class Panel_Bake(bpy.types.Panel):
 		
 		row = col.row(align=True)
 		row.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
-		
-		
 
+		# anti aliasing
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
-
-
-
 		# Force Single
 		row = col.row(align=True)
 		row.active = len(settings.sets) > 0
@@ -803,9 +797,6 @@ class Panel_Bake(bpy.types.Panel):
 			row.alert = True
 			row.prop(context.scene.texToolsSettings, "bake_force_single", text="Dither Floats")
 
-
-
-
 		col.separator()
 
 
@@ -819,6 +810,13 @@ class Panel_Bake(bpy.types.Panel):
 			row.label(text="--> Mode: '{}'".format(settings.bake_mode))
 
 
+		# Warning: Wrong bake mode, require 
+		if settings.bake_mode == 'diffuse':
+			if bpy.context.scene.render.engine != 'CYCLES':
+				if bpy.context.scene.render.engine != op_bake.modes[settings.bake_mode].engine:
+					col.label("Requires '{}'".format(op_bake.modes[settings.bake_mode].engine), icon='ERROR')
+				
+				
 
 
 		# Optional Parameters
@@ -977,6 +975,19 @@ class op_color_dropdown_convert_to(bpy.types.Menu):
 		layout.operator(op_color_convert_vertex_colors.op.bl_idname, text="Vertex Colors", icon = 'COLOR')
 
 
+class op_enable_cycles(bpy.types.Operator):
+	bl_idname = "uv.textools_enable_cycles"
+	bl_label = "Enable Cycles"
+	bl_description = "Enable Cycles render engine"
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		bpy.context.scene.render.engine = 'CYCLES'
+		return {'FINISHED'}
+
 
 class Panel_Colors(bpy.types.Panel):
 	bl_label = " "
@@ -996,8 +1007,14 @@ class Panel_Colors(bpy.types.Panel):
 		
 		# layout.label(text="Select face and color")
 		
-		box = layout.box()
+		if bpy.context.scene.render.engine != 'CYCLES' and bpy.context.scene.render.engine != 'BLENDER_RENDER':
+			row = layout.row(align=True)
+			row.alert = True
+			row.operator(op_enable_cycles.bl_idname, text="Enable 'CYCLES'", icon='CANCEL')#, icon='UV_SYNC_SELECT'
+			return
 
+
+		box = layout.box()
 		col = box.column(align=True)
 		
 

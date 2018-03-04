@@ -14,11 +14,12 @@ class op(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	directions = bpy.props.EnumProperty(items= 
-		[('3', '3', 'Top, sides, bottom'), 
-		('4', '4', 'Top, Left & Right, Front & Back, bottom'),
+		[('2', '2', 'Top & Bottom, Sides'),
+		 ('3', '3', 'Top & Bottom, Left & Right, Front & Back'), 
+		('4', '4', 'Top, Left & Right, Front & Back, Bottom'),
 		('6', '6', 'All sides')], 
 		name = "Direction", 
-		default = '4'
+		default = '3'
 	)
 	def invoke(self, context, event):
 		wm = context.window_manager
@@ -111,10 +112,13 @@ def color_elements(self, context):
 	# for i in range(count):
 	# 	groups.append([])
 
-	if self.directions == '3':
-		groups.append(face_directions['top'])
+	if self.directions == '2':
+		groups.append(face_directions['top']+face_directions['bottom'])
 		groups.append(face_directions['left']+face_directions['right']+face_directions['front']+face_directions['back'])
-		groups.append(face_directions['bottom'])
+	if self.directions == '3':
+		groups.append(face_directions['top']+face_directions['bottom'])
+		groups.append(face_directions['left']+face_directions['right'])
+		groups.append(face_directions['front']+face_directions['back'])
 	elif self.directions == '4':
 		groups.append(face_directions['top'])
 		groups.append(face_directions['left']+face_directions['right'])

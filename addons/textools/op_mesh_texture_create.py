@@ -7,49 +7,27 @@ from math import pi
 import math
 from . import utilities_uv
 from . import utilities_texel
-
-
-id_shape_key_mesh = "mesh"
-id_shape_key_uv = "uv"
-
-
-
-# Find a mesh that contains UV mesh shape keys 
-def find_uv_mesh(objects):
-	for obj in objects:
-		# Requires mesh & UV channel
-		if obj.type == 'MESH': # and not obj.data.uv_layers
-			if obj.data.shape_keys and len(obj.data.shape_keys.key_blocks) == 2:
-				if "uv" in obj.data.shape_keys.key_blocks:
-					if "model" in obj.data.shape_keys.key_blocks:
-						if "Solidify" in obj.modifiers:
-							return obj
-	return None
-
-
+from . import utilities_mesh_texture
 
 def get_mode():
-	# Create UV mesh from face selection
-	if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT':
-		if not find_uv_mesh([bpy.context.active_object]):
-			return 'CREATE_FACES'
 
-	# Wrap texture mesh around UV mesh
-	if len(bpy.context.selected_objects) >= 2 and find_uv_mesh(bpy.context.selected_objects):
-		return 'WRAP'
+	if not utilities_mesh_texture.find_uv_mesh([bpy.context.active_object]):
+		# Create UV mesh from face selection
+		if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT':
+			return 'FACES'
 
-	# Create UV mesh from whole object
-	if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
-		if "MeshDeform" not in bpy.context.active_object.modifiers:
-			return 'CREATE_OBJECT'
+		# Create UV mesh from whole object
+		if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
+			if "MeshDeform" not in bpy.context.active_object.modifiers:
+				return 'OBJECT'
 
 	return 'UNDEFINED'
 
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_mesh_texture"
-	bl_label = "Swap UV 2 XYZ"
+	bl_idname = "uv.textools_mesh_texture_create"
+	bl_label = "Create Mesh Texture"
 	bl_description = "Swap UV to XYZ coordinates"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -61,13 +39,7 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-		mode = get_mode()
-		if mode == 'CREATE_FACES' or mode == 'CREATE_OBJECT':
-			create_uv_mesh(self, bpy.context.active_object)	
-				
-		elif mode == 'WRAP':
-			wrap_mesh_texture(self)
-
+		create_uv_mesh(self, bpy.context.active_object)	
 		return {'FINISHED'}
 
 
@@ -290,7 +262,7 @@ def wrap_mesh_texture(self):
 	print("Wrap Mesh Texture :)")
 
 	# Collect UV mesh
-	obj_uv = find_uv_mesh(bpy.context.selected_objects)
+	obj_uv = utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects)
 	if not obj_uv:
 		self.report({'ERROR_INVALID_INPUT'}, "No UV mesh found" )
 		return

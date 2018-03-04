@@ -20,6 +20,7 @@ if "bpy" in locals():
 	imp.reload(utilities_texel)
 	imp.reload(utilities_ui)
 	imp.reload(utilities_uv)
+	imp.reload(utilities_mesh_texture)
 	
 	imp.reload(op_align)
 	imp.reload(op_bake)
@@ -47,7 +48,8 @@ if "bpy" in locals():
 	imp.reload(op_select_islands_overlap)
 	imp.reload(op_select_islands_flipped)
 	imp.reload(op_smoothing_uv_islands)
-	imp.reload(op_mesh_texture)
+	imp.reload(op_mesh_texture_create)
+	imp.reload(op_mesh_texture_wrap)
 	imp.reload(op_texel_checker_map)
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
@@ -68,6 +70,7 @@ else:
 	from . import utilities_texel
 	from . import utilities_ui
 	from . import utilities_uv
+	from . import utilities_mesh_texture
 
 	from . import op_align
 	from . import op_bake
@@ -95,7 +98,8 @@ else:
 	from . import op_select_islands_overlap
 	from . import op_select_islands_flipped
 	from . import op_smoothing_uv_islands
-	from . import op_mesh_texture
+	from . import op_mesh_texture_create
+	from . import op_mesh_texture_wrap
 	from . import op_texel_checker_map
 	from . import op_texel_density_get
 	from . import op_texel_density_set
@@ -728,33 +732,16 @@ class Panel_Mesh(bpy.types.Panel):
 
 	def draw(self, context):
 		layout = self.layout
-		
-		
-		#---------- Mesh ------------
 
 		box = layout.box()
 		col = box.column()
 		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
 		col.separator()
-		col.operator(op_mesh_texture.op.bl_idname, text="Mesh Texture", icon_value = icon_get("op_mesh_texture"))
-		
-		message = ""
-		icon = "NONE"
-		mode = op_mesh_texture.get_mode()
-		if mode == 'CREATE_FACES':
-			message = "Create UV mesh faces"
-			icon = "MESH_GRID"
-		elif mode == 'CREATE_OBJECT':
-			message = "Create UV mesh"
-			icon = "MESH_GRID"
-		elif mode == 'WRAP':
-			message = "Wrap texture meshe" 
-			icon = "POTATO"
-		elif bpy.context.active_object:
-			icon = "ERROR"
 
-		col.label(text = message, icon= icon)
-		
+		col.label(text = "Mesh Texture")
+		row = col.row(align=True)
+		row.operator(op_mesh_texture_create.op.bl_idname, text="Create", icon_value = icon_get("op_mesh_texture"))
+		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
 
 
 

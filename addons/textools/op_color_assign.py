@@ -82,11 +82,11 @@ def assign_color(self, context, index):
 
 
 	#Change View mode to MATERIAL
-	for area in bpy.context.screen.areas:
-		if area.type == 'VIEW_3D':
-			for space in area.spaces:
-				if space.type == 'VIEW_3D':
-					space.viewport_shade = 'MATERIAL'
+	# for area in bpy.context.screen.areas:
+	# 	if area.type == 'VIEW_3D':
+	# 		for space in area.spaces:
+	# 			if space.type == 'VIEW_3D':
+	# 				space.viewport_shade = 'MATERIAL'
 
 	# restore mode
 	bpy.ops.object.mode_set(mode='OBJECT')

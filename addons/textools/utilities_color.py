@@ -34,6 +34,7 @@ def assign_color(index):
 		if material.use_nodes and bpy.context.scene.render.engine == 'CYCLES':
 			# Cycles material (Preferred for baking)
 			material.node_tree.nodes["Diffuse BSDF"].inputs[0].default_value = rgba
+			material.diffuse_color = rgb
 
 		elif not material.use_nodes and bpy.context.scene.render.engine == 'BLENDER_RENDER' or bpy.context.scene.render.engine == 'BLENDER_GAME':
 			# Legacy render engine, not suited for baking

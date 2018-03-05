@@ -709,8 +709,6 @@ class Panel_Layout(bpy.types.Panel):
 		col = box.column(align=True)
 		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
 		row = col.row(align=True)
-		if bpy.context.object and bpy.context.object.mode == 'EDIT':
-			row.enabled  = False
 		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
 
 

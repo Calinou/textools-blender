@@ -57,8 +57,8 @@ class op(bpy.types.Operator):
 def set_texel_density(self, context, mode, density):
 	print("Set texel density!")
 
-	if bpy.context.object.mode == 'EDIT':
-		mode = 'EDIT'
+	is_edit = bpy.context.object.mode == 'EDIT'
+	is_sync = bpy.context.scene.tool_settings.use_uv_select_sync
 	object_faces = utilities_texel.get_selected_object_faces()
 
 
@@ -100,10 +100,11 @@ def set_texel_density(self, context, mode, density):
 
 			# Collect groups of faces to scale together
 			group_faces = []
-			if mode == 'EDIT':
-				# Scale selected faces
+			if is_edit:
+				# Collect selected faces as islands
 				bm.faces.ensure_lookup_table()
-				group_faces = [[ bm.faces[index] ] for index in object_faces[obj] ]
+				bpy.ops.uv.select_all(action='SELECT')
+				group_faces = utilities_uv.getSelectionIslands()
 
 			elif mode == 'ALL':
 				# Scale all UV's together
@@ -148,7 +149,7 @@ def set_texel_density(self, context, mode, density):
 				scale = density / (sum_area_uv / sum_area_vt)
 
 				# Set Scale Origin to Island or top left
-				if mode == 'EDIT' or mode == 'ISLAND':
+				if mode == 'ISLAND':
 					bpy.context.space_data.pivot_point = 'MEDIAN'
 				elif mode == 'ALL':
 					bpy.context.space_data.pivot_point = 'CURSOR'
@@ -167,12 +168,17 @@ def set_texel_density(self, context, mode, density):
 			# Restore selection
 			utilities_uv.selection_restore()
 
-
 	# Restore selection
 	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.object.select_all(action='DESELECT')
 	for obj in object_faces:
 		obj.select = True
 	bpy.context.scene.objects.active = list(object_faces.keys())[0]
-	if mode == 'EDIT':
+
+	# Restore edit mode
+	if is_edit:
 		bpy.ops.object.mode_set(mode='EDIT')
+
+	# Restore sync mode
+	if is_sync:
+		bpy.context.scene.tool_settings.use_uv_select_sync = True

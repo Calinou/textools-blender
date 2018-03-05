@@ -368,11 +368,11 @@ def setup_vertex_color_selection(obj):
 
 	bpy.ops.object.mode_set(mode='VERTEX_PAINT')
 
-	bpy.data.brushes["Draw"].color = (0, 0, 0)
+	bpy.context.tool_settings.vertex_paint.brush.color = (0, 0, 0)
 	bpy.context.object.data.use_paint_mask = False
 	bpy.ops.paint.vertex_color_set()
 
-	bpy.data.brushes["Draw"].color = (1, 1, 1)
+	bpy.context.tool_settings.vertex_paint.brush.color = (1, 1, 1)
 	bpy.context.object.data.use_paint_mask = True
 	bpy.ops.paint.vertex_color_set()
 
@@ -437,7 +437,7 @@ def setup_vertex_color_id_material(obj):
 			color = utilities_color.get_color_id(i, len(obj.material_slots))
 
 			bpy.ops.object.mode_set(mode='VERTEX_PAINT')
-			bpy.data.brushes["Draw"].color = color
+			bpy.context.tool_settings.vertex_paint.brush.color = color
 			bpy.context.object.data.use_paint_mask = True
 			bpy.ops.paint.vertex_color_set()
 

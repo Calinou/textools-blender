@@ -67,7 +67,7 @@ def convert_vertex_colors(self, context):
 			color[2] = pow(color[2],1/gamma)
 
 			bpy.ops.object.mode_set(mode='VERTEX_PAINT')
-			bpy.data.brushes["Draw"].color = color
+			bpy.context.tool_settings.vertex_paint.brush.color = color
 			bpy.context.object.data.use_paint_mask = True
 			bpy.ops.paint.vertex_color_set()
 

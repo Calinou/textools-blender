@@ -95,7 +95,7 @@ def register():
 	# You really can save it anywhere in bpy.types.*  Just make sure the location makes sense
 	bpy.types.Scene.TT_bake_mode = EnumProperty(
 		items=generate_previews(),
-		)
+	)
 	
 def unregister():
 	from bpy.types import WindowManager

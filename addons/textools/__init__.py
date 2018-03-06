@@ -1204,14 +1204,13 @@ def register():
 
 
 def unregister():
+	#GUI Utilities
+	utilities_ui.unregister()
 
 	bpy.utils.unregister_module(__name__)
 
 	#Unregister Settings
 	del bpy.types.Scene.texToolsSettings
-
-	#GUI Utilities
-	utilities_ui.unregister()
 
 	#handle the keymap
 	for km, kmi in keymaps:

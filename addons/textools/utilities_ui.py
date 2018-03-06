@@ -5,7 +5,6 @@ from bpy.types import Panel, EnumProperty, WindowManager
 from bpy.props import StringProperty
 
 preview_collections = {}
-preview_icons = bpy.utils.previews.new()
 
 size_textures = [
 		('32', '32', ''), 
@@ -24,12 +23,11 @@ def icon_get(name):
 	return preview_icons[name].icon_id
 
 
-
+preview_icons = bpy.utils.previews.new()
 def icon_register(fileName):
 	name = fileName.split('.')[0]   # Don't include file extension
 	icons_dir = os.path.join(os.path.dirname(__file__), "icons")
 	preview_icons.load(name, os.path.join(icons_dir, fileName), 'IMAGE')
-	# print("register icon {}, {}x".format(fileName, len(preview_icons)))
 
 
 
@@ -41,8 +39,8 @@ def get_padding():
 
 def generate_previews():
 	# We are accessing all of the information that we generated in the register function below
-	pcoll = preview_collections["thumbnail_previews"]
-	image_location = pcoll.images_location
+	preview_collection = preview_collections["thumbnail_previews"]
+	image_location = preview_collection.images_location
 	VALID_EXTENSIONS = ('.png', '.jpg', '.jpeg')
 	
 	enum_items = []
@@ -51,7 +49,7 @@ def generate_previews():
 	for i, image in enumerate(os.listdir(image_location)):
 		if image.endswith(VALID_EXTENSIONS):
 			filepath = os.path.join(image_location, image)
-			thumb = pcoll.load(filepath, filepath, 'IMAGE')
+			thumb = preview_collection.load(filepath, filepath, 'IMAGE')
 			enum_items.append((image, image, "", thumb.icon_id, i))
 			
 	return enum_items
@@ -101,8 +99,8 @@ def register():
 	
 def unregister():
 	from bpy.types import WindowManager
-	for pcoll in preview_collections.values():
-		bpy.utils.previews.remove(pcoll)
+	for preview_collection in preview_collections.values():
+		bpy.utils.previews.remove(preview_collection)
 	preview_collections.clear()
 	
 

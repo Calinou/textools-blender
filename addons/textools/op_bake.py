@@ -21,7 +21,7 @@ modes={
 	'id_material':		ub.BakeMode('bake_vertex_color',type='EMIT', 	setVColor=ub.setup_vertex_color_id_material),
 	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
 	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
-	'displacment':		ub.BakeMode('',					type='DISPLACEMENT', engine='BLENDER_RENDER'),
+	'displacment':		ub.BakeMode('',					type='DISPLACEMENT', color=(0, 0, 0, 1), engine='BLENDER_RENDER'),
 	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='CYCLES'),
 	'ao_legacy':		ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
 	'position':			ub.BakeMode('bake_position',	type='EMIT'),
@@ -332,8 +332,8 @@ def setup_image(mode, name, width, height, path, is_clear):
 	# bpy.data.images.remove(bpy.data.images[name])
 
 	if name not in bpy.data.images:
-		# Create new image
-		image = bpy.data.images.new(name, width=width, height=height)
+		# Create new image with 32 bit float
+		image = bpy.data.images.new(name, width=width, height=height, float_buffer=True)
 
 	else:
 		# Reuse existing Image
@@ -471,6 +471,7 @@ def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, 
 
 		bpy.context.scene.render.use_bake_selected_to_active = is_multi
 		bpy.context.scene.render.bake_distance = ray_distance
+		bpy.context.scene.render.use_bake_clear = False
 
 		bpy.ops.object.bake_image()
 

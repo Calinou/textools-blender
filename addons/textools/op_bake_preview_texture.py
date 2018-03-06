@@ -52,9 +52,9 @@ def preview_texture(self, context):
 			view_area = area
 
 	# Exit existing local view
-	if view_area and view_area.spaces[0].local_view:
-		bpy.ops.view3d.localview({'area': view_area})
-		return
+	# if view_area and view_area.spaces[0].local_view:
+	# 	bpy.ops.view3d.localview({'area': view_area})
+	# 	return
 
 
 	# Get background image
@@ -93,6 +93,5 @@ def preview_texture(self, context):
 					space.viewport_shade = 'MATERIAL'
 
 			# Enter local view
-			bpy.ops.view3d.localview({'area': view_area})
-
-			bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="Object is in isolated view")
+			# bpy.ops.view3d.localview({'area': view_area})
+			# bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="Object is in isolated view")

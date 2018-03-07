@@ -80,11 +80,13 @@ def register():
 	from bpy.types import Scene
 	from bpy.props import StringProperty, EnumProperty
 	
+	print("_______REgister previews")
+
 	# Operators
 	# bpy.utils.register_class(op_popup)
 
 	# global preview_icons
-	preview_icons = bpy.utils.previews.new()
+	# preview_icons = bpy.utils.previews.new()
 
 	# Create a new preview collection (only upon register)
 	preview_collection = bpy.utils.previews.new()
@@ -98,6 +100,9 @@ def register():
 	)
 	
 def unregister():
+
+	print("_______UNregister previews")
+
 	from bpy.types import WindowManager
 	for preview_collection in preview_collections.values():
 		bpy.utils.previews.remove(preview_collection)

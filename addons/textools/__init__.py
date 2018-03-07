@@ -14,11 +14,11 @@ bl_info = {
 # More info: https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Multi-File_packages
 if "bpy" in locals():
 	import imp
+	imp.reload(utilities_ui)
 	imp.reload(settings)
 	imp.reload(utilities_bake)
 	imp.reload(utilities_color)
 	imp.reload(utilities_texel)
-	imp.reload(utilities_ui)
 	imp.reload(utilities_uv)
 	imp.reload(utilities_mesh_texture)
 	
@@ -65,10 +65,10 @@ if "bpy" in locals():
 	
 else:
 	from . import settings
+	from . import utilities_ui
 	from . import utilities_bake
 	from . import utilities_color
 	from . import utilities_texel
-	from . import utilities_ui
 	from . import utilities_uv
 	from . import utilities_mesh_texture
 

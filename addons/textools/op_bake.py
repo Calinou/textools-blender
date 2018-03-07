@@ -396,38 +396,34 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 	obj.select = True
 	bpy.ops.object.mode_set(mode='EDIT')
 	bpy.ops.mesh.select_all(action='SELECT')
-	# bpy.ops.object.select_all(action='DESELECT')
-	# for obj_high in (set.objects_high):
-	# 	obj_high.select = True
-
-
-	if material_bake:
-		# Override with material_bake
-		if len(obj.material_slots) == 0:
-			obj.data.materials.append(material_bake)
-
-		else:
-			obj.material_slots[0].material = material_bake
-			obj.active_material_index = 0
-			bpy.ops.object.material_slot_assign()
-
-	elif material_empty:
-		#Assign material_empty if no material available
-		if len(obj.material_slots) == 0:
-			obj.data.materials.append(material_empty)
-
-		else: # not obj.material_slots[0].material:
-			obj.material_slots[0].material = material_empty
-			obj.active_material_index = 0
-			bpy.ops.object.material_slot_assign()
 
 	if material_bake:
 		# Setup properties of bake materials
 		if mode == 'wireframe':
-			print("________connect wireframe setting to material")
 			if "Value" in material_bake.node_tree.nodes:
 				material_bake.node_tree.nodes["Value"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_wireframe_size
 
+	# Don't apply in diffuse mode
+	if mode != 'diffuse':
+		if material_bake:
+			# Override with material_bake
+			if len(obj.material_slots) == 0:
+				obj.data.materials.append(material_bake)
+
+			else:
+				obj.material_slots[0].material = material_bake
+				obj.active_material_index = 0
+				bpy.ops.object.material_slot_assign()
+
+		elif material_empty:
+			#Assign material_empty if no material available
+			if len(obj.material_slots) == 0:
+				obj.data.materials.append(material_empty)
+
+			else: # not obj.material_slots[0].material:
+				obj.material_slots[0].material = material_empty
+				obj.active_material_index = 0
+				bpy.ops.object.material_slot_assign()
 
 	bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -487,20 +483,12 @@ def cycles_bake(mode, padding, sampling_scale, samples, ray_distance, is_multi, 
 		elif modes[mode].normal_space == 'TANGENT':
 			bpy.context.scene.render.bake.normal_r = 'POS_X'
 			bpy.context.scene.render.bake.normal_b = 'POS_Z'
-
 			# Adjust Y swizzle from Addon preferences
 			swizzle_y = bpy.context.user_preferences.addons["textools"].preferences.swizzle_y_coordinate
 			if swizzle_y == 'Y-':
 				bpy.context.scene.render.bake.normal_g = 'NEG_Y'
 			elif swizzle_y == 'Y+':
 				bpy.context.scene.render.bake.normal_g = 'POS_Y'
-			
-
-
-
-
-
-
 
 		# Set samples
 		bpy.context.scene.cycles.samples = samples

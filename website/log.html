@@ -13,69 +13,82 @@
 	</head>
 	<body>
 		<div class="Page">
-			<p>Release log...</p>
-			
-		  <hr>
-			<a class="NoButton" id="developer"></a>
-			<h1>Developer Notes</h1>
+	
+		  <h1>Release Log</h1>
+		  <p>Find the latest and older releases here</p>
 			<div class="Panel">
-				<div class="Columns2">
-					<div class="Content">
-						<h2>Using GIT source version in Blender</h2>
-						<p><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a></p>
-						<p>Quite often the latest GIT source code version is not very stable. To run the GIT version I recommend setting up the '<strong>Scripts</strong>' path in the user preferences to point to the GIT folder.</p>
-						<ol>
-							<li>Goto user preferences (<strong>Ctrl</strong> + <strong>Alt</strong> + <strong>U</strong>) </li>
-							<li>In the '<strong>File</strong>' tab set the '<strong>Scripts</strong>' path to '{GIT Path}\' so that blender will pick up 'addons' folder </li>
-							<li>In the 'Add-ons' tab enable TexTools</li>
-						</ol>
-					</div>
-					<div class="Content">
-						<h2>License</h2>
-						<p>The license for TexTools is the GNU General Public License. TexTools for Blender © 2018 Hendrik-Jan Schoenmaker.			      </p>
-					</div>
-					<div class="Content">
-						<h2>Debug mode</h2>
-						<p>By default the public releases and the GIT source version hide development tools in the UI. To reveal them you have to set the debug panel value to other than '<strong>0</strong>'</p>
-						<ol>
-							<li> Press <strong>Ctrl</strong> + <strong>Alt</strong> + <strong>D</strong> for the debug value panel</li>
-							<li> Set the value other than '0' </li>
-							<li>Protoype tools should be shown in red in the interface</li>
-						</ol>
-						<p><img src="images/demo_enable_debug.gif" alt=""/></p>
-						<p>Additional tools should now be highlighted in red inside the interface.</p>
-					</div>
-					<div class="Content">
-						<h2>Code Structure</h2>
-						<p>Each operator for the tools has it's own <strong>python module file</strong>. Should you want to inspect or change the code this should make it easy to look for the right code. All code is commented fairly thorough and to my best ability simplified.</p>
-						<p><img src="images/show_source_files.png" width="179" height="190" alt=""/></p>
-						<p><strong>Materials</strong> used for baking are stored in the resources folder as *.blend file.						</p>
-						<p><strong>Operators</strong> are stored each in op_{type}.py modules. Whenever possible they are self contained.</p>
-						<p><strong>Utitlities</strong> modules are used for shared methods and consist of</p>
-						<ul>
-							<li> utilities_bake.py</li>
-							<li>utitlities_color.py</li>
-							<li>utilities_texel.py</li>
-							<li>utilities_uv.py</li>
-							<li>utilities_ui.py</li>
-						</ul>
-					</div>
-					<div class="Content">
-						<h2>Release Log</h2>
-						<p>Having issues with the latest version? Try an older version from the list below:</p>
-						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip"> TexTools 1.0.0.zip</a>
-						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.7.zip"> TexTools 0.9.7.zip</a>
-						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip"> TexTools 0.9.5.zip</a>
-						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.0.zip"> TexTools 0.9.0.zip</a>
-						<a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip"> TexTools 0.8.0.zip</a>
-						<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.2.zip">TexTools 0.7.2.zip</a>
-						<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.1.zip"> TexTools 0.7.1.zip </a>
-						<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.0.zip">TexTools 0.7.0.zip </a>
-						<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.6.0.zip"> TexTools 0.6.0.zip </a>
-						<a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.3.0.zip"> TexTools 0.3.0.zip </a>
-						
-					</div>
-				</div>
+				<div class="Columns1">
+				  <div class="Content">
+				    <h2>Release Log</h2>
+					<p>By default the public releases and the GIT source version hide development tools in the UI. To reveal them you have to set the debug panel value to other th</p>
+						<table width="100%" border="0" cellspacing="6" cellpadding="0">
+						  <tr>
+						    <td width="150" valign="top"><strong>Download</strong></td>
+						    <td width="80" valign="top"><strong>Git Tag</strong></td>
+						    <td valign="top"><strong>Notes</strong></td>
+					      </tr>
+						  <tbody>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">TexTools 1.0.0.zip</a></td>
+						      <td valign="top">...</td>
+						      <td valign="top">notes</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.7.zip">TexTools 0.9.7.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip">TexTools 0.9.5.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.0.zip">TexTools 0.9.0.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip">TexTools 0.8.0.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.2.zip">TexTools 0.7.2.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.1.zip">TexTools 0.7.1.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.0.zip">TexTools 0.7.0.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.6.0.zip">TexTools 0.6.0.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.3.0.zip">TexTools 0.3.0.zip</a></td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+						    <tr>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+						      <td valign="top">&nbsp;</td>
+					        </tr>
+					      </tbody>
+					  </table>
+						<p>&nbsp;</p>
+				  </div>
+					
+			  </div>
 			</div>
 			<br>
 			<hr>

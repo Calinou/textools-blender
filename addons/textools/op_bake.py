@@ -394,8 +394,13 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 
 	bpy.context.scene.objects.active = obj
 	obj.select = True
+
+	# Select All faces
 	bpy.ops.object.mode_set(mode='EDIT')
+	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+	faces = [face for face in bm.faces if face.select]
 	bpy.ops.mesh.select_all(action='SELECT')
+
 
 	if material_bake:
 		# Setup properties of bake materials
@@ -424,6 +429,11 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 				obj.material_slots[0].material = material_empty
 				obj.active_material_index = 0
 				bpy.ops.object.material_slot_assign()
+
+	# Restore Face selection
+	bpy.ops.mesh.select_all(action='DESELECT')
+	for face in faces:
+		face.select = True
 
 	bpy.ops.object.mode_set(mode='OBJECT')
 

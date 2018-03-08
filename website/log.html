@@ -14,73 +14,163 @@
 	<body>
 		<div class="Page">
 	
-		  <h1>Release Log</h1>
-		  <p>Find the latest and older releases here</p>
-			<div class="Panel">
-				<div class="Columns1">
+		  <h1>TexTools</h1>
+		  <div class="Panel">
+			  <div class="Columns1">
 				  <div class="Content">
 				    <h2>Release Log</h2>
-					<p>By default the public releases and the GIT source version hide development tools in the UI. To reveal them you have to set the debug panel value to other th</p>
+					<p>Find the latest and older releases inchronological order.</p>
 						<table width="100%" border="0" cellspacing="6" cellpadding="0">
 						  <tr>
 						    <td width="150" valign="top"><strong>Download</strong></td>
-						    <td width="80" valign="top"><strong>Git Tag</strong></td>
-						    <td valign="top"><strong>Notes</strong></td>
+						    <td width="80" valign="top"><strong>Git Commit</strong></td>
+						    <td width="35%" valign="top"><strong>Features</strong></td>
+						    <td width="35%" valign="top"><strong>Fixes</strong></td>
+					      </tr>
+						  <tr>
+						    <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.1.0.zip">TexTools 1.1.0.zip</a></td>
+						    <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/55b2e78af4cb703c00432e587cec5c106f2f8be9" class="NoButton"></a></td>
+						    <td valign="top"><ul>
+						      <li>New release log page</li>
+						      <li>Mesh texture tool</li>
+						      <li>Bake mode: Height map</li>
+						      <li>Initial addon for unit testing</li>
+						      </ul></td>
+						    <td valign="top"><ul>
+						      <li>Bake based on vertex colors fixed where asusmed &quot;draw&quot; excisted.</li>
+						      <li>Improved bake set pairs with sequential names and ignore parts after keywords</li>
+						      <li>Fixed diffuse baking bug where only white results appeared.</li>
+						    </ul></td>
 					      </tr>
 						  <tbody>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">TexTools 1.0.0.zip</a></td>
-						      <td valign="top">...</td>
-						      <td valign="top">notes</td>
+						      <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/55b2e78af4cb703c00432e587cec5c106f2f8be9" class="NoButton">55b2e78</a></td>
+						      <td valign="top"><ul>
+						        <li>Color ID: Convert to vertex colors</li>
+						        <li>Color ID: Create from material slots</li>
+						        <li>Color ID: Create from mesh elements</li>
+						        <li>Bake Mode: Material ID</li>
+						        <li>Preferences: Set swizzle coordinates</li>
+						        <li>Bake Sets: Group by group, parenting or name sequences</li>
+						        <li>Bake mode: Curvature</li>
+						        <li>Bake mode: Position map</li>
+						        <li>Disable UV sync button</li>
+					          </ul></td>
+						      <td valign="top"><ul>
+						        <li>Improved AO bake mode using blender render engine</li></ul></td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.7.zip">TexTools 0.9.7.zip</a></td>
-						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</td>
+						      <td valign="top"> <a href="https://bitbucket.org/renderhjs/textools-blender/commits/40d0f5bba457e4c4d4a86285d35d6ece7c45b283" class="NoButton">40d0f5b</a></td>
+						      <td valign="top"><ul>
+						        <li>Color ID: Convert to texture atlas</li>
+						        <li>Bake: Preview texture on model</li>
+						        <li>Bake mode: Face selection</li>
+						        <li>UI: Online help for each rollout</li>
+					          </ul></td>
+						      <td valign="top"><ul>
+						        <li>Fixed cavity and dust bake</li>
+						        <li>Fixed ID map bake</li>
+						        <li></li>
+					          </ul></td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.5.zip">TexTools 0.9.5.zip</a></td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/9ffbe1a86183437b1defa56a289d7c62901e1581" class="NoButton">9ffbe1a</a></td>
+						      <td valign="top"><ul>
+						        <li>Peel edge unwrapping</li>
+						        <li>Rectify UV faces</li>
+						        <li>Smooth by UV islands</li>
+						        <li>Color ID tools</li>
+						        <li>Color ID: templates</li>
+						        <li>Bake mode: Diffuse</li>
+						        <li>Bake mode: Object normals</li>
+						        <li>Texel checker map: Cycle 2 styles</li>
+						        <li>Color ID: Color mesh elements</li>
+						        <li>Color ID: Export and import colors to clipboard</li>
+					          </ul></td>
 						      <td valign="top">&nbsp;</td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.9.0.zip">TexTools 0.9.0.zip</a></td>
-						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/ef554554291a669e451a6edec66d30bfa06dabd7" class="NoButton">ef55455</a></td>
+						      <td valign="top"><ul>
+						        <li>Crop UV selection</li>
+						        <li>Select UV channel dropdown</li>
+						        <li>Swap UV channels</li>
+						        <li>Resize UV area</li>
+						        <li>Texel Density Apply &amp; Get</li>
+						        <li>Texel Dentiy checker map</li>
+						        <li>Bake set: New type 'floater'</li>
+					          </ul></td>
+						      <td valign="top"><ul>
+						        <li>Removed console_toggle() in debug mode to resolve non windows errors</li>
+					          </ul></td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip">TexTools 0.8.0.zip</a></td>
-						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/0f87a2ded3eec0cb8f450adae4ef9d27dc59c6f4" class="NoButton">0f87a2d</a></td>
+						      <td valign="top"><ul>
+						        <li>UI rollout panels</li>
+						        <li>Bake: Organize tool</li>
+						        <li>Bake: Explode tool</li>
+						        <li>Bake Sets: Select by type or set</li>
+					          </ul></td>
+						      <td valign="top"><ul>
+						        <li>Align island by edge supports multiple UV islands</li>
+					          </ul></td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.2.zip">TexTools 0.7.2.zip</a></td>
-						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/91e7d969f082c83d14eb7e10598b2babacaee454" class="NoButton">91e7d96</a></td>
+						      <td valign="top"><ul>
+						        <li>Bake Sets: Warn icons when missing UV or low poly</li>
+						      </ul></td>
+						      <td valign="top"><ul>
+						        <li>Bake sets: Sort by name</li>
+						        <li>Bake: Fixed tangent space</li>
+						        <li>Bake: Ignore renderable for objects in scene that are not part</li>
+					          </ul></td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.1.zip">TexTools 0.7.1.zip</a></td>
-						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/bd11690e3d08f50243ec585e977ff44ebf57bc17" class="NoButton">bd11690</a></td>
+						      <td valign="top"><p>&nbsp;</p></td>
+						      <td valign="top"><ul>
+						        <li>Bake: name matching</li>
+						        <li>Select islands bounds</li>
+					          </ul></td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.7.0.zip">TexTools 0.7.0.zip</a></td>
-						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"> <a href="https://bitbucket.org/renderhjs/textools-blender/commits/8639bc1c69dd9657d3ff9f0b06be7ed50117c22a" class="NoButton">8639bc1</a></td>
+						      <td valign="top">						        <ul>
+                                <li>Bake: Anti Aliasing</li>
+                                  <li>Bake: Lock selection</li>
+                                <li>Bake: Single image mode</li>
+						      </ul></td>
+						      <td valign="top"><ul>
+						        <li>Undo for all operators</li>
+						        <li>Checker map for cycles</li>
+						        <li>UI improvements</li>
+					          </ul></td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.6.0.zip">TexTools 0.6.0.zip</a></td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/3b0a31d12a0a6718c87499b873dd50ff7a6388da" class="NoButton">3b0a31d</a></td>
+						      <td valign="top">						        <ul>
+					            <li>Texture size inspector</li>
+						          <li>Bake tool</li>
+				              </ul></td>
 						      <td valign="top">&nbsp;</td>
 					        </tr>
 						    <tr>
 						      <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender%20TexTools%200.3.0.zip">TexTools 0.3.0.zip</a></td>
 						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&nbsp;</td>
-					        </tr>
-						    <tr>
-						      <td valign="top">&nbsp;</td>
-						      <td valign="top">&nbsp;</td>
+						      <td valign="top"><ul>
+						        <li>Initial public release</li>
+					          </ul></td>
 						      <td valign="top">&nbsp;</td>
 					        </tr>
 					      </tbody>

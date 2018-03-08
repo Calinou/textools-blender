@@ -59,11 +59,12 @@ def clear_colors(self, context):
 	for i in range(count):
 		bpy.ops.object.material_slot_remove()
 
-	# Delete materials
+	# Delete materials if not used
 	for material in bpy.data.materials:
 		if utilities_color.material_prefix in material.name:
-			material.user_clear()
-			bpy.data.materials.remove(material)
+			if material.users == 0:
+				material.user_clear()
+				bpy.data.materials.remove(material)
 
 	# Restore previous mode
 	bpy.ops.object.mode_set(mode=previous_mode)

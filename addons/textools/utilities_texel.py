@@ -137,8 +137,8 @@ def get_area_triangle_uv(A,B,C, size_x, size_y):
 def get_area_triangle(A,B,C):
 	# Heron's formula: http://www.1728.org/triang.htm
 	# area = square root (s • (s - a) • (s - b) • (s - c))
-	a = (B-A).length
-	b = (C-B).length
-	c = (A-C).length
-	s = (a+b+c)/2
+	a = abs((B-A).length)
+	b = abs((C-B).length)
+	c = abs((A-C).length)
+	s = abs((a+b+c)/2)
 	return math.sqrt(s * (s-a) * (s-b) * (s-c))

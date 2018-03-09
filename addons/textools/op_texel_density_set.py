@@ -146,7 +146,10 @@ def set_texel_density(self, context, mode, density):
 					sum_area_uv+= math.sqrt( face_area_uv ) * min(image.size[0], image.size[1])
 
 				# Apply scale to group
-				scale = density / (sum_area_uv / sum_area_vt)
+				print("scale: {:.2f} {:.2f} {:.2f} ".format(density, sum_area_uv, sum_area_vt))
+				scale = 0
+				if density > 0 and sum_area_uv > 0 and sum_area_vt > 0:
+					scale = density / (sum_area_uv / sum_area_vt)
 
 				# Set Scale Origin to Island or top left
 				if mode == 'ISLAND':

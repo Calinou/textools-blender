@@ -333,7 +333,10 @@ def setup_image(mode, name, width, height, path, is_clear):
 
 	if name not in bpy.data.images:
 		# Create new image with 32 bit float
-		image = bpy.data.images.new(name, width=width, height=height, float_buffer=True)
+		is_float_32 = bpy.context.user_preferences.addons["textools"].preferences.bake_32bit_float == '32'
+		image = bpy.data.images.new(name, width=width, height=height, float_buffer=is_float_32)
+		image.colorspace_settings.name = 'sRGB'
+
 
 	else:
 		# Reuse existing Image

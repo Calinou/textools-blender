@@ -2,7 +2,7 @@ bl_info = {
 	"name": "TexTools",
 	"description": "Professional UV and Texture tools for Blender.",
 	"author": "renderhjs",
-	"version": (1, 0, 00),
+	"version": (1, 1, 00),
 	"blender": (2, 79, 0),
 	"category": "UV",
 	"location": "UV Image Editor > UVs > TexTools panel",
@@ -145,7 +145,15 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 		name = "Swizzle Coordinates", 
 		default = 'Y+'
 	)
-
+	bake_32bit_float = bpy.props.EnumProperty(items= 
+		[	
+			('8', '8 Bit', ''), 
+			('32', '32 Bit', '')
+		], 
+		description="",
+		name = "Image depth", 
+		default = '8'
+	)
 
 	def draw(self, context):
 		layout = self.layout
@@ -157,7 +165,15 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 			col.label(text="Y+ used in: Blender, Maya, Modo, Toolbag, Unity")
 		elif self.swizzle_y_coordinate == 'Y-':
 			col.label(text="Y- used in: 3ds Max, CryENGINE, Source, Unreal Engine")
-		# user_preferences.addons[__name__].preferences
+		
+		box.separator()
+		col = box.column(align=True)
+		col.prop(self, "bake_32bit_float", icon='IMAGE_RGB')
+		if self.bake_32bit_float == '8':
+			col.label(text="8")
+		elif self.bake_32bit_float == '32':
+			col.label(text="32")
+		
 
 
 
@@ -687,31 +703,6 @@ class Panel_Layout(bpy.types.Panel):
 		row = col.row(align=True)
 		row.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
 		row.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
-		
-
-		#---------- Texel ------------
-
-		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
-		box = layout.box()
-		# col = box.column(align=True)
-
-		box.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
-		
-
-		col = box.column(align=True)
-
-		row = col.row(align=True)
-		row.label(text="" , icon_value = icon_get("texel_density"))
-		row.separator()
-		row.prop(context.scene.texToolsSettings, "texel_density", text="")
-		row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
-
-		col = box.column(align=True)
-		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
-		row = col.row(align=True)
-		# if bpy.context.object and bpy.context.object.mode == 'EDIT':
-		# 	row.enabled  = False
-		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
 
 
 		
@@ -734,6 +725,30 @@ class Panel_Mesh(bpy.types.Panel):
 		box = layout.box()
 		col = box.column()
 		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
+		
+		#---------- Texel ------------
+
+		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
+		box = layout.box()
+		box.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
+		col = box.column(align=True)
+
+		row = col.row(align=True)
+		row.label(text="" , icon_value = icon_get("texel_density"))
+		row.separator()
+		row.prop(context.scene.texToolsSettings, "texel_density", text="")
+		row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+
+		col = box.column(align=True)
+		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
+		row = col.row(align=True)
+		# if bpy.context.object and bpy.context.object.mode == 'EDIT':
+		# 	row.enabled  = False
+		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
+
+
+
+		
 
 		layout.label(text = "Mesh Texture")
 		box = layout.box()

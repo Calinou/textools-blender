@@ -29,7 +29,7 @@
 			<div class="Columns2">
 				<div class="Content">
 					<h2>Download</h2>
-					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.0.0.zip">Blender_TexTools_1.0.0.zip </a></p>
+					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.1.0.zip">Blender_TexTools_1.1.0.zip </a></p>
 					<p>Find older releases in the <a href="log.html" class="NoButton">release log</a></p>
 				</div>
 				<div class="Content">
@@ -38,9 +38,11 @@
 					  <li>Select flipped UV islands				</li>
 					  <li>Bake Displacement map</li>
 					  <li>Bake Wireframe map</li>
-					  <li>Mesh Texture</li>
+					  <li>Bake legacy AO and cycles AO</li>
+					  <li>Mesh Texture tools</li>
 					  <li>Color ID from face directions</li>
-	              </ul>
+					  <li>32 bit float bake option</li>
+                  </ul>
 				</div>
 				<div class="Content">
 					<h2>Requirements</h2>
@@ -178,13 +180,26 @@
               </div>
                 
 			</div>
-			
-			
-			
-		  <div class="Info"><h3> Texel Density Tools   </h3>
+
+		</div>
+		<a name="mesh" class="NoButton" id="texturebaking"></a>
+		<h1>Mesh Panel</h1>
+		<p>Tools that modify the mesh instead of the UVs.</p>
+		<div class="Panel">
+        
+        	 
+		  <div class="Columns1">
+		    <div class="Content">
+		      <h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing</h2>
+		      <p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.	        </p>
+		    </div>
+          </div>
+        
+        	<div class="Info"><h3> Texel Density Tools   </h3>
 				<p>Texel Densities are used to apply the same size of pixels in 3D (texel) to the surface of your objects or selected faces. This	is	common	for environment game assets or VR assets where texels require a consistent look.</p>
 			</div>
-			<div class="Columns2">
+            
+          <div class="Columns3">
 				<div class="Content">
 					<h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
 					<p>Assigns a checker map texture (blender render) or material (cycles) to the objects. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to <strong>texture mode</strong>.					</p>
@@ -243,16 +258,16 @@
 					</table>
 				</div>
 			</div>
-		</div>
-		<a name="mesh" class="NoButton" id="texturebaking"></a>
-		<h1>Mesh Panel</h1>
-		<p>Tools that modify the mesh instead of the UVs.</p>
-		<div class="Panel">
-		  <div class="Columns2">
-		    <div class="Content">
-		      <h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing</h2>
-		      <p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.	        </p>
-		    </div>
+            
+            
+            <div class="Info"><h3>Mesh Texture 
+			</h3>
+            </div>
+            
+            
+            
+            
+		  <div class="Columns1">
 		    <div class="Content">
 		      <h2> <img src="images/op_mesh_texture.png" width="32" height="32" alt=""/> Mesh Texture<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 		      <p>Wraps meshes as textures around 3D models. This tool consists of a 2 step process</p>
@@ -533,7 +548,7 @@
 			<p>Color ID's are a quick way to block out your model with a set of colors or face groups. Colors are global accross your blend file and can be adjusted at any time.</p>
 			<p><strong>Tip:</strong> For baking use the <strong>Diffuse bake</strong> mode and setup the materials in the <strong>Cycles</strong> render mode.</p>
 			<div class="Panel">
-				<div class="Columns2">
+				<div class="Columns3">
 					<div class="Content">
 						<h2>Color templates</h2>
 						<p>Choose from a collection of color themes. Once selected this will replace your previous colors but maintain your material ID's.</p>
@@ -662,7 +677,25 @@
 				    </table>
 				  </div>
 				  
-				</div>
+                  <div class="Content">
+				    <h2>Image Depth<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<p>Bakes images in either 8 bit  or 32 bit.						</p>
+						<table width="100%" border="0" cellspacing="10" cellpadding="0">
+						  <tr>
+						    <td valign="top"><p><strong>8 Bit</strong></p></td>
+						    <td valign="top"><p>8 bits per channel.</p></td>
+					      </tr>
+						  <tr>
+						    <td width="164" valign="top"><strong>32 Bit</strong></td>
+						    <td width="700" valign="top">32 bits per channel. This is sometimes needed to avoid artifacts on normal maps (stains, compressions). Read this <a href="https://www.cgcookie.com/articles/bit-depth-how-compression-affects-normal-maps" class="NoButton">CGCookie guide</a> to convert it back to 8 bit to use in game engines.</td>
+					      </tr>
+						  <tbody>
+					      </tbody>
+				    </table>
+				  </div>
+                  
+                  
+			  </div>
 		  </div>
 			<br>
             

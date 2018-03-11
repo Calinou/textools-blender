@@ -45,6 +45,7 @@ class BakeMode:
 def store_bake_settings():
 	# Render Settings
 	settings.bake_render_engine = bpy.context.scene.render.engine
+	settings.bake_cycles_samples = bpy.context.scene.cycles.samples
 
 	# Disable Objects that are meant to be hidden
 	sets = settings.sets
@@ -82,6 +83,8 @@ def restore_bake_settings():
 	# Render Settings
 	if settings.bake_render_engine != '':
 		bpy.context.scene.render.engine = settings.bake_render_engine
+
+	bpy.context.scene.cycles.samples = settings.bake_cycles_samples
 
 	# Restore Objects that were hidden for baking
 	for obj in settings.bake_objects_hide_render:

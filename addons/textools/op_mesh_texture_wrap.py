@@ -83,7 +83,12 @@ def wrap_mesh_texture(self):
 				break
 		
 	# Set thickness
-	obj_uv.modifiers["Solidify"].thickness = (max_z - min_z) * 1.0
+	size = (max_z - min_z)
+	min_z-= size*0.1
+	max_z+= size*0.1
+	size = (max_z - min_z)
+	
+	obj_uv.modifiers["Solidify"].thickness = size
 
 	# Set offset
 	p_z = (obj_uv.location.z - min_z) / (max_z - min_z)

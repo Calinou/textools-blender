@@ -29,7 +29,7 @@
 					      </tr>
 						  <tr>
 						    <td valign="top"><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.1.0.zip">TexTools 1.1.0.zip</a></td>
-						    <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/55b2e78af4cb703c00432e587cec5c106f2f8be9" class="NoButton"></a></td>
+						    <td valign="top"><a href="https://bitbucket.org/renderhjs/textools-blender/commits/a3a8e000e056dc94265011c00cdd76ecb903d672" class="NoButton">a3a8e00</a></td>
 						    <td valign="top"><ul>
 						      <li>New release log page</li>
 						      <li>Mesh texture tools</li>
@@ -37,13 +37,24 @@
 						      <li>Bake mode: Wireframe</li>
 						      <li>Bake mode: Legacy AO and AO</li>
 						      <li>Select flipped UV islands</li>
-						      <li>Color ID from directions</li>
+						      <li>Color ID from directions: 2, 3, 4 or 6</li>
 						      <li>Initial addon for unit testing</li>
-						      </ul></td>
+						      <li>Bake 32 bit float mode added</li>
+						      <li>Toogle active UV channel: Toggle UV render toggle</li>
+						    </ul></td>
 						    <td valign="top"><ul>
 						      <li>Bake based on vertex colors fixed where asusmed &quot;draw&quot; excisted.</li>
 						      <li>Improved bake set pairs with sequential names and ignore parts after keywords</li>
 						      <li>Fixed diffuse baking bug where only white results appeared.</li>
+						      <li>Texel get/set: fixed applying with collapsed UV verts</li>
+						      <li>Removed UI thumbnail listening event</li>
+						      <li>Bake face mask: Restored face selection</li>
+						      <li>Restored render settings after bake, e.g. samples</li>
+						      <li>Clear Color ID: Don't destroy materials.</li>
+						      <li>Color ID: Warning when using wrong engine</li>
+						      <li>Bug: Apply and get texel density from face selections</li>
+						      <li>Bake materials: Don't create image nodes over and over.</li>
+						      <li>Recitfy: Simplified active operator validations</li>
 						    </ul></td>
 					      </tr>
 						  <tbody>

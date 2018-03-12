@@ -170,9 +170,9 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 		col = box.column(align=True)
 		col.prop(self, "bake_32bit_float", icon='IMAGE_RGB')
 		if self.bake_32bit_float == '8':
-			col.label(text="8")
+			col.label(text="8 Bit images are used. Banding may appear in normal maps.")
 		elif self.bake_32bit_float == '32':
-			col.label(text="32")
+			col.label(text="32 Bit images are used. Images may require dithering to 8 bit.")
 		
 
 

@@ -11,8 +11,8 @@ from . import settings
 from . import utilities_color
 
 
-keywords_low = ['lowpoly','low','lowp','lp','l']
-keywords_high = ['highpoly','high','highp','hp','h']
+keywords_low = ['lowpoly','low','lowp','lp','lo','l']
+keywords_high = ['highpoly','high','highp','hp','hi','h']
 keywords_cage = ['cage','c']
 keywords_float = ['floater','float','f']
 

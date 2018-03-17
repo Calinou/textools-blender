@@ -50,6 +50,7 @@ if "bpy" in locals():
 	imp.reload(op_smoothing_uv_islands)
 	imp.reload(op_mesh_texture_create)
 	imp.reload(op_mesh_texture_wrap)
+	imp.reload(op_mesh_texture_pattern)
 	imp.reload(op_texel_checker_map)
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
@@ -100,6 +101,7 @@ else:
 	from . import op_smoothing_uv_islands
 	from . import op_mesh_texture_create
 	from . import op_mesh_texture_wrap
+	from . import op_mesh_texture_pattern
 	from . import op_texel_checker_map
 	from . import op_texel_density_get
 	from . import op_texel_density_set
@@ -752,10 +754,10 @@ class Panel_Mesh(bpy.types.Panel):
 
 		layout.label(text = "Mesh Texture")
 		box = layout.box()
-		col = box.column(align=True)
-		col.operator(op_mesh_texture_create.op.bl_idname, text="Create", icon_value = icon_get("op_mesh_texture"))
-		col.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
-
+		row = box.row(align=True)
+		row.operator(op_mesh_texture_create.op.bl_idname, text="Create", icon_value = icon_get("op_mesh_texture"))
+		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
+		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Create Pattern")
 
 
 class Panel_Bake(bpy.types.Panel):

@@ -749,13 +749,10 @@ class Panel_Mesh(bpy.types.Panel):
 		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
 
 
-
-		
-
 		layout.label(text = "Mesh Texture")
 		box = layout.box()
 		row = box.row(align=True)
-		row.operator(op_mesh_texture_create.op.bl_idname, text="Create", icon_value = icon_get("op_mesh_texture"))
+		row.operator(op_mesh_texture_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_mesh_texture"))
 		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
 		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Create Pattern")
 

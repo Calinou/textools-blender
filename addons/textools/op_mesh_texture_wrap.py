@@ -84,8 +84,8 @@ def wrap_mesh_texture(self):
 		
 	# Set thickness
 	size = (max_z - min_z)
-	min_z-= size*0.1
-	max_z+= size*0.1
+	min_z-= size*0.25
+	max_z+= size*0.25
 	size = (max_z - min_z)
 	
 	obj_uv.modifiers["Solidify"].thickness = size

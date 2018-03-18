@@ -25,7 +25,7 @@ class op(bpy.types.Operator):
 		('stripe', 'Stripes', ''),
 		('brick', 'Bricks', '')], 
 		name = "Mode", 
-		default = 'triangle'
+		default = 'brick'
 	)
 	size = bpy.props.IntProperty(
 		name = "Size",
@@ -37,6 +37,9 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object != None and context.active_object.mode != 'OBJECT':
+			return False
+
 		return True
 
 	def draw(self, context):
@@ -54,10 +57,10 @@ def create_pattern(self, mode, size):
 	
 	print("Create pattern {}".format(mode))
 	
+	# bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
 	if mode == 'hexagon':
 		bpy.ops.mesh.primitive_circle_add(vertices=6, radius=1, fill_type='NGON')
-		bpy.context.object.show_wire = True
 
 		bpy.ops.object.editmode_toggle()
 		bpy.ops.transform.rotate(GetContextView3D(), value=math.pi*0.5,  axis=(0, 0, 1))
@@ -69,17 +72,58 @@ def create_pattern(self, mode, size):
 
 	elif mode == 'triangle':
 		bpy.ops.mesh.primitive_circle_add(vertices=3, radius=1, fill_type='NGON')
-		bpy.context.object.show_wire = True
 
 		bpy.ops.object.editmode_toggle()
-		# bpy.ops.transform.rotate(GetContextView3D(), value=math.pi*0.5,  axis=(0, 0, 1))
 		bpy.ops.transform.translate(GetContextView3D(), value=(0, 0.5, 0), constraint_axis=(False, True, False))
 		bpy.ops.object.editmode_toggle()
 		
-		bpy.ops.object.modifier_add(type='MIRROR')
-		bpy.context.object.modifiers["Mirror"].use_y = True
-		bpy.context.object.modifiers["Mirror"].use_x = False
+		modifier = bpy.context.object.modifiers.new(name="Mirror", type='MIRROR')
+		modifier.use_y = True
+		modifier.use_x = False
+		modifier.show_expanded = False
+		AddArray("Array0", 0.5,-0.5,2)
+		AddArray("Array1", 1-1/3.0,0,size)
+		AddArray("Array1", 0,-(1-1/3.0),size*0.66)
 
+	elif mode == 'rectangle':
+		bpy.ops.mesh.primitive_plane_add(radius=1)
+		AddArray("Array0", 1,0,size)
+		AddArray("Array1", 0,-1,size)
+
+	elif mode == 'diamond':
+		bpy.ops.mesh.primitive_plane_add(radius=1)
+
+		bpy.ops.object.editmode_toggle()
+		bpy.ops.transform.rotate(GetContextView3D(), value=math.pi*0.25,  axis=(0, 0, 1))
+		bpy.ops.object.editmode_toggle()
+
+		AddArray("Array0", 0.5,-0.5,2)
+		AddArray("Array1", 1-1/3,0,size)
+		AddArray("Array2", 0,-(1-1/3),size)
+
+	elif mode == 'brick':
+		bpy.ops.mesh.primitive_plane_add(radius=1)
+
+		bpy.ops.object.editmode_toggle()
+		bpy.ops.transform.resize(GetContextView3D(), value=(1, 0.5, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		bpy.ops.object.editmode_toggle()
+
+		AddArray("Array0", 0.5,-1,2)
+		AddArray("Array1", 1-1/3,0,size)
+		AddArray("Array2", 0,-1,size)
+
+	elif mode == 'stripe':
+		bpy.ops.mesh.primitive_plane_add(radius=1)
+
+		bpy.ops.object.editmode_toggle()
+		bpy.ops.transform.resize(GetContextView3D(), value=(0.5, size/2, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		bpy.ops.object.editmode_toggle()
+
+		AddArray("Array0", 1,0, size)
+
+
+	if bpy.context.object:
+		bpy.context.object.show_wire = True
 
 def AddArray(name, offset_x, offset_y, count):
 	modifier = bpy.context.object.modifiers.new(name=name, type='ARRAY')

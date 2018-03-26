@@ -122,8 +122,9 @@ def create_pattern(self, mode, size):
 		AddArray("Array0", 1,0, size)
 
 
-	# if bpy.context.object:
-	# 	bpy.context.object.show_wire = True
+	if bpy.context.object:
+		bpy.context.object.show_wire = True
+		# bpy.ops.object.editmode_toggle()
 
 def AddArray(name, offset_x, offset_y, count):
 	modifier = bpy.context.object.modifiers.new(name=name, type='ARRAY')

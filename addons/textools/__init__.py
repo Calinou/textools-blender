@@ -601,6 +601,7 @@ class Panel_Units(bpy.types.Panel):
 		if not has_uv_channel:
 			row.label(text="UV")
 			
+			
 
 class Panel_Layout(bpy.types.Panel):
 	bl_label = " "

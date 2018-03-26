@@ -613,7 +613,7 @@ class Panel_Layout(bpy.types.Panel):
 		layout = self.layout
 		row = layout.row(align=True)
 		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#uvlayout"
-		row.label(text ="UV Layout")
+		row.label(text ="Unwrap")
 
 	# def draw_header(self, _):
 	# 	layout = self.layout
@@ -732,7 +732,9 @@ class Panel_Mesh(bpy.types.Panel):
 
 		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
 		box = layout.box()
-		box.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
+		row = box.row()
+		row.scale_y = 1.75
+		row.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
 		col = box.column(align=True)
 
 		row = col.row(align=True)
@@ -791,6 +793,7 @@ class Panel_Bake(bpy.types.Panel):
 			count = len(settings.sets)
 		
 		row = col.row(align=True)
+		row.scale_y = 1.75
 		row.operator(op_bake.op.bl_idname, text = "Bake {}x".format(count), icon_value = icon_get("op_bake"));
 
 		# anti aliasing

@@ -50,6 +50,7 @@ if "bpy" in locals():
 	imp.reload(op_smoothing_uv_islands)
 	imp.reload(op_mesh_texture_create)
 	imp.reload(op_mesh_texture_wrap)
+	imp.reload(op_mesh_texture_trim)
 	imp.reload(op_mesh_texture_pattern)
 	imp.reload(op_texel_checker_map)
 	imp.reload(op_texel_density_get)
@@ -101,6 +102,7 @@ else:
 	from . import op_smoothing_uv_islands
 	from . import op_mesh_texture_create
 	from . import op_mesh_texture_wrap
+	from . import op_mesh_texture_trim
 	from . import op_mesh_texture_pattern
 	from . import op_texel_checker_map
 	from . import op_texel_density_get
@@ -349,6 +351,7 @@ def on_color_count_changed(self, context):
 		utilities_color.validate_face_colors(bpy.context.active_object)
 
 
+
 def get_dropdown_uv_values(self, context):
 	# Dynamic Dropdowns: https://blender.stackexchange.com/questions/35223/whats-the-correct-way-of-implementing-dynamic-dropdown-menus-in-python
 	
@@ -365,6 +368,14 @@ def get_dropdown_uv_values(self, context):
 
 				return options
 	return []
+
+
+
+def on_slider_meshtexture_wrap(self, context):
+	value = bpy.context.scene.texToolsSettings.meshtexture_wrap
+	obj_uv = utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects)
+	if obj_uv:
+		obj_uv.data.shape_keys.key_blocks["model"].value = value
 
 
 
@@ -450,6 +461,15 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default = 256,
 		min = 0.0
 		# max = 100.00
+	)
+	meshtexture_wrap = bpy.props.FloatProperty(
+		name = "Wrap",
+		description = "Transition of mesh texture wrap",
+		default = 0,
+		min = 0,
+		max = 1,
+		update = on_slider_meshtexture_wrap, 
+		subtype  = 'FACTOR'
 	)
 
 	def get_color(hex = "808080"):
@@ -754,9 +774,22 @@ class Panel_Mesh(bpy.types.Panel):
 
 		layout.label(text = "Mesh Texture")
 		box = layout.box()
-		row = box.row(align=True)
-		row.operator(op_mesh_texture_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_mesh_texture"))
+		col = box.column(align=True)
+		col.operator(op_mesh_texture_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_mesh_texture"))
+
+		row = col.row(align = True)
 		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
+		if bpy.app.debug_value != 0:
+			row = row.row(align = True)
+			row.alert = True
+			row.operator(op_mesh_texture_trim.op.bl_idname, text="Trim", icon = 'MESH_DATA')
+
+			row = col.row(align = True)
+			row.alert = True
+			if not utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
+				row.enabled = False
+			row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
+
 		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Create Pattern")
 
 

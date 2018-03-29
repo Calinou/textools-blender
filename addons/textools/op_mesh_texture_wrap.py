@@ -83,7 +83,7 @@ def wrap_mesh_texture(self):
 				break
 		
 	# Set thickness
-	size = (max_z - min_z)
+	size = max(0.1, (max_z - min_z))
 	min_z-= size*0.25
 	max_z+= size*0.25
 	size = (max_z - min_z)
@@ -91,8 +91,11 @@ def wrap_mesh_texture(self):
 	obj_uv.modifiers["Solidify"].thickness = size
 
 	# Set offset
-	p_z = (obj_uv.location.z - min_z) / (max_z - min_z)
-	obj_uv.modifiers["Solidify"].offset = -(p_z-0.5)/0.5
+	if size > 0:
+		p_z = (obj_uv.location.z - min_z) / (max_z - min_z)
+		obj_uv.modifiers["Solidify"].offset = -(p_z-0.5)/0.5
+	else:
+		obj_uv.modifiers["Solidify"].offset = 0
 
 	for obj in obj_textures:
 		use_dynamic_bind = len(obj.modifiers) > 1

@@ -53,9 +53,9 @@ def trim(self):
 		self.report({'ERROR_INVALID_INPUT'}, "No meshes found for mesh textures" )
 		return
 
-	print("Wrap {} texture meshes".format(len(obj_textures)))
-	# Clear first shape transition
-	obj_uv.data.shape_keys.key_blocks["model"].value = 0
+	# Setup Thickness
+	utilities_mesh_texture.uv_mesh_fit(obj_uv, obj_textures)
+
 
 	# Apply bool modifier to trim
 	for obj in obj_textures:

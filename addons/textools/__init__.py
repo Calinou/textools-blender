@@ -353,8 +353,6 @@ def on_color_count_changed(self, context):
 
 
 def get_dropdown_uv_values(self, context):
-	# Dynamic Dropdowns: https://blender.stackexchange.com/questions/35223/whats-the-correct-way-of-implementing-dynamic-dropdown-menus-in-python
-	
 	# Requires mesh and UV data
 	if bpy.context.active_object != None:
 		if bpy.context.active_object.type == 'MESH':
@@ -470,6 +468,10 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		max = 1,
 		update = on_slider_meshtexture_wrap, 
 		subtype  = 'FACTOR'
+	)
+	meshtexture_precission = bpy.props.EnumProperty(items= 
+		[('5', '5 Low', 'Regular precission'), 
+		('6', '6 High', 'High precission')], name = "precission", default = '5'
 	)
 
 	def get_color(hex = "808080"):
@@ -756,39 +758,52 @@ class Panel_Mesh(bpy.types.Panel):
 		row = box.row()
 		row.scale_y = 1.75
 		row.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
+		
 		col = box.column(align=True)
-
 		row = col.row(align=True)
 		row.label(text="" , icon_value = icon_get("texel_density"))
 		row.separator()
 		row.prop(context.scene.texToolsSettings, "texel_density", text="")
 		row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
 
-		col = box.column(align=True)
-		col.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
+		# col = box.column(align=True)
 		row = col.row(align=True)
+		row.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
+		
 		# if bpy.context.object and bpy.context.object.mode == 'EDIT':
 		# 	row.enabled  = False
-		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "Scale", expand=False)
+		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
 
 
 		layout.label(text = "Mesh Texture")
 		box = layout.box()
 		col = box.column(align=True)
-		col.operator(op_mesh_texture_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_mesh_texture"))
+
+		row = col.row(align=True)
+		row.scale_y = 1.75
+		row.operator(op_mesh_texture_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_mesh_texture"))
+
+		col.operator(op_mesh_texture_trim.op.bl_idname, text="Trim", icon = 'MESH_DATA')
+
+
+		col = box.column(align=True)
 
 		row = col.row(align = True)
 		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
-		if bpy.app.debug_value != 0:
-			row = row.row(align = True)
-			row.alert = True
-			row.operator(op_mesh_texture_trim.op.bl_idname, text="Trim", icon = 'MESH_DATA')
+		row.prop(context.scene.texToolsSettings, "meshtexture_precission", text="")
 
+		if bpy.app.debug_value != 0:
+			
 			row = col.row(align = True)
 			row.alert = True
 			if not utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
 				row.enabled = False
 			row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
+
+			
+			
+
+
 
 		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Create Pattern")
 

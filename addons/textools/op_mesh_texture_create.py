@@ -230,14 +230,6 @@ def create_uv_mesh(self, obj):
 	mesh_obj.show_all_edges = True
 	mesh_obj.draw_type = 'WIRE'
 
-	# Add solidify modifier
-	bpy.ops.object.modifier_add(type='SOLIDIFY')
-	bpy.context.object.modifiers["Solidify"].offset = 1
-	bpy.context.object.modifiers["Solidify"].thickness = scale*0.1 #10% height
-	bpy.context.object.modifiers["Solidify"].use_even_offset = True
-	bpy.context.object.modifiers["Solidify"].thickness_clamp = 0
-	bpy.context.object.modifiers["Solidify"].use_quality_normals = True
-
 	bpy.ops.object.select_all(action='DESELECT')
 	mesh_obj.select = True
 	bpy.context.scene.objects.active = mesh_obj

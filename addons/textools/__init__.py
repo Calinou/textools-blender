@@ -783,7 +783,7 @@ class Panel_Mesh(bpy.types.Panel):
 		row.scale_y = 1.75
 		row.operator(op_mesh_texture_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_mesh_texture"))
 
-		col.operator(op_mesh_texture_trim.op.bl_idname, text="Trim", icon = 'MESH_DATA')
+		col.operator(op_mesh_texture_trim.op.bl_idname, text="Trim to UV", icon = 'MESH_DATA')
 
 
 		col = box.column(align=True)
@@ -797,7 +797,7 @@ class Panel_Mesh(bpy.types.Panel):
 			row.enabled = False
 		row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
 
-		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Create Pattern")
+		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Pattern")
 
 
 

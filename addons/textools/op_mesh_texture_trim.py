@@ -19,10 +19,12 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		# Wrap texture mesh around UV mesh
-		if len(bpy.context.selected_objects) >= 2:
+		if len(bpy.context.selected_objects) >= 1:
+			# Find a UV mesh
 			if utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
-				return True
+				# Find 1 or more meshes to wrap
+				if len( utilities_mesh_texture.find_texture_meshes(bpy.context.selected_objects)) > 0:
+					return True
 
 		return False
 
@@ -43,11 +45,8 @@ def trim(self):
 		return
 
 	# Collect texture meshes
-	obj_textures = []
-	for obj in bpy.context.selected_objects:
-		if obj != obj_uv:
-			if obj.type == 'MESH':
-				obj_textures.append(obj)
+	obj_textures = utilities_mesh_texture.find_texture_meshes( bpy.context.selected_objects )
+	
 
 	if len(obj_textures) == 0:
 		self.report({'ERROR_INVALID_INPUT'}, "No meshes found for mesh textures" )

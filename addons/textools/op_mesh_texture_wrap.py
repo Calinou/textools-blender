@@ -55,7 +55,8 @@ def wrap_mesh_texture(self):
 	# Undo wrapping
 	if bpy.context.scene.texToolsSettings.meshtexture_wrap > 0:
 		bpy.context.scene.texToolsSettings.meshtexture_wrap = 0
-		# Remove Solidify and push modifiers
+		# Clear modifiers
+		utilities_mesh_texture.uv_mesh_clear(obj_uv)
 		return
 	
 	# Setup Thickness

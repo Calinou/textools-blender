@@ -470,8 +470,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		subtype  = 'FACTOR'
 	)
 	meshtexture_precission = bpy.props.EnumProperty(items= 
-		[('5', '5 Low', 'Regular precission'), 
-		('6', '6 High', 'High precission')], name = "precission", default = '5'
+		[('5', '5 Low', 'Mesh Deform Procession, increase if not wrapping correctly'), 
+		('6', '6 High', 'Mesh Deform Procession, increase if not wrapping correctly')], name = "precission", default = '5'
 	)
 
 	def get_color(hex = "808080"):
@@ -792,20 +792,13 @@ class Panel_Mesh(bpy.types.Panel):
 		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
 		row.prop(context.scene.texToolsSettings, "meshtexture_precission", text="")
 
-		if bpy.app.debug_value != 0:
-			
-			row = col.row(align = True)
-			row.alert = True
-			if not utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
-				row.enabled = False
-			row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
-
-			
-			
-
-
+		row = col.row(align = True)
+		if not utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
+			row.enabled = False
+		row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
 
 		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Create Pattern")
+
 
 
 class Panel_Bake(bpy.types.Panel):
@@ -1091,26 +1084,10 @@ class Panel_Colors(bpy.types.Panel):
 		c.prop(context.scene.texToolsSettings, "color_ID_templates", text="")
 		c = split.column(align=True)
 		c.prop(context.scene.texToolsSettings, "color_ID_count", text="", expand=False)
-		
-
-		# row = col.row(align=True)
-		
-		
-
-		# box = layout.box()
 
 		row = box.row(align=True)
 		row.operator(op_color_clear.op.bl_idname, text="Clear", icon = 'X')
 		row.menu(op_color_dropdown_io.bl_idname, '', icon='COLOR')
-		# 	Drop down menu for import export? 
-		# 	https://blender.stackexchange.com/questions/46496/how-do-i-make-a-custom-drop-down-menu-with-custom-items-in-blender
-		# 	http://elfnor.com/drop-down-and-button-select-menus-for-blender-operator-add-ons.html
-		
-		
-		# row = box.row(align=True)
-		
-
-
 
 
 		max_columns = 5

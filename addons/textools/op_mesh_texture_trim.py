@@ -59,12 +59,14 @@ def trim(self):
 
 	# Apply bool modifier to trim
 	for obj in obj_textures:
-		bpy.ops.object.select_all(action='DESELECT')
-		obj.select = True
-		bpy.context.scene.objects.active = obj
-		# bpy.ops.object.convert(target='MESH')
+		name = "Trim UV"
 
-		bpy.ops.object.modifier_add(type='BOOLEAN')
-		bpy.context.object.modifiers["Boolean"].object = obj_uv
+		if name in obj.modifiers:
+			obj.modifiers.remove( obj.modifiers[name] )
+
+		modifier_bool = obj.modifiers.new(name=name, type='BOOLEAN')
+		modifier_bool.object = obj_uv
+
+	bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message="Collapse modifiers before wrapping")
 
 

@@ -27,8 +27,8 @@ def get_mode():
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_mesh_texture_create"
-	bl_label = "Create Mesh Texture"
-	bl_description = "Swap UV to XYZ coordinates"
+	bl_label = "UV Mesh"
+	bl_description = "Create a new UV Mesh from your selected object"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -192,7 +192,7 @@ def create_uv_mesh(self, obj):
 	mesh = bpy.data.meshes.new("mesh_texture")
 	mesh.from_pydata(m_verts_A, [], m_faces)
 	mesh.update()
-	mesh_obj = bpy.data.objects.new("mesh_texture_obj", mesh)
+	mesh_obj = bpy.data.objects.new("UV_mesh {0}".format(obj.name), mesh)
 	mesh_obj.location = bpy.context.scene.cursor_location
 	bpy.context.scene.objects.link(mesh_obj)
 

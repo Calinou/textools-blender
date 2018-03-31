@@ -23,8 +23,15 @@ def find_uv_mesh(objects):
  						if modifier.object:
  							if modifier.object.data.shape_keys and len(modifier.object.data.shape_keys.key_blocks) == 2:
  								return modifier.object
-
 	return None
+
+
+
+def uv_mesh_clear(obj_uv):
+	# Remove Previous Modifiers
+	if "Solidify" in obj_uv.modifiers:
+		obj_uv.modifiers.remove( obj_uv.modifiers["Solidify"] )
+	# Remove Solidify and push modifiers
 
 
 
@@ -32,9 +39,8 @@ def uv_mesh_fit(obj_uv, obj_textures):
 	# Clear first shape transition
 	bpy.context.scene.texToolsSettings.meshtexture_wrap = 0
 
-	# Remove Previous Modifiers
-	if "Solidify" in obj_uv.modifiers:
-		obj_uv.modifiers.remove( obj_uv.modifiers["Solidify"] )
+	# Clear modifiers first
+	uv_mesh_clear(obj_uv)
 
 
 	# Add solidify modifier

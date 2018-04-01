@@ -44,7 +44,7 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if not bpy.context.active_object or bpy.context.active_object.mode != 'OBJECT':
+		if bpy.context.active_object and bpy.context.active_object.mode != 'OBJECT':
 			return False
 
 		return True
@@ -121,10 +121,13 @@ def create_pattern(self, mode, size, scale):
 		AddArray("Array2", 0,-1,size)
 
 	elif mode == 'stripe':
-		bpy.ops.mesh.primitive_plane_add(radius=scale)
+		bpy.ops.mesh.primitive_plane_add(radius=1)
 
-		bpy.ops.object.editmode_toggle()
+		bpy.ops.object.editmode_toggle()		
 		bpy.ops.transform.resize(GetContextView3D(), value=(0.5, size/2, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		bpy.ops.transform.resize(GetContextView3D(), value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		bpy.ops.transform.translate(GetContextView3D(), value=(0, (-size/2)*scale, 0), constraint_axis=(False, True, False))
+
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 1,0, size)

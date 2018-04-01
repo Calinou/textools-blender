@@ -79,6 +79,7 @@ def assign_checker_map(size_x, size_y):
 		for obj in objects:
 			image = utilities_texel.get_object_texture_image(obj)
 			if image and image.generated_type in texture_modes:
+				print("Found image M"+image.generated_type)
 				mode_count[image.generated_type]+=1
 			else:
 				mode_count['None']+=1

@@ -45,35 +45,35 @@ def get_selected_object_faces():
 
 def get_object_texture_image(obj):
 
-	print("Get img for '{}'".format(obj.name))
-
 	previous_mode = bpy.context.active_object.mode
 	bpy.ops.object.mode_set(mode='OBJECT')
 
+	if bpy.context.scene.render.engine == 'BLENDER_RENDER':
+		# Search in UV editor background image
+		if len(obj.data.uv_textures) > 0:
+			if len(obj.data.uv_textures[0].data) > 0:
+				if obj.data.uv_textures[0].data[0].image:
+					return obj.data.uv_textures[0].data[0].image
+	else:
+		# Search in material & texture slots
+		for slot_mat in obj.material_slots:
 
-	# Search in material & texture slots
-	for slot_mat in obj.material_slots:
+			if slot_mat.material:
 
-		if slot_mat.material:
+				# Check for traditional texture slots in material
+				for slot_tex in slot_mat.material.texture_slots:
+					if slot_tex and slot_tex.texture and hasattr(slot_tex.texture , 'image'):
+						return slot_tex.texture.image
 
-			# Check for traditional texture slots in material
-			for slot_tex in slot_mat.material.texture_slots:
-				if slot_tex and slot_tex.texture and hasattr(slot_tex.texture , 'image'):
-					return slot_tex.texture.image
+				# Check if material uses Nodes
+				if hasattr(slot_mat.material , 'node_tree'):
+					if slot_mat.material.node_tree:
+						for node in slot_mat.material.node_tree.nodes:
+							if type(node) is bpy.types.ShaderNodeTexImage:
+								if node.image:
+									return node.image
 
-			# Check if material uses Nodes
-			if hasattr(slot_mat.material , 'node_tree'):
-				if slot_mat.material.node_tree:
-					for node in slot_mat.material.node_tree.nodes:
-						if type(node) is bpy.types.ShaderNodeTexImage:
-							if node.image:
-								return node.image
-
-	# Search in UV editor background image
-	if len(obj.data.uv_textures) > 0:
-		if len(obj.data.uv_textures[0].data) > 0:
-			if obj.data.uv_textures[0].data[0].image:
-				return obj.data.uv_textures[0].data[0].image
+	
 
 	return None
 

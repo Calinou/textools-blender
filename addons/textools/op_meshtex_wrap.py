@@ -5,45 +5,49 @@ from mathutils import Vector
 from collections import defaultdict
 from math import pi
 import math
-from . import utilities_mesh_texture
+from . import utilities_meshtex
+
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_mesh_texture_wrap"
+	bl_idname = "uv.textools_meshtex_wrap"
 	bl_label = "Wrap Mesh Texture"
 	bl_description = "Swap UV to XYZ coordinates"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):
+		if not bpy.context.active_object or bpy.context.active_object.mode != 'OBJECT':
+			return False
+			
 		# Wrap texture mesh around UV mesh
 		if len(bpy.context.selected_objects) >= 1:
 			# Find a UV mesh
-			if utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
+			if utilities_meshtex.find_uv_mesh(bpy.context.selected_objects):
 				# Find 1 or more meshes to wrap
-				if len( utilities_mesh_texture.find_texture_meshes(bpy.context.selected_objects)) > 0:
+				if len( utilities_meshtex.find_texture_meshes(bpy.context.selected_objects)) > 0:
 					return True
 
 		return False
 
 	def execute(self, context):
-		wrap_mesh_texture(self)
+		wrap_meshtex(self)
 		return {'FINISHED'}
 
 
 
-def wrap_mesh_texture(self):
+def wrap_meshtex(self):
 	# Wrap the mesh texture around the 
 	print("Wrap Mesh Texture :)")
 
 	# Collect UV mesh
-	obj_uv = utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects)
+	obj_uv = utilities_meshtex.find_uv_mesh(bpy.context.selected_objects)
 	if not obj_uv:
 		self.report({'ERROR_INVALID_INPUT'}, "No UV mesh found" )
 		return
 
 	# Collect texture meshes
-	obj_textures = utilities_mesh_texture.find_texture_meshes( bpy.context.selected_objects )
+	obj_textures = utilities_meshtex.find_texture_meshes( bpy.context.selected_objects )
 
 	if len(obj_textures) == 0:
 		self.report({'ERROR_INVALID_INPUT'}, "No meshes found for mesh textures" )
@@ -55,11 +59,11 @@ def wrap_mesh_texture(self):
 	if bpy.context.scene.texToolsSettings.meshtexture_wrap > 0:
 		bpy.context.scene.texToolsSettings.meshtexture_wrap = 0
 		# Clear modifiers
-		utilities_mesh_texture.uv_mesh_clear(obj_uv)
+		utilities_meshtex.uv_mesh_clear(obj_uv)
 		return
 	
 	# Setup Thickness
-	utilities_mesh_texture.uv_mesh_fit(obj_uv, obj_textures)
+	utilities_meshtex.uv_mesh_fit(obj_uv, obj_textures)
 
 	
 	for obj in obj_textures:

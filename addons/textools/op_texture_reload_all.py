@@ -20,14 +20,39 @@ class op(bpy.types.Operator):
 
 
 def main(context):
+	count_clear_mat = 0
+	count_clear_img = 0
+	count_reload = 0
+
+	for material in bpy.data.materials:
+		if not material.users:
+			count_clear_mat+=1
+			material.user_clear()
+			bpy.data.materials.remove(material)
+
 	# Clean up unused images
-	for img in bpy.data.images:
-		if not img.users:
-			bpy.data.images.remove(img)
-			
+	for image in bpy.data.images:
+		if not image.users:
+			count_clear_img+=1
+			image.user_clear()
+			bpy.data.images.remove(image)
+
 	#Reload all File images
 	for img in bpy.data.images :
 		if img.source == 'FILE' :
+			count_reload+=1
 			img.reload()
+
+	# Show popup on cleared & reloaded items
+	message = ""
+	if count_reload > 0:
+		message+="{}x reloaded. ".format(count_reload)
+	if count_clear_mat > 0:
+		message+="{}x mat cleared. ".format(count_clear_mat)
+	if count_clear_img > 0:
+		message+="{}x img cleared.".format(count_clear_img)
+
+	if len(message) > 0:
+		bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message=message)
 
 	

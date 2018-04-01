@@ -6,13 +6,13 @@ from collections import defaultdict
 from math import pi
 import math
 
-from . import utilities_mesh_texture
+from . import utilities_meshtex
 
 
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_mesh_texture_pattern"
+	bl_idname = "uv.textools_meshtex_pattern"
 	bl_label = "Create Pattern"
 	bl_description = "Create mesh pattern"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -44,7 +44,7 @@ class op(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if context.active_object != None and context.active_object.mode != 'OBJECT':
+		if not bpy.context.active_object or bpy.context.active_object.mode != 'OBJECT':
 			return False
 
 		return True

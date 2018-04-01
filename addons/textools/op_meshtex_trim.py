@@ -6,24 +6,27 @@ from collections import defaultdict
 from math import pi
 import math
 
-from . import utilities_mesh_texture
+from . import utilities_meshtex
 
 
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_mesh_texture_trim"
+	bl_idname = "uv.textools_meshtex_trim"
 	bl_label = "Trim"
 	bl_description = "Trim Mesh Texture"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):
+		if not bpy.context.active_object or bpy.context.active_object.mode != 'OBJECT':
+			return False
+		
 		if len(bpy.context.selected_objects) >= 1:
 			# Find a UV mesh
-			if utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
+			if utilities_meshtex.find_uv_mesh(bpy.context.selected_objects):
 				# Find 1 or more meshes to wrap
-				if len( utilities_mesh_texture.find_texture_meshes(bpy.context.selected_objects)) > 0:
+				if len( utilities_meshtex.find_texture_meshes(bpy.context.selected_objects)) > 0:
 					return True
 
 		return False
@@ -39,13 +42,13 @@ def trim(self):
 	print("Trim Mesh Texture :)")
 
 	# Collect UV mesh
-	obj_uv = utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects)
+	obj_uv = utilities_meshtex.find_uv_mesh(bpy.context.selected_objects)
 	if not obj_uv:
 		self.report({'ERROR_INVALID_INPUT'}, "No UV mesh found" )
 		return
 
 	# Collect texture meshes
-	obj_textures = utilities_mesh_texture.find_texture_meshes( bpy.context.selected_objects )
+	obj_textures = utilities_meshtex.find_texture_meshes( bpy.context.selected_objects )
 	
 
 	if len(obj_textures) == 0:
@@ -53,7 +56,7 @@ def trim(self):
 		return
 
 	# Setup Thickness
-	utilities_mesh_texture.uv_mesh_fit(obj_uv, obj_textures)
+	utilities_meshtex.uv_mesh_fit(obj_uv, obj_textures)
 
 
 	# Apply bool modifier to trim

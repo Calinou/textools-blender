@@ -7,11 +7,11 @@ from math import pi
 import math
 from . import utilities_uv
 from . import utilities_texel
-from . import utilities_mesh_texture
+from . import utilities_meshtex
 
 
 def get_mode():
-	if not utilities_mesh_texture.find_uv_mesh([bpy.context.active_object]):
+	if not utilities_meshtex.find_uv_mesh([bpy.context.active_object]):
 		# Create UV mesh from face selection
 		if bpy.context.active_object and bpy.context.active_object.mode == 'EDIT':
 			return 'FACES'
@@ -26,7 +26,7 @@ def get_mode():
 
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_mesh_texture_create"
+	bl_idname = "uv.textools_meshtex_create"
 	bl_label = "UV Mesh"
 	bl_description = "Create a new UV Mesh from your selected object"
 	bl_options = {'REGISTER', 'UNDO'}

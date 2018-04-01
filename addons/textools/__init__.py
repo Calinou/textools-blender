@@ -20,7 +20,7 @@ if "bpy" in locals():
 	imp.reload(utilities_color)
 	imp.reload(utilities_texel)
 	imp.reload(utilities_uv)
-	imp.reload(utilities_mesh_texture)
+	imp.reload(utilities_meshtex)
 	
 	imp.reload(op_align)
 	imp.reload(op_bake)
@@ -48,10 +48,11 @@ if "bpy" in locals():
 	imp.reload(op_select_islands_overlap)
 	imp.reload(op_select_islands_flipped)
 	imp.reload(op_smoothing_uv_islands)
-	imp.reload(op_mesh_texture_create)
-	imp.reload(op_mesh_texture_wrap)
-	imp.reload(op_mesh_texture_trim)
-	imp.reload(op_mesh_texture_pattern)
+	imp.reload(op_meshtex_create)
+	imp.reload(op_meshtex_wrap)
+	imp.reload(op_meshtex_trim)
+	imp.reload(op_meshtex_trim_collapse)
+	imp.reload(op_meshtex_pattern)
 	imp.reload(op_texel_checker_map)
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
@@ -72,7 +73,7 @@ else:
 	from . import utilities_color
 	from . import utilities_texel
 	from . import utilities_uv
-	from . import utilities_mesh_texture
+	from . import utilities_meshtex
 
 	from . import op_align
 	from . import op_bake
@@ -100,10 +101,11 @@ else:
 	from . import op_select_islands_overlap
 	from . import op_select_islands_flipped
 	from . import op_smoothing_uv_islands
-	from . import op_mesh_texture_create
-	from . import op_mesh_texture_wrap
-	from . import op_mesh_texture_trim
-	from . import op_mesh_texture_pattern
+	from . import op_meshtex_create
+	from . import op_meshtex_wrap
+	from . import op_meshtex_trim
+	from . import op_meshtex_trim_collapse
+	from . import op_meshtex_pattern
 	from . import op_texel_checker_map
 	from . import op_texel_density_get
 	from . import op_texel_density_set
@@ -371,7 +373,7 @@ def get_dropdown_uv_values(self, context):
 
 def on_slider_meshtexture_wrap(self, context):
 	value = bpy.context.scene.texToolsSettings.meshtexture_wrap
-	obj_uv = utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects)
+	obj_uv = utilities_meshtex.find_uv_mesh(bpy.context.selected_objects)
 	if obj_uv:
 		obj_uv.data.shape_keys.key_blocks["model"].value = value
 
@@ -471,7 +473,8 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 	)
 	meshtexture_precission = bpy.props.EnumProperty(items= 
 		[('5', '5 Low', 'Mesh Deform Procession, increase if not wrapping correctly'), 
-		('6', '6 High', 'Mesh Deform Procession, increase if not wrapping correctly')], name = "precission", default = '5'
+		('6', '6 Medium', 'Mesh Deform Procession, increase if not wrapping correctly'),
+		('7', '7 High', 'Mesh Deform Procession, increase if not wrapping correctly')], name = "precission", default = '5'
 	)
 
 	def get_color(hex = "808080"):
@@ -781,23 +784,27 @@ class Panel_Mesh(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.scale_y = 1.75
-		row.operator(op_mesh_texture_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_mesh_texture"))
+		row.operator(op_meshtex_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_meshtex"))
+		col.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon = 'MESH_DATA')
 
-		col.operator(op_mesh_texture_trim.op.bl_idname, text="Trim to UV", icon = 'MESH_DATA')
+		# Warning about trimmed mesh
+		if op_meshtex_trim_collapse.is_available():
+			row = col.row(align=True)
+			row.alert = True
+			row.operator(op_meshtex_trim_collapse.op.bl_idname, text="Collapse Trim", icon='CANCEL')
 
 
 		col = box.column(align=True)
-
 		row = col.row(align = True)
-		row.operator(op_mesh_texture_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
+		row.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
 		row.prop(context.scene.texToolsSettings, "meshtexture_precission", text="")
 
 		row = col.row(align = True)
-		if not utilities_mesh_texture.find_uv_mesh(bpy.context.selected_objects):
+		if not utilities_meshtex.find_uv_mesh(bpy.context.selected_objects):
 			row.enabled = False
 		row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
 
-		box.operator(op_mesh_texture_pattern.op.bl_idname, text="Pattern")
+		box.operator(op_meshtex_pattern.op.bl_idname, text="Create Pattern")
 
 
 
@@ -1180,7 +1187,7 @@ def register():
 		"bake_obj_high.png", 
 		"bake_obj_low.png", 
 		"op_align_bottom.png", 
-		"op_mesh_texture.png", 
+		"op_meshtex.png", 
 		"op_align_left.png", 
 		"op_align_right.png", 
 		"op_align_top.png", 

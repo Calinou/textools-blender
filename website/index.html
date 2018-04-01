@@ -262,30 +262,27 @@
             
             <div class="Info"><h3>Mesh Texture 
 			</h3>
+              <p><strong>Behind the Scenes:</strong> The scripts first create a new UV mesh with 2 <a href="https://docs.blender.org/manual/en/dev/animation/shape_keys/introduction.html" class="NoButton">shape keys</a> which morphs between the UV and mesh topology. The mesh to then project gets a '<a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/deform/mesh_deform.html" class="NoButton">Mesh Deform modifier</a>' applied which allows it to deform with the 'UV mesh'.</p>
             </div>
             
             
             
             
 		  <div class="Columns1">
+          	<div class="Content">
+		      <h2> <img src="images/op_mesh_texture.png" width="32" height="32" alt=""/> UV Mesh<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		      <p>Create a UV mesh from your active object with 2 shape keys: 1 mesh shape that reflects the UV map in 3D space and the 2nd shape reflecting the 3D model. You can transition between the 2 states in the mesh tab in the properties panel.	        </p>
+          	</div>
+          
 		    <div class="Content">
-		      <h2> <img src="images/op_mesh_texture.png" width="32" height="32" alt=""/> Mesh Texture<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		      <p>Wraps meshes as textures around 3D models. This tool consists of a 2 step process.		      </p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td width="80" valign="top"><strong>Create</strong></td>
-		          <td width="90%" valign="top"><p>Create UV mesh from your active object with 2 shape keys: 1 mesh shape that reflects the UV map in 3D space and the 2nd shape reflecting the 3D model.</p>
-		            <p> You can transition between the 2 states in the mesh tab in the properties panel.</p></td>
-	            </tr>
-		        <tbody>
-		          <tr>
-		            <td valign="top"><strong>  Wrap</strong></td>
-		            <td valign="top">Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.</td>
-	              </tr>
-	            </tbody>
-	          </table>
-		      <p><strong>Behind the Scenes:</strong> The scripts first create a new UV mesh with 2 <a href="https://docs.blender.org/manual/en/dev/animation/shape_keys/introduction.html" class="NoButton">shape keys</a> which morphs between the UV and mesh topology. The mesh to then project gets a '<a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/deform/mesh_deform.html" class="NoButton">Mesh Deform modifier</a>' applied which allows it to deform with the 'UV mesh'.</p>
-	        </div>
+		      <h2> Trim to UV<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		      <p>Wraps meshes as textures around 3D models. This tool consists of a 2 step process.	        </p>
+		    </div>
+            
+            <div class="Content">
+		      <h2> Wrap<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		      <p>Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.	        </p>
+            </div>
 	      </div>
 		  
 		  </div>

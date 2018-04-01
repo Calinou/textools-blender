@@ -35,7 +35,8 @@ def find_texture_meshes(objects):
 	for obj in objects:
 		if obj and obj.type == 'MESH':
 			if find_uv_mesh([obj], insideModifiers=False) == None:
-				obj_textures.append(obj)
+				if obj not in obj_textures:
+					obj_textures.append(obj)
 
 	return obj_textures
 

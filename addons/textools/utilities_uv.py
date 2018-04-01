@@ -5,8 +5,9 @@ import time
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
-
 from . import settings
+
+
 
 def selection_store():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);

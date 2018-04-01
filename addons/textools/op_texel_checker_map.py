@@ -9,7 +9,8 @@ from math import pi
 from . import utilities_texel
 
 
-texture_modes = ['UV_GRID','COLOR_GRID']
+texture_modes = ['UV_GRID','COLOR_GRID','None']
+
 
 
 class op(bpy.types.Operator):
@@ -24,17 +25,7 @@ class op(bpy.types.Operator):
 		if bpy.context.area.type != 'IMAGE_EDITOR':
 			return False
 
-		if bpy.context.object == None:
-			return False
-
-		if len(bpy.context.selected_objects) == 0:
-			return False
-
-		if len(bpy.context.selected_objects) == 1 and bpy.context.active_object.type != 'MESH':
-			return False
-
-		#Requires UV map
-		if not bpy.context.object.data or not bpy.context.object.data.uv_layers:
+		if len(get_valid_objects()) == 0:
 			return False
 
 		return True
@@ -48,16 +39,27 @@ class op(bpy.types.Operator):
 
 
 
+def get_valid_objects():
+	# Collect Objects
+	objects = []
+	for obj in bpy.context.selected_objects:
+		if obj.type == 'MESH' and obj.data.uv_layers:
+				objects.append(obj)
+
+	return objects
+
+
+
 def assign_checker_map(size_x, size_y):
 	# Force Object mode
 	if bpy.context.scene.objects.active != None and bpy.context.object.mode != 'OBJECT':
 		bpy.ops.object.mode_set(mode='OBJECT')
 
 	# Collect Objects
-	objects = []
-	for obj in bpy.context.selected_objects:
-		if obj.type == 'MESH' and obj.data.uv_layers:
-				objects.append(obj)
+	objects = get_valid_objects()
+	
+	if len(objects) == 0:
+		self.report({'ERROR_INVALID_INPUT'}, "No UV mapped objects selected" )
 
 	#Change View mode to TEXTURED
 	for area in bpy.context.screen.areas:
@@ -73,19 +75,23 @@ def assign_checker_map(size_x, size_y):
 		mode_count = {}
 		for mode in texture_modes:
 			mode_count[mode] = 0
+
 		for obj in objects:
 			image = utilities_texel.get_object_texture_image(obj)
 			if image and image.generated_type in texture_modes:
 				mode_count[image.generated_type]+=1
+			else:
+				mode_count['None']+=1
 
 		# Sort by count (returns tuple list of key,value)
 		mode_max_count = sorted(mode_count.items(), key=operator.itemgetter(1))
 		mode_max_count.reverse()
 
-		mode = None
+		mode = 'None'
 		if mode_max_count[0][1] == 0:
 			# There are no checker maps
 			mode = texture_modes[0]
+
 		elif mode_max_count[0][0] in texture_modes:
 			if mode_max_count[-1][1] > 0:
 				# There is more than 0 of another mode, complete existing mode first
@@ -95,13 +101,16 @@ def assign_checker_map(size_x, size_y):
 				index = texture_modes.index(mode_max_count[0][0])
 				mode = texture_modes[ (index+1)%len(texture_modes) ]
 
+		print("Mode: "+mode)
 
-		name = utilities_texel.get_checker_name(mode, size_x, size_y)
-		image = get_image(name, mode, size_x, size_y)
-
-		# Assig to all objects
-		for obj in objects:
-			apply_faces_image(obj, image)
+		if mode == 'None':
+			for obj in objects:
+				remove_material(obj)
+		else:
+			name = utilities_texel.get_checker_name(mode, size_x, size_y)
+			image = get_image(name, mode, size_x, size_y)
+			for obj in objects:
+				apply_image(obj, image)
 	
 	# Restore object selection
 	bpy.ops.object.mode_set(mode='OBJECT')
@@ -114,7 +123,26 @@ def assign_checker_map(size_x, size_y):
 
 
 
-def apply_faces_image(obj, image):
+def remove_material(obj):
+	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.select_all(action='DESELECT')
+	obj.select = True
+	bpy.context.scene.objects.active = obj
+
+	if bpy.context.scene.render.engine == 'BLENDER_RENDER':
+		if obj.data.uv_textures.active:
+			for uvface in obj.data.uv_textures.active.data:
+				uvface.image = None
+
+	elif bpy.context.scene.render.engine == 'CYCLES':
+		# Clear material slots
+		count = len(obj.material_slots)
+		for i in range(count):
+			bpy.ops.object.material_slot_remove()
+
+
+
+def apply_image(obj, image):
 	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True

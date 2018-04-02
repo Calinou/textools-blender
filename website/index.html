@@ -175,7 +175,7 @@
 					<p>Selects the edge bounds <img src="images/show_selection_view_edge.png" alt=""/>of all UV Islands in the 3D view.</p>
 				</div>
               <div class="Content">
-				<h2> <img src="images/op_select_islands_flipped.png" width="32" height="32" alt=""/> Select Flipped<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				<h2> <img src="images/op_select_islands_flipped.png" width="32" height="32" alt=""/> Select Flipped</h2>
 				  <p>Selects mirrored or flipped UV islands as face <img src="images/show_selection_uv_face.png" class="Icon" alt=""/> select mode.              </p>
               </div>
                 
@@ -262,27 +262,95 @@
             
             <div class="Info"><h3>Mesh Texture 
 			</h3>
-              <p><strong>Behind the Scenes:</strong> The scripts first create a new UV mesh with 2 <a href="https://docs.blender.org/manual/en/dev/animation/shape_keys/introduction.html" class="NoButton">shape keys</a> which morphs between the UV and mesh topology. The mesh to then project gets a '<a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/deform/mesh_deform.html" class="NoButton">Mesh Deform modifier</a>' applied which allows it to deform with the 'UV mesh'.</p>
+              <p>  The Mesh Texture tools use <a href="https://docs.blender.org/manual/en/dev/animation/shape_keys/introduction.html" class="NoButton">shape keys</a> to wrap between a UV shape and 3D Mesh shape. Combined with the <a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/deform/mesh_deform.html" class="NoButton">Mesh Deform modifier</a> we can wrap any mesh from UV space into 3D space. </p>
             </div>
             
             
             
             
-		  <div class="Columns1">
+		  <div class="Columns3">
           	<div class="Content">
-		      <h2> <img src="images/op_mesh_texture.png" width="32" height="32" alt=""/> UV Mesh<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		      <p>Create a UV mesh from your active object with 2 shape keys: 1 mesh shape that reflects the UV map in 3D space and the 2nd shape reflecting the 3D model. You can transition between the 2 states in the mesh tab in the properties panel.	        </p>
+		      <h2> <img src="images/op_meshtex_create.png" width="32" height="32" alt=""/> UV Mesh</h2>
+		      <p>Create a UV mesh from your active object with 2 shape keys: </p>
+              <ol>
+                <li>A UV map shaped mesh</li>
+                <li>A mesh shape identical to the input 3D model. </li>
+              </ol>
+              <p><strong><img src="images/texmesh_uv_mesh.gif" alt=""/></strong></p>
+		      <p><strong>Tip</strong>: With the UV mesh selected you can transition back and forth using the transition slider.</p>
+		      <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
           	</div>
           
 		    <div class="Content">
-		      <h2> Trim to UV<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		      <p>Wraps meshes as textures around 3D models. This tool consists of a 2 step process.	        </p>
+		      <h2> <img src="images/op_meshtex_trim.png" width="32" height="32" alt=""/> Trim to UV<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		      <p>Trims the objects to the UV mesh within the object selection. This operator requires a UV mesh to be part of the selection.</p>
+		      <p><strong><img src="images/demo_meshtex_trim.gif" alt=""/></strong></p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><strong><img src="images/show_collapse_trim.png" alt=""/></strong></td>
+		          <td valign="top">Collapse the trimmed mesh's modifiers.</td>
+	            </tr>
+		        <tbody>
+	            </tbody>
+	          </table>
 		    </div>
             
             <div class="Content">
-		      <h2> Wrap<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		      <h2> <img src="images/op_meshtex_wrap.png" width="32" height="32" alt=""/> Wrap<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 		      <p>Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.	        </p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><strong>Quality</strong></td>
+		          <td valign="top"><p>Mesh deform binding precission quality.</p>
+	              <p><strong><img src="images/show_meshtex_wrap_quality.png" alt=""/></strong></p>
+	              <p><strong>Note: </strong>When the mesh deform modifier does not correctly wrap the input mesh try increasing the quality of the binding precission. </p></td>
+	            </tr>
+		        <tbody>
+		          <tr>
+		            <td valign="top"><strong>  Slider</strong></td>
+		            <td valign="top"><p>Slides UV mesh state between UV mesh shape and target mesh shape.</p>
+	                <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p></td>
+	              </tr>
+	            </tbody>
+	          </table>
+		      <p><strong><img src="images/demo_meshtex_wrap.gif" alt=""/></strong></p>
             </div>
+           	<div class="Content">
+		      <h2> <img src="images/op_meshtex_pattern.png" width="32" height="32" alt=""/> Create Pattern<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+		      <p>Creates a new mesh with multiple array modifiers to create a pattern. There are <strong>6 patterns</strong> to choose from.</p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><strong>Type</strong></td>
+		          <td valign="top"><p>Type of the pattern to generate</p></td>
+	            </tr>
+		        <tr>
+		          <td valign="top"><strong> Size</strong></td>
+		          <td valign="top"><p>The size in steps of the array to repeat on the x and y axis</p></td>
+	            </tr>
+		        <tbody>
+		          <tr>
+		            <td valign="top"><strong> Scale</strong></td>
+		            <td valign="top"><p>An overal scale of the pattern</p></td>
+	              </tr>
+	            </tbody>
+	          </table>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><img src="images/meshtex_pattern_bricks.png" width="120" height="120" alt=""/></td>
+		          <td valign="top"><img src="images/meshtex_pattern_stripes.png" width="120" height="120" alt=""/></td>
+	            </tr>
+		        <tr>
+		          <td valign="top"><img src="images/meshtex_pattern_rectangles.png" width="120" height="120" alt=""/></td>
+		          <td valign="top"><img src="images/meshtex_pattern_hexagons.png" width="120" height="120" alt=""/></td>
+	            </tr>
+		        <tr>
+		          <td valign="top"><img src="images/meshtex_pattern_diamonds.png" width="120" height="120" alt=""/></td>
+		          <td valign="top"><img src="images/meshtex_pattern_triangles.png" width="120" height="120" alt=""/></td>
+	            </tr>
+		        <tbody>
+	            </tbody>
+	          </table>
+           	</div>
 	      </div>
 		  
 		  </div>
@@ -352,7 +420,7 @@
 					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
 				</div>
 				<div class="Content">
-				  <h2>Wireframe<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <h2>Wireframe</h2>
 				  <p><img src="images/bake_wireframe.png" width="128" height="128" alt=""/></p>
 				  <p>Bakes a black and white wireframe<strong> mask</strong>.</p>
 				  <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -386,7 +454,7 @@
 					<p>Bakes a map with unique colors within the bounds of the object.</p>
 				</div>
 				<div class="Content">
-					<h2>AO<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2>AO</h2>
 					<p><img src="images/bake_ao.png" width="128" height="128" alt=""/></p>
 					<p>Bakes an Ambient Occlusion map with the <strong>Cycles Render</strong> and <strong>normalized</strong> enabled.					</p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -399,6 +467,7 @@
 						</tbody>
 					</table>
 				</div>
+                
 				<div class="Content">
 				  <h2>AO Legacy</h2>
 				  <p><img src="images/bake_ao_legacy.png" width="128" height="128" alt=""/></p>
@@ -415,6 +484,12 @@
 			      </table>
 				  <p><strong>Note: </strong>Uses Blender Render and does not support cages.</p>
 			  </div>
+				<div class="Content">
+				  <h2>Paint Base<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <p><img src="images/bake_paint_base.png" width="128" height="128" alt=""/></p>
+				  <p>Sometimes also referred to Blizzard or Dota AO texture map. This bake combines a dirt map with vertical gradient and top facing normals with a highlight.</p>
+				  <p>This bake is a good starting point for character texture maps.</p>
+		      </div>
               <div class="Content">
 				<h2>Curvature</h2>
 					<p><img src="images/bake_curvature.png" width="128" height="128" alt=""/></p>
@@ -431,7 +506,7 @@
 					<p><strong>Note:</strong> Curvature maps require a high and low poly object.</p>
 				</div>
 				<div class="Content">
-				  <h2>Displacement<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <h2>Displacement</h2>
 				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
 				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
 				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
@@ -607,7 +682,7 @@
 						<p>Assigns a color ID to each material slot and assigned faces.</p>
 					</div>
                     <div class="Content">
-						<h2>  <img src="images/op_color_from_directions.png" width="32" height="32" alt=""/> Directions<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+						<h2>  <img src="images/op_color_from_directions.png" width="32" height="32" alt=""/> Directions</h2>
 						<p>Assigns a color ID to face within 3, 4 or 6 face directions.</p>
 						<table width="100%" border="0" cellspacing="10" cellpadding="0">
 						  <tr>

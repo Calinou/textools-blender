@@ -2,10 +2,10 @@ bl_info = {
 	"name": "TexTools",
 	"description": "Professional UV and Texture tools for Blender.",
 	"author": "renderhjs",
-	"version": (1, 1, 00),
+	"version": (1, 2, 00),
 	"blender": (2, 79, 0),
 	"category": "UV",
-	"location": "UV Image Editor > UVs > TexTools panel",
+	"location": "UV Image Editor > Tools > 'TexTools' panel",
 	"wiki_url": "http://renderhjs.net/textools/blender/"
 }
 
@@ -472,9 +472,9 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		subtype  = 'FACTOR'
 	)
 	meshtexture_precission = bpy.props.EnumProperty(items= 
-		[('5', '5 Low', 'Mesh Deform Procession, increase if not wrapping correctly'), 
-		('6', '6 Medium', 'Mesh Deform Procession, increase if not wrapping correctly'),
-		('7', '7 High', 'Mesh Deform Procession, increase if not wrapping correctly')], name = "precission", default = '5'
+		[('5', '5 Low', 'Mesh Deform precession, increase if not wrapping correctly'), 
+		('6', '6 Medium', 'Mesh Deform precession, increase if not wrapping correctly'),
+		('7', '7 High', 'Mesh Deform precession, increase if not wrapping correctly')], name = "precission", default = '5'
 	)
 
 	def get_color(hex = "808080"):
@@ -784,8 +784,8 @@ class Panel_Mesh(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.scale_y = 1.75
-		row.operator(op_meshtex_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_meshtex"))
-		col.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon = 'MESH_DATA')
+		row.operator(op_meshtex_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_meshtex_create"))
+		col.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon_value = icon_get("op_meshtex_trim"))
 
 		# Warning about trimmed mesh
 		if op_meshtex_trim_collapse.is_available():
@@ -796,7 +796,7 @@ class Panel_Mesh(bpy.types.Panel):
 
 		col = box.column(align=True)
 		row = col.row(align = True)
-		row.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon = 'POTATO')
+		row.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon_value = icon_get("op_meshtex_wrap"))
 		row.prop(context.scene.texToolsSettings, "meshtexture_precission", text="")
 
 		row = col.row(align = True)
@@ -804,7 +804,7 @@ class Panel_Mesh(bpy.types.Panel):
 			row.enabled = False
 		row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
 
-		box.operator(op_meshtex_pattern.op.bl_idname, text="Create Pattern")
+		box.operator(op_meshtex_pattern.op.bl_idname, text="Create Pattern", icon_value = icon_get("op_meshtex_pattern"))
 
 
 
@@ -1187,7 +1187,6 @@ def register():
 		"bake_obj_high.png", 
 		"bake_obj_low.png", 
 		"op_align_bottom.png", 
-		"op_meshtex.png", 
 		"op_align_left.png", 
 		"op_align_right.png", 
 		"op_align_top.png", 
@@ -1205,11 +1204,15 @@ def register():
 		"op_island_rotate_90_left.png", 
 		"op_island_rotate_90_right.png", 
 		"op_island_straighten_edge_loops.png", 
+		"op_meshtex_create.png",
+		"op_meshtex_pattern.png",
+		"op_meshtex_trim.png",
+		"op_meshtex_wrap.png",
 		"op_rectify.png", 
+		"op_select_islands_flipped.png", 
 		"op_select_islands_identical.png", 
 		"op_select_islands_outline.png", 
 		"op_select_islands_overlap.png", 
-		"op_select_islands_flipped.png", 
 		"op_smoothing_uv_islands.png", 
 		"op_texel_checker_map.png", 
 		"op_texture_reload_all.png",

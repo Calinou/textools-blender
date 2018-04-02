@@ -288,7 +288,7 @@
 		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
 		        <tr>
 		          <td valign="top"><strong><img src="images/show_collapse_trim.png" alt=""/></strong></td>
-		          <td valign="top">Collapse the trimmed mesh's modifiers.</td>
+		          <td valign="top">Collapses the trimmed mesh's modifiers.</td>
 	            </tr>
 		        <tbody>
 	            </tbody>
@@ -309,7 +309,8 @@
 		          <tr>
 		            <td valign="top"><strong>  Slider</strong></td>
 		            <td valign="top"><p>Slides UV mesh state between UV mesh shape and target mesh shape.</p>
-	                <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p></td>
+	                <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
+	                <p>This is the same as adjusting the shape key transition value in the mesh properties tab of blender.</p></td>
 	              </tr>
 	            </tbody>
 	          </table>
@@ -317,7 +318,7 @@
             </div>
            	<div class="Content">
 		      <h2> <img src="images/op_meshtex_pattern.png" width="32" height="32" alt=""/> Create Pattern<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		      <p>Creates a new mesh with multiple array modifiers to create a pattern. There are <strong>6 patterns</strong> to choose from.</p>
+		      <p>Creates a new mesh at the 3D cursor with multiple array modifiers to create a pattern. All of the array modifiers use relative offsets so you can edit the mesh in any size while preserving the pattern array.		      </p>
 		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
 		        <tr>
 		          <td valign="top"><strong>Type</strong></td>
@@ -330,10 +331,11 @@
 		        <tbody>
 		          <tr>
 		            <td valign="top"><strong> Scale</strong></td>
-		            <td valign="top"><p>An overal scale of the pattern</p></td>
+		            <td valign="top"><p>Thel scale of the pattern</p></td>
 	              </tr>
 	            </tbody>
 	          </table>
+		      <p>There are <strong>6 patterns</strong> to choose from.</p>
 		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
 		        <tr>
 		          <td valign="top"><img src="images/meshtex_pattern_bricks.png" width="120" height="120" alt=""/></td>
@@ -401,25 +403,7 @@
 				</table>
 			</div>
 			<div class="Columns4">
-				<div class="Content">
-					<h2>Tangent Normal </h2>
-					<p><img src="images/bake_normal_tangent.png" width="128" height="128" alt=""/></p>
-					<p>A normal map in tangent space.				</p>
-					<p><strong>Note: </strong>You can change the Y direction of the normal map in the <a href="#preferences" class="NoButton">Addon Preferences</a>.</p>
-				</div>
-				<div class="Content">
-					<h2> Object Normal</h2>
-					<p><img src="images/bake_normal_object.png" width="128" height="128" alt=""/></p>
-					<p>Bakes a normal map in object space.					</p>
-					<p><strong>Tip:</strong> Use the green channel for vertical gradients.</p>
-				</div>
-				<div class="Content">
-					<h2>Diffuse</h2>
-					<p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
-					<p>Renders the diffuse colors of all Cycles materials of the object.					</p>
-					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
-				</div>
-				<div class="Content">
+            	<div class="Content">
 				  <h2>Wireframe</h2>
 				  <p><img src="images/bake_wireframe.png" width="128" height="128" alt=""/></p>
 				  <p>Bakes a black and white wireframe<strong> mask</strong>.</p>
@@ -433,6 +417,31 @@
 			        </tbody>
 			      </table>
 		      </div>
+				<div class="Content">
+					<h2>Tangent Normal </h2>
+					<p><img src="images/bake_normal_tangent.png" width="128" height="128" alt=""/></p>
+					<p>A normal map in tangent space.				</p>
+					<p><strong>Note: </strong>You can change the Y direction of the normal map in the <a href="#preferences" class="NoButton">Addon Preferences</a>.</p>
+				</div>
+				<div class="Content">
+					<h2> Object Normal</h2>
+					<p><img src="images/bake_normal_object.png" width="128" height="128" alt=""/></p>
+					<p>Bakes a normal map in object space.					</p>
+					<p><strong>Tip:</strong> Use the green channel for vertical gradients.</p>
+				</div>
+                <div class="Content">
+					<h2>Position</h2>
+					<p><img src="images/bake_position.png" width="128" height="128" alt=""/></p>
+					<p>Bakes a map with unique colors within the bounds of the object.</p>
+				</div>
+                <div class="Content">
+				  <h2>Displacement</h2>
+				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
+				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
+				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
+			  </div>
+				
+				
 				<div class="Content">
 				  <h2>Face Selection</h2>
 					<p><img src="images/bake_selection.png" width="128" height="128" alt=""/></p>
@@ -449,9 +458,10 @@
 					<p>Assigns a unique color to each sub material or material slot.</p>
 				</div>
 				<div class="Content">
-					<h2>Position</h2>
-					<p><img src="images/bake_position.png" width="128" height="128" alt=""/></p>
-					<p>Bakes a map with unique colors within the bounds of the object.</p>
+					<h2>Diffuse</h2>
+					<p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
+					<p>Renders the diffuse colors of all Cycles materials of the object.					</p>
+					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
 				</div>
 				<div class="Content">
 					<h2>AO</h2>
@@ -487,7 +497,7 @@
 				<div class="Content">
 				  <h2>Paint Base<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 				  <p><img src="images/bake_paint_base.png" width="128" height="128" alt=""/></p>
-				  <p>Sometimes also referred to Blizzard or Dota AO texture map. This bake combines a dirt map with vertical gradient and top facing normals with a highlight.</p>
+				  <p>Sometimes also referred to Blizzard or Dota diffuse map. This bake combines a dirt map with vertical gradient and top facing normals with a highlight. Credits to <a href="https://twitter.com/Linko_3D/status/973540986893762565" class="NoButton">Danyl Bekhoucha</a> for sharing his shader setup.</p>
 				  <p>This bake is a good starting point for character texture maps.</p>
 		      </div>
               <div class="Content">
@@ -505,12 +515,7 @@
 					</table>
 					<p><strong>Note:</strong> Curvature maps require a high and low poly object.</p>
 				</div>
-				<div class="Content">
-				  <h2>Displacement</h2>
-				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
-				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
-				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
-			  </div>
+				
 				<div class="Content">
 				  <h2>Cavity</h2>
 					<p><img src="images/bake_cavity.png" width="128" height="128" alt=""/></p>
@@ -702,7 +707,8 @@
 						      <td valign="top">Assigns all 6 colors of 6 directions</td>
 					        </tr>
 					  </table>
-			      </div>
+						<p><img src="images/demo_color_id_directions.png" alt=""/></p>
+		          </div>
 				</div>
 				
 				

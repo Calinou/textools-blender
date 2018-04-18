@@ -39,6 +39,7 @@ if "bpy" in locals():
 	imp.reload(op_color_select)
 	imp.reload(op_island_align_edge)
 	imp.reload(op_island_align_sort)
+	imp.reload(op_island_align_world)
 	imp.reload(op_island_mirror)
 	imp.reload(op_island_rotate_90)
 	imp.reload(op_island_straighten_edge_loops)
@@ -92,6 +93,7 @@ else:
 	from . import op_color_select
 	from . import op_island_align_edge
 	from . import op_island_align_sort
+	from . import op_island_align_world
 	from . import op_island_mirror
 	from . import op_island_rotate_90
 	from . import op_island_straighten_edge_loops
@@ -672,11 +674,17 @@ class Panel_Layout(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
-
+		
+		row = col.row(align=True)
+		row.alert = True
+		row.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_rectify"))
+		
+		
 
 		row = col.row(align=True)
 		row.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
-	
+		
+
 
 
 		row = col.row(align=True)

@@ -84,7 +84,7 @@ def main(context):
 			avg_normal+=face.normal
 		avg_normal/=len(faces)
 
-		# avg_normal = (obj.matrix_world*avg_normal).normalized()
+		avg_normal = (obj.matrix_world*avg_normal).normalized()
 
 		# Which Side
 		x = 0
@@ -93,15 +93,15 @@ def main(context):
 		max_size = max(abs(avg_normal.x), abs(avg_normal.y), abs(avg_normal.z))
 		if(abs(avg_normal.x) == max_size):
 			print("x normal")
-
-			align_island(obj, faces, y, z)
+			align_island(obj, uvLayer, faces, y, z)
 
 		elif(abs(avg_normal.y) == max_size):
 			print("y normal")
-			align_island(obj, faces, y, z)
-			pass
+			align_island(obj, uvLayer, faces, x, z)
+
 		elif(abs(avg_normal.z) == max_size):
-			pass
+			print("z normal")
+			align_island(obj, uvLayer, faces, x, y)
 
 		print("align island: faces {}x n:{}, max:{}".format(len(faces), avg_normal, max_size))
 
@@ -110,7 +110,7 @@ def main(context):
 	#Restore selection
 	utilities_uv.selection_restore()
 
-def align_island(obj, faces, s_x=0, s_y=1):
+def align_island(obj, uvLayer, faces, x=0, y=1):
 
 	# Find lowest and highest verts
 	minmax_val  = [0,0]
@@ -118,15 +118,36 @@ def align_island(obj, faces, s_x=0, s_y=1):
 
 	print("faces {}x".format(len(faces)))
 
+
+
+
+	vert_to_uv = {}
+	uv_to_vert = {}
+
 	processed = []
 	for face in faces:
+
+		# Collect UV to Vert
+		for loop in face.loops:
+			vert = loop.vert
+			uv = loop[uvLayer]
+			# vert_to_uv
+			if vert not in vert_to_uv:
+				vert_to_uv[vert] = [uv];
+			else:
+				vert_to_uv[vert].append(uv)
+			# uv_to_vert
+			if uv not in uv_to_vert:
+				uv_to_vert[ uv ] = vert;
+
+
 		for vert in face.verts:
 			if vert not in processed:
 				processed.append(vert)
 
 				print("idx {}".format(vert.index))
 
-				vert_y = (obj.matrix_world * vert.co)[s_y]
+				vert_y = (obj.matrix_world * vert.co)[y]
 
 				if not minmax_vert[0]:
 					minmax_vert[0] = vert
@@ -151,4 +172,21 @@ def align_island(obj, faces, s_x=0, s_y=1):
 
 	if minmax_vert[0] and minmax_vert[1]:
 		print("Min {} , Max {} ".format(minmax_vert[0].index, minmax_vert[1].index))
-				
+		
+		vert_A = minmax_vert[0]
+		vert_B = minmax_vert[1]
+		uv_A = vert_to_uv[vert_A][0]
+		uv_B = vert_to_uv[vert_B][0]
+
+		delta_verts = Vector((
+			vert_B.co[x] - vert_A.co[x],
+			vert_B.co[y] - vert_A.co[y]
+		))
+
+		delta_uvs = Vector((
+			uv_B.co.x - uv_A.co.x,
+			uv_B.co.y - uv_A.co.y,
+
+		))
+
+		print("Delta {} | {}".format(delta_verts, delta_uvs))

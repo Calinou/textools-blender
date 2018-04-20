@@ -110,6 +110,8 @@ def main(context):
 	#Restore selection
 	utilities_uv.selection_restore()
 
+
+
 def align_island(obj, uvLayer, faces, x=0, y=1):
 
 	# Find lowest and highest verts
@@ -144,8 +146,6 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 		for vert in face.verts:
 			if vert not in processed:
 				processed.append(vert)
-
-				print("idx {}".format(vert.index))
 
 				vert_y = (obj.matrix_world * vert.co)[y]
 
@@ -184,9 +184,19 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 		))
 
 		delta_uvs = Vector((
-			uv_B.co.x - uv_A.co.x,
-			uv_B.co.y - uv_A.co.y,
+			uv_B.uv.x - uv_A.uv.x,
+			uv_B.uv.y - uv_A.uv.y,
 
 		))
+		# Get angles
+		angle_vert = math.atan2(delta_verts.y, delta_verts.x)
+		angle_uv = math.atan2(delta_uvs.y, delta_uvs.x)
 
-		print("Delta {} | {}".format(delta_verts, delta_uvs))
+		angle_delta = angle_vert - angle_uv
+
+		print("Delta {} | {}".format(angle_vert*180/math.pi, angle_uv*180/math.pi))
+		print("Delta Angle {}".format(angle_delta*180/math.pi))
+
+		bpy.context.space_data.pivot_point = 'MEDIAN'
+		bpy.ops.transform.rotate(value=angle_delta, axis=(0, 0, 1))
+		# bpy.ops.transform.rotate(value=0.58191, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SPHERE', proportional_size=0.0267348)

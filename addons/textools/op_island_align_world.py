@@ -84,7 +84,7 @@ def main(context):
 			avg_normal+=face.normal
 		avg_normal/=len(faces)
 
-		avg_normal = (obj.matrix_world*avg_normal).normalized()
+		# avg_normal = (obj.matrix_world*avg_normal).normalized()
 
 		# Which Side
 		x = 0
@@ -108,7 +108,7 @@ def main(context):
 	
 
 	#Restore selection
-	utilities_uv.selection_restore()
+	# utilities_uv.selection_restore()
 
 
 
@@ -147,7 +147,7 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 			if vert not in processed:
 				processed.append(vert)
 
-				vert_y = (obj.matrix_world * vert.co)[y]
+				vert_y = (vert.co)[y] #obj.matrix_world * 
 
 				if not minmax_vert[0]:
 					minmax_vert[0] = vert
@@ -171,7 +171,8 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 					continue
 
 	if minmax_vert[0] and minmax_vert[1]:
-		print("Min {} , Max {} ".format(minmax_vert[0].index, minmax_vert[1].index))
+		axis_names = ['x', 'y', 'z']
+		print("  Min {} , Max {} along '{}'".format(minmax_vert[0].index, minmax_vert[1].index, axis_names[y] ))
 		
 		vert_A = minmax_vert[0]
 		vert_B = minmax_vert[1]
@@ -194,8 +195,10 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 
 		angle_delta = angle_vert - angle_uv
 
-		print("Delta {} | {}".format(angle_vert*180/math.pi, angle_uv*180/math.pi))
-		print("Delta Angle {}".format(angle_delta*180/math.pi))
+		print("  Delta {} | {}".format(angle_vert*180/math.pi, angle_uv*180/math.pi))
+		print("  Delta Angle {}".format(angle_delta*180/math.pi))
+
+
 
 		bpy.context.space_data.pivot_point = 'MEDIAN'
 		bpy.ops.transform.rotate(value=angle_delta, axis=(0, 0, 1))

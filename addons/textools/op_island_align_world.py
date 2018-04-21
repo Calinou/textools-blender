@@ -95,15 +95,15 @@ def main(context):
 		max_size = max(abs(avg_normal.x), abs(avg_normal.y), abs(avg_normal.z))
 		if(abs(avg_normal.x) == max_size):
 			print("x normal")
-			align_island(obj, uvLayer, faces, y, z)
+			align_island(obj, uvLayer, faces, y, z, avg_normal.x > 0, False)
 
 		elif(abs(avg_normal.y) == max_size):
 			print("y normal")
-			align_island(obj, uvLayer, faces, x, z)
+			align_island(obj, uvLayer, faces, x, z, avg_normal.y > 0, False)
 
 		elif(abs(avg_normal.z) == max_size):
 			print("z normal")
-			align_island(obj, uvLayer, faces, x, y)
+			align_island(obj, uvLayer, faces, x, y, False, avg_normal.z > 0)
 
 		print("align island: faces {}x n:{}, max:{}".format(len(faces), avg_normal, max_size))
 
@@ -114,23 +114,103 @@ def main(context):
 
 
 
-def align_island(obj, uvLayer, faces, x=0, y=1):
+def align_island(obj, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 
 	# Find lowest and highest verts
 	minmax_val  = [0,0]
 	minmax_vert = [None, None]
 
-	print("faces {}x".format(len(faces)))
+	axis_names = ['x', 'y', 'z']
+	print("Align shell {}x 	at {},{} flip {},{}".format(len(faces), axis_names[x], axis_names[y], flip_x, flip_y))
 
 
+		# print("  Min #{} , Max #{} along '{}'".format(minmax_vert[0].index, minmax_vert[1].index, axis_names[y] ))
+		# print("  A1 {:.1f} , A2 {:.1f} along ".format(minmax_val[0], minmax_val[1] ))
+		
 
 
 	vert_to_uv = {}
 	uv_to_vert = {}
+	for face in faces:
 
-	processed = []
+		# Collect UV to Vert
+		for loop in face.loops:
+			loop[uvLayer].select = True
+			vert = loop.vert
+			uv = loop[uvLayer]
+			# vert_to_uv
+			if vert not in vert_to_uv:
+				vert_to_uv[vert] = [uv];
+			else:
+				vert_to_uv[vert].append(uv)
+			# uv_to_vert
+			if uv not in uv_to_vert:
+				uv_to_vert[ uv ] = vert;
+
+	processed_edges = []
+	edges = []
+	for face in faces:
+		for edge in face.edges:
+			if edge not in processed_edges:
+				processed_edges.append(edge)
+				delta = edge.verts[0].co -edge.verts[1].co
+				max_side = max(abs(delta.x), abs(delta.y), abs(delta.z))
+
+				# Check edges dominant in active axis
+				if( abs(delta[x]) == max_side or abs(delta[y]) == max_side):
+					edges.append(edge)
+
+	print("Edges {}x".format(len(edges)))
+
+	avg_angle = 0
+	for edge in edges:
+		uv0 = vert_to_uv[ edge.verts[0] ][0]
+		uv1 = vert_to_uv[ edge.verts[1] ][0]
+		delta_verts = Vector((
+			edge.verts[1].co[x] - edge.verts[0].co[x],
+			edge.verts[1].co[y] - edge.verts[0].co[y]
+		))
+		
+
+		if flip_x:
+			delta_verts.x = edge.verts[0].co[x] - edge.verts[1].co[x]
+			delta_verts.y = edge.verts[0].co[y] - edge.verts[1].co[y]
+			
+
+		delta_uvs = Vector((
+			uv1.uv.x - uv0.uv.x,
+			uv1.uv.y - uv0.uv.y
+		))
+		a0 = math.atan2(delta_verts.y, delta_verts.x)# - math.pi/2
+		a1 = math.atan2(delta_uvs.y, delta_uvs.x)# - math.pi/2
+
+		
 
 
+		a_delta = math.atan2(math.sin(a1-a0), math.cos(a1-a0))
+		# edge.verts[0].index, edge.verts[1].index
+		print("  turn {:.1f}	.. {:.1f} , {:.1f}".format(a_delta*180/math.pi, a0*180/math.pi,a1*180/math.pi))
+		avg_angle+=a_delta
+
+
+	avg_angle/=len(edges)
+	print("Turn {:.1f}".format(avg_angle * 180/math.pi))
+	
+	bpy.ops.uv.select_all(action='DESELECT')
+	for face in faces:
+		for loop in face.loops:
+			loop[uvLayer].select = True
+
+
+	bpy.context.space_data.pivot_point = 'MEDIAN'
+	bpy.ops.transform.rotate(value=avg_angle, axis=(0, 0, 1))
+	# bpy.ops.transform.rotate(value=0.58191, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SPHERE', proportional_size=0.0267348)
+
+
+	# processed = []
+	
+
+	'''
 	bpy.ops.uv.select_all(action='DESELECT')
 	for face in faces:
 
@@ -213,3 +293,4 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 		# vert_B.select = True
 
 		# return
+	'''

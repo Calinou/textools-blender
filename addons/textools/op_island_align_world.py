@@ -3,11 +3,13 @@ import os
 import bmesh
 import math
 import operator
+
 from mathutils import Vector
 from collections import defaultdict
 from itertools import chain # 'flattens' collection of iterables
 
 from . import utilities_uv
+
 
 
 
@@ -108,7 +110,7 @@ def main(context):
 	
 
 	#Restore selection
-	# utilities_uv.selection_restore()
+	utilities_uv.selection_restore()
 
 
 
@@ -127,10 +129,14 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 	uv_to_vert = {}
 
 	processed = []
+
+
+	bpy.ops.uv.select_all(action='DESELECT')
 	for face in faces:
 
 		# Collect UV to Vert
 		for loop in face.loops:
+			loop[uvLayer].select = True
 			vert = loop.vert
 			uv = loop[uvLayer]
 			# vert_to_uv
@@ -149,13 +155,12 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 
 				vert_y = (vert.co)[y] #obj.matrix_world * 
 
-				if not minmax_vert[0]:
-					minmax_vert[0] = vert
-					minmax_val[0] = vert_y
-					continue
+				print("idx {} = {}".format(vert.index, vert_y))
 
-				if not minmax_vert[1]:
+				if not minmax_vert[0] or not minmax_vert[1]:
+					minmax_vert[0] = vert
 					minmax_vert[1] = vert
+					minmax_val[0] = vert_y
 					minmax_val[1] = vert_y
 					continue
 
@@ -163,16 +168,16 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 					# Not yet defined or smaller
 					minmax_vert[0] = vert
 					minmax_val[0] = vert_y
-					continue
-
+					
 				elif vert_y > minmax_val[1]:
 					minmax_vert[1] = vert
 					minmax_val[1] = vert_y
-					continue
+					
 
 	if minmax_vert[0] and minmax_vert[1]:
 		axis_names = ['x', 'y', 'z']
-		print("  Min {} , Max {} along '{}'".format(minmax_vert[0].index, minmax_vert[1].index, axis_names[y] ))
+		print("  Min #{} , Max #{} along '{}'".format(minmax_vert[0].index, minmax_vert[1].index, axis_names[y] ))
+		# print("  A1 {:.1f} , A2 {:.1f} along ".format(minmax_val[0], minmax_val[1] ))
 		
 		vert_A = minmax_vert[0]
 		vert_B = minmax_vert[1]
@@ -193,13 +198,18 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 		angle_vert = math.atan2(delta_verts.y, delta_verts.x)
 		angle_uv = math.atan2(delta_uvs.y, delta_uvs.x)
 
-		angle_delta = angle_vert - angle_uv
+		angle_delta = math.atan2(math.sin(angle_vert-angle_uv), math.cos(angle_vert-angle_uv))
 
-		print("  Delta {} | {}".format(angle_vert*180/math.pi, angle_uv*180/math.pi))
-		print("  Delta Angle {}".format(angle_delta*180/math.pi))
-
-
+		print("  Angles {:.2f} | {:.2f}".format(angle_vert*180/math.pi, angle_uv*180/math.pi))
+		print("  Angle Diff {:.2f}".format(angle_delta*180/math.pi))
 
 		bpy.context.space_data.pivot_point = 'MEDIAN'
 		bpy.ops.transform.rotate(value=angle_delta, axis=(0, 0, 1))
 		# bpy.ops.transform.rotate(value=0.58191, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SPHERE', proportional_size=0.0267348)
+
+
+		# bpy.ops.mesh.select_all(action='DESELECT')
+		# vert_A.select = True
+		# vert_B.select = True
+
+		# return

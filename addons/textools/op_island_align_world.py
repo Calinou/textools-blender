@@ -195,8 +195,8 @@ def align_island(obj, uvLayer, faces, x=0, y=1):
 
 		))
 		# Get angles
-		angle_vert = math.atan2(delta_verts.y, delta_verts.x)
-		angle_uv = math.atan2(delta_uvs.y, delta_uvs.x)
+		angle_vert = math.atan2(delta_verts.y, delta_verts.x) - math.pi/2
+		angle_uv = math.atan2(delta_uvs.y, delta_uvs.x) - math.pi/2
 
 		angle_delta = math.atan2(math.sin(angle_vert-angle_uv), math.cos(angle_vert-angle_uv))
 

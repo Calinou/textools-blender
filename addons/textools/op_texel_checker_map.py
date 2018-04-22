@@ -39,16 +39,6 @@ class op(bpy.types.Operator):
 
 
 
-def get_valid_objects():
-	# Collect Objects
-	objects = []
-	for obj in bpy.context.selected_objects:
-		if obj.type == 'MESH' and obj.data.uv_layers:
-				objects.append(obj)
-
-	return objects
-
-
 
 def assign_checker_map(size_x, size_y):
 	# Force Object mode
@@ -76,11 +66,20 @@ def assign_checker_map(size_x, size_y):
 		for mode in texture_modes:
 			mode_count[mode] = 0
 
+		# Image sizes
+		image_sizes_x = []
+		image_sizes_y = []
+
 		for obj in objects:
 			image = utilities_texel.get_object_texture_image(obj)
 			if image and image.generated_type in texture_modes:
-				print("Found image M"+image.generated_type)
 				mode_count[image.generated_type]+=1
+
+				# Track image sizes
+				if image.size[0] not in image_sizes_x:
+					image_sizes_x.append(image.size[0])
+				if image.size[1] not in image_sizes_y:
+					image_sizes_y.append(image.size[1])
 			else:
 				mode_count['None']+=1
 
@@ -88,9 +87,11 @@ def assign_checker_map(size_x, size_y):
 		mode_max_count = sorted(mode_count.items(), key=operator.itemgetter(1))
 		mode_max_count.reverse()
 
+
+
 		mode = 'None'
 		if mode_max_count[0][1] == 0:
-			# There are no checker maps
+			# There are no maps
 			mode = texture_modes[0]
 
 		elif mode_max_count[0][0] in texture_modes:
@@ -100,7 +101,18 @@ def assign_checker_map(size_x, size_y):
 			else:
 				# Switch to next checker mode
 				index = texture_modes.index(mode_max_count[0][0])
-				mode = texture_modes[ (index+1)%len(texture_modes) ]
+				
+				
+				if texture_modes[ index ] != 'NONE' and len(image_sizes_x) > 1 or len(image_sizes_y) > 1:
+					# There are multiple resolutions on selected objects
+					mode = texture_modes[ index ]
+				elif texture_modes[ index ] != 'NONE' and (len(image_sizes_x) > 0 and image_sizes_x[0] != size_x) and (len(image_sizes_y) > 0 and image_sizes_y[0] != size_y):
+					# The selected objects have a different resolution
+					mode = texture_modes[ index ]
+				else:
+					# Next mode
+					mode = texture_modes[ (index+1)%len(texture_modes) ]
+
 
 		print("Mode: "+mode)
 
@@ -121,6 +133,24 @@ def assign_checker_map(size_x, size_y):
 
 	# Clean up images and materials
 	utilities_texel.checker_images_cleanup()
+
+	# Force redraw of viewport to update texture
+	bpy.context.scene.update()
+
+
+
+def get_valid_objects():
+	# Collect Objects
+	objects = []
+	for obj in bpy.context.selected_objects:
+		if obj.type == 'MESH' and obj.data.uv_layers:
+				objects.append(obj)
+
+	return objects
+
+
+
+
 
 
 

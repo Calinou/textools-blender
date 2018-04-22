@@ -93,17 +93,18 @@ def main(context):
 		y = 1
 		z = 2
 		max_size = max(abs(avg_normal.x), abs(avg_normal.y), abs(avg_normal.z))
-		if(abs(avg_normal.x) == max_size):
-			print("x normal")
-			align_island(obj, uvLayer, faces, y, z, avg_normal.x > 0, False)
+		for i in range(10):
+			if(abs(avg_normal.x) == max_size):
+				print("x normal")
+				align_island(obj, uvLayer, faces, y, z, avg_normal.x > 0, False)
 
-		elif(abs(avg_normal.y) == max_size):
-			print("y normal")
-			align_island(obj, uvLayer, faces, x, z, avg_normal.y > 0, False)
+			elif(abs(avg_normal.y) == max_size):
+				print("y normal")
+				align_island(obj, uvLayer, faces, x, z, avg_normal.y > 0, False)
 
-		elif(abs(avg_normal.z) == max_size):
-			print("z normal")
-			align_island(obj, uvLayer, faces, x, y, False, avg_normal.z > 0)
+			elif(abs(avg_normal.z) == max_size):
+				print("z normal")
+				align_island(obj, uvLayer, faces, x, y, False, avg_normal.z > 0)
 
 		print("align island: faces {}x n:{}, max:{}".format(len(faces), avg_normal, max_size))
 
@@ -158,6 +159,7 @@ def align_island(obj, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 
 				# Check edges dominant in active axis
 				if( abs(delta[x]) == max_side or abs(delta[y]) == max_side):
+				# if( abs(delta[y]) == max_side):
 					edges.append(edge)
 
 	print("Edges {}x".format(len(edges)))
@@ -172,28 +174,28 @@ def align_island(obj, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 		))
 		
 
-		if flip_x:
-			delta_verts.x = edge.verts[0].co[x] - edge.verts[1].co[x]
-			delta_verts.y = edge.verts[0].co[y] - edge.verts[1].co[y]
+		# if flip_x:
+		# 	delta_verts.x = edge.verts[0].co[x] - edge.verts[1].co[x]
+		# 	delta_verts.y = edge.verts[0].co[y] - edge.verts[1].co[y]
 			
 
 		delta_uvs = Vector((
 			uv1.uv.x - uv0.uv.x,
 			uv1.uv.y - uv0.uv.y
 		))
-		a0 = math.atan2(delta_verts.y, delta_verts.x)# - math.pi/2
-		a1 = math.atan2(delta_uvs.y, delta_uvs.x)# - math.pi/2
+		a0 = math.atan2(delta_verts.y, delta_verts.x) - math.pi/2
+		a1 = math.atan2(delta_uvs.y, delta_uvs.x) - math.pi/2
 
 		
 
 
-		a_delta = math.atan2(math.sin(a1-a0), math.cos(a1-a0))
+		a_delta = math.atan2(math.sin(a0-a1), math.cos(a0-a1)) 
 		# edge.verts[0].index, edge.verts[1].index
 		print("  turn {:.1f}	.. {:.1f} , {:.1f}".format(a_delta*180/math.pi, a0*180/math.pi,a1*180/math.pi))
 		avg_angle+=a_delta
 
 
-	avg_angle/=len(edges)
+	avg_angle/=len(edges) - math.pi/2
 	print("Turn {:.1f}".format(avg_angle * 180/math.pi))
 	
 	bpy.ops.uv.select_all(action='DESELECT')

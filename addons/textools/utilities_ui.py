@@ -4,6 +4,9 @@ import os
 from bpy.types import Panel, EnumProperty, WindowManager
 from bpy.props import StringProperty
 
+from . import settings
+from . import utilities_bake
+
 preview_collections = {}
 
 size_textures = [
@@ -19,11 +22,13 @@ size_textures = [
 	]
 
 
+preview_icons = bpy.utils.previews.new()
+
 def icon_get(name):
 	return preview_icons[name].icon_id
 
 
-preview_icons = bpy.utils.previews.new()
+
 def icon_register(fileName):
 	name = fileName.split('.')[0]   # Don't include file extension
 	icons_dir = os.path.join(os.path.dirname(__file__), "icons")
@@ -76,6 +81,13 @@ class op_popup(bpy.types.Operator):
 
 
 
+
+def on_bakemode_set(self, context):
+	settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").lower()
+	utilities_bake.on_select_bake_mode(settings.bake_mode)
+
+
+
 def register():
 	from bpy.types import Scene
 	from bpy.props import StringProperty, EnumProperty
@@ -92,12 +104,15 @@ def register():
 	preview_collection = bpy.utils.previews.new()
 	preview_collection.images_location = os.path.join(os.path.dirname(__file__), "resources/bake_modes")
 	preview_collections["thumbnail_previews"] = preview_collection
+
 	
 	# This is an EnumProperty to hold all of the images
 	# You really can save it anywhere in bpy.types.*  Just make sure the location makes sense
 	bpy.types.Scene.TT_bake_mode = EnumProperty(
 		items=generate_previews(),
+		update = on_bakemode_set
 	)
+	# on_bakemode_set(None,None)
 	
 def unregister():
 

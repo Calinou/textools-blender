@@ -42,6 +42,21 @@ class BakeMode:
 
 
 
+def on_select_bake_mode(mode):
+	print("Mode changed {}".format(mode))#settings.bake_mode
+
+	if len(settings.sets) > 0:
+		name_texture = "{}_{}".format(settings.sets[0].name, mode)
+
+		if name_texture in bpy.data.images:
+			image = bpy.data.images[name_texture]
+
+			# Set background image
+			for area in bpy.context.screen.areas:
+				if area.type == 'IMAGE_EDITOR':
+					area.spaces[0].image = image
+
+
 def store_bake_settings():
 	# Render Settings
 	settings.bake_render_engine = bpy.context.scene.render.engine

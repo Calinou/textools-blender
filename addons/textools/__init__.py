@@ -876,8 +876,8 @@ class Panel_Bake(bpy.types.Panel):
 
 		# Bake Mode
 		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon = 'TEXTURE_SHADED');
-		col.template_icon_view(context.scene, "TT_bake_mode")
-		settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").lower()
+		col.template_icon_view(bpy.context.scene, "TT_bake_mode")
+		
 		
 		if bpy.app.debug_value != 0:
 			row = col.row()
@@ -901,10 +901,11 @@ class Panel_Bake(bpy.types.Panel):
 				break		
 
 		# Display Bake mode properties / parameters
-		params = op_bake.modes[settings.bake_mode].params
-		if len(params) > 0:
-			for param in params:
-				col.prop(context.scene.texToolsSettings, param)
+		if settings.bake_mode in op_bake.modes:
+			params = op_bake.modes[settings.bake_mode].params
+			if len(params) > 0:
+				for param in params:
+					col.prop(context.scene.texToolsSettings, param)
 
 
 		box = layout.box()

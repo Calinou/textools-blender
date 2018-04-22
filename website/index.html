@@ -126,16 +126,20 @@
 					<p><strong>Tip</strong>: You can align mutliple UV islands by edge at once.</p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify</h2>
-					<p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.</p>
-					<p><img src="images/demo_rectify.gif" alt=""/></p>
-				</div>
+				  <h2><img src="images/op_island_align_world.png" width="32" height="32" alt=""/> Align World</h2>
+				  <p><strong>Rotates</strong> the UV island to match it's face's world orientation. The tool determines orientation for 6 direction thresholds (e.g top view, side views,,..). This is a great tool for when you don't know if UV islands are aligned consistently.			  </p>
+			  </div>
 				<div class="Content">
-					<h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
+				  <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
 					<p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
+				  <h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify</h2>
+				  <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.</p>
+				  <p><img src="images/demo_rectify.gif" alt=""/></p>
+			  </div>
+				<div class="Content">
+				  <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
 					<p>This tool has 4 directions to align UV islands or UV vertices to. </p>
 					<p>In UV vertex mode <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. </p>
 					<p><img src="images/demo_align.gif" alt=""/></p>
@@ -204,7 +208,7 @@
 					<h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
 					<p>Assigns a checker map texture (blender render) or material (cycles) to the objects. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to <strong>texture mode</strong>.					</p>
 					<p><img src="images/show_checkermap_swap.png" alt=""/></p>
-					<p><strong>Tip:</strong> Assign a checker map again and the checker map will change from <strong>UV Grid</strong> to <strong>Color Grid</strong></p>
+					<p><strong>Tip:</strong> Assign a checker map again and the checker map will change from <strong>UV Grid</strong> to <strong>Color Grid</strong> to <strong>Gravity Checker</strong> to <strong>None</strong></p>
 				</div>
 				<div class="Content">
 					<h2><img src="images/texel_density.png" width="32" height="32" alt=""/> Texel Density</h2>

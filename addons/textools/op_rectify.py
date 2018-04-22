@@ -6,7 +6,8 @@ from collections import defaultdict
 from math import pi
 import time
 from math import radians, hypot
-from . import utilities_color
+
+from . import utilities_uv
 
 
 class op(bpy.types.Operator):
@@ -44,66 +45,22 @@ class op(bpy.types.Operator):
 
 
 precision = 3
-__face_to_verts = defaultdict(set)
-__vert_to_faces = defaultdict(set)
-
 
 
 def rectify(self, context):
 	obj = bpy.context.active_object
-	
+
+
 	bm = bmesh.from_edit_mesh(obj.data)
 	uv_layer = bm.loops.layers.uv.verify()
-	bm.faces.ensure_lookup_table()
-	bm.faces.index_update()
 
-	# Face to ID look up dictionary
-	selected_faces = [f for f in bm.faces if f.select]
-	for face in selected_faces:
-		for loop in face.loops:
-			id = loop[uv_layer].uv.to_tuple(5), loop.vert.index
-			__face_to_verts[face.index].add(id)
-			__vert_to_faces[id].add(face.index)
+	#Store selection
+	utilities_uv.selection_store()
 
-	uv_island_lists = get_island(bm)
+	main(False)
 
-	for island in uv_island_lists:
-		for f in bm.faces:  # deselect faces
-			if f.select:
-				f.select = False
-		for faces in island:
-			faces['face'].select = True
-		main(False)
-	for f in bm.faces:  # deselect faces
-		if f in selected_faces:
-			f.select = True
-		else:
-			f.select = False
-
-
-
-
-def parse_island(bm, face_idx, faces_left, island):
-	if face_idx in faces_left:
-		faces_left.remove(face_idx)
-		island.append({'face': bm.faces[face_idx]})
-		for v in __face_to_verts[face_idx]:
-			connected_faces = __vert_to_faces[v]
-			if connected_faces:
-				for cf in connected_faces:
-					parse_island(bm, cf, faces_left, island)
-
-
-def get_island(bm):
-	uv_island_lists = []
-	faces_left = set(__face_to_verts.keys())
-	while len(faces_left) > 0:
-		current_island = []
-		face_idx = list(faces_left)[0]
-		parse_island(bm, face_idx, faces_left, current_island)
-		uv_island_lists.append(current_island)
-	return uv_island_lists
-
+	#Restore selection
+	utilities_uv.selection_restore()
 
 
 def main(square = False, snapToClosest = False):

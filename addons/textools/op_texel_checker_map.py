@@ -9,7 +9,7 @@ from math import pi
 from . import utilities_texel
 
 
-texture_modes = ['UV_GRID','COLOR_GRID','None']
+texture_modes = ['UV_GRID','COLOR_GRID','GRAVITY','NONE']
 
 
 
@@ -70,26 +70,37 @@ def assign_checker_map(size_x, size_y):
 		image_sizes_x = []
 		image_sizes_y = []
 
+		# Collect current modes in selected objects
 		for obj in objects:
 			image = utilities_texel.get_object_texture_image(obj)
-			if image and image.generated_type in texture_modes:
-				mode_count[image.generated_type]+=1
+			mode = 'NONE'
+			if image:
+				if "GRAVITY" in image.name.upper():
+					mode = 'GRAVITY'
 
-				# Track image sizes
-				if image.size[0] not in image_sizes_x:
-					image_sizes_x.append(image.size[0])
-				if image.size[1] not in image_sizes_y:
-					image_sizes_y.append(image.size[1])
-			else:
-				mode_count['None']+=1
+				elif image.generated_type in texture_modes:
+					# Generated checker maps
+					mode = image.generated_type
+
+					# Track image sizes
+					if image.size[0] not in image_sizes_x:
+						image_sizes_x.append(image.size[0])
+					if image.size[1] not in image_sizes_y:
+						image_sizes_y.append(image.size[1])
+
+			mode_count[mode]+=1
+
 
 		# Sort by count (returns tuple list of key,value)
 		mode_max_count = sorted(mode_count.items(), key=operator.itemgetter(1))
 		mode_max_count.reverse()
 
+		for key,val in mode_max_count:
+			print("{} = {}".format(key, val))
 
 
-		mode = 'None'
+		# Determine next mode
+		mode = 'NONE'
 		if mode_max_count[0][1] == 0:
 			# There are no maps
 			mode = texture_modes[0]
@@ -98,10 +109,10 @@ def assign_checker_map(size_x, size_y):
 			if mode_max_count[-1][1] > 0:
 				# There is more than 0 of another mode, complete existing mode first
 				mode = mode_max_count[0][0]
+
 			else:
 				# Switch to next checker mode
 				index = texture_modes.index(mode_max_count[0][0])
-				
 				
 				if texture_modes[ index ] != 'NONE' and len(image_sizes_x) > 1 or len(image_sizes_y) > 1:
 					# There are multiple resolutions on selected objects
@@ -116,9 +127,15 @@ def assign_checker_map(size_x, size_y):
 
 		print("Mode: "+mode)
 
-		if mode == 'None':
+		if mode == 'NONE':
 			for obj in objects:
 				remove_material(obj)
+
+		elif mode == 'GRAVITY':
+			image = load_image("checker_map_gravity")
+			for obj in objects:
+				apply_image(obj, image)
+
 		else:
 			name = utilities_texel.get_checker_name(mode, size_x, size_y)
 			image = get_image(name, mode, size_x, size_y)
@@ -136,6 +153,16 @@ def assign_checker_map(size_x, size_y):
 
 	# Force redraw of viewport to update texture
 	bpy.context.scene.update()
+
+
+
+
+def load_image(name):
+	pathTexture = icons_dir = os.path.join(os.path.dirname(__file__), "resources/{}.png".format(name))
+	image = bpy.ops.image.open(filepath=pathTexture, relative_path=False)
+	if "{}.png".format(name) in bpy.data.images:
+		bpy.data.images["{}.png".format(name)].name = name #remove extension in name
+	return bpy.data.images[name];
 
 
 
@@ -174,6 +201,7 @@ def remove_material(obj):
 
 
 def apply_image(obj, image):
+
 	bpy.ops.object.mode_set(mode='OBJECT')
 	bpy.ops.object.select_all(action='DESELECT')
 	obj.select = True

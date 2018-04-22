@@ -676,8 +676,8 @@ class Panel_Layout(bpy.types.Panel):
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
 		
 		row = col.row(align=True)
-		row.alert = True
-		row.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_rectify"))
+		# row.alert = True
+		row.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
 		
 		
 
@@ -1206,6 +1206,7 @@ def register():
 		"op_color_from_materials.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 
+		"op_island_align_world.png", 
 		"op_island_align_sort_h.png", 
 		"op_island_align_sort_v.png", 
 		"op_island_mirror.png", 

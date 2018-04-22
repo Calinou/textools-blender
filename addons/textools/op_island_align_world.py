@@ -93,7 +93,7 @@ def main(context):
 		y = 1
 		z = 2
 		max_size = max(abs(avg_normal.x), abs(avg_normal.y), abs(avg_normal.z))
-		for i in range(10):
+		for i in range(1):
 			if(abs(avg_normal.x) == max_size):
 				print("x normal")
 				align_island(obj, uvLayer, faces, y, z, avg_normal.x > 0, False)

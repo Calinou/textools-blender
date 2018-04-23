@@ -43,6 +43,12 @@ def main(context):
 			count_reload+=1
 			img.reload()
 
+	# Refresh vieport texture
+	for window in bpy.context.window_manager.windows:
+		screen = window.screen
+		for area in screen.areas:
+			area.tag_redraw()
+
 	# Show popup on cleared & reloaded items
 	message = ""
 	if count_reload > 0:
@@ -54,5 +60,5 @@ def main(context):
 
 	if len(message) > 0:
 		bpy.ops.ui.textools_popup('INVOKE_DEFAULT', message=message)
-
+	
 	

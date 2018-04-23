@@ -18,11 +18,19 @@ class op(bpy.types.Operator):
 	bl_label = "Align World"
 	bl_description = "Align selected UV islands to world / gravity directions"
 	bl_options = {'REGISTER', 'UNDO'}
-	
+
+	# is_global = bpy.props.BoolProperty(
+	# 	name = "Global Axis",
+	# 	description = "Global or local object axis alignment",
+	# 	default = False
+	# )
+
+	# def draw(self, context):
+	# 	layout = self.layout
+	# 	layout.prop(self, "is_global")
+
 	@classmethod
 	def poll(cls, context):
-
-
 		if not bpy.context.active_object:
 			return False
 
@@ -30,35 +38,28 @@ class op(bpy.types.Operator):
 		if bpy.context.active_object.mode != 'EDIT':
 			return False
 
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
-			return False
-
 		#Requires UV map
 		if not bpy.context.object.data.uv_layers:
 			return False
 
-
 		if bpy.context.scene.tool_settings.use_uv_select_sync:
 			return False
 
-
-		# if bpy.context.scene.tool_settings.uv_select_mode != 'FACE':
-		#  	return False
-
-		# if bpy.context.scene.tool_settings.use_uv_select_sync:
-		# 	return False
+		#Only in UV editor mode
+		if bpy.context.area.type != 'IMAGE_EDITOR':
+			return False
 
 		return True
 
+
 	def execute(self, context):
-		main(context)
+		main(self)
 		return {'FINISHED'}
 
 
 
 def main(context):
-	print("--------------------------- Executing aling_world")
+	print("\n________________________\nis_global")
 
 	#Store selection
 	utilities_uv.selection_store()
@@ -70,14 +71,13 @@ def main(context):
 	if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
 		bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 
+	obj  = bpy.context.object
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 	
 	islands = utilities_uv.getSelectionIslands()
 
-	print("Clusters: {}x".format(len(islands)))
-
-	obj  = bpy.context.object
+	
 
 	for faces in islands:
 		# Get average viewport normal of UV island
@@ -93,18 +93,18 @@ def main(context):
 		y = 1
 		z = 2
 		max_size = max(abs(avg_normal.x), abs(avg_normal.y), abs(avg_normal.z))
-		for i in range(1):
-			if(abs(avg_normal.x) == max_size):
-				print("x normal")
-				align_island(obj, uvLayer, faces, y, z, avg_normal.x > 0, False)
+	
+		if(abs(avg_normal.x) == max_size):
+			print("x normal")
+			align_island(obj, uvLayer, faces, y, z, avg_normal.x < 0, False)
 
-			elif(abs(avg_normal.y) == max_size):
-				print("y normal")
-				align_island(obj, uvLayer, faces, x, z, avg_normal.y > 0, False)
+		elif(abs(avg_normal.y) == max_size):
+			print("y normal")
+			align_island(obj, uvLayer, faces, x, z, avg_normal.y > 0, False)
 
-			elif(abs(avg_normal.z) == max_size):
-				print("z normal")
-				align_island(obj, uvLayer, faces, x, y, False, avg_normal.z > 0)
+		elif(abs(avg_normal.z) == max_size):
+			print("z normal")
+			align_island(obj, uvLayer, faces, x, y, False, avg_normal.z < 0)
 
 		print("align island: faces {}x n:{}, max:{}".format(len(faces), avg_normal, max_size))
 
@@ -174,8 +174,11 @@ def align_island(obj, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 		))
 		
 
-		# if flip_x:
-		# 	delta_verts.x = edge.verts[0].co[x] - edge.verts[1].co[x]
+		if flip_x:
+			delta_verts.x = -edge.verts[1].co[x] + edge.verts[0].co[x]
+		if flip_y:
+			delta_verts.y = -edge.verts[1].co[y] + edge.verts[0].co[y]
+		
 		# 	delta_verts.y = edge.verts[0].co[y] - edge.verts[1].co[y]
 			
 
@@ -195,7 +198,7 @@ def align_island(obj, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 		avg_angle+=a_delta
 
 
-	avg_angle/=len(edges) - math.pi/2
+	avg_angle/=len(edges) # - math.pi/2
 	print("Turn {:.1f}".format(avg_angle * 180/math.pi))
 	
 	bpy.ops.uv.select_all(action='DESELECT')

@@ -182,6 +182,14 @@ class Panel_Preferences(bpy.types.AddonPreferences):
 		elif self.bake_32bit_float == '32':
 			col.label(text="32 Bit images are used. Images may require dithering to 8 bit.")
 		
+		
+		if not hasattr(bpy.types,"ShaderNodeBevel"):
+			box.separator()
+			col = box.column(align=True)
+		
+			col.label("Unlock Bevel Shader", icon='ERROR')
+			col.operator("wm.url_open", text="Get Blender with Bevel Shader", icon='BLENDER').url = "https://builder.blender.org/download/"
+			col.label("Use nightly builds of Blender 2.79 or 2.8 to access Bevel baking")
 
 
 
@@ -428,6 +436,13 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		default = 1,
 		min = 0.1,
 		max = 4.0
+	)
+	bake_bevel_size = bpy.props.FloatProperty(
+		name = "Bevel",
+		description = "Bevel radius",
+		default = 0.05,
+		min = 0.0,
+		max = 1.0
 	)
 	bake_ray_distance = bpy.props.FloatProperty(
 		name = "Ray Dist.",

@@ -6,6 +6,7 @@ from bpy.props import StringProperty
 
 from . import settings
 from . import utilities_bake
+from . import op_bake
 
 preview_collections = {}
 
@@ -52,7 +53,9 @@ def generate_previews():
 	
 	# Generate the thumbnails
 	for i, image in enumerate(os.listdir(image_location)):
-		if image.endswith(VALID_EXTENSIONS):
+		mode = image[0:-4]
+		print(".. .{}".format(mode))
+		if image.endswith(VALID_EXTENSIONS) and mode in op_bake.modes:
 			filepath = os.path.join(image_location, image)
 			thumb = preview_collection.load(filepath, filepath, 'IMAGE')
 			enum_items.append((image, image, "", thumb.icon_id, i))
@@ -110,8 +113,10 @@ def register():
 	# You really can save it anywhere in bpy.types.*  Just make sure the location makes sense
 	bpy.types.Scene.TT_bake_mode = EnumProperty(
 		items=generate_previews(),
-		update = on_bakemode_set
+		update = on_bakemode_set,
+		default = 'normal_tangent.png'
 	)
+	settings.bake_mode = 'normal_tangent'
 	# on_bakemode_set(None,None)
 	
 def unregister():

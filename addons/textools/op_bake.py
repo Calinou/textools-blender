@@ -30,6 +30,12 @@ modes={
 	'wireframe':		ub.BakeMode('bake_wireframe',	type='EMIT', 	color=(0, 0, 0, 1), params=["bake_wireframe_size"])
 }
 
+if hasattr(bpy.types,"ShaderNodeBevel"):
+	# Has newer bevel shader (2.8 series, 2.7 buildbot series)
+	modes['bevel_mask'] = ub.BakeMode('bake_bevel_mask',					type='EMIT', 	color=(0, 0, 0, 1), params=["bake_samples","bake_bevel_size"])
+
+	
+
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_bake"
@@ -411,6 +417,10 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 		if mode == 'wireframe':
 			if "Value" in material_bake.node_tree.nodes:
 				material_bake.node_tree.nodes["Value"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_wireframe_size
+		if mode == 'bevel_mask':
+			if "Bevel" in material_bake.node_tree.nodes:
+				material_bake.node_tree.nodes["Bevel"].inputs[0].default_value = bpy.context.scene.texToolsSettings.bake_bevel_size
+
 
 	# Don't apply in diffuse mode
 	if mode != 'diffuse':
@@ -448,12 +458,20 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 
 
 def get_material(mode):
+
+	
+
 	if modes[mode].material == "":
 		return None # No material setup requires
 
 	# Find or load material
 	name = modes[mode].material
 	path = os.path.join(os.path.dirname(__file__), "resources/materials.blend")+"\\Material\\"
+	if "bevel" in mode:
+		path = os.path.join(os.path.dirname(__file__), "resources/materials_2.80.blend")+"\\Material\\"
+	
+	print("Get mat {}\n{}".format(mode, path))
+
 	if bpy.data.materials.get(name) is None:
 		print("Material not yet loaded: "+mode)
 		bpy.ops.wm.append(filename=name, directory=path, link=False, autoselect=False)

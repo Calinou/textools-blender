@@ -588,11 +588,10 @@ class Panel_Units(bpy.types.Panel):
 
 		r = col.row(align = True)
 		r.prop(context.scene.texToolsSettings, "size", text="")
-		col.prop(context.scene.texToolsSettings, "padding", text="Padding")
-		
-		row = col.row(align=True)
-		row.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
-		row.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
+
+		r = col.row(align = True)
+		r.prop(context.scene.texToolsSettings, "padding", text="Padding")
+		r.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 		
 		col.separator()
 		col.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
@@ -691,16 +690,8 @@ class Panel_Layout(bpy.types.Panel):
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
 		
 		row = col.row(align=True)
-		# row.alert = True
 		row.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
 		
-		
-
-		row = col.row(align=True)
-		row.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
-		
-
-
 
 		row = col.row(align=True)
 		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("op_island_rotate_90_left")).angle = -math.pi / 2
@@ -721,36 +712,37 @@ class Panel_Layout(bpy.types.Panel):
 		col.operator(op_align.op.bl_idname, text="→", icon_value = icon_get("op_align_right")).direction = "right"
 
 
-		aligned = box.row(align=True)
-		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
+		col = box.column(align=True)
+		row = col.row(align=True)
+		op = row.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
 		op.is_vertical = False;
 		op.padding = utilities_ui.get_padding()
 		
-		op = aligned.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("op_island_align_sort_v"))
+		op = row.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("op_island_align_sort_v"))
 		op.is_vertical = True;
 		op.padding = utilities_ui.get_padding()
 
+		col.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
+		
+
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
-		# row = col.row(align=True)
-		
+
+		col.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
 		col.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
 		col.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
-		# if bpy.app.debug_value != 0:
-		# 	row = col.row(align=True)
-		# 	row.alert = True
-		# 	row.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
-		
+
 
 		#---------- Selection ------------
 		layout.label(text="Select")
-		# row = layout.row()
+
 		box = layout.box()
 		col = box.column(align=True)
+
 		row = col.row(align=True)
 		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("op_select_islands_identical"))
 		row.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("op_select_islands_overlap"))
-		# aligned = box.row(align=True)
+
 		row = col.row(align=True)
 		row.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
 		row.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
@@ -768,7 +760,7 @@ class Panel_Mesh(bpy.types.Panel):
 		layout = self.layout
 		row = layout.row(align=True)
 		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#mesh"
-		row.label(text ="Mesh")
+		row.label(text ="Topology")
 
 	def draw(self, context):
 		layout = self.layout

@@ -1196,6 +1196,24 @@ def icon_get(name):
 	return utilities_ui.icon_get(name)
 
 	
+
+def menu_image_uvs(self, context):
+	# self.layout.operator(UvIsleSharpOperator.bl_idname)
+	self.layout.separator()
+	self.layout.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
+	self.layout.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("op_island_align_sort_v"))
+
+def menu_image_select(self, context):
+	# self.layout.operator(UvIsleSharpOperator.bl_idname)
+	layout = self.layout
+	layout.separator()
+	layout.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("op_select_islands_identical"))
+	layout.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("op_select_islands_overlap"))
+	layout.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
+	layout.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
+
+
+
 def register():
 	bpy.utils.register_module(__name__)
 	
@@ -1250,36 +1268,10 @@ def register():
 	]
 	for icon in icons:
 		utilities_ui.icon_register(icon)
+
+	bpy.types.IMAGE_MT_uvs.append(menu_image_uvs)
+	bpy.types.IMAGE_MT_select.append(menu_image_select)
 	
-	# #Key Maps
-	# wm = bpy.context.window_manager
-	# if wm.keyconfigs.addon is not None:
-	# 	# https://github.com/RayMairlot/UV-Rotate-Shortcuts/blob/master/UV%20Rotate.py
-
-	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'UP_ARROW', 'PRESS', alt=True)
-	# 	kmi.properties.direction = "top"
-	# 	keymaps.append((km, kmi))
-
-	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'DOWN_ARROW', 'PRESS', alt=True)
-	# 	kmi.properties.direction = "bottom"
-	# 	keymaps.append((km, kmi))
-
-	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'LEFT_ARROW', 'PRESS', alt=True)
-	# 	kmi.properties.direction = "left"
-	# 	keymaps.append((km, kmi))
-
-	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	# 	kmi = km.keymap_items.new(op_align.op.bl_idname, 'RIGHT_ARROW', 'PRESS', alt=True)
-	# 	kmi.properties.direction = "right"
-	# 	keymaps.append((km, kmi))
-
-	# 	km = wm.keyconfigs.addon.keymaps.new(name='UV Editor', space_type='EMPTY')
-	# 	kmi = km.keymap_items.new(op_island_mirror.op.bl_idname, 'M', 'PRESS', alt=True)
-	# 	kmi.properties.is_stack = False
-	# 	keymaps.append((km, kmi))
 
 
 
@@ -1296,6 +1288,9 @@ def unregister():
 	for km, kmi in keymaps:
 		km.keymap_items.remove(kmi)
 	keymaps.clear()
+
+	bpy.types.IMAGE_MT_uvs.remove(menu_image_uvs)
+	bpy.types.IMAGE_MT_select.remove(menu_image_select)
 
 
 if __name__ == "__main__":

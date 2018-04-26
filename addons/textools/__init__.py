@@ -373,7 +373,7 @@ def get_dropdown_uv_values(self, context):
 				step = 0
 				for uvLoop in bpy.context.object.data.uv_layers:
 					# options.append((str(step), "#{}  {}".format(step+1, uvLoop.name), "Change UV channel to '{}'".format(uvLoop.name), step))
-					options.append((str(step), "#{}".format(step+1), "Change UV channel to '{}'".format(uvLoop.name), step))
+					options.append((str(step), "UV {}".format(step+1), "Change UV channel to '{}'".format(uvLoop.name), step))
 					step+=1
 
 				return options
@@ -610,7 +610,10 @@ class Panel_Units(bpy.types.Panel):
 					
 					# split = row.split(percentage=0.25)
 					# c = row.column(align=True)
-					row.label(text="UV")#, icon='GROUP_UVS'
+					# r = row.row(align=True)
+					# r.alignment = 'RIGHT'
+					# r.expand =
+					# row.label(text="UV")#, icon='GROUP_UVS'
 
 					
 					if not bpy.context.object.data.uv_layers:

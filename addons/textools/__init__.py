@@ -1197,20 +1197,52 @@ def icon_get(name):
 
 	
 
-def menu_image_uvs(self, context):
-	# self.layout.operator(UvIsleSharpOperator.bl_idname)
-	self.layout.separator()
-	self.layout.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
-	self.layout.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("op_island_align_sort_v"))
+def menu_IMAGE_uvs(self, context):
+	layout = self.layout
+	layout.separator()
+	layout.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
+	
+	layout.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
+	layout.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
+	layout.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
+	layout.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("op_island_align_sort_v"))
+	
+	layout.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
+		
+	
 
-def menu_image_select(self, context):
-	# self.layout.operator(UvIsleSharpOperator.bl_idname)
+
+
+class menu_IMAGE_select_textools(bpy.types.Menu):
+	bl_label="hgf"
+	bl_idname="view3D.fsdfdsfsd"
+	def draw(self, context):
+		layout = self.layout
+		layout.operator(op_align.op.bl_idname, text="←", icon_value = icon_get("op_align_left")).direction = "left"
+		layout.operator(op_align.op.bl_idname, text="↑", icon_value = icon_get("op_align_top")).direction = "top"
+		layout.operator(op_align.op.bl_idname, text="↓", icon_value = icon_get("op_align_bottom")).direction = "bottom"
+		layout.operator(op_align.op.bl_idname, text="→", icon_value = icon_get("op_align_right")).direction = "right"
+
+
+
+def menu_IMAGE_select(self, context):
 	layout = self.layout
 	layout.separator()
 	layout.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("op_select_islands_identical"))
 	layout.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("op_select_islands_overlap"))
 	layout.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
 	layout.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
+	layout.menu(menu_IMAGE_select_textools)
+	layout.label(text="????")
+
+
+
+def menu_IMAGE_image(self, context):
+	self.layout.separator()
+	self.layout.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
+	
+def menu_VIEW3D_view(self, context):
+	self.layout.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
 
 
 
@@ -1269,8 +1301,10 @@ def register():
 	for icon in icons:
 		utilities_ui.icon_register(icon)
 
-	bpy.types.IMAGE_MT_uvs.append(menu_image_uvs)
-	bpy.types.IMAGE_MT_select.append(menu_image_select)
+	bpy.types.IMAGE_MT_uvs.append(menu_IMAGE_uvs)
+	bpy.types.IMAGE_MT_select.append(menu_IMAGE_select)
+	bpy.types.IMAGE_MT_image.append(menu_IMAGE_image)
+	bpy.types.VIEW3D_MT_view.append(menu_VIEW3D_view)
 	
 
 
@@ -1289,9 +1323,11 @@ def unregister():
 		km.keymap_items.remove(kmi)
 	keymaps.clear()
 
-	bpy.types.IMAGE_MT_uvs.remove(menu_image_uvs)
-	bpy.types.IMAGE_MT_select.remove(menu_image_select)
-
+	bpy.types.IMAGE_MT_uvs.remove(menu_IMAGE_uvs)
+	bpy.types.IMAGE_MT_select.remove(menu_IMAGE_select)
+	bpy.types.IMAGE_MT_image.remove(menu_IMAGE_image)
+	bpy.types.VIEW3D_MT_view.remove(menu_VIEW3D_view)
+	
 
 if __name__ == "__main__":
 	register()

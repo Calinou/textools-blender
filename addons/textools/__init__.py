@@ -732,9 +732,12 @@ class Panel_Layout(bpy.types.Panel):
 		col = aligned.column(align=True)
 
 		col.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
-		col.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
 		col.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
-
+		
+		row = col.row(align=True)
+		row.scale_y = 1.75
+		row.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
+		
 
 		#---------- Selection ------------
 		layout.label(text="Select")
@@ -776,9 +779,6 @@ class Panel_Mesh(bpy.types.Panel):
 
 		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
 		box = layout.box()
-		row = box.row()
-		row.scale_y = 1.75
-		row.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
 		
 		col = box.column(align=True)
 		row = col.row(align=True)
@@ -786,6 +786,8 @@ class Panel_Mesh(bpy.types.Panel):
 		row.separator()
 		row.prop(context.scene.texToolsSettings, "texel_density", text="")
 		row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+
+
 
 		# col = box.column(align=True)
 		row = col.row(align=True)
@@ -795,6 +797,11 @@ class Panel_Mesh(bpy.types.Panel):
 		# 	row.enabled  = False
 		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
 
+		row = col.row(align=True)
+		row.scale_y = 1.75
+		row.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
+		
+
 
 		layout.label(text = "Mesh Texture")
 		box = layout.box()
@@ -802,7 +809,7 @@ class Panel_Mesh(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.scale_y = 1.75
-		row.operator(op_meshtex_create.op.bl_idname, text="UV Mesh", icon_value = icon_get("op_meshtex_create"))
+		row.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
 		col.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon_value = icon_get("op_meshtex_trim"))
 
 		# Warning about trimmed mesh

@@ -1255,6 +1255,23 @@ def menu_VIEW3D_MT_uv_map(self, context):
 	layout.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
 	layout.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
 		
+def menu_VIEW3D_MT_object_specials(self, context):
+	layout = self.layout
+	layout.separator()
+	layout.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
+	layout.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon_value = icon_get("op_meshtex_trim"))
+
+	# Warning about trimmed mesh
+	if op_meshtex_trim_collapse.is_available():
+		layout.operator(op_meshtex_trim_collapse.op.bl_idname, text="Collapse Trim", icon='CANCEL')
+
+	layout.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
+	layout.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon_value = icon_get("op_meshtex_wrap"))
+	# layout.prop(context.scene.texToolsSettings, "meshtexture_precission", text="")
+	
+	
+
+
 
 
 def register():
@@ -1318,6 +1335,7 @@ def register():
 	bpy.types.VIEW3D_MT_object.append(menu_VIEW3D_MT_object)
 	bpy.types.INFO_MT_add.append(menu_INFO_MT_mesh_add)
 	bpy.types.VIEW3D_MT_uv_map.append(menu_VIEW3D_MT_uv_map)
+	bpy.types.VIEW3D_MT_object_specials.append(menu_VIEW3D_MT_object_specials)
 	
 
 
@@ -1341,7 +1359,8 @@ def unregister():
 	bpy.types.IMAGE_MT_image.remove(menu_IMAGE_MT_image)
 	bpy.types.VIEW3D_MT_object.remove(menu_VIEW3D_MT_object)
 	bpy.types.INFO_MT_add.remove(menu_INFO_MT_mesh_add)
-	bpy.types.VIEW3D_MT_uv_map.append(menu_VIEW3D_MT_uv_map)
+	bpy.types.VIEW3D_MT_uv_map.remove(menu_VIEW3D_MT_uv_map)
+	bpy.types.VIEW3D_MT_object_specials.remove(menu_VIEW3D_MT_object_specials)
 	
 
 if __name__ == "__main__":

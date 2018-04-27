@@ -30,34 +30,26 @@ def icon_get(name):
 
 
 def GetContextView3D():
-	#=== Iterates through the blender GUI's windows, screens, areas, regions to find the View3D space and its associated window.  Populate an 'oContextOverride context' that can be used with bpy.ops that require to be used from within a View3D (like most addon code that runs of View3D panels)
-	# Tip: If your operator fails the log will show an "PyContext: 'xyz' not found".  To fix stuff 'xyz' into the override context and try again!
-	for oWindow in bpy.context.window_manager.windows:          ###IMPROVE: Find way to avoid doing four levels of traversals at every request!!
-		oScreen = oWindow.screen
-		for oArea in oScreen.areas:
-			if oArea.type == 'VIEW_3D': 
-				for oRegion in oArea.regions:
-					if oRegion.type == 'WINDOW': ###LEARN: View3D has several 'windows' like 'HEADER' and 'WINDOW'.  Most bpy.ops require 'WINDOW'
-						#=== Now that we've (finally!) found the damn View3D stuff all that into a dictionary bpy.ops operators can accept to specify their context.  I stuffed extra info in there like selected objects, active objects, etc as most operators require them.  (If anything is missing operator will fail and log a 'PyContext: error on the log with what is missing in context override) ===
-						oContextOverride = {'window': oWindow, 'screen': oScreen, 'area': oArea, 'region': oRegion, 'scene': bpy.context.scene, 'edit_object': bpy.context.edit_object, 'active_object': bpy.context.active_object, 'selected_objects': bpy.context.selected_objects}   # Stuff the override context with very common requests by operators.  MORE COULD BE NEEDED!
-						print("-AssembleOverrideContextForView3dOps() created override context: ", oContextOverride)
-						return oContextOverride					
+	for window in bpy.context.window_manager.windows:
+		screen = window.screen
+		for area in screen.areas:
+			if area.type == 'VIEW_3D': 
+				for region in area.regions:
+					if region.type == 'WINDOW':
+						override = {'window': window, 'screen': screen, 'area': area, 'region': region, 'scene': bpy.context.scene, 'edit_object': bpy.context.edit_object, 'active_object': bpy.context.active_object, 'selected_objects': bpy.context.selected_objects}   # Stuff the override context with very common requests by operators.  MORE COULD BE NEEDED!
+						return override					
 	return None
 
 
 def GetContextViewUV():
-	#=== Iterates through the blender GUI's windows, screens, areas, regions to find the View3D space and its associated window.  Populate an 'oContextOverride context' that can be used with bpy.ops that require to be used from within a View3D (like most addon code that runs of View3D panels)
-	# Tip: If your operator fails the log will show an "PyContext: 'xyz' not found".  To fix stuff 'xyz' into the override context and try again!
-	for oWindow in bpy.context.window_manager.windows:          ###IMPROVE: Find way to avoid doing four levels of traversals at every request!!
-		oScreen = oWindow.screen
-		for oArea in oScreen.areas:
-			if oArea.type == 'IMAGE_EDITOR': 
-				for oRegion in oArea.regions:
-					if oRegion.type == 'WINDOW': ###LEARN: View3D has several 'windows' like 'HEADER' and 'WINDOW'.  Most bpy.ops require 'WINDOW'
-						#=== Now that we've (finally!) found the damn View3D stuff all that into a dictionary bpy.ops operators can accept to specify their context.  I stuffed extra info in there like selected objects, active objects, etc as most operators require them.  (If anything is missing operator will fail and log a 'PyContext: error on the log with what is missing in context override) ===
-						oContextOverride = {'window': oWindow, 'screen': oScreen, 'area': oArea, 'region': oRegion, 'scene': bpy.context.scene, 'edit_object': bpy.context.edit_object, 'active_object': bpy.context.active_object, 'selected_objects': bpy.context.selected_objects}   # Stuff the override context with very common requests by operators.  MORE COULD BE NEEDED!
-						print("-AssembleOverrideContextForView3dOps() created override context: ", oContextOverride)
-						return oContextOverride			
+	for window in bpy.context.window_manager.windows:
+		screen = window.screen
+		for area in screen.areas:
+			if area.type == 'IMAGE_EDITOR': 
+				for region in area.regions:
+					if region.type == 'WINDOW': 
+						override = {'window': window, 'screen': screen, 'area': area, 'region': region, 'scene': bpy.context.scene, 'edit_object': bpy.context.edit_object, 'active_object': bpy.context.active_object, 'selected_objects': bpy.context.selected_objects}   # Stuff the override context with very common requests by operators.  MORE COULD BE NEEDED!
+						return override			
 	return None
 
 

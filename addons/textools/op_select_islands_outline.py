@@ -6,7 +6,7 @@ from collections import defaultdict
 from math import pi
 
 from . import utilities_uv
-
+from . import utilities_ui
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_select_islands_outline"
@@ -25,10 +25,6 @@ class op(bpy.types.Operator):
 		#Requires UV map
 		if not bpy.context.object.data.uv_layers:
 			return False 
-
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
-			return False
 
 		return True
 
@@ -57,8 +53,13 @@ def select_outline(context):
 	edges_seam = [edge for edge in bm.edges if edge.seam]
 	
 
+	contextViewUV = utilities_ui.GetContextViewUV()
+	if not contextViewUV:
+		self.report({'ERROR_INVALID_INPUT'}, "This tool requires an available UV/Image view.")
+		return
+
 	# Create seams from islands
-	bpy.ops.uv.seams_from_islands()
+	bpy.ops.uv.seams_from_islands(contextViewUV)
 	edges_islands = [edge for edge in bm.edges if edge.seam]
 
 	# Clear seams

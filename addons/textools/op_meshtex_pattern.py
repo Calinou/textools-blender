@@ -70,7 +70,7 @@ def create_pattern(self, mode, size, scale):
 
 	contextView3D = utilities_ui.GetContextView3D()
 	if not contextView3D:
-		self.report({'ERROR_INVALID_INPUT'}, "A View3D panel is required to create the object.")
+		self.report({'ERROR_INVALID_INPUT'}, "This tool requires an available View3D view.")
 		return
 
 

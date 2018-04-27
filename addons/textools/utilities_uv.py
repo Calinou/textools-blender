@@ -5,9 +5,9 @@ import time
 from mathutils import Vector
 from collections import defaultdict
 from math import pi
+
 from . import settings
-
-
+from . import utilities_ui
 
 def selection_store():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
@@ -50,7 +50,9 @@ def selection_restore():
 	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_uv_mode
 	bpy.context.space_data.pivot_point = settings.selection_uv_pivot
 
-	bpy.ops.uv.cursor_set(location=settings.selection_uv_pivot_pos)
+	contextViewUV = utilities_ui.GetContextViewUV()
+	if contextViewUV:
+		bpy.ops.uv.cursor_set(contextViewUV, location=settings.selection_uv_pivot_pos)
 
 
 	bpy.ops.mesh.select_all(action='DESELECT')
@@ -77,7 +79,7 @@ def selection_restore():
 
 
 	#UV Face-UV Selections (Loops)
-	bpy.ops.uv.select_all(action='DESELECT')
+	bpy.ops.uv.select_all(contextViewUV, action='DESELECT')
 	for uv_set in settings.selection_uv_loops:
 		for loop in bm.faces[ uv_set[0] ].loops:
 			if loop.vert.index == uv_set[1]:

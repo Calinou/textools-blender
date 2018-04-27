@@ -27,10 +27,6 @@ class op(bpy.types.Operator):
 		if bpy.context.active_object.mode != 'EDIT':
 			return False
 
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
-			return False
-
 		# No Sync mode
 		if context.scene.tool_settings.use_uv_select_sync:
 			return False

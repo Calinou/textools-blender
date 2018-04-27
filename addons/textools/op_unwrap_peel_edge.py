@@ -6,6 +6,7 @@ from collections import defaultdict
 from math import pi
 
 from . import utilities_uv
+from . import utilities_ui
 
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_unwrap_peel_edge"
@@ -26,10 +27,6 @@ class op(bpy.types.Operator):
 		if bpy.context.active_object.mode != 'EDIT':
 			return False
 
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
-			return False
-
 		# Need view Face mode
 		if tuple(bpy.context.scene.tool_settings.mesh_select_mode)[1] == False:
 			return False
@@ -46,6 +43,12 @@ def unwrap_edges_pipe(self, context):
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uvLayer = bm.loops.layers.uv.verify()
+
+
+	contextViewUV = utilities_ui.GetContextViewUV()
+	if not contextViewUV:
+		self.report({'ERROR_INVALID_INPUT'}, "This tool requires an available UV/Image view.")
+		return
 
 	# selected_initial = [edge for edge in bm.edges if edge.select]
 	selected_edges = []
@@ -85,7 +88,7 @@ def unwrap_edges_pipe(self, context):
 
 	bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.0226216)
 	bpy.ops.uv.select_all(action='SELECT')
-	bpy.ops.uv.textools_rectify()
+	bpy.ops.uv.textools_rectify(contextViewUV)
 
 	# TODO: Restore initial selection
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')

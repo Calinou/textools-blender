@@ -21,10 +21,6 @@ class op(bpy.types.Operator):
 	
 	@classmethod
 	def poll(cls, context):
-		#Only in UV editor mode
-		if bpy.context.area.type != 'IMAGE_EDITOR':
-			return False
-
 		if len(get_valid_objects()) == 0:
 			return False
 

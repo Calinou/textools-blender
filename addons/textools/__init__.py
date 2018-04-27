@@ -1201,20 +1201,23 @@ def menu_IMAGE_uvs(self, context):
 	layout = self.layout
 	layout.separator()
 	layout.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
-	
-	layout.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
-	layout.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
+	layout.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
+	layout.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
+
+	layout.separator()
 	layout.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
 	layout.operator(op_island_align_sort.op.bl_idname, text="Sort V", icon_value = icon_get("op_island_align_sort_v"))
-	
-	layout.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
 		
-	
+	layout.separator()
+	layout.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
+	layout.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
+
+	layout.menu(submenu_align.bl_idname)
 
 
 
-class menu_IMAGE_select_textools(bpy.types.Menu):
-	bl_label="hgf"
+class submenu_align(bpy.types.Menu):
+	bl_label="Align"
 	bl_idname="view3D.fsdfdsfsd"
 	def draw(self, context):
 		layout = self.layout
@@ -1223,8 +1226,6 @@ class menu_IMAGE_select_textools(bpy.types.Menu):
 		layout.operator(op_align.op.bl_idname, text="↓", icon_value = icon_get("op_align_bottom")).direction = "bottom"
 		layout.operator(op_align.op.bl_idname, text="→", icon_value = icon_get("op_align_right")).direction = "right"
 
-
-
 def menu_IMAGE_select(self, context):
 	layout = self.layout
 	layout.separator()
@@ -1232,18 +1233,28 @@ def menu_IMAGE_select(self, context):
 	layout.operator(op_select_islands_overlap.op.bl_idname, text="Overlap", icon_value = icon_get("op_select_islands_overlap"))
 	layout.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
 	layout.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
-	layout.menu(menu_IMAGE_select_textools)
-	layout.label(text="????")
+	
 
-
-
-def menu_IMAGE_image(self, context):
+def menu_IMAGE_MT_image(self, context):
 	self.layout.separator()
 	self.layout.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
 	
-def menu_VIEW3D_view(self, context):
+def menu_VIEW3D_MT_object(self, context):
+	self.layout.separator()
 	self.layout.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
+	self.layout.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
+	
 
+def menu_INFO_MT_mesh_add(self, context):
+	self.layout.operator(op_meshtex_pattern.op.bl_idname, text="Create Pattern", icon_value = icon_get("op_meshtex_pattern"))
+
+def menu_VIEW3D_MT_uv_map(self, context):
+	layout = self.layout
+	layout.separator()
+	layout.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
+	layout.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
+	layout.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
+		
 
 
 def register():
@@ -1303,8 +1314,10 @@ def register():
 
 	bpy.types.IMAGE_MT_uvs.append(menu_IMAGE_uvs)
 	bpy.types.IMAGE_MT_select.append(menu_IMAGE_select)
-	bpy.types.IMAGE_MT_image.append(menu_IMAGE_image)
-	bpy.types.VIEW3D_MT_view.append(menu_VIEW3D_view)
+	bpy.types.IMAGE_MT_image.append(menu_IMAGE_MT_image)
+	bpy.types.VIEW3D_MT_object.append(menu_VIEW3D_MT_object)
+	bpy.types.INFO_MT_add.append(menu_INFO_MT_mesh_add)
+	bpy.types.VIEW3D_MT_uv_map.append(menu_VIEW3D_MT_uv_map)
 	
 
 
@@ -1325,8 +1338,10 @@ def unregister():
 
 	bpy.types.IMAGE_MT_uvs.remove(menu_IMAGE_uvs)
 	bpy.types.IMAGE_MT_select.remove(menu_IMAGE_select)
-	bpy.types.IMAGE_MT_image.remove(menu_IMAGE_image)
-	bpy.types.VIEW3D_MT_view.remove(menu_VIEW3D_view)
+	bpy.types.IMAGE_MT_image.remove(menu_IMAGE_MT_image)
+	bpy.types.VIEW3D_MT_object.remove(menu_VIEW3D_MT_object)
+	bpy.types.INFO_MT_add.remove(menu_INFO_MT_mesh_add)
+	bpy.types.VIEW3D_MT_uv_map.append(menu_VIEW3D_MT_uv_map)
 	
 
 if __name__ == "__main__":

@@ -8,8 +8,7 @@ from math import pi
 import math
 
 from . import utilities_meshtex
-
-
+from . import utilities_ui
 
 
 class op(bpy.types.Operator):
@@ -68,11 +67,18 @@ def create_pattern(self, mode, size, scale):
 	
 	# bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
+
+	contextView3D = utilities_ui.GetContextView3D()
+	if not contextView3D:
+		self.report({'ERROR_INVALID_INPUT'}, "A View3D panel is required to create the object.")
+		return
+
+
 	if mode == 'hexagon':
 		bpy.ops.mesh.primitive_circle_add(vertices=6, radius=scale, fill_type='NGON')
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.rotate(GetContextView3D(), value=math.pi*0.5,  axis=(0, 0, 1))
+		bpy.ops.transform.rotate(contextView3D, value=math.pi*0.5,  axis=(0, 0, 1))
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 0.75,-0.5,2)
@@ -83,7 +89,7 @@ def create_pattern(self, mode, size, scale):
 		bpy.ops.mesh.primitive_circle_add(vertices=3, radius=scale, fill_type='NGON')
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.translate(GetContextView3D(), value=(0, scale*0.5, 0), constraint_axis=(False, True, False))
+		bpy.ops.transform.translate(contextView3D, value=(0, scale*0.5, 0), constraint_axis=(False, True, False))
 		bpy.ops.object.editmode_toggle()
 		
 		modifier = bpy.context.object.modifiers.new(name="Mirror", type='MIRROR')
@@ -103,7 +109,7 @@ def create_pattern(self, mode, size, scale):
 		bpy.ops.mesh.primitive_plane_add(radius=scale)
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.rotate(GetContextView3D(), value=math.pi*0.25,  axis=(0, 0, 1))
+		bpy.ops.transform.rotate(contextView3D, value=math.pi*0.25,  axis=(0, 0, 1))
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 0.5,-0.5,2)
@@ -114,7 +120,7 @@ def create_pattern(self, mode, size, scale):
 		bpy.ops.mesh.primitive_plane_add(radius=scale)
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.resize(GetContextView3D(), value=(1, 0.5, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		bpy.ops.transform.resize(contextView3D, value=(1, 0.5, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 0.5,-1,2)
@@ -125,9 +131,9 @@ def create_pattern(self, mode, size, scale):
 		bpy.ops.mesh.primitive_plane_add(radius=1)
 
 		bpy.ops.object.editmode_toggle()		
-		bpy.ops.transform.resize(GetContextView3D(), value=(0.5, size/2, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
-		bpy.ops.transform.resize(GetContextView3D(), value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
-		bpy.ops.transform.translate(GetContextView3D(), value=(0, (-size/2)*scale, 0), constraint_axis=(False, True, False))
+		bpy.ops.transform.resize(contextView3D, value=(0.5, size/2, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		bpy.ops.transform.resize(contextView3D, value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		bpy.ops.transform.translate(contextView3D, value=(0, (-size/2)*scale, 0), constraint_axis=(False, True, False))
 
 		bpy.ops.object.editmode_toggle()
 
@@ -149,17 +155,3 @@ def AddArray(name, offset_x, offset_y, count):
 
 
 
-def GetContextView3D():
-	#=== Iterates through the blender GUI's windows, screens, areas, regions to find the View3D space and its associated window.  Populate an 'oContextOverride context' that can be used with bpy.ops that require to be used from within a View3D (like most addon code that runs of View3D panels)
-	# Tip: If your operator fails the log will show an "PyContext: 'xyz' not found".  To fix stuff 'xyz' into the override context and try again!
-	for oWindow in bpy.context.window_manager.windows:          ###IMPROVE: Find way to avoid doing four levels of traversals at every request!!
-		oScreen = oWindow.screen
-		for oArea in oScreen.areas:
-			if oArea.type == 'VIEW_3D':                         ###LEARN: Frequently, bpy.ops operators are called from View3d's toolbox or property panel.  By finding that window/screen/area we can fool operators in thinking they were called from the View3D!
-				for oRegion in oArea.regions:
-					if oRegion.type == 'WINDOW':                ###LEARN: View3D has several 'windows' like 'HEADER' and 'WINDOW'.  Most bpy.ops require 'WINDOW'
-						#=== Now that we've (finally!) found the damn View3D stuff all that into a dictionary bpy.ops operators can accept to specify their context.  I stuffed extra info in there like selected objects, active objects, etc as most operators require them.  (If anything is missing operator will fail and log a 'PyContext: error on the log with what is missing in context override) ===
-						oContextOverride = {'window': oWindow, 'screen': oScreen, 'area': oArea, 'region': oRegion, 'scene': bpy.context.scene, 'edit_object': bpy.context.edit_object, 'active_object': bpy.context.active_object, 'selected_objects': bpy.context.selected_objects}   # Stuff the override context with very common requests by operators.  MORE COULD BE NEEDED!
-						print("-AssembleOverrideContextForView3dOps() created override context: ", oContextOverride)
-						return oContextOverride
-	raise Exception("ERROR: AssembleOverrideContextForView3dOps() could not find a VIEW_3D with WINDOW region to create override context to enable View3D operators.  Operator cannot function.")

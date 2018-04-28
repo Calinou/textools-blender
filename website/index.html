@@ -130,7 +130,7 @@
 				  <p><strong>Rotates</strong> the UV island to match it's face's world orientation. The tool determines orientation for 6 direction thresholds (e.g top view, side views,,..). This is a great tool for when you don't know if UV islands are aligned consistently.			  </p>
 			  </div>
 				<div class="Content">
-				  <h2><img src="images/op_island_rotate_90.png" width="31" height="32" alt=""/> Rotate 90°</h2>
+				  <h2><img src="images/op_island_rotate_90_right.png" width="31" height="32" alt=""/> Rotate 90°</h2>
 					<p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
 				</div>
 				<div class="Content">
@@ -146,7 +146,7 @@
 					<p> In the UV face mode <img src="images/show_selection_uv_face.png" alt="" class="Icon"/>  selected UV islands are aligned to either side of the initial selection bounds.    </p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_islands_align_sort.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
+					<h2><img src="images/op_island_align_sort_v.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
 					<p>Sorts the selected UV islands by longest side and aligns them <strong>vertically</strong> or <strong>horizontally</strong> in a row.</p>
 					<p><img src="images/demo_sort_align.gif" alt=""/></p>
 				</div>
@@ -362,8 +362,9 @@
 		  </div>
 		<h1>Texture Baking Panel</h1>
 		<p>To bake textures in TexTools just select your objects and press Bake. High  low poly and cageobject pairs are detected via object names. You can bake just with a <strong>single </strong>objects,  <strong>high</strong> <strong>poly </strong>to <strong>low poly</strong> or in addition that with a custom <strong>cage</strong> object. </p>
-		<div class="Panel">
-			<div class="Columns3">
+        
+        <div class="Panel">
+        	<div class="Columns3">
 				<div class="Content">
 					<h2><img src="images/op_bake.png" width="32" height="32" alt=""/> Bake</h2>
 					<p>Bakes the current texture type with the current selected object set. Baked images will appear in <strong>UV/Image Editor</strong>. </p>
@@ -392,36 +393,28 @@
 				</div>
 				
 			</div>
-			
-			<div class="Info">
-				<h3>Bake Modes  </h3>
-				<p><img src="images/bake_icon_material_affected.png" alt="" class="Icon"/> marked bake modes incorporate existing materials. Other materials are only affected by the geometry of the input objects.</p>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td width="120" valign="top"><strong>Ray Distance</strong></td>
-						<td width="16" valign="top"><p>&nbsp;</p></td>
-						<td valign="top">When baking high to low poly objects<em> adjust the <strong>Ray Distance </strong> to set the offset of rays baking to the surface. When using a cage object this distance will set the <strong>Cage Extrusion</strong> value. Read more in the Blender <a href="https://docs.blender.org/manual/en/dev/render/cycles/baking.html" class="NoButton">Baking manual</a>.</em></td>
-					</tr>
-					<tbody>
-					</tbody>
-				</table>
-			</div>
-			<div class="Columns4">
+        
+        </div>
+        
+        <h1>Baking Modes</h1>
+		<p><img src="images/bake_icon_material_affected.png" alt="" class="Icon"/> marked bake modes incorporate existing materials. Other materials are only affected by the geometry of the input objects.</p>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		    <td width="120" valign="top"><strong>Ray Distance</strong></td>
+		    <td width="16" valign="top"><p>&nbsp;</p></td>
+		    <td valign="top">When baking high to low poly objects<em> adjust the <strong>Ray Distance </strong> to set the offset of rays baking to the surface. When using a cage object this distance will set the <strong>Cage Extrusion</strong> value. Read more in the Blender <a href="https://docs.blender.org/manual/en/dev/render/cycles/baking.html" class="NoButton">Baking manual</a>.</em></td>
+	      </tr>
+		  <tbody>
+	      </tbody>
+		  </table>
+		<div class="Panel">
+		  <div class="Info">
+		    <h3>Normal Maps</h3>
+		  </div>
+            
+            
+            <div class="Columns4">
             	<div class="Content">
-				  <h2>Wireframe</h2>
-				  <p><img src="images/bake_wireframe.png" width="128" height="128" alt=""/></p>
-				  <p>Bakes a black and white wireframe<strong> mask</strong>.</p>
-				  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-				    <tr>
-				      <td valign="top"><strong>Thickness</strong></td>
-				      <td width="16" valign="top"><p>&nbsp;</p></td>
-				      <td valign="top">The thickness of the wireframe in pixels.<em><strong></strong></em></td>
-			        </tr>
-				    <tbody>
-			        </tbody>
-			      </table>
-		      </div>
-				<div class="Content">
 					<h2>Tangent Normal </h2>
 					<p><img src="images/bake_normal_tangent.png" width="128" height="128" alt=""/></p>
 					<p>A normal map in tangent space.				</p>
@@ -438,19 +431,36 @@
 					<p><img src="images/bake_position.png" width="128" height="128" alt=""/></p>
 					<p>Bakes a map with unique colors within the bounds of the object.</p>
 				</div>
-                <div class="Content">
-				  <h2>Displacement</h2>
-				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
-				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
-				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
-			  </div>
+            
+            </div>
+            
+            
+            <div class="Info">
+				<h3>ID Maps & Masks</h3>
 				
-				
-				<div class="Content">
+			</div>
+            
+            
+            <div class="Columns4">
+            	<div class="Content">
+				  <h2>Wireframe</h2>
+				  <p><img src="images/bake_wireframe.png" width="128" height="128" alt=""/></p>
+				  <p>Bakes a black and white wireframe<strong> mask</strong>.</p>
+				  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+				    <tr>
+				      <td valign="top"><strong>Thickness</strong></td>
+				      <td width="16" valign="top"><p>&nbsp;</p></td>
+				      <td valign="top">The thickness of the wireframe in pixels.<em><strong></strong></em></td>
+			        </tr>
+				    <tbody>
+			        </tbody>
+			      </table>
+		      </div>
+              <div class="Content">
 				  <h2>Face Selection</h2>
 					<p><img src="images/bake_selection.png" width="128" height="128" alt=""/></p>
 					<p>Bakes a black and white <strong>mask</strong> of the the face selection of the object. This can be useful to generate quick masks for working with textures.</p>
-				</div>
+			  </div>
 				<div class="Content">
 					<h2>Element ID</h2>
 					<p><img src="images/bake_id_element.png" width="128" height="128" alt=""/></p>
@@ -461,6 +471,25 @@
 					<p><img src="images/bake_id_material.png" width="128" height="128" alt=""/></p>
 					<p>Assigns a unique color to each sub material or material slot.</p>
 				</div>
+            </div>
+            
+            <div class="Info">
+				<h3>Aging &amp; Dirt</h3>
+				
+			</div>
+            
+            
+			<div class="Columns4">
+            	
+
+                <div class="Content">
+				  <h2>Displacement</h2>
+				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
+				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
+				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
+			  </div>
+				
+                
 				<div class="Content">
 					<h2>Diffuse</h2>
 					<p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
@@ -518,7 +547,7 @@
 						</tbody>
 					</table>
 					<p><strong>Note:</strong> Curvature maps require a high and low poly object.</p>
-				</div>
+			  </div>
 				
 				<div class="Content">
 				  <h2>Cavity</h2>
@@ -624,7 +653,7 @@
 					</div>
 				</div>
 				
-			</div>
+		  </div>
 			<a class="NoButton" id="colorid"></a>
 			<h1>Color ID Panel</h1>
 			<p>Color ID's are a quick way to block out your model with a set of colors or face groups. Colors are global accross your blend file and can be adjusted at any time.</p>

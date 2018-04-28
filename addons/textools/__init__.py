@@ -438,12 +438,21 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		max = 4.0
 	)
 	bake_bevel_size = bpy.props.FloatProperty(
-		name = "Bevel",
-		description = "Bevel radius",
+		name = "Radius",
+		description = "Bevel radius 1 to 16",
 		default = 0.05,
 		min = 0.0,
 		max = 1.0
 	)
+	bake_bevel_samples = bpy.props.IntProperty(
+		name = "Bevel Samples",
+		description = "Bevel Samples",
+		default = 4,
+		min = 1,
+		max = 16
+	)
+
+
 	bake_ray_distance = bpy.props.FloatProperty(
 		name = "Ray Dist.",
 		description = "Ray distance when baking. When using cage used as extrude distance",

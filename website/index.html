@@ -22,7 +22,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texturing  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a> which has been very popular with many veteran realtime 3D artists. TexTools consists of 4 areas: <a href="#sizepanel" class="NoButton">Size Panel</a>, <strong><a href="#uvlayout" class="NoButton">UV Layout</a></strong>, <a href="#mesh" class="NoButton">Mesh Panel</a>, <strong><a href="#texturebaking" class="NoButton">Texture Baking</a></strong> and <strong><a href="#colorid" class="NoButton">Color ID</a></strong>. </p>
+			<p> TexTools is a <strong>Free</strong> addon for Blender 3D with a set of professional UV and Texturing  tools. Back in 2009 I released the Original <a href="http://renderhjs.net/textools/3dsMax.html" class="NoButton">TexTools for 3dsMax</a> which has been very popular with many veteran realtime 3D artists.</p>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			  <tbody>
 			    <tr>
@@ -52,7 +52,8 @@
 				</div>
 				<div class="Content">
 				  <h2>Requirements</h2>
-					<p><a href="https://www.blender.org/download/releases/2-79/" class="NoButton">Blender 2.79</a> for Windows, Mac or Linux</p>
+					<p><a href="https://www.blender.org/download/releases/2-79/" class="NoButton">Blender 2.79</a> for Windows, Mac or Linux. </p>
+					<p><strong>Tip</strong>: Use <a href="https://builder.blender.org/download/" class="NoButton">nightly builds</a> for additional bevel based baking modes.</p>
 				</div>
 				
 				<div class="Content">
@@ -187,7 +188,7 @@
 
 		</div>
 		<a name="mesh" class="NoButton" id="texturebaking"></a>
-		<h1>Mesh Panel</h1>
+		<h1>Topology Panel</h1>
 		<p>Tools that modify the mesh instead of the UVs.</p>
 		<div class="Panel">
         
@@ -414,29 +415,68 @@
             
             
             <div class="Columns4">
+            
+            
             	<div class="Content">
 					<h2>Tangent Normal </h2>
 					<p><img src="images/bake_normal_tangent.png" width="128" height="128" alt=""/></p>
-					<p>A normal map in tangent space.				</p>
+					<p>Bakes a normal map in tangent space.				</p>
 					<p><strong>Note: </strong>You can change the Y direction of the normal map in the <a href="#preferences" class="NoButton">Addon Preferences</a>.</p>
 				</div>
+                
+                <div class="Content">
+					<h2>Tangent Normal Bevel<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				<p><img src="images/bake_normal_tangent_bevel.png" width="128" height="128" alt=""/></p>
+			    <p>Bakes a normal map in tangent space with beveled edges. </p>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					  <tr>
+					    <td valign="top"><strong>Bevel Samples</strong></td>
+					    <td valign="top"><p>&nbsp;</p></td>
+					    <td valign="top">Number of samples (1 to 16). The higher the better but slower.</td>
+				      </tr>
+					  <tr>
+					    <td valign="top"><strong>Radius</strong></td>
+					    <td width="16" valign="top"><p>&nbsp;</p></td>
+					    <td valign="top">The radius of the bevel in scene units.<em><strong></strong></em></td>
+				      </tr>
+
+			    </table>
+                <p><strong>Note: </strong>This mode requires a <a href="https://builder.blender.org/download/" class="NoButton">nighltly build</a> of Blender as it uses the new <strong>bevel shader</strong>.</p>
+              </div>
+                
 				<div class="Content">
 					<h2> Object Normal</h2>
 					<p><img src="images/bake_normal_object.png" width="128" height="128" alt=""/></p>
 					<p>Bakes a normal map in object space.					</p>
 					<p><strong>Tip:</strong> Use the green channel for vertical gradients.</p>
 				</div>
-                <div class="Content">
-					<h2>Position</h2>
-					<p><img src="images/bake_position.png" width="128" height="128" alt=""/></p>
-					<p>Bakes a map with unique colors within the bounds of the object.</p>
-				</div>
-            
-            </div>
+                
+              
+           	  <div class="Content">
+					<h2>Object Normal Bevel<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				<p><img src="images/bake_normal_object_bevel.png" width="128" height="128" alt=""/></p>
+			    <p>Bakes a normal map in object space. with beveled edges.</p>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					  <tr>
+					    <td valign="top"><strong>Bevel Samples</strong></td>
+					    <td valign="top"><p>&nbsp;</p></td>
+					    <td valign="top">Number of samples (1 to 16). The higher the better but slower.</td>
+				      </tr>
+					  <tr>
+					    <td valign="top"><strong>Radius</strong></td>
+					    <td width="16" valign="top"><p>&nbsp;</p></td>
+					    <td valign="top">The radius of the bevel in scene units.<em><strong></strong></em><em><strong></strong></em></td>
+				      </tr>
+					  <tbody>
+				      </tbody>
+			    </table>
+                <p><strong>Note: </strong>This mode requires a <a href="https://builder.blender.org/download/" class="NoButton">nighltly build</a> of Blender as it uses the new <strong>bevel shader</strong>.</p>
+           	  </div>
+          </div>
             
             
             <div class="Info">
-				<h3>ID Maps & Masks</h3>
+				<h3>Mask &amp; ID Maps</h3>
 				
 			</div>
             
@@ -464,7 +504,7 @@
 				<div class="Content">
 					<h2>Element ID</h2>
 					<p><img src="images/bake_id_element.png" width="128" height="128" alt=""/></p>
-					<p>Bakes a colored texture where each mesh element has a unique color. Use this map to isolate different parts of your model in the texture.</p>
+					<p>Bakes a colored texture where each <strong>mesh element</strong> has a unique color. Use this map to isolate different parts of your model in the texture.</p>
 				</div>
 				<div class="Content">
 					<h2>Material ID</h2>
@@ -481,21 +521,6 @@
             
 			<div class="Columns4">
             	
-
-                <div class="Content">
-				  <h2>Displacement</h2>
-				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
-				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
-				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
-			  </div>
-				
-                
-				<div class="Content">
-					<h2>Diffuse</h2>
-					<p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
-					<p>Renders the diffuse colors of all Cycles materials of the object.					</p>
-					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
-				</div>
 				<div class="Content">
 					<h2>AO</h2>
 					<p><img src="images/bake_ao.png" width="128" height="128" alt=""/></p>
@@ -549,6 +574,29 @@
 					<p><strong>Note:</strong> Curvature maps require a high and low poly object.</p>
 			  </div>
 				
+                
+                <div class="Content">
+					<h2> Bevel Mask<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				<p><img src="images/bake_bevel_mask.png" width="128" height="128" alt=""/></p>
+			    <p>Bakes a mask using the new bevel shader. Edges are solved shader based and geometry independent.</p>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					  <tr>
+					    <td valign="top"><strong>Bevel Samples</strong></td>
+					    <td valign="top"><p>&nbsp;</p></td>
+					    <td valign="top">Number of samples (1 to 16). The higher the better but slower.</td>
+				      </tr>
+					  <tr>
+					    <td valign="top"><strong>Radius</strong></td>
+					    <td width="16" valign="top"><p>&nbsp;</p></td>
+					    <td valign="top">The radius of the bevel in scene units.<em><strong></strong></em><em><strong></strong></em></td>
+				      </tr>
+					  <tbody>
+				      </tbody>
+			    </table>
+                <p><strong>Note: </strong>This mode requires a <a href="https://builder.blender.org/download/" class="NoButton">nighltly build</a> of Blender as it uses the new <strong>bevel shader</strong>.</p>
+           	  </div>
+                
+                
 				<div class="Content">
 				  <h2>Cavity</h2>
 					<p><img src="images/bake_cavity.png" width="128" height="128" alt=""/></p>
@@ -565,10 +613,49 @@
 				
 		  </div>
 			
-			<div class="Info"><h3>Bake Sets</h3>
-				<p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection <strong>automatically</strong> into bake sets based on their <strong>names</strong>, <strong>grouping</strong> or <strong>parenting</strong>. </p></div>
-				<div class="Columns2">
-					<div class="Content">
+            
+            <div class="Info">
+				<h3>Miscellaneous</h3>
+				
+			</div>
+            
+            
+			<div class="Columns4">
+            	
+				<div class="Content">
+					<h2>Diffuse</h2>
+					<p><img src="images/bake_diffuse.png" width="128" height="128" alt=""/></p>
+					<p>Renders the diffuse colors of all Cycles materials of the object.					</p>
+					<p><strong>Tip: </strong>Color IDs should be rendered in this mode.</p>
+				</div>
+                
+                <div class="Content">
+					<h2>Position</h2>
+					<p><img src="images/bake_position.png" width="128" height="128" alt=""/></p>
+					<p>Bakes a map with unique colors within the bounds of the object.</p>
+				</div>
+                
+                <div class="Content">
+				  <h2>Displacement</h2>
+				  <p><img src="images/bake_displacment.png" width="128" height="128" alt=""/></p>
+				  <p>Distance of the surface to the projection cage or offset. Distance maps can be used with displacement modifiers.</p>
+				  <p><strong>Note: </strong>Uses  Blender Render and does not support cages.</p>
+			  </div>
+				
+            </div>
+            
+          </div>
+            
+            
+            
+            <h1>Bake Sets</h1>
+		<p>A bake set is a set of objects that are used together to bake a texture or part of a texture. TexTools  groups your scene selection <strong>automatically</strong> into bake sets based on their <strong>names</strong>, <strong>grouping</strong> or <strong>parenting</strong>. </p>
+		<div class="Panel">
+		  <div class="Info">
+		    <h3>Normal Maps</h3>
+		  </div>
+		  <div class="Columns2">
+			  <div class="Content">
 						<h2>Bake Sets </h2>
 						<p>This area displays the selected bake sets. Bake sets reflect your scene selection but are split by <strong>common names</strong>. Each bake set can contain 4 different type of objects. They are</p>
 						<table width="100%" border="0" cellspacing="10" cellpadding="0">
@@ -612,7 +699,7 @@
 						</table>
 						<p><strong>Tip</strong>: Expand the tool panel width to see the amount of objects for each type.</p>
 						<p><img src="images/demo_resize_panel_bake_sets.gif" width="234" height="56" alt=""/></p>
-					</div>
+			</div>
 					
 					<div class="Content">
 						<h2>Grouping objects</h2>
@@ -651,7 +738,7 @@
 						<p><img src="images/demo_bake_explode.gif" alt=""/></p>
 						<p>Animation keyframes are added at 0 and 50 of each selected object to transition between the 2 states. Keyframes can be removed aftwards if not desired.</p>
 					</div>
-				</div>
+		  </div>
 				
 		  </div>
 			<a class="NoButton" id="colorid"></a>

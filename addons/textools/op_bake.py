@@ -31,9 +31,10 @@ modes={
 }
 
 if hasattr(bpy.types,"ShaderNodeBevel"):
-	# Has newer bevel shader (2.8 series, 2.7 buildbot series)
-	modes['bevel_mask'] = ub.BakeMode('bake_bevel_mask',					type='EMIT', 	color=(0, 0, 0, 1), params=["bake_bevel_size"])
-	modes['normal_tangent_bevel'] = ub.BakeMode('bake_tangent_bevel',		type='NORMAL', 	color=(0.5, 0.5, 1, 1), params=["bake_bevel_size"])
+	# Has newer bevel shader (2.7 nightly build series)
+	modes['bevel_mask'] = ub.BakeMode('bake_bevel_mask',					type='EMIT', 	color=(0, 0, 0, 1), params=["bake_bevel_samples","bake_bevel_size"])
+	modes['normal_tangent_bevel'] = ub.BakeMode('bake_bevel_normal',		type='NORMAL', 	color=(0.5, 0.5, 1, 1), params=["bake_bevel_samples","bake_bevel_size"])
+	modes['normal_object_bevel'] = ub.BakeMode('bake_bevel_normal',		type='NORMAL', 	color=(0.5, 0.5, 1, 1), normal_space='OBJECT', params=["bake_bevel_samples","bake_bevel_size"])
 
 
 
@@ -420,9 +421,15 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 		if mode == 'bevel_mask':
 			if "Bevel" in material_bake.node_tree.nodes:
 				material_bake.node_tree.nodes["Bevel"].inputs[0].default_value = bpy.context.scene.texToolsSettings.bake_bevel_size
+				material_bake.node_tree.nodes["Bevel"].samples = bpy.context.scene.texToolsSettings.bake_bevel_samples
 		if mode == 'normal_tangent_bevel':
 			if "Bevel" in material_bake.node_tree.nodes:
 				material_bake.node_tree.nodes["Bevel"].inputs[0].default_value = bpy.context.scene.texToolsSettings.bake_bevel_size
+				material_bake.node_tree.nodes["Bevel"].samples = bpy.context.scene.texToolsSettings.bake_bevel_samples
+		if mode == 'normal_object_bevel':
+			if "Bevel" in material_bake.node_tree.nodes:
+				material_bake.node_tree.nodes["Bevel"].inputs[0].default_value = bpy.context.scene.texToolsSettings.bake_bevel_size
+				material_bake.node_tree.nodes["Bevel"].samples = bpy.context.scene.texToolsSettings.bake_bevel_samples
 
 
 

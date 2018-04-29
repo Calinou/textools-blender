@@ -907,14 +907,15 @@ class Panel_Bake(bpy.types.Panel):
 		
 		if bpy.app.debug_value != 0:
 			row = col.row()
-			row.label(text="--> Mode: '{}'".format(settings.bake_mode))
+			row.label(text="--> Mode: '{}'".format(bpy.context.scene.TT_bake_mode))
 
+		bake_mode = utilities_ui.get_bake_mode()
 
 		# Warning: Wrong bake mode, require 
-		if settings.bake_mode == 'diffuse':
+		if bake_mode == 'diffuse':
 			if bpy.context.scene.render.engine != 'CYCLES':
-				if bpy.context.scene.render.engine != op_bake.modes[settings.bake_mode].engine:
-					col.label("Requires '{}'".format(op_bake.modes[settings.bake_mode].engine), icon='ERROR')
+				if bpy.context.scene.render.engine != op_bake.modes[bake_mode].engine:
+					col.label("Requires '{}'".format(op_bake.modes[bake_mode].engine), icon='ERROR')
 				
 				
 
@@ -927,8 +928,8 @@ class Panel_Bake(bpy.types.Panel):
 				break		
 
 		# Display Bake mode properties / parameters
-		if settings.bake_mode in op_bake.modes:
-			params = op_bake.modes[settings.bake_mode].params
+		if bake_mode in op_bake.modes:
+			params = op_bake.modes[bake_mode].params
 			if len(params) > 0:
 				for param in params:
 					col.prop(context.scene.texToolsSettings, param)

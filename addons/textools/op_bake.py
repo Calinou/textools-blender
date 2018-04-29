@@ -6,7 +6,7 @@ from collections import defaultdict
 from math import pi
 from random import random
 
-
+from . import utilities_ui
 from . import settings
 from . import utilities_bake as ub #Use shorthand ub = utitlites_bake
 
@@ -50,8 +50,10 @@ class op(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
-		if settings.bake_mode not in modes:
-			self.report({'ERROR_INVALID_INPUT'}, "Uknown mode '{}' only available: '{}'".format(settings.bake_mode, ", ".join(modes.keys() )) )
+		bake_mode = utilities_ui.get_bake_mode()
+
+		if bake_mode not in modes:
+			self.report({'ERROR_INVALID_INPUT'}, "Uknown mode '{}' only available: '{}'".format(bake_mode, ", ".join(modes.keys() )) )
 			return
 
 		# Store Selection
@@ -62,7 +64,7 @@ class op(bpy.types.Operator):
 		# Render sets
 		bake(
 			self = self, 
-			mode = settings.bake_mode,
+			mode = bake_mode,
 			size = bpy.context.scene.texToolsSettings.size, 
 
 			bake_single = bpy.context.scene.texToolsSettings.bake_force_single,

@@ -68,7 +68,7 @@ def get_padding():
 
 
 
-def generate_previews():
+def generate_bake_mode_previews():
 	# We are accessing all of the information that we generated in the register function below
 	preview_collection = preview_collections["thumbnail_previews"]
 	image_location = preview_collection.images_location
@@ -80,13 +80,18 @@ def generate_previews():
 	for i, image in enumerate(os.listdir(image_location)):
 		mode = image[0:-4]
 		print(".. .{}".format(mode))
+
+
 		if image.endswith(VALID_EXTENSIONS) and mode in op_bake.modes:
 			filepath = os.path.join(image_location, image)
 			thumb = preview_collection.load(filepath, filepath, 'IMAGE')
-			enum_items.append((image, image, "", thumb.icon_id, i))
+			enum_items.append((image, mode, "", thumb.icon_id, i))
 			
 	return enum_items
 	
+
+def get_bake_mode():
+	return str(bpy.context.scene.TT_bake_mode).replace(".png","").lower()
 
 
 class op_popup(bpy.types.Operator):
@@ -111,8 +116,8 @@ class op_popup(bpy.types.Operator):
 
 
 def on_bakemode_set(self, context):
-	settings.bake_mode = str(bpy.context.scene.TT_bake_mode).replace(".png","").lower()
-	utilities_bake.on_select_bake_mode(settings.bake_mode)
+	print("Set  '{}'".format(bpy.context.scene.TT_bake_mode))
+	utilities_bake.on_select_bake_mode(get_bake_mode())
 
 
 
@@ -137,12 +142,11 @@ def register():
 	# This is an EnumProperty to hold all of the images
 	# You really can save it anywhere in bpy.types.*  Just make sure the location makes sense
 	bpy.types.Scene.TT_bake_mode = EnumProperty(
-		items=generate_previews(),
+		items=generate_bake_mode_previews(),
 		update = on_bakemode_set,
 		default = 'normal_tangent.png'
 	)
-	settings.bake_mode = 'normal_tangent'
-	# on_bakemode_set(None,None)
+
 	
 def unregister():
 

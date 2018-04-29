@@ -43,7 +43,7 @@ class BakeMode:
 
 
 def on_select_bake_mode(mode):
-	print("Mode changed {}".format(mode))#settings.bake_mode
+	print("Mode changed {}".format(mode))
 
 	if len(settings.sets) > 0:
 		name_texture = "{}_{}".format(settings.sets[0].name, mode)

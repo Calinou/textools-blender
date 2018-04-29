@@ -67,18 +67,24 @@ def create_pattern(self, mode, size, scale):
 	
 	# bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
-
-	contextView3D = utilities_ui.GetContextView3D()
-	if not contextView3D:
-		self.report({'ERROR_INVALID_INPUT'}, "This tool requires an available View3D view.")
-		return
+	context_override = None
+	if bpy.context.area.type != 'VIEW_3D':
+		context_override = utilities_ui.GetContextView3D()
+		if not context_override:
+			self.report({'ERROR_INVALID_INPUT'}, "This tool requires an available View3D view.")
+			return
+	
 
 
 	if mode == 'hexagon':
 		bpy.ops.mesh.primitive_circle_add(vertices=6, radius=scale, fill_type='NGON')
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.rotate(contextView3D, value=math.pi*0.5,  axis=(0, 0, 1))
+		if context_override:
+			bpy.ops.transform.rotate(context_override, value=math.pi*0.5,  axis=(0, 0, 1))
+		else:
+			bpy.ops.transform.rotate(value=math.pi*0.5,  axis=(0, 0, 1))
+
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 0.75,-0.5,2)
@@ -89,7 +95,12 @@ def create_pattern(self, mode, size, scale):
 		bpy.ops.mesh.primitive_circle_add(vertices=3, radius=scale, fill_type='NGON')
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.translate(contextView3D, value=(0, scale*0.5, 0), constraint_axis=(False, True, False))
+		
+		if context_override:
+			bpy.ops.transform.translate(context_override, value=(0, scale*0.5, 0), constraint_axis=(False, True, False))
+		else:
+			bpy.ops.transform.translate(value=(0, scale*0.5, 0), constraint_axis=(False, True, False))
+
 		bpy.ops.object.editmode_toggle()
 		
 		modifier = bpy.context.object.modifiers.new(name="Mirror", type='MIRROR')
@@ -109,7 +120,12 @@ def create_pattern(self, mode, size, scale):
 		bpy.ops.mesh.primitive_plane_add(radius=scale)
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.rotate(contextView3D, value=math.pi*0.25,  axis=(0, 0, 1))
+
+		if context_override:
+			bpy.ops.transform.rotate(context_override, value=math.pi*0.25,  axis=(0, 0, 1))
+		else:
+			bpy.ops.transform.rotate(value=math.pi*0.25,  axis=(0, 0, 1))
+
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 0.5,-0.5,2)
@@ -120,7 +136,13 @@ def create_pattern(self, mode, size, scale):
 		bpy.ops.mesh.primitive_plane_add(radius=scale)
 
 		bpy.ops.object.editmode_toggle()
-		bpy.ops.transform.resize(contextView3D, value=(1, 0.5, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		
+		if context_override:
+			bpy.ops.transform.resize(context_override, value=(1, 0.5, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		else:
+			bpy.ops.transform.resize(value=(1, 0.5, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+		
+
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 0.5,-1,2)
@@ -130,11 +152,16 @@ def create_pattern(self, mode, size, scale):
 	elif mode == 'stripe':
 		bpy.ops.mesh.primitive_plane_add(radius=1)
 
-		bpy.ops.object.editmode_toggle()		
-		bpy.ops.transform.resize(contextView3D, value=(0.5, size/2, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
-		bpy.ops.transform.resize(contextView3D, value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
-		bpy.ops.transform.translate(contextView3D, value=(0, (-size/2)*scale, 0), constraint_axis=(False, True, False))
-
+		bpy.ops.object.editmode_toggle()
+		if context_override:
+			bpy.ops.transform.resize(context_override, value=(0.5, size/2, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+			bpy.ops.transform.resize(context_override, value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+			bpy.ops.transform.translate(context_override, value=(0, (-size/2)*scale, 0), constraint_axis=(False, True, False))
+		else:
+			bpy.ops.transform.resize(value=(0.5, size/2, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+			bpy.ops.transform.resize(value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+			bpy.ops.transform.translate(value=(0, (-size/2)*scale, 0), constraint_axis=(False, True, False))
+		
 		bpy.ops.object.editmode_toggle()
 
 		AddArray("Array0", 1,0, size)

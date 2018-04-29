@@ -819,13 +819,13 @@ class Panel_Mesh(bpy.types.Panel):
 		row = col.row(align=True)
 		row.scale_y = 1.75
 		row.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
-		col.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon_value = icon_get("op_meshtex_trim"))
+		
+		row = col.row(align=True)
+		row.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon_value = icon_get("op_meshtex_trim"))
 
 		# Warning about trimmed mesh
 		if op_meshtex_trim_collapse.is_available():
-			row = col.row(align=True)
-			row.alert = True
-			row.operator(op_meshtex_trim_collapse.op.bl_idname, text="Collapse Trim", icon='CANCEL')
+			row.operator(op_meshtex_trim_collapse.op.bl_idname, text="Collapse Trim", icon_value=icon_get("op_meshtex_trim_collapse"))
 
 
 		col = box.column(align=True)
@@ -1056,12 +1056,6 @@ class op_color_dropdown_convert_from(bpy.types.Menu):
 		layout.operator(op_color_from_elements.op.bl_idname, text="Mesh Elements", icon_value = icon_get('op_color_from_elements'))
 		layout.operator(op_color_from_materials.op.bl_idname, text="Materials", icon_value = icon_get('op_color_from_materials'))
 		layout.operator(op_color_from_directions.op.bl_idname, text="Directions", icon_value = icon_get('op_color_from_directions'))
-
-		if bpy.app.debug_value != 0:
-			col = layout.column(align=True)
-			col.alert = True
-			col.operator(op_color_clear.op.bl_idname, text="Texture map", icon = 'CANCEL')
-			col.operator(op_color_clear.op.bl_idname, text="Vertex Colors", icon = 'CANCEL')
 			
 
 
@@ -1073,7 +1067,7 @@ class op_color_dropdown_convert_to(bpy.types.Menu):
 	def draw(self, context):
 		layout = self.layout
 		layout.operator(op_color_convert_texture.op.bl_idname, text="Texture Atlas", icon_value = icon_get('op_color_convert_texture'))
-		layout.operator(op_color_convert_vertex_colors.op.bl_idname, text="Vertex Colors", icon = 'COLOR')
+		layout.operator(op_color_convert_vertex_colors.op.bl_idname, text="Vertex Colors", icon_value = icon_get("op_color_convert_vertex_colors"))
 
 
 class op_enable_cycles(bpy.types.Operator):
@@ -1223,8 +1217,6 @@ def menu_IMAGE_uvs(self, context):
 
 	layout.menu(submenu_align.bl_idname)
 
-
-
 class submenu_align(bpy.types.Menu):
 	bl_label="Align"
 	bl_idname="view3D.fsdfdsfsd"
@@ -1243,17 +1235,17 @@ def menu_IMAGE_select(self, context):
 	layout.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
 	layout.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
 	
-
 def menu_IMAGE_MT_image(self, context):
-	self.layout.separator()
-	self.layout.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
-	
+	layout = self.layout
+	layout.separator()
+	layout.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
+	layout.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
+		
 def menu_VIEW3D_MT_object(self, context):
 	self.layout.separator()
 	self.layout.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
 	self.layout.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
 	
-
 def menu_INFO_MT_mesh_add(self, context):
 	self.layout.operator(op_meshtex_pattern.op.bl_idname, text="Create Pattern", icon_value = icon_get("op_meshtex_pattern"))
 
@@ -1307,6 +1299,7 @@ def register():
 		"op_bake_explode.png", 
 		"op_bake_preview_texture.png", 
 		"op_color_convert_texture.png", 
+		"op_color_convert_vertex_colors.png", 
 		"op_color_from_directions.png", 
 		"op_color_from_elements.png", 
 		"op_color_from_materials.png", 
@@ -1322,6 +1315,7 @@ def register():
 		"op_meshtex_create.png",
 		"op_meshtex_pattern.png",
 		"op_meshtex_trim.png",
+		"op_meshtex_trim_collapse.png", 
 		"op_meshtex_wrap.png",
 		"op_rectify.png", 
 		"op_select_islands_flipped.png", 

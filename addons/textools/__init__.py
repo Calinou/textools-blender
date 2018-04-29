@@ -901,7 +901,7 @@ class Panel_Bake(bpy.types.Panel):
 
 
 		# Bake Mode
-		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon = 'TEXTURE_SHADED');
+		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
 		col.template_icon_view(bpy.context.scene, "TT_bake_mode")
 		
 		
@@ -1305,15 +1305,16 @@ def register():
 		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
+		"op_bake_preview_texture.png", 
 		"op_color_convert_texture.png", 
 		"op_color_from_directions.png", 
 		"op_color_from_elements.png", 
 		"op_color_from_materials.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 
-		"op_island_align_world.png", 
 		"op_island_align_sort_h.png", 
 		"op_island_align_sort_v.png", 
+		"op_island_align_world.png", 
 		"op_island_mirror.png", 
 		"op_island_rotate_90_left.png", 
 		"op_island_rotate_90_right.png", 

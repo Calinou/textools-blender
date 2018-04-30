@@ -2,18 +2,10 @@
 
 TexTools is a Free addon for Blender 3D with a set of professional UV and Texture toolsBack in 2009 I released the [Original TexTools](http://renderhjs.net/textools/) for 3dsMax. Current features include: Easy Texture Baking, UV Align and Selection tools and Texel Density tools.
 
-## Website ##
-Visit the [Official Website & Documentation](http://renderhjs.net/textools/blender/) for in depth overview of all the tools.
+## Download & Documentation ##
+Visit the [Official Website & Documentation](http://renderhjs.net/textools/blender/) for in depth overview of all the tools. Alternatively visit this [release log](http://renderhjs.net/textools/blender/log.html)
 
-![](https://farm5.staticflickr.com/4753/28069602029_0de95d4f1d_o.png)
-
-## Download ##
-* [Blender_TexTools_0.9.0.zip](http://renderhjs.net/textools/blender/Blender_TexTools_0.9.0.zip)
-* [Blender_TexTools_0.8.0.zip](http://renderhjs.net/textools/blender/Blender_TexTools_0.8.0.zip)
-* [Blender TexTools 0.7.2.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.7.2.zip)
-* [Blender TexTools 0.7.1.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.7.1.zip)
-* [Blender TexTools 0.6.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.6.0.zip)
-* [Blender TexTools 0.3.0.zip](http://renderhjs.net/textools/blender/Blender TexTools 0.3.0.zip)
+![](http://renderhjs.net/textools/blender/images/splash_1.2.0.jpg)
 
 ## Links ##
 * ![](http://renderhjs.net/textools/blender/img/paypal_donate.png)
@@ -21,6 +13,7 @@ Visit the [Official Website & Documentation](http://renderhjs.net/textools/blend
 * [Git repository](https://bitbucket.org/renderhjs/textools-blender) on BitBucket
 * [3dsMax version](http://renderhjs.net/textools/) of TexTools
 * Blenderartist [discussion thread](https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender)
+* Polycount [discussion thread](http://polycount.com/discussion/197226/textools-for-blender)
 * Personal website [renderhjs.net](http://www.renderhjs.net/) all written in haxe ;)
 
 ---

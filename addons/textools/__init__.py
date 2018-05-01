@@ -31,6 +31,7 @@ if "bpy" in locals():
 	imp.reload(op_color_clear)
 	imp.reload(op_color_convert_texture)
 	imp.reload(op_color_convert_vertex_colors)
+	imp.reload(op_edge_split_bevel)
 	imp.reload(op_color_from_elements)
 	imp.reload(op_color_from_materials)
 	imp.reload(op_color_from_directions)
@@ -88,6 +89,7 @@ else:
 	from . import op_color_from_elements
 	from . import op_color_from_materials
 	from . import op_color_from_directions
+	from . import op_edge_split_bevel
 	from . import op_color_io_export
 	from . import op_color_io_import
 	from . import op_color_select
@@ -703,6 +705,11 @@ class Panel_Layout(bpy.types.Panel):
 		
 		row = col.row(align=True)
 		row.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
+
+		if bpy.app.debug_value != 0:
+			row = col.row(align=True)
+			row.alert = True
+			row.operator(op_edge_split_bevel.op.bl_idname, text="Split Bevel")
 		
 
 		row = col.row(align=True)

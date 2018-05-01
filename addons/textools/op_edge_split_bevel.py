@@ -24,7 +24,7 @@ class op(bpy.types.Operator):
 		description = "Space for split bevel",
 		default = 0.015,
 		min = 0,
-		max = 1
+		max = 0.06
 	)
 
 
@@ -104,19 +104,29 @@ def main(self, radius):
 	# edges = sort_edges(edges)
 
 	for edge in edges:
+		v0 = edge.verts[0]
+		v1 = edge.verts[1]
 
 		# Find faces that connect with both verts
 		faces = []
 		for face in edge.link_faces:
-			if edge.verts[0] in face.verts and edge.verts[1] in face.verts:
+			if v0 in face.verts and v1 in face.verts:
 				faces.append(face)
 
 		if len(faces) == 2:
-			print("Hard edge: {} -> {} = {}x faces".format(edge.verts[0].index, edge.verts[1].index, len(faces)))
+			print("Hard edge: {} -> {} = {}x faces".format(v0.index, v1.index, len(faces)))
 
-			centers = [get_face_center(uvLayer, faces[0]), get_face_center(uvLayer, faces[1])]
+			# Find 2 edge rail pairs
+			slide_face_uvs(uvLayer, edge, v0, faces[0], radius, vert_to_uv)
+			slide_face_uvs(uvLayer, edge, v0, faces[1], radius, vert_to_uv)
+			slide_face_uvs(uvLayer, edge, v1, faces[0], radius, vert_to_uv)
+			slide_face_uvs(uvLayer, edge, v1, faces[1], radius, vert_to_uv)
+			
 
-
+			
+			# centers = [get_face_center(uvLayer, faces[0]), get_face_center(uvLayer, faces[1])]
+			# for face in faces:
+				
 
 	# print("islands {}x".format(len(islands)))
 	# for island in islands:
@@ -126,6 +136,31 @@ def main(self, radius):
 
 	#Restore selection
 	utilities_uv.selection_restore()
+
+
+def slide_face_uvs(uvLayer, edge, vert, face, radius, vert_to_uv):
+	avg_target = Vector((0,0))
+	avg_count = 0
+
+	for e in face.edges:
+		if e != edge and vert in e.verts:
+			vert_B = e.verts[0]
+			if vert == e.verts[0]:
+				vert_B = e.verts[1]
+			A = vert_to_uv[vert][0].uv
+			B = vert_to_uv[vert_B][0].uv
+
+			avg_target+= A +(B - A).normalized() * radius
+			avg_count+=1
+
+	avg_target/=avg_count
+	avg_target = vert_to_uv[vert][0].uv +(avg_target - vert_to_uv[vert][0].uv).normalized() * radius
+
+	for loop in face.loops:
+		if loop.vert == vert:
+			loop[uvLayer].uv = avg_target
+
+
 
 
 def get_face_center(uvLayer, face):

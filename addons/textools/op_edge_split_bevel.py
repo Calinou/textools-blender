@@ -120,9 +120,11 @@ def main(self, radius):
 				faces.append(face)
 
 		if len(faces) == 2:
-			a  = get_side_data(edge, edges, faces[0])
-			b  = get_side_data(edge, edges, faces[1])
+			v0_links, v1_links = get_edge_prev_next(edge, edges)
 
+			print("e {}_{} = {}x , {}x".format(edge.verts[0].index, edge.verts[1].index, len(v0_links), len(v1_links)))
+
+			# find matching rails
 
 	'''
 	# Loop through edges
@@ -206,14 +208,23 @@ def main(self, radius):
 
 
 
-
-
-def get_side_data(edge, edges, face):
-	
-	print("____get side data "+face.index)
-
+def get_edge_prev_next(edge, edges):
 	v0 = edge.verts[0]
 	v1 = edge.verts[1]
+
+	# v0_extends = []	
+	v0_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v !=  v0]
+	v1_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v !=  v1]
+
+	return v0_extends, v1_extends
+	# Find connecting other end verts to this edge
+
+# def get_side_data(edge, edges, face):
+	
+# 	print("____get side data {}".format(face.index))
+
+# 	v0 = edge.verts[0]
+	# v1 = edge.verts[1]
 
 	# Find shared edges before and after
 
@@ -229,7 +240,7 @@ def get_side_data(edge, edges, face):
 	# 		for v in e.verts:
 	# 			if v not v1:
 	# 				v1_extends.append(v)
-
+	return [], []
 
 
 

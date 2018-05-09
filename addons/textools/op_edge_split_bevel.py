@@ -24,7 +24,7 @@ class op(bpy.types.Operator):
 		description = "Space for split bevel",
 		default = 0.015,
 		min = 0,
-		max = 0.06
+		max = 0.10
 	)
 
 
@@ -98,10 +98,16 @@ def main(self, radius):
 			# print("Hard edge: {} - {}".format(edge.verts[0].index, edge.verts[1].index))
 			edges.append(edge)
 
+	# Get vert rails to slide		
+	vert_rails = get_vert_edge_rails(edges)
 
 
-	
-	# edges = sort_edges(edges)
+	print("Vert rails: {}x".format(len(vert_rails)))
+	for vert in vert_rails:
+		print(".. v.idx {} = {}x".format(vert.index, len(vert_rails[vert]) ))
+
+
+
 
 	for edge in edges:
 		v0 = edge.verts[0]
@@ -114,13 +120,74 @@ def main(self, radius):
 				faces.append(face)
 
 		if len(faces) == 2:
-			print("Hard edge: {} -> {} = {}x faces".format(v0.index, v1.index, len(faces)))
+			a  = get_side_data(edge, edges, faces[0])
+			b  = get_side_data(edge, edges, faces[1])
 
-			# Find 2 edge rail pairs
-			slide_face_uvs(uvLayer, edge, v0, faces[0], radius, vert_to_uv)
-			slide_face_uvs(uvLayer, edge, v0, faces[1], radius, vert_to_uv)
-			slide_face_uvs(uvLayer, edge, v1, faces[0], radius, vert_to_uv)
-			slide_face_uvs(uvLayer, edge, v1, faces[1], radius, vert_to_uv)
+
+	'''
+	# Loop through edges
+	for edge in edges:
+		v0 = edge.verts[0]
+		v1 = edge.verts[1]
+
+		# Find shared edges before and after
+		v0_extends = []
+		v1_extends = []
+		for e in edges:
+			if e not edge and v0 in e.verts:
+				for v in e.verts:
+					if v not v0:
+						v0_extends.append(v)
+
+			if e not edge and v1 in e.verts:
+				for v in e.verts:
+					if v not v1:
+						v1_extends.append(v)
+
+	'''
+
+
+
+
+
+
+
+	'''
+	# Select rails
+	bpy.ops.uv.select_all(action='DESELECT')
+	bpy.context.scene.tool_settings.uv_select_mode = 'EDGE'
+
+	for vert in vert_rails:
+		for edge in vert_rails[vert]:
+			for v in edge.verts:
+				for uv in vert_to_uv[v]:
+					uv.select = True
+	return
+	'''
+
+
+
+
+	# # edges = sort_edges(edges)
+
+	# for edge in edges:
+	# 	v0 = edge.verts[0]
+	# 	v1 = edge.verts[1]
+
+	# 	# Find faces that connect with both verts
+	# 	faces = []
+	# 	for face in edge.link_faces:
+	# 		if v0 in face.verts and v1 in face.verts:
+	# 			faces.append(face)
+
+	# 	if len(faces) == 2:
+	# 		print("Hard edge: {} -> {} = {}x faces".format(v0.index, v1.index, len(faces)))
+
+	# 		# Find 2 edge rail pairs
+	# 		slide_face_uvs(uvLayer, edge, v0, faces[0], radius, vert_to_uv)
+	# 		slide_face_uvs(uvLayer, edge, v0, faces[1], radius, vert_to_uv)
+	# 		slide_face_uvs(uvLayer, edge, v1, faces[0], radius, vert_to_uv)
+	# 		slide_face_uvs(uvLayer, edge, v1, faces[1], radius, vert_to_uv)
 			
 
 			
@@ -136,6 +203,63 @@ def main(self, radius):
 
 	#Restore selection
 	utilities_uv.selection_restore()
+
+
+
+
+
+def get_side_data(edge, edges, face):
+	
+	print("____get side data "+face.index)
+
+	v0 = edge.verts[0]
+	v1 = edge.verts[1]
+
+	# Find shared edges before and after
+
+	# v0_extends = []
+	# v1_extends = []
+	# for e in edges:
+	# 	if e not edge and v0 in e.verts:
+	# 		for v in e.verts:
+	# 			if v not v0:
+	# 				v0_extends.append(v)
+
+	# 	if e not edge and v1 in e.verts:
+	# 		for v in e.verts:
+	# 			if v not v1:
+	# 				v1_extends.append(v)
+
+
+
+
+def get_vert_edge_rails(edges):
+
+	vert_rails = {}
+	for edge in edges:
+		v0 = edge.verts[0]
+		v1 = edge.verts[1]
+
+		faces = []
+		for face in edge.link_faces:
+			if v0 in face.verts and v1 in face.verts:
+				faces.append(face)
+
+		for face in faces:
+			for e in face.edges:
+				if e not in edges:
+					if v0 not in vert_rails:
+						vert_rails[ v0 ] = []
+					if v1 not in vert_rails:
+						vert_rails[ v1 ] = []
+
+					if v0 in e.verts and e not in vert_rails[v0]:
+						vert_rails[v0].append(e)
+
+					if v1 in e.verts and e not in vert_rails[v1]:
+						vert_rails[v1].append(e)
+
+	return vert_rails
 
 
 def slide_face_uvs(uvLayer, edge, vert, face, radius, vert_to_uv):

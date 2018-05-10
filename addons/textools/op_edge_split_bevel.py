@@ -101,18 +101,39 @@ def main(self, radius):
 	# Get vert rails to slide		
 	vert_rails = get_vert_edge_rails(edges)
 
+	# Get left and right faces
+	edge_face_pairs = get_edge_face_pairs(edges)
+
 
 	print("Vert rails: {}x".format(len(vert_rails)))
-	for vert in vert_rails:
-		print(".. v.idx {} = {}x".format(vert.index, len(vert_rails[vert]) ))
+	# for vert in vert_rails:
+	# 	print(".. v.idx {} = {}x".format(vert.index, len(vert_rails[vert]) ))
 
 
 
+	vert_processed = []
 
 	for edge in edges:
-		v0 = edge.verts[0]
-		v1 = edge.verts[1]
+		if len(edge_face_pairs[edge]) == 2:
+			v0 = edge.verts[0]
+			v1 = edge.verts[1]
+			
+			f0 = edge_face_pairs[edge][0]
+			f1 = edge_face_pairs[edge][1]
 
+			# v0
+			if v0 not in vert_processed:
+				xyz(v0, edge, f0, vert_rails[v0])
+				xyz(v0, edge, f1, vert_rails[v0])
+				vert_processed.append(v0)
+			
+			# V1
+			if v1 not in vert_processed:
+				xyz(v1, edge, f0, vert_rails[v1])
+				xyz(v1, edge, f1, vert_rails[v1])
+				vert_processed.append(v1)
+
+		'''
 		# Find faces that connect with both verts
 		faces = []
 		for face in edge.link_faces:
@@ -125,86 +146,22 @@ def main(self, radius):
 			print("e {}_{} = {}x , {}x".format(edge.verts[0].index, edge.verts[1].index, len(v0_links), len(v1_links)))
 
 			# find matching rails
+			if v0 not in vert_processed and len(v0_links) > 0:
+				# rails = []
+				# rails.append(vert_rails[v0])
+				# rails.append( [ e for v in v0_links for  ] )
+				pass
+		'''
 
-	'''
-	# Loop through edges
-	for edge in edges:
-		v0 = edge.verts[0]
-		v1 = edge.verts[1]
-
-		# Find shared edges before and after
-		v0_extends = []
-		v1_extends = []
-		for e in edges:
-			if e not edge and v0 in e.verts:
-				for v in e.verts:
-					if v not v0:
-						v0_extends.append(v)
-
-			if e not edge and v1 in e.verts:
-				for v in e.verts:
-					if v not v1:
-						v1_extends.append(v)
-
-	'''
-
-
-
-
-
-
-
-	'''
-	# Select rails
-	bpy.ops.uv.select_all(action='DESELECT')
-	bpy.context.scene.tool_settings.uv_select_mode = 'EDGE'
-
-	for vert in vert_rails:
-		for edge in vert_rails[vert]:
-			for v in edge.verts:
-				for uv in vert_to_uv[v]:
-					uv.select = True
-	return
-	'''
-
-
-
-
-	# # edges = sort_edges(edges)
-
-	# for edge in edges:
-	# 	v0 = edge.verts[0]
-	# 	v1 = edge.verts[1]
-
-	# 	# Find faces that connect with both verts
-	# 	faces = []
-	# 	for face in edge.link_faces:
-	# 		if v0 in face.verts and v1 in face.verts:
-	# 			faces.append(face)
-
-	# 	if len(faces) == 2:
-	# 		print("Hard edge: {} -> {} = {}x faces".format(v0.index, v1.index, len(faces)))
-
-	# 		# Find 2 edge rail pairs
-	# 		slide_face_uvs(uvLayer, edge, v0, faces[0], radius, vert_to_uv)
-	# 		slide_face_uvs(uvLayer, edge, v0, faces[1], radius, vert_to_uv)
-	# 		slide_face_uvs(uvLayer, edge, v1, faces[0], radius, vert_to_uv)
-	# 		slide_face_uvs(uvLayer, edge, v1, faces[1], radius, vert_to_uv)
-			
-
-			
-			# centers = [get_face_center(uvLayer, faces[0]), get_face_center(uvLayer, faces[1])]
-			# for face in faces:
-				
-
-	# print("islands {}x".format(len(islands)))
-	# for island in islands:
-	# 	print("I")
-	# 	for face in island:
-	# 		print("F")
 
 	#Restore selection
 	utilities_uv.selection_restore()
+
+
+def xyz(vert, edge, face, rails):
+	print("Slide {} with {}x rails".format(vert.index, len(rails)))
+
+
 
 
 
@@ -217,30 +174,21 @@ def get_edge_prev_next(edge, edges):
 	v1_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v !=  v1]
 
 	return v0_extends, v1_extends
-	# Find connecting other end verts to this edge
 
-# def get_side_data(edge, edges, face):
-	
-# 	print("____get side data {}".format(face.index))
 
-# 	v0 = edge.verts[0]
-	# v1 = edge.verts[1]
 
-	# Find shared edges before and after
+def get_edge_face_pairs(edges):
+	edge_faces = {}
+	for edge in edges:
+		v0 = edge.verts[0]
+		v1 = edge.verts[1]
+		faces = []
+		for face in edge.link_faces:
+			if v0 in face.verts and v1 in face.verts:
+				faces.append(face)
+		edge_faces[edge] = faces
 
-	# v0_extends = []
-	# v1_extends = []
-	# for e in edges:
-	# 	if e not edge and v0 in e.verts:
-	# 		for v in e.verts:
-	# 			if v not v0:
-	# 				v0_extends.append(v)
-
-	# 	if e not edge and v1 in e.verts:
-	# 		for v in e.verts:
-	# 			if v not v1:
-	# 				v1_extends.append(v)
-	return [], []
+	return edge_faces
 
 
 

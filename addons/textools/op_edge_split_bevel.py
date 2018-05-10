@@ -124,15 +124,18 @@ def main(self, radius):
 			# v0
 			if v0 not in vert_processed:
 				vert_processed.append(v0)
-				xyz(v0, edge, f0, vert_rails)
-				xyz(v0, edge, f1, vert_rails)
+				slide_uvs(v0, edge, f0, edges, vert_rails)
+				slide_uvs(v0, edge, f1, edges, vert_rails)
 				
+			return
 			
+
+
 			# V1
 			if v1 not in vert_processed:
 				vert_processed.append(v1)
-				xyz(v1, edge, f0, vert_rails)
-				xyz(v1, edge, f1, vert_rails)
+				slide_uvs(v1, edge, f0, edges, vert_rails)
+				slide_uvs(v1, edge, f1, edges, vert_rails)
 				
 
 		'''
@@ -160,18 +163,32 @@ def main(self, radius):
 	utilities_uv.selection_restore()
 
 
-def xyz(vert, edge, face, vert_rails):
-	print("Slide v{} with {}x rails".format(vert.index, len(rails)))
-
+def slide_uvs(vert, edge, face, edges, vert_rails):
+	
 	v0_links, v1_links = get_edge_prev_next(edge, edges)
+
+	faces = [f for e in face.edges for f in e.link_faces if e != edge and f != face]
+	faces.append(face)
+
+	print("  S-faces {} = {}x".format(face.index, len(faces) ))
+
+	face_edges = []
+	for f in faces:
+		for e in face.edges:
+			if e not in face_edges:
+				face_edges.append(e)
 
 	# Get all rails
 	rails = []
-	rails.append( vert_rails[vert] )
+	rails.extend( vert_rails[vert] )
 	for v in v0_links:
-		rails.append( vert_rails[v] )
+		rails.extend( vert_rails[v] )
 	for v in v1_links:
-		rails.append( vert_rails[v] )
+		rails.extend( vert_rails[v] )
+	rails = [e for e in rails if e in face_edges]
+
+
+	print("... v{} with {}x rails ".format(vert.index, len(rails)))
 
 	# Filter rails on same side
 

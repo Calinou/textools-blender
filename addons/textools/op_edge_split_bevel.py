@@ -123,15 +123,17 @@ def main(self, radius):
 
 			# v0
 			if v0 not in vert_processed:
-				xyz(v0, edge, f0, vert_rails[v0])
-				xyz(v0, edge, f1, vert_rails[v0])
 				vert_processed.append(v0)
+				xyz(v0, edge, f0, vert_rails)
+				xyz(v0, edge, f1, vert_rails)
+				
 			
 			# V1
 			if v1 not in vert_processed:
-				xyz(v1, edge, f0, vert_rails[v1])
-				xyz(v1, edge, f1, vert_rails[v1])
 				vert_processed.append(v1)
+				xyz(v1, edge, f0, vert_rails)
+				xyz(v1, edge, f1, vert_rails)
+				
 
 		'''
 		# Find faces that connect with both verts
@@ -158,8 +160,20 @@ def main(self, radius):
 	utilities_uv.selection_restore()
 
 
-def xyz(vert, edge, face, rails):
-	print("Slide {} with {}x rails".format(vert.index, len(rails)))
+def xyz(vert, edge, face, vert_rails):
+	print("Slide v{} with {}x rails".format(vert.index, len(rails)))
+
+	v0_links, v1_links = get_edge_prev_next(edge, edges)
+
+	# Get all rails
+	rails = []
+	rails.append( vert_rails[vert] )
+	for v in v0_links:
+		rails.append( vert_rails[v] )
+	for v in v1_links:
+		rails.append( vert_rails[v] )
+
+	# Filter rails on same side
 
 
 
@@ -221,6 +235,7 @@ def get_vert_edge_rails(edges):
 	return vert_rails
 
 
+
 def slide_face_uvs(uvLayer, edge, vert, face, radius, vert_to_uv):
 	avg_target = Vector((0,0))
 	avg_count = 0
@@ -246,13 +261,16 @@ def slide_face_uvs(uvLayer, edge, vert, face, radius, vert_to_uv):
 
 
 
-def get_face_center(uvLayer, face):
-	center = Vector((0,0))
-	for loop in face.loops:
-		if loop[uvLayer].select is True:
-			center+= loop[uvLayer].uv
-	center/=len(face.loops)
-	return center
+# def get_face_center(uvLayer, face):
+# 	center = Vector((0,0))
+# 	for loop in face.loops:
+# 		if loop[uvLayer].select is True:
+# 			center+= loop[uvLayer].uv
+# 	center/=len(face.loops)
+# 	return center
+
+
+
 
 # def sort_edges(edges):
 

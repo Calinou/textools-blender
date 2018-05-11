@@ -170,8 +170,9 @@ def slide_uvs(vert, edge, face, edges, vert_rails):
 	faces = [f for e in face.edges for f in e.link_faces if e != edge and f != face]
 	faces.append(face)
 
-	print("  S-faces {} = {}x".format(face.index, len(faces) ))
+	# print("  S-faces {} = {}x".format(face.index, len(faces) ))
 
+	# Get all face edges
 	face_edges = []
 	for f in faces:
 		for e in face.edges:
@@ -185,6 +186,7 @@ def slide_uvs(vert, edge, face, edges, vert_rails):
 		rails.extend( vert_rails[v] )
 	for v in v1_links:
 		rails.extend( vert_rails[v] )
+	# Keep only rails shared with faces
 	rails = [e for e in rails if e in face_edges]
 
 

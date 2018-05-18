@@ -138,25 +138,6 @@ def main(self, radius):
 				slide_uvs(v1, edge, f1, edges, vert_rails)
 				
 
-		'''
-		# Find faces that connect with both verts
-		faces = []
-		for face in edge.link_faces:
-			if v0 in face.verts and v1 in face.verts:
-				faces.append(face)
-
-		if len(faces) == 2:
-			v0_links, v1_links = get_edge_prev_next(edge, edges)
-
-			print("e {}_{} = {}x , {}x".format(edge.verts[0].index, edge.verts[1].index, len(v0_links), len(v1_links)))
-
-			# find matching rails
-			if v0 not in vert_processed and len(v0_links) > 0:
-				# rails = []
-				# rails.append(vert_rails[v0])
-				# rails.append( [ e for v in v0_links for  ] )
-				pass
-		'''
 
 
 	#Restore selection
@@ -165,11 +146,27 @@ def main(self, radius):
 
 def slide_uvs(vert, edge, face, edges, vert_rails):
 	
-	v0_links, v1_links = get_edge_prev_next(edge, edges)
+	A_links, B_links = get_edge_prev_next(edge, edges)
+	
+	verts_edges = {edge.verts[0], edge.verts[1]}
+	for v in A_links:
+		verts_edges.add( v )
+	for v in B_links:
+		verts_edges.add( v )
+
+	print("Edge {}<-->{} =  verts_edges: {}x = {}".format(edge.verts[0].index, edge.verts[1].index, len(verts_edges), [v.index for v in verts_edges] ))
+
+	for v in A_links:
+		print("  A.. #{}".format(v.index))
+	for v in B_links:
+		print("  B.. #{}".format(v.index))
+	
+
 
 	faces = [f for e in face.edges for f in e.link_faces if e != edge and f != face]
 	faces.append(face)
 
+	print("  Faces: {}x".format(len(faces)))
 	# print("  S-faces {} = {}x".format(face.index, len(faces) ))
 
 	# Get all face edges
@@ -179,18 +176,18 @@ def slide_uvs(vert, edge, face, edges, vert_rails):
 			if e not in face_edges:
 				face_edges.append(e)
 
-	# Get all rails
+	# Get all rails (max 3x: current, before and after)
 	rails = []
 	rails.extend( vert_rails[vert] )
-	for v in v0_links:
+	for v in A_links:
 		rails.extend( vert_rails[v] )
-	for v in v1_links:
+	for v in B_links:
 		rails.extend( vert_rails[v] )
 	# Keep only rails shared with faces
 	rails = [e for e in rails if e in face_edges]
 
 
-	print("... v{} with {}x rails ".format(vert.index, len(rails)))
+	print("...... v{} with {}x rails ".format(vert.index, len(rails)))
 
 	# Filter rails on same side
 
@@ -199,15 +196,19 @@ def slide_uvs(vert, edge, face, edges, vert_rails):
 
 
 def get_edge_prev_next(edge, edges):
-	v0 = edge.verts[0]
-	v1 = edge.verts[1]
+	A = edge.verts[0]
+	B = edge.verts[1]
 
+	print("  get_edge_prev_next {}x edges".format(len(edges)))
 	# v0_extends = []	
-	v0_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v !=  v0]
-	v1_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v !=  v1]
+	# v0_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v != v0]
+	# v1_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v != v1]
+	# v0_extends = [v_nest for v in edge.verts for e in v.link_edges for v_nest in e.verts if e != edge and if e in edges]
+	
+	A_extends = [v2 for v1 in edge.verts for e in v1.link_edges for v2 in e.verts if e != edge and e in edges and v2 not in edge.verts and v1 != A]
+	B_extends = [v2 for v1 in edge.verts for e in v1.link_edges for v2 in e.verts if e != edge and e in edges and v2 not in edge.verts and v1 != B]
 
-	return v0_extends, v1_extends
-
+	return A_extends, B_extends
 
 
 def get_edge_face_pairs(edges):

@@ -24,7 +24,7 @@ class op(bpy.types.Operator):
 		description = "Space for split bevel",
 		default = 0.015,
 		min = 0,
-		max = 0.10
+		max = 0.35
 	)
 
 
@@ -125,31 +125,36 @@ def main(self, radius):
 			# v0
 			if v0 not in vert_processed:
 				vert_processed.append(v0)
-				faces, delta = slide_uvs(v0, edge, f0, edges, vert_rails, vert_to_uv, radius)
+				faces, delta = slide_uvs(v0, edge, f0, edges, vert_rails, vert_to_uv)
 				vert_uv_pos.append( {"v":v0, "f":f0, "delta":delta, "faces":faces} )
 
-				faces, delta = slide_uvs(v0, edge, f1, edges, vert_rails, vert_to_uv, radius)
+				faces, delta = slide_uvs(v0, edge, f1, edges, vert_rails, vert_to_uv)
 				vert_uv_pos.append( {"v":v0, "f":f1, "delta":delta, "faces":faces} )
 
 			# V1
 			if v1 not in vert_processed:
 				vert_processed.append(v1)
-				faces, delta = slide_uvs(v1, edge, f0, edges, vert_rails, vert_to_uv, radius)
+				faces, delta = slide_uvs(v1, edge, f0, edges, vert_rails, vert_to_uv)
 				vert_uv_pos.append( {"v":v1, "f":f0, "delta":delta, "faces":faces} )
 				
-				faces, delta = slide_uvs(v1, edge, f1, edges, vert_rails, vert_to_uv, radius)
+				faces, delta = slide_uvs(v1, edge, f1, edges, vert_rails, vert_to_uv)
 				vert_uv_pos.append( {"v":v1, "f":f1, "delta":delta, "faces":faces} )
 	
 	# ...
 	for item in vert_uv_pos:
 		faces = item["faces"]
-		vert = item["v"]
+		v = item["v"]
+
 
 		for face in faces:
-			if vert in face.verts:
+			if v in face.verts:
 				for loop in face.loops:
 					if loop.vert == vert:
-						loop[uvLayer].uv+= item["delta"]
+						loop[uvLayer].uv+= vert_to_uv[v][0].uv + item["delta"] * radius/2
+		# for f in faces:
+		# 	for loop in f.loops:
+		# 		if loop.vert == vert:
+		# 			loop[uvLayer].uv= vert_to_uv[vert][0].uv + item["delta"] * radius/2
 
 	
 
@@ -165,7 +170,7 @@ def main(self, radius):
 	utilities_uv.selection_restore()
 
 
-def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv, radius):
+def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv):
 	A = edge.verts[0]
 	B = edge.verts[1]
 	A_links, B_links = get_edge_prev_next(edge, edges)
@@ -179,6 +184,8 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv, radius):
 	print("_____________\nEdge {} <--> {}  ({})".format(edge.verts[0].index, edge.verts[1].index , vert.index))
 
 	# Collect faces of this side
+
+	'''
 	faces = [face]
 	face_edges_used = [e for e in face.edges if e in edges]
 	for e in face.edges:
@@ -186,16 +193,32 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv, radius):
 			for f in e.link_faces:
 				if f != face:
 					faces.append(f)
+	'''
+
+	faces = [face]
+	edges_main_used = [edge]
+	for i in range(2):
+		append = []
+
+		for f in faces:
+			for e in f.edges:
+				if e not in edges_main_used:
+					if e in edges:
+						edges_main_used.append(e)
+
+					for f_link in e.link_faces:
+						if f_link not in faces:
+							append.append(f_link)
+		faces.extend(append)
+
+	if vert.index == 51 and face.index == 36:
+		print("Faces {}x".format(len(faces)))
+		for f in faces:
+			print("	f{}".format(f.index))
+
 
 	# Get all face edges that could be valid rails
 	face_edges = list(set([e for f in faces for e in f.edges if e not in edges]))
-
-	# face_edges = set()
-	# for f in faces:
-	# 	for e in face.edges:
-	# 		face_edges.add(e)
-
-	print("Face edges: {}x".format(len(face_edges)))
 
 	# The verts influencing the offset
 	verts = [A,B]
@@ -204,12 +227,12 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv, radius):
 	elif vert == B:
 		verts.extend(A_links)
 
-	print("Verts: {}x = {}".format(len(verts), [v.index for v in verts]))
+	# print("Verts: {}x = {}".format(len(verts), [v.index for v in verts]))
 
 
 
-	avg_uv_delta = Vector((0,0))
-	avg_uv_count = 0
+	delta = Vector((0,0))
+	count = 0
 	for v in verts:
 		rails = [e for e in vert_rails[v] if e in face_edges]
 		for e in rails:
@@ -224,12 +247,12 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv, radius):
 				v1 = e.verts[0]
 			uv0 = vert_to_uv[v0][0].uv
 			uv1 = vert_to_uv[v1][0].uv
-			avg_uv_delta += (uv1-uv0).normalized() * radius
-			avg_uv_count += 1
+			delta += (uv1-uv0).normalized()
+			count += 1
 
-	avg_uv_delta/=avg_uv_count
+	delta/=count
 
-	return faces, avg_uv_delta
+	return faces, delta
 	# print("	V{} = {}".format(v.index, avg_uv_delta))
 
 	# for loop in face.loops:
@@ -333,7 +356,7 @@ def get_vert_edge_rails(edges):
 
 		for face in faces:
 			for e in face.edges:
-				if e not in edges:
+				if e not in edges and len(e.link_faces) > 1:
 					if v0 not in vert_rails:
 						vert_rails[ v0 ] = []
 					if v1 not in vert_rails:

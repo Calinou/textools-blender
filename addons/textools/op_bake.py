@@ -13,7 +13,7 @@ from . import utilities_bake as ub #Use shorthand ub = utitlites_bake
 
 # Notes: https://docs.blender.org/manual/en/dev/render/blender_render/bake.html
 modes={
-	'normal_tangent':	ub.BakeMode('',					type='NORMAL', 	color=(0.5, 0.5, 1, 1)),
+	'normal_tangent':	ub.BakeMode('',					type='NORMAL', 	color=(0.5, 0.5, 1, 1), use_project=True),
 	'normal_object': 	ub.BakeMode('',					type='NORMAL', 	color=(0.5, 0.5, 1, 1), normal_space='OBJECT' ),
 	'cavity': 			ub.BakeMode('bake_cavity',		type='EMIT', 	setVColor=ub.setup_vertex_color_dirty),
 	'paint_base': 		ub.BakeMode('bake_paint_base',	type='EMIT'),
@@ -22,18 +22,18 @@ modes={
 	'id_material':		ub.BakeMode('bake_vertex_color',type='EMIT', 	setVColor=ub.setup_vertex_color_id_material),
 	'selection':		ub.BakeMode('bake_vertex_color',type='EMIT', 	color=(0, 0, 0, 1), setVColor=ub.setup_vertex_color_selection),
 	'diffuse':			ub.BakeMode('',					type='DIFFUSE'),
-	'displacment':		ub.BakeMode('',					type='DISPLACEMENT', color=(0, 0, 0, 1), engine='BLENDER_RENDER'),
-	'ao':				ub.BakeMode('',					type='AO', params=["bake_samples"], engine='CYCLES'),
-	'ao_legacy':		ub.BakeMode('',					type='AO', params=["bake_samples"], engine='BLENDER_RENDER'),
+	'displacment':		ub.BakeMode('',					type='DISPLACEMENT', use_project=True, color=(0, 0, 0, 1), engine='BLENDER_RENDER'),
+	'ao':				ub.BakeMode('',					type='AO', 		params=["bake_samples"], engine='CYCLES'),
+	'ao_legacy':		ub.BakeMode('',					type='AO', 		params=["bake_samples"], engine='BLENDER_RENDER'),
 	'position':			ub.BakeMode('bake_position',	type='EMIT'),
-	'curvature':		ub.BakeMode('',					type='NORMAL', params=["bake_curvature_size"], composite="curvature"),
+	'curvature':		ub.BakeMode('',					type='NORMAL',	use_project=True, params=["bake_curvature_size"], composite="curvature"),
 	'wireframe':		ub.BakeMode('bake_wireframe',	type='EMIT', 	color=(0, 0, 0, 1), params=["bake_wireframe_size"])
 }
 
 if hasattr(bpy.types,"ShaderNodeBevel"):
 	# Has newer bevel shader (2.7 nightly build series)
-	modes['bevel_mask'] = ub.BakeMode('bake_bevel_mask',					type='EMIT', 	color=(0, 0, 0, 1), params=["bake_bevel_samples","bake_bevel_size"])
-	modes['normal_tangent_bevel'] = ub.BakeMode('bake_bevel_normal',		type='NORMAL', 	color=(0.5, 0.5, 1, 1), params=["bake_bevel_samples","bake_bevel_size"])
+	modes['bevel_mask'] = ub.BakeMode('bake_bevel_mask',				type='EMIT', 	color=(0, 0, 0, 1), params=["bake_bevel_samples","bake_bevel_size"])
+	modes['normal_tangent_bevel'] = ub.BakeMode('bake_bevel_normal',	type='NORMAL', 	color=(0.5, 0.5, 1, 1), params=["bake_bevel_samples","bake_bevel_size"])
 	modes['normal_object_bevel'] = ub.BakeMode('bake_bevel_normal',		type='NORMAL', 	color=(0.5, 0.5, 1, 1), normal_space='OBJECT', params=["bake_bevel_samples","bake_bevel_size"])
 
 

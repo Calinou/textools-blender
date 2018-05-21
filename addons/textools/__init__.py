@@ -941,6 +941,11 @@ class Panel_Bake(bpy.types.Panel):
 				for param in params:
 					col.prop(context.scene.texToolsSettings, param)
 
+		# Warning about projection requirement
+		if len(settings.sets) > 0 and op_bake.modes[bake_mode].use_project == True:
+			if len(settings.sets[0].objects_low) == 0 or len(settings.sets[0].objects_high) == 0:
+				col.label("Need high and low", icon='ERROR')
+	
 
 		box = layout.box()
 		col = box.column(align=True)

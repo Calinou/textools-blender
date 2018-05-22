@@ -128,28 +128,28 @@ def main(self, radius):
 				faces, origin, delta = slide_uvs(v0, edge, f0, edges, vert_rails, vert_to_uv)
 				vert_uv_pos.append( {"v":v0, "f":f0, "origin":origin, "delta":delta, "faces":faces} )
 
-				# faces, origin, delta = slide_uvs(v0, edge, f1, edges, vert_rails, vert_to_uv)
-				# vert_uv_pos.append( {"v":v0, "f":f1, "origin":origin, "delta":delta, "faces":faces} )
+				faces, origin, delta = slide_uvs(v0, edge, f1, edges, vert_rails, vert_to_uv)
+				vert_uv_pos.append( {"v":v0, "f":f1, "origin":origin, "delta":delta, "faces":faces} )
 
 			# V1
-			# if v1 not in vert_processed:
-			# 	vert_processed.append(v1)
-				# faces, origin, delta = slide_uvs(v1, edge, f0, edges, vert_rails, vert_to_uv)
-				# vert_uv_pos.append( {"v":v1, "f":f0, "origin":origin, "delta":delta, "faces":faces} )
+			if v1 not in vert_processed:
+				vert_processed.append(v1)
+				faces, origin, delta = slide_uvs(v1, edge, f0, edges, vert_rails, vert_to_uv)
+				vert_uv_pos.append( {"v":v1, "f":f0, "origin":origin, "delta":delta, "faces":faces} )
 				
-				# faces, origin, delta = slide_uvs(v1, edge, f1, edges, vert_rails, vert_to_uv)
-				# vert_uv_pos.append( {"v":v1, "f":f1, "origin":origin, "delta":delta, "faces":faces} )
+				faces, origin, delta = slide_uvs(v1, edge, f1, edges, vert_rails, vert_to_uv)
+				vert_uv_pos.append( {"v":v1, "f":f1, "origin":origin, "delta":delta, "faces":faces} )
 	
 	# ...
 	for item in vert_uv_pos:
 		v = item["v"]
 
-
+		
 		for face in item["faces"]:
 			if v in face.verts:
 				for loop in face.loops:
-					if loop.vert == vert:
-						loop[uvLayer].uv= item["origin"] + item["delta"] * radius/2
+					if loop.vert == v:
+						loop[uvLayer].uv= item["origin"] + item["delta"] * (radius/2)
 		# for f in faces:
 		# 	for loop in f.loops:
 		# 		if loop.vert == vert:
@@ -170,6 +170,11 @@ def main(self, radius):
 
 
 def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv):
+	
+	def IS_DEBUG():
+		return vert.index == 64 and edge.verts[0].index == 64 and edge.verts[1].index == 63
+
+
 	A = edge.verts[0]
 	B = edge.verts[1]
 	A_links, B_links = get_edge_prev_next(edge, edges)
@@ -180,7 +185,10 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv):
 	for v in B_links:
 		verts_edges.add( v )
 
-	print("_____________\nEdge {} <--> {}  ({})".format(edge.verts[0].index, edge.verts[1].index , vert.index))
+	if IS_DEBUG():
+		print("\r")
+
+	print("Edge {} <--> {}  ({})".format(edge.verts[0].index, edge.verts[1].index , vert.index))
 
 	# Collect faces of this side
 
@@ -210,10 +218,8 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv):
 							append.append(f_link)
 		faces.extend(append)
 
-	if vert.index == 51 and face.index == 36:
-		print("  Faces {}x".format(len(faces)))
-		for f in faces:
-			print("    f{}".format(f.index))
+	if IS_DEBUG():
+		print("  Faces {}x = {}".format(len(faces), [f.index for f in faces]))
 
 
 	# Get all face edges that could be valid rails
@@ -225,19 +231,20 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv):
 		verts.extend(B_links)
 	elif vert == B:
 		verts.extend(A_links)
+	# verts = [vert]
 
-	if vert.index == 51 and face.index == 36:
+	if IS_DEBUG():
 		print("  Verts: {}x = {}".format(len(verts), [v.index for v in verts]))
 		print("  Rails:")
 
 
 	delta = Vector((0,0))
-	count = 0
+	count = 0.0
 	for v in verts:
 		rails = [e for e in vert_rails[v] if e in face_edges]
 
-		if vert.index == 51 and face.index == 36:
-			print("    v {}  rails = {}".format(v.index, [("{} - {}".format(e.verts[0].index, e.verts[1].index)) for e in rails]))
+		if IS_DEBUG():
+			print("    #{}  rails = {}".format(v.index, [("{} - {}".format(e.verts[0].index, e.verts[1].index)) for e in rails]))
 
 
 		for e in rails:
@@ -250,14 +257,17 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv):
 			elif e.verts[1] in verts_edges:
 				v0 = e.verts[1]
 				v1 = e.verts[0]
-			uv1 = vert_to_uv[v0][0].uv
-			uv0 = vert_to_uv[v1][0].uv
+			uv0 = vert_to_uv[v0][0].uv
+			uv1 = vert_to_uv[v1][0].uv
 			delta += (uv1-uv0).normalized()
-			count += 1
+			count += 1.0
 
 	delta/=count
 
-	return faces, vert_to_uv[v0][0].uv.copy(), delta
+	if IS_DEBUG():
+		print("\r")
+
+	return faces, vert_to_uv[vert][0].uv.copy(), delta.normalized()
 	# print("	V{} = {}".format(v.index, avg_uv_delta))
 
 	# for loop in face.loops:
@@ -320,7 +330,7 @@ def get_edge_prev_next(edge, edges):
 	A = edge.verts[0]
 	B = edge.verts[1]
 
-	print("  get_edge_prev_next {}x edges".format(len(edges)))
+	# print("  get_edge_prev_next {}x edges".format(len(edges)))
 	# v0_extends = []	
 	# v0_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v != v0]
 	# v1_extends = [v for e in edges for v in e.verts if v in edge.verts and e != edge and v != v1]
@@ -358,23 +368,6 @@ def get_vert_edge_rails(edges):
 		for face in edge.link_faces:
 			if v0 in face.verts and v1 in face.verts:
 				faces.append(face)
-
-		# faces = list(edge.link_faces)
-		# edges_main_used = [edge]
-		# for i in range(2):
-		# 	append = []
-
-		# 	for f in faces:
-		# 		for e in f.edges:
-		# 			if e not in edges_main_used:
-		# 				if e in edges:
-		# 					edges_main_used.append(e)
-
-		# 				for f_link in e.link_faces:
-		# 					if f_link not in faces:
-		# 						append.append(f_link)
-		# 	faces.extend(append)
-
 
 		for face in faces:
 			for e in face.edges:

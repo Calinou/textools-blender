@@ -18,7 +18,7 @@ class op(bpy.types.Operator):
 		 ('3', '3', 'Top & Bottom, Left & Right, Front & Back'), 
 		('4', '4', 'Top, Left & Right, Front & Back, Bottom'),
 		('6', '6', 'All sides')], 
-		name = "Direction", 
+		name = "Directions", 
 		default = '3'
 	)
 	def invoke(self, context, event):

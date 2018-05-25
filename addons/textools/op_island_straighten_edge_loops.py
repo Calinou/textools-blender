@@ -57,54 +57,48 @@ def main(context):
 	utilities_uv.selection_store()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 	
-	# Collect XYZ verts
-	verts = []
-	for face in bm.faces:
-		if face.select:
-			for loop in face.loops:
-				if loop[uvLayer].select:
-					if loop.vert not in verts:
-						verts.append( loop.vert )
-
-	print("Verts {}x".format(len(verts)))
-
-	# Select verts
-	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
-	bpy.ops.mesh.select_all(action='DESELECT')
-	for vert in verts:
-		vert.select = True
-
-	# Get selected Edges
-	bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='EDGE') #BUG, Does not convert vert to edge selection
-	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
-	edges = []
-	for edge in bm.edges:
-		if edge.select:
-			edges.append(edge)
-
-	print("Edges {}x".format(len(edges)))
-
-	# Get edge groups
+	edges = get_selected_edges(bm, uv_layer)
 	groups = get_edge_groups(bm, edges)
 
+	print("Edges {}x".format(len(edges)))
 	print("Groups {}x".format(len(groups)))
 	
 	# Restore 3D face selection
 	utilities_uv.selection_restore()
 
 	for edges in groups:
-		straighten_edges(bm, uvLayer, edges)
+		straighten_edges(bm, uv_layer, edges)
 
 
 	#Restore selection
-	# utilities_uv.selection_restore()
+	utilities_uv.selection_restore()
 	
 
 
 
-def straighten_edges(bm, uvLayer, edges):
+
+
+
+
+
+class EdgeSet:
+	bm = None
+	edges = []
+	length = 0
+
+	def __init__(self, bm, edges):
+		self.bm = bm
+		self.edges = edges
+
+	def straighten(self):
+		pass
+		
+
+
+
+def straighten_edges(bm, uv_layer, edges):
 	print("straighten "+str(len(edges))+"x")
 
 	# Get island faces
@@ -116,7 +110,7 @@ def straighten_edges(bm, uvLayer, edges):
 	for face in faces:
 		for loop in face.loops:
 			vert = loop.vert
-			uv = loop[uvLayer]
+			uv = loop[uv_layer]
 			if vert not in vert_to_uv:
 				vert_to_uv[vert] = [uv];
 			else:
@@ -128,8 +122,6 @@ def straighten_edges(bm, uvLayer, edges):
 		uv1 = vert_to_uv[e.verts[0]][0].uv
 		uv2 = vert_to_uv[e.verts[1]][0].uv
 		edge_length[e] = (uv2 - uv1).length
-
-
 
 	# TODO: sort by length? or middle edge of chain?
 	edge_main = edges[0]
@@ -180,19 +172,35 @@ def straighten_edges(bm, uvLayer, edges):
 		# Find average edge as origin
 
 
-class EdgeSet:
-	bm = None
+
+
+def get_selected_edges(bm, uv_layer):
+	# Collect XYZ verts
+	verts = []
+	for face in bm.faces:
+		if face.select:
+			for loop in face.loops:
+				if loop[uv_layer].select:
+					if loop.vert not in verts:
+						verts.append( loop.vert )
+
+	print("Verts {}x".format(len(verts)))
+
+	# Select verts
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+	bpy.ops.mesh.select_all(action='DESELECT')
+	for vert in verts:
+		vert.select = True
+
+	# Get selected Edges
+	bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='EDGE') #BUG, Does not convert vert to edge selection
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
 	edges = []
-	length = 0
-
-	def __init__(self, bm, edges):
-		self.bm = bm
-		self.edges = edges
-
-	def straighten(self):
-		pass
-		
-
+	for edge in bm.edges:
+		if edge.select:
+			edges.append(edge)
+			
+	return edges
 
 
 

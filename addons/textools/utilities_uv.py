@@ -152,8 +152,6 @@ def getSelectionBBox():
 
 
 def getSelectionIslands(bm=None, uvLayer=None):
-	time_A = time.time()
-
 	if bm == None:
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 		uvLayer = bm.loops.layers.uv.verify()
@@ -202,5 +200,5 @@ def getSelectionIslands(bm=None, uvLayer=None):
 	# 		loop[uvLayer].select = True
 
 	
-	print("Islands: {}x, {:.4f} seconds".format(len(islands), time.time() - time_A))
+	print("Islands: {}x".format(len(islands)))
 	return islands

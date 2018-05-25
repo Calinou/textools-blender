@@ -68,8 +68,20 @@ def main(context):
 	# Restore 3D face selection
 	utilities_uv.selection_restore()
 
+	# Get island faces
+	islands = utilities_uv.getSelectionIslands()
+	faces = [f for island in islands for f in island ]
+
+	edge_sets = []
 	for edges in groups:
-		straighten_edges(bm, uv_layer, edges)
+		edge_sets.append( EdgeSet(bm, uv_layer, edges, faces) )
+		# straighten_edges(bm, uv_layer, edges, faces)
+
+	sorted_sets = sorted(edge_sets, key=lambda x: x.length, reverse=True)
+
+	for edge_set in sorted_sets:
+		edge_set.straighten()
+		
 
 
 	#Restore selection
@@ -86,42 +98,61 @@ def main(context):
 class EdgeSet:
 	bm = None
 	edges = []
+	faces = []
+	uv_layer = ''
+	vert_to_uv = {}
 	length = 0
 
-	def __init__(self, bm, edges):
+	def __init__(self, bm, uv_layer, edges, faces):
 		self.bm = bm
+		self.uv_layer = uv_layer
 		self.edges = edges
+		self.faces = faces
+
+		# Get Vert to UV within faces
+		self.vert_to_uv = {}
+		for face in faces:
+			for loop in face.loops:
+				vert = loop.vert
+				uv = loop[uv_layer]
+				if vert not in self.vert_to_uv:
+					self.vert_to_uv[vert] = [uv];
+				else:
+					self.vert_to_uv[vert].append(uv)
+
+		# Get edge lengths
+		edge_length = {}
+		self.length = 0
+		for e in edges:
+			uv1 = self.vert_to_uv[e.verts[0]][0].uv
+			uv2 = self.vert_to_uv[e.verts[1]][0].uv
+			edge_length[e] = (uv2 - uv1).length
+			self.length+=edge_length[e]
+
 
 	def straighten(self):
-		pass
+		print("Straight {}x at {:.2f} length ".format(len(self.edges), self.length))
+
+		# Get edge angles in UV space
+		angles = {}
+		for edge in self.edges:
+			uv1 = self.vert_to_uv[edge.verts[0]][0].uv
+			uv2 = self.vert_to_uv[edge.verts[1]][0].uv
+			diff = uv2 - uv1
+			angle = math.atan2(diff.y, diff.x)%(math.pi)
+			angles[edge] = angle
+			print("Angle {:.2f} degr".format(angle * 180 / math.pi))
+
+		edge_main = sorted(angles.items(), key = operator.itemgetter(1))[0][0]
+
+		print("Main edge: {} at {:.2f} degr".format( edge_main.index, angles[edge_main] * 180 / math.pi ))
 		
 
 
 
 def straighten_edges(bm, uv_layer, edges):
-	print("straighten "+str(len(edges))+"x")
+	
 
-	# Get island faces
-	islands = utilities_uv.getSelectionIslands()
-	faces = [f for island in islands for f in island ]
-
-	# Get Vert to UV within faces
-	vert_to_uv = {}
-	for face in faces:
-		for loop in face.loops:
-			vert = loop.vert
-			uv = loop[uv_layer]
-			if vert not in vert_to_uv:
-				vert_to_uv[vert] = [uv];
-			else:
-				vert_to_uv[vert].append(uv)
-
-	# Get edge lengths
-	edge_length = {}
-	for e in edges:
-		uv1 = vert_to_uv[e.verts[0]][0].uv
-		uv2 = vert_to_uv[e.verts[1]][0].uv
-		edge_length[e] = (uv2 - uv1).length
 
 	# TODO: sort by length? or middle edge of chain?
 	edge_main = edges[0]

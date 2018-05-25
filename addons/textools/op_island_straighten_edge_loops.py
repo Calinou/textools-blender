@@ -72,6 +72,9 @@ def main(context):
 	islands = utilities_uv.getSelectionIslands()
 	faces = [f for island in islands for f in island ]
 
+	bpy.ops.uv.seams_from_islands()
+
+
 	edge_sets = []
 	for edges in groups:
 		edge_sets.append( EdgeSet(bm, uv_layer, edges, faces) )
@@ -82,17 +85,11 @@ def main(context):
 	for edge_set in sorted_sets:
 		edge_set.straighten()
 		
-
+	return
 
 	#Restore selection
 	utilities_uv.selection_restore()
 	
-
-
-
-
-
-
 
 
 class EdgeSet:
@@ -101,6 +98,7 @@ class EdgeSet:
 	faces = []
 	uv_layer = ''
 	vert_to_uv = {}
+	edge_length = {}
 	length = 0
 
 	def __init__(self, bm, uv_layer, edges, faces):
@@ -121,13 +119,13 @@ class EdgeSet:
 					self.vert_to_uv[vert].append(uv)
 
 		# Get edge lengths
-		edge_length = {}
+		self.edge_length = {}
 		self.length = 0
 		for e in edges:
 			uv1 = self.vert_to_uv[e.verts[0]][0].uv
 			uv2 = self.vert_to_uv[e.verts[1]][0].uv
-			edge_length[e] = (uv2 - uv1).length
-			self.length+=edge_length[e]
+			self.edge_length[e] = (uv2 - uv1).length
+			self.length+=self.edge_length[e]
 
 
 	def straighten(self):
@@ -138,69 +136,75 @@ class EdgeSet:
 		for edge in self.edges:
 			uv1 = self.vert_to_uv[edge.verts[0]][0].uv
 			uv2 = self.vert_to_uv[edge.verts[1]][0].uv
-			diff = uv2 - uv1
-			angle = math.atan2(diff.y, diff.x)%(math.pi)
-			angles[edge] = angle
-			print("Angle {:.2f} degr".format(angle * 180 / math.pi))
+			delta = uv2 - uv1
+			angle = math.atan2(delta.y, delta.x)%(math.pi/2)
+			if angle >= (math.pi/4):
+				angle = angle - (math.pi/2)
+			angles[edge] = abs(angle)
+			# print("Angle {:.2f} degr".format(angle * 180 / math.pi))
 
+		# Pick edge with least rotation offset to U or V axis
 		edge_main = sorted(angles.items(), key = operator.itemgetter(1))[0][0]
 
 		print("Main edge: {} at {:.2f} degr".format( edge_main.index, angles[edge_main] * 180 / math.pi ))
 		
+		# Rotate main edge to closest axis
+		uvs = [uv for v in edge_main.verts for uv in self.vert_to_uv[v]]
+		bpy.ops.uv.select_all(action='DESELECT')
+		for uv in uvs:
+			uv.select = True
+		uv1 = self.vert_to_uv[edge_main.verts[0]][0].uv
+		uv2 = self.vert_to_uv[edge_main.verts[1]][0].uv
+		diff = uv2 - uv1
+		angle = math.atan2(diff.y, diff.x)%(math.pi/2)
+		if angle >= (math.pi/4):
+			angle = angle - (math.pi/2)
+		bpy.ops.uv.cursor_set(location=uv1 + diff/2)
+		bpy.ops.transform.rotate(value=angle, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')
 
-
-
-def straighten_edges(bm, uv_layer, edges):
-	
-
-
-	# TODO: sort by length? or middle edge of chain?
-	edge_main = edges[0]
-
-	# Rotate island to match main edge
-	uv1 = vert_to_uv[edge_main.verts[0]][0].uv
-	uv2 = vert_to_uv[edge_main.verts[1]][0].uv
-	diff = uv2 - uv1
-	angle = math.atan2(diff.y, diff.x)%(math.pi)
-
-	bpy.context.space_data.pivot_point = 'CURSOR'
-	bpy.ops.uv.select_linked(extend=False)
-	bpy.ops.uv.cursor_set(location=uv1 + diff/2)
-	bpy.ops.transform.rotate(value=angle, axis=(-0, -0, -1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED')
-
-	# Expand edges and straighten
-	count = len(edges)
-	processed = [edge_main]
-	for i in range(count):
-		if(len(processed) < len(edges)):
-			verts = set([v for e in processed for v in e.verts])
-			edges_expand = [e for e in edges if e not in processed and (e.verts[0] in verts or e.verts[1] in verts)]
-			verts_ends = [v for e in edges_expand for v in e.verts if v in verts]
-			
-			for edge in edges_expand:
+		# Expand edges and straighten
+		count = len(self.edges)
+		processed = [edge_main]
+		for i in range(count):
+			if(len(processed) < len(self.edges)):
+				verts = set([v for e in processed for v in e.verts])
+				edges_expand = [e for e in self.edges if e not in processed and (e.verts[0] in verts or e.verts[1] in verts)]
+				verts_ends = [v for e in edges_expand for v in e.verts if v in verts]
 				
-				v1 = [v for v in edge.verts if v in verts_ends][0]
-				v2 = [v for v in edge.verts if v not in verts_ends][0]
-				# direction
-				previous_edge = [e for e in processed if e.verts[0] in edge.verts or e.verts[1] in edge.verts][0]
-				prev_v1 = [v for v in previous_edge.verts if v != v1][0]
-				prev_v2 = [v for v in previous_edge.verts if v == v1][0]
-				direction = (vert_to_uv[prev_v2][0].uv - vert_to_uv[prev_v1][0].uv).normalized()
+				if len(edges_expand) == 0:
+					continue
 
-				for uv in vert_to_uv[v2]:
-					uv.uv = vert_to_uv[v1][0].uv + direction * edge_length[edge]
+				for edge in edges_expand:
+					if edge.verts[0] in verts_ends and edge.verts[1] in verts_ends:
+						continue
+						
+					print("  E {} verts {} verts end: {}".format(edge.index, [v.index for v in edge.verts], [v.index for v in verts_ends]))
+					v1 = [v for v in edge.verts if v in verts_ends][0]
+					v2 = [v for v in edge.verts if v not in verts_ends][0]
+					# direction
+					previous_edge = [e for e in processed if e.verts[0] in edge.verts or e.verts[1] in edge.verts][0]
+					prev_v1 = [v for v in previous_edge.verts if v != v1][0]
+					prev_v2 = [v for v in previous_edge.verts if v == v1][0]
+					direction = (self.vert_to_uv[prev_v2][0].uv - self.vert_to_uv[prev_v1][0].uv).normalized()
 
-			print("Procesed {}x Expand {}x".format(len(processed), len(edges_expand) ))
-			print("verts_ends: {}x".format(len(verts_ends)))
+					for uv in self.vert_to_uv[v2]:
+						uv.uv = self.vert_to_uv[v1][0].uv + direction * self.edge_length[edge]
 
-			processed.extend(edges_expand)
+				print("Procesed {}x Expand {}x".format(len(processed), len(edges_expand) ))
+				print("verts_ends: {}x".format(len(verts_ends)))
+				processed.extend(edges_expand)
 
+		# Select edges
+		uvs = list(set( [uv for e in self.edges for v in e.verts for uv in self.vert_to_uv[v] ] ))
+		bpy.ops.uv.select_all(action='DESELECT')
+		for uv in uvs:
+			uv.select = True
 
+		# Pin UV's
+		bpy.ops.uv.pin()
+		bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
+		bpy.ops.uv.pin(clear=True)
 
-	print("Faces: {}x".format(len(faces)))
-	# Need more than 1 edge to continue
-	# if len(edges) > 1:
-		# Find average edge as origin
 
 
 

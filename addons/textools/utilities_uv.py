@@ -11,7 +11,7 @@ from . import utilities_ui
 
 def selection_store():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 
 	# https://blender.stackexchange.com/questions/5781/how-to-list-all-selected-elements-in-python
 	# print("selectionStore")
@@ -37,14 +37,16 @@ def selection_store():
 	settings.selection_uv_loops = []
 	for face in bm.faces:
 		for loop in face.loops:
-			if loop[uvLayer].select:
+			if loop[uv_layer].select:
 				settings.selection_uv_loops.append( [face.index, loop.vert.index] )
 
 
 
-def selection_restore():
-	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+def selection_restore(bm = None, uv_layer = None):
+	if not bm:
+		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
+	if not uv_layer:
+		uv_layer = bm.loops.layers.uv.verify();
 
 	# print("selectionRestore")
 	bpy.context.scene.tool_settings.uv_select_mode = settings.selection_uv_mode
@@ -83,7 +85,7 @@ def selection_restore():
 	for uv_set in settings.selection_uv_loops:
 		for loop in bm.faces[ uv_set[0] ].loops:
 			if loop.vert.index == uv_set[1]:
-				loop[uvLayer].select = True
+				loop[uv_layer].select = True
 				break
 
 	bpy.context.scene.update()
@@ -103,11 +105,21 @@ def get_selected_faces():
 
 def set_selected_faces(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 	for face in faces:
 		for loop in face.loops:
-			loop[uvLayer].select = True
+			loop[uv_layer].select = True
 
+
+def get_selected_uvs(bm, uv_layer):
+	"""Returns selected mesh vertices of selected UV's"""
+	uvs = []
+	for face in bm.faces:
+		if face.select:
+			for loop in face.loops:
+				if loop[uv_layer].select:
+					uvs.append( loop[uv_layer] )
+	return uvs
 
 
 
@@ -125,7 +137,7 @@ def get_selected_uv_verts(bm, uv_layer):
 
 def get_selected_uv_edges(bm, uv_layer):
 	"""Returns selected mesh edges of selected UV's"""
-	verts = get_selection_edge(bm, uv_layer)
+	verts = get_selected_uv_verts(bm, uv_layer)
 	edges = []
 	for edge in bm.edges:
 		if edge.verts[0] in verts and edge.verts[1] in verts:
@@ -168,7 +180,7 @@ def get_uv_to_vert(bm, uv_layer):
 	for face in bm.faces:
 		for loop in face.loops:
 			vert = loop.vert
-			uv = loop[uvLayer]
+			uv = loop[uv_layer]
 			if uv not in uv_to_vert:
 				uv_to_vert[ uv ] = vert;
 	return uv_to_vert
@@ -178,7 +190,7 @@ def get_uv_to_vert(bm, uv_layer):
 
 def getSelectionBBox():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 	
 	bbox = {}
 	
@@ -190,8 +202,8 @@ def getSelectionBBox():
 	for face in bm.faces:
 		# if face.select == True:
 		for loop in face.loops:
-			if loop[uvLayer].select is True:
-				uv = loop[uvLayer].uv
+			if loop[uv_layer].select is True:
+				uv = loop[uv_layer].uv
 				boundsMin.x = min(boundsMin.x, uv.x)
 				boundsMin.y = min(boundsMin.y, uv.y)
 				boundsMax.x = max(boundsMax.x, uv.x)
@@ -217,10 +229,10 @@ def getSelectionBBox():
 
 
 
-def getSelectionIslands(bm=None, uvLayer=None):
+def getSelectionIslands(bm=None, uv_layer=None):
 	if bm == None:
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-		uvLayer = bm.loops.layers.uv.verify()
+		uv_layer = bm.loops.layers.uv.verify()
 
 	#Reference A: https://github.com/nutti/Magic-UV/issues/41
 	#Reference B: https://github.com/c30ra/uv-align-distribute/blob/v2.2/make_island.py
@@ -232,7 +244,7 @@ def getSelectionIslands(bm=None, uvLayer=None):
 	#Collect selected UV faces
 	faces_selected = [];
 	for face in bm.faces:
-		if face.select and face.loops[0][uvLayer].select:
+		if face.select and face.loops[0][uv_layer].select:
 			faces_selected.append(face)
 		
 	#Collect UV islands
@@ -245,13 +257,13 @@ def getSelectionIslands(bm=None, uvLayer=None):
 
 			#Select single face
 			bpy.ops.uv.select_all(action='DESELECT')
-			face.loops[0][uvLayer].select = True;
+			face.loops[0][uv_layer].select = True;
 			bpy.ops.uv.select_linked(extend=False)#Extend selection
 			
 			#Collect faces
 			islandFaces = [face];
 			for faceAll in faces_unparsed:
-				if faceAll != face and faceAll.select and faceAll.loops[0][uvLayer].select:
+				if faceAll != face and faceAll.select and faceAll.loops[0][uv_layer].select:
 					islandFaces.append(faceAll)
 			
 			for faceAll in islandFaces:
@@ -263,7 +275,7 @@ def getSelectionIslands(bm=None, uvLayer=None):
 	#Restore selection 
 	# for face in faces_selected:
 	# 	for loop in face.loops:
-	# 		loop[uvLayer].select = True
+	# 		loop[uv_layer].select = True
 
 	
 	print("Islands: {}x".format(len(islands)))

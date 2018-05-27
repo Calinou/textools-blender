@@ -67,14 +67,14 @@ def main(self, radius):
 
 	obj  = bpy.context.object
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 	
 	islands = utilities_uv.getSelectionIslands()
 	
 
 	# Collect UV to Vert
-	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uvLayer)
-	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uvLayer)
+	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uv_layer)
+	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uv_layer)
 
 	# Collect hard edges
 	edges = []
@@ -135,11 +135,11 @@ def main(self, radius):
 			if v in face.verts:
 				for loop in face.loops:
 					if loop.vert == v:
-						loop[uvLayer].uv= item["origin"] + item["delta"] * (radius/2)
+						loop[uv_layer].uv= item["origin"] + item["delta"] * (radius/2)
 		# for f in faces:
 		# 	for loop in f.loops:
 		# 		if loop.vert == vert:
-		# 			loop[uvLayer].uv= vert_to_uv[vert][0].uv + item["delta"] * radius/2
+		# 			loop[uv_layer].uv= vert_to_uv[vert][0].uv + item["delta"] * radius/2
 
 	
 
@@ -147,7 +147,7 @@ def main(self, radius):
 
 	# for loop in face.loops:
 	# 	if loop.vert == vert:
-	# 		loop[uvLayer].uv+= avg_uv_delta
+	# 		loop[uv_layer].uv+= avg_uv_delta
 
 
 
@@ -258,12 +258,12 @@ def slide_uvs(vert, edge, face, edges, vert_rails, vert_to_uv):
 
 	# for loop in face.loops:
 	# 	if loop.vert == vert:
-	# 		loop[uvLayer].uv+= avg_uv_delta
+	# 		loop[uv_layer].uv+= avg_uv_delta
 
 
 
 '''
-def slide_face_uvs(uvLayer, edge, vert, face, radius, vert_to_uv):
+def slide_face_uvs(uv_layer, edge, vert, face, radius, vert_to_uv):
 	avg_target = Vector((0,0))
 	avg_count = 0
 
@@ -283,7 +283,7 @@ def slide_face_uvs(uvLayer, edge, vert, face, radius, vert_to_uv):
 
 	for loop in face.loops:
 		if loop.vert == vert:
-			loop[uvLayer].uv = avg_target
+			loop[uv_layer].uv = avg_target
 '''
 
 

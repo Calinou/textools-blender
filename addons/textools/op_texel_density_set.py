@@ -96,7 +96,7 @@ def set_texel_density(self, context, mode, density):
 			utilities_uv.selection_store()
 
 			bm = bmesh.from_edit_mesh(obj.data)
-			uvLayer = bm.loops.layers.uv.verify()
+			uv_layer = bm.loops.layers.uv.verify()
 
 			# Collect groups of faces to scale together
 			group_faces = []
@@ -125,7 +125,7 @@ def set_texel_density(self, context, mode, density):
 				sum_area_uv = 0
 				for face in group:
 					# Triangle Verts
-					triangle_uv = [loop[uvLayer].uv for loop in face.loops ]
+					triangle_uv = [loop[uv_layer].uv for loop in face.loops ]
 					triangle_vt = [obj.matrix_world * vert.co for vert in face.verts]
 
 					#Triangle Areas
@@ -163,7 +163,7 @@ def set_texel_density(self, context, mode, density):
 				bpy.context.scene.tool_settings.uv_select_mode = 'VERTEX'
 				for face in group:
 					for loop in face.loops:
-						loop[uvLayer].select = True
+						loop[uv_layer].select = True
 
 				print("Scale: {} {}x".format(scale, len(group)))
 				bpy.ops.transform.resize(value=(scale, scale, 1), proportional='DISABLED')

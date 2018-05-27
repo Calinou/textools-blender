@@ -40,7 +40,7 @@ def smooth_uv_islands(self, context):
 		bpy.ops.object.mode_set(mode='EDIT')
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 
 	# Smooth everything
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')

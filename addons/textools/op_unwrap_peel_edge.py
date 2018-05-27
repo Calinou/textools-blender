@@ -42,7 +42,7 @@ def unwrap_edges_pipe(self, context):
 	print("unwrap_edges_pipe()")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 
 	contextViewUV = utilities_ui.GetContextViewUV()

@@ -49,7 +49,7 @@ class op(bpy.types.Operator):
 def swap(self, context):
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	# Get selected island
 	islands = utilities_uv.getSelectionIslands()
@@ -77,8 +77,8 @@ def swap(self, context):
 	for island in islands_equal:
 		for face in island:
 			for loop in face.loops:
-				if not loop[uvLayer].select:
-					loop[uvLayer].select = True
+				if not loop[uv_layer].select:
+					loop[uv_layer].select = True
 
 
 
@@ -93,7 +93,7 @@ class Island_stats:
 
 	def __init__(self, faces):
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-		uvLayer = bm.loops.layers.uv.verify();
+		uv_layer = bm.loops.layers.uv.verify();
 		
 		# Collect topology stats
 		self.faces = faces

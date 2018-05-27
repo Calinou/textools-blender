@@ -44,7 +44,7 @@ def select_outline(context):
 	bpy.context.scene.tool_settings.use_uv_select_sync = False
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
 	bpy.ops.mesh.select_all(action='DESELECT')

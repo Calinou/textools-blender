@@ -61,13 +61,13 @@ def main(context):
 	print("Executing operator_island_align_edge")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 	
 	faces_selected = [];
 	for face in bm.faces:
 		if face.select:
 			for loop in face.loops:
-				if loop[uvLayer].select:
+				if loop[uv_layer].select:
 					faces_selected.append(face)
 					break
 	
@@ -78,8 +78,8 @@ def main(context):
 	for face in faces_selected:
 		uvs = []
 		for loop in face.loops:
-			if loop[uvLayer].select:
-				uvs.append(loop[uvLayer])
+			if loop[uv_layer].select:
+				uvs.append(loop[uv_layer])
 				if len(uvs) >= 2:
 					break
 		if len(uvs) >= 2:
@@ -97,7 +97,7 @@ def main(context):
 			#Collect faces
 			faces_island = [face];
 			for f in faces_unparsed:
-				if f != face and f.select and f.loops[0][uvLayer].select:
+				if f != face and f.select and f.loops[0][uv_layer].select:
 					print("append "+str(f.index))
 					faces_island.append(f)
 			for f in faces_island:
@@ -115,7 +115,7 @@ def main(context):
 
 def align_island(uv_vert0, uv_vert1, faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	print("Align {}x faces".format(len(faces)))
 
@@ -123,7 +123,7 @@ def align_island(uv_vert0, uv_vert1, faces):
 	bpy.ops.uv.select_all(action='DESELECT')
 	for face in faces:
 		for loop in face.loops:
-			loop[uvLayer].select = True
+			loop[uv_layer].select = True
 
 	diff = uv_vert1 - uv_vert0
 	angle = math.atan2(diff.y, diff.x)%(math.pi/2)

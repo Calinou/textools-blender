@@ -56,7 +56,7 @@ def main(context, angle):
 	utilities_uv.selection_store()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 	
 	bpy.ops.uv.select_linked(extend=False)
 

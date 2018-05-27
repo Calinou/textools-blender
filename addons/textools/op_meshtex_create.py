@@ -83,11 +83,11 @@ def create_uv_mesh(self, obj):
 
 	
 	bm = bmesh.from_edit_mesh(obj.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	#Collect UV islands
 	bpy.ops.uv.select_all(action='SELECT')
-	islands = utilities_uv.getSelectionIslands(bm, uvLayer)
+	islands = utilities_uv.getSelectionIslands(bm, uv_layer)
 
 	# Collect clusters 
 	uvs = {}
@@ -102,7 +102,7 @@ def create_uv_mesh(self, obj):
 		if face.select:
 			# Calculate triangle area for UV and View
 			# Triangle Verts
-			tri_uv = [loop[uvLayer].uv for loop in face.loops ]
+			tri_uv = [loop[uv_layer].uv for loop in face.loops ]
 			tri_vt = [vert.co for vert in face.verts]
 
 			#Triangle Areas
@@ -119,7 +119,7 @@ def create_uv_mesh(self, obj):
 
 			for i in range(len(face.loops)):
 				v = face.loops[i]
-				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
+				uv = Get_UVSet(uvs, bm, uv_layer, face.index, i)
 
 				# 	# clusters
 				isMerged = False
@@ -157,7 +157,7 @@ def create_uv_mesh(self, obj):
 			f = []
 			for i in range(len(face.loops)):
 				v = face.loops[i].vert
-				uv = Get_UVSet(uvs, bm, uvLayer, face.index, i)
+				uv = Get_UVSet(uvs, bm, uv_layer, face.index, i)
 				c = uv_to_clusters[ uv ]
 
 				index = 0

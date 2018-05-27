@@ -44,7 +44,7 @@ class op(bpy.types.Operator):
 
 def crop(self, context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 
 	padding = utilities_ui.get_padding()
 

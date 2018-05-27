@@ -55,7 +55,7 @@ def selectOverlap(context):
 	# https://developer.blender.org/D2865
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 	bpy.ops.uv.select_all(action='SELECT')
@@ -108,7 +108,7 @@ class Island_bounds:
 
 	def __init__(self, faces):
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-		uvLayer = bm.loops.layers.uv.verify();
+		uv_layer = bm.loops.layers.uv.verify();
 		
 		# Collect topology stats
 		self.faces = faces

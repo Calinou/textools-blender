@@ -64,7 +64,7 @@ def main(context):
 	utilities_uv.selection_store()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	if bpy.context.scene.tool_settings.uv_select_mode == 'EDGE':
 
@@ -75,7 +75,7 @@ def main(context):
 		for face in bm.faces:
 			if face.select:
 				for loop in face.loops:
-					if loop[uvLayer].select and loop.vert not in verts_middle:
+					if loop[uv_layer].select and loop.vert not in verts_middle:
 						verts_middle.append(loop.vert)
 					
 		# 2.) Align UV shell
@@ -109,8 +109,8 @@ def main(context):
 			if face.select:
 				for loop in face.loops:
 					if loop.vert in verts_middle:
-						loop[uvLayer].select = True
-						x_middle = loop[uvLayer].uv.x;
+						loop[uv_layer].select = True
+						x_middle = loop[uv_layer].uv.x;
 
 
 		print("Middle "+str(len(verts_middle))+"x, x pos: "+str(x_middle))
@@ -122,13 +122,13 @@ def main(context):
 		for face in bm.faces:
 			if face.select:
 				for loop in face.loops:
-					if loop[uvLayer].select and loop.vert not in verts_middle:
-						if loop[uvLayer].uv.x <= x_middle:
+					if loop[uv_layer].select and loop.vert not in verts_middle:
+						if loop[uv_layer].uv.x <= x_middle:
 							# Left
 							if loop.vert not in verts_A:
 								verts_A.append(loop.vert)
 
-						elif loop[uvLayer].uv.x > x_middle:
+						elif loop[uv_layer].uv.x > x_middle:
 							# Right
 							if loop.vert not in verts_B:
 								verts_B.append(loop.vert)
@@ -154,7 +154,7 @@ def main(context):
 				if face.select:
 					for loop in face.loops:
 						if loop.vert in verts_half:
-							loop[uvLayer].select = True
+							loop[uv_layer].select = True
 
 			# Extend selection				
 			bpy.ops.uv.select_more()
@@ -163,7 +163,7 @@ def main(context):
 			for face in bm.faces:
 				if face.select:
 					for loop in face.loops:
-						if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uvLayer].select:
+						if loop.vert not in verts_half and loop.vert not in verts_middle and loop[uv_layer].select:
 							verts_half.append(loop.vert)
 
 
@@ -198,7 +198,7 @@ def main(context):
 				# Are all UV faces selected?
 				countSelected = 0
 				for loop in face.loops:
-					if loop[uvLayer].select:
+					if loop[uv_layer].select:
 						countSelected+=1
 						# print("Vert selected "+str(face.index))
 				if countSelected == len(face.loops):
@@ -257,7 +257,7 @@ def main(context):
 			if face.select:
 				for loop in face.loops:
 					if loop.vert in verts_middle:
-						loop[uvLayer].select = True
+						loop[uv_layer].select = True
 
 		# 5.) Align UV shell
 		alignToCenterLine()
@@ -292,7 +292,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 
 	# Get verts_island
@@ -312,8 +312,8 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=True, type='FACE')
 
 	# Collect Librarys of verts / UV
-	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uvLayer)
-	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uvLayer)
+	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uv_layer)
+	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uv_layer)
 	uv_to_face = {}
 	# UV clusters / groups (within 0.000001 distance)
 	clusters = []
@@ -324,7 +324,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 		if face.select:
 			for loop in face.loops:
 				vert = loop.vert
-				uv = loop[uvLayer]
+				uv = loop[uv_layer]
 
 				if uv not in uv_to_face:
 					uv_to_face[ uv ] = face;
@@ -733,7 +733,7 @@ def alignToCenterLine():
 	print("align to center line")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
 
 	# 1.) Get average edges rotation + center
@@ -744,8 +744,8 @@ def alignToCenterLine():
 		if face.select:
 			verts = []
 			for loop in face.loops:
-				if loop[uvLayer].select:
-					verts.append(loop[uvLayer].uv)
+				if loop[uv_layer].select:
+					verts.append(loop[uv_layer].uv)
 
 			if len(verts) == 2:
 				diff = verts[1] - verts[0]

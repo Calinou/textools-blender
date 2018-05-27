@@ -65,7 +65,7 @@ def main(context):
 	utilities_uv.selection_store()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	#Only in Face or Island mode
 	if bpy.context.scene.tool_settings.uv_select_mode is not 'FACE' or 'ISLAND':
@@ -73,7 +73,7 @@ def main(context):
 
 	obj  = bpy.context.object
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 	
 	islands = utilities_uv.getSelectionIslands()
 
@@ -96,15 +96,15 @@ def main(context):
 	
 		if(abs(avg_normal.x) == max_size):
 			print("x normal")
-			align_island(obj, bm, uvLayer, faces, y, z, avg_normal.x < 0, False)
+			align_island(obj, bm, uv_layer, faces, y, z, avg_normal.x < 0, False)
 
 		elif(abs(avg_normal.y) == max_size):
 			print("y normal")
-			align_island(obj, bm, uvLayer, faces, x, z, avg_normal.y > 0, False)
+			align_island(obj, bm, uv_layer, faces, x, z, avg_normal.y > 0, False)
 
 		elif(abs(avg_normal.z) == max_size):
 			print("z normal")
-			align_island(obj, bm, uvLayer, faces, x, y, False, avg_normal.z < 0)
+			align_island(obj, bm, uv_layer, faces, x, y, False, avg_normal.z < 0)
 
 		print("align island: faces {}x n:{}, max:{}".format(len(faces), avg_normal, max_size))
 
@@ -115,7 +115,7 @@ def main(context):
 
 
 
-def align_island(obj, bm, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
+def align_island(obj, bm, uv_layer, faces, x=0, y=1, flip_x=False, flip_y=False):
 
 	# Find lowest and highest verts
 	minmax_val  = [0,0]
@@ -131,8 +131,8 @@ def align_island(obj, bm, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 
 
 	# Collect UV to Vert
-	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uvLayer)
-	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uvLayer)
+	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uv_layer)
+	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uv_layer)
 
 	processed_edges = []
 	edges = []
@@ -190,7 +190,7 @@ def align_island(obj, bm, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 	bpy.ops.uv.select_all(action='DESELECT')
 	for face in faces:
 		for loop in face.loops:
-			loop[uvLayer].select = True
+			loop[uv_layer].select = True
 
 
 	bpy.context.space_data.pivot_point = 'MEDIAN'
@@ -207,9 +207,9 @@ def align_island(obj, bm, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 
 		# Collect UV to Vert
 		for loop in face.loops:
-			loop[uvLayer].select = True
+			loop[uv_layer].select = True
 			vert = loop.vert
-			uv = loop[uvLayer]
+			uv = loop[uv_layer]
 			# vert_to_uv
 			if vert not in vert_to_uv:
 				vert_to_uv[vert] = [uv];

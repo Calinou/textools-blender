@@ -59,7 +59,7 @@ def align(context, direction):
 	#B-Mesh
 	obj = bpy.context.active_object
 	bm = bmesh.from_edit_mesh(obj.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 
 	if len(obj.data.uv_layers) == 0:
 		print("There is no UV channel or UV data set")
@@ -105,7 +105,7 @@ def align(context, direction):
 		for f in bm.faces:
 			if f.select:
 				for l in f.loops:
-					luv = l[uvLayer]
+					luv = l[uv_layer]
 					if luv.select:
 						# print("Idx: "+str(luv.uv))
 						if direction == "top":

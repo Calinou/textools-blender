@@ -112,7 +112,7 @@ def pack_texture(self, context):
 
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 
 	for face in bm.faces:
 		index = face.material_index
@@ -127,7 +127,7 @@ def pack_texture(self, context):
 		y+= size_pixel/size_image_pow/2
 
 		for loop in face.loops:
-			loop[uvLayer].uv = (x, y)
+			loop[uv_layer].uv = (x, y)
 
 	# Remove Slots & add one
 	bpy.ops.object.mode_set(mode='OBJECT')

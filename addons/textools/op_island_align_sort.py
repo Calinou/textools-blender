@@ -69,7 +69,7 @@ def main(context, isVertical, padding):
 		bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-	uvLayer = bm.loops.layers.uv.verify();
+	uv_layer = bm.loops.layers.uv.verify();
 	
 
 	boundsAll = utilities_uv.getSelectionBBox()
@@ -85,7 +85,7 @@ def main(context, isVertical, padding):
 
 	#Rotate to minimal bounds
 	for i in range(0, len(islands)):
-		alignIslandMinimalBounds(uvLayer, islands[i])
+		alignIslandMinimalBounds(uv_layer, islands[i])
 
 		# Collect BBox sizes
 		bounds = utilities_uv.getSelectionBBox()
@@ -127,7 +127,7 @@ def main(context, isVertical, padding):
 	utilities_uv.selection_restore()
 
 
-def alignIslandMinimalBounds(uvLayer, faces):
+def alignIslandMinimalBounds(uv_layer, faces):
 	# Select Island
 	bpy.ops.uv.select_all(action='DESELECT')
 	utilities_uv.set_selected_faces(faces)

@@ -54,7 +54,7 @@ def main(context):
 	utilities_uv.selection_store()
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 	bpy.ops.mesh.mark_seam(clear=True)

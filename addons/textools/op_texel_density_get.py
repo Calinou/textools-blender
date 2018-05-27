@@ -86,14 +86,14 @@ def get_texel_density(self, context):
 		if image:
 			bpy.ops.object.mode_set(mode='EDIT')
 			bm = bmesh.from_edit_mesh(obj.data)
-			uvLayer = bm.loops.layers.uv.verify()
+			uv_layer = bm.loops.layers.uv.verify()
 			bm.faces.ensure_lookup_table()
 			
 			for index in object_faces[obj]:
 				face = bm.faces[index]
 
 				# Triangle Verts
-				triangle_uv = [loop[uvLayer].uv for loop in face.loops ]
+				triangle_uv = [loop[uv_layer].uv for loop in face.loops ]
 				triangle_vt = [vert.co for vert in face.verts]
 
 				#Triangle Areas

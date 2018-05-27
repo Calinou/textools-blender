@@ -51,7 +51,7 @@ class op(bpy.types.Operator):
 
 def select_flipped(context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
-	uvLayer = bm.loops.layers.uv.verify()
+	uv_layer = bm.loops.layers.uv.verify()
 
 	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 	bpy.ops.uv.select_all(action='SELECT')
@@ -75,8 +75,8 @@ def select_flipped(context):
 			sum = 0
 			count = len(face.loops)
 			for i in range(count):
-				uv_A = face.loops[i][uvLayer].uv
-				uv_B = face.loops[(i+1)%count][uvLayer].uv
+				uv_A = face.loops[i][uv_layer].uv
+				uv_B = face.loops[(i+1)%count][uv_layer].uv
 				sum += (uv_B.x - uv_A.x) * (uv_B.y + uv_A.y)
 
 			if sum > 0:
@@ -88,7 +88,7 @@ def select_flipped(context):
 		if is_flipped:
 			for face in island:
 				for loop in face.loops:
-					loop[uvLayer].select = True
+					loop[uv_layer].select = True
 
 
 
@@ -101,7 +101,7 @@ class Island_bounds:
 
 	def __init__(self, faces):
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
-		uvLayer = bm.loops.layers.uv.verify();
+		uv_layer = bm.loops.layers.uv.verify();
 		
 		# Collect topology stats
 		self.faces = faces

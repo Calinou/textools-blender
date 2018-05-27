@@ -90,7 +90,7 @@ def selection_restore():
 
 
 
-def getSelectedFaces():
+def get_selected_faces():
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	faces = [];
 	for face in bm.faces:
@@ -101,12 +101,78 @@ def getSelectedFaces():
 
 
 
-def setSelectedFaces(faces):
+def set_selected_faces(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uvLayer = bm.loops.layers.uv.verify();
 	for face in faces:
 		for loop in face.loops:
 			loop[uvLayer].select = True
+
+
+
+
+def get_selected_uv_verts(bm, uv_layer):
+	"""Returns selected mesh vertices of selected UV's"""
+	verts = set()
+	for face in bm.faces:
+		if face.select:
+			for loop in face.loops:
+				if loop[uv_layer].select:
+					verts.add( loop.vert )
+	return list(verts)
+
+
+
+def get_selected_uv_edges(bm, uv_layer):
+	"""Returns selected mesh edges of selected UV's"""
+	verts = get_selection_edge(bm, uv_layer)
+	edges = []
+	for edge in bm.edges:
+		if edge.verts[0] in verts and edge.verts[1] in verts:
+			edges.append(edge)
+	return edges
+
+
+
+def get_selected_uv_faces(bm, uv_layer):
+	"""Returns selected mesh faces of selected UV's"""
+	faces = []
+	for face in bm.faces:
+		if face.select:
+			count = 0
+			for loop in face.loops:
+				if loop[uv_layer].select:
+					count+=1
+			if count == len(face.loops):
+				faces.append(face)
+	return faces
+
+
+
+def get_vert_to_uv(bm, uv_layer):
+	vert_to_uv = {}
+	for face in bm.faces:
+		for loop in face.loops:
+			vert = loop.vert
+			uv = loop[uv_layer]
+			if vert not in vert_to_uv:
+				vert_to_uv[vert] = [uv];
+			else:
+				vert_to_uv[vert].append(uv)
+	return vert_to_uv
+
+
+
+def get_uv_to_vert(bm, uv_layer):
+	uv_to_vert = {}
+	for face in bm.faces:
+		for loop in face.loops:
+			vert = loop.vert
+			uv = loop[uvLayer]
+			if uv not in uv_to_vert:
+				uv_to_vert[ uv ] = vert;
+	return uv_to_vert
+
 
 
 

@@ -73,22 +73,8 @@ def main(self, radius):
 	
 
 	# Collect UV to Vert
-	vert_to_uv = {}
-	uv_to_vert = {}
-	for face in bm.faces:
-		for loop in face.loops:
-			loop[uvLayer].select = True
-			vert = loop.vert
-			uv = loop[uvLayer]
-			# vert_to_uv
-			if vert not in vert_to_uv:
-				vert_to_uv[vert] = [uv];
-			else:
-				vert_to_uv[vert].append(uv)
-			# uv_to_vert
-			if uv not in uv_to_vert:
-				uv_to_vert[ uv ] = vert;
-
+	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uvLayer)
+	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uvLayer)
 
 	# Collect hard edges
 	edges = []

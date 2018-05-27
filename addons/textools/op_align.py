@@ -78,7 +78,7 @@ def align(context, direction):
 		for island in islands:
 			
 			bpy.ops.uv.select_all(action='DESELECT')
-			utilities_uv.setSelectedFaces(island)
+			utilities_uv.set_selected_faces(island)
 			bounds = utilities_uv.getSelectionBBox()
 
 			# print("Island "+str(len(island))+"x faces, delta: "+str(delta.y))

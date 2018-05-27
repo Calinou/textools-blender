@@ -604,9 +604,7 @@ class Panel_Units(bpy.types.Panel):
 		r.prop(context.scene.texToolsSettings, "padding", text="Padding")
 		r.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 		
-		col.separator()
-		col.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
-		
+
 		# col.operator(op_extend_canvas.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas"))
 		
 
@@ -655,6 +653,18 @@ class Panel_Units(bpy.types.Panel):
 					has_uv_channel = True
 		if not has_uv_channel:
 			row.label(text="UV")
+
+
+		col = layout.column(align=True)
+
+		# col.separator()
+		col.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
+		
+		row = col.row(align=True)
+		row.scale_y = 1.75
+		row.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
+		
+
 			
 			
 
@@ -683,7 +693,6 @@ class Panel_Layout(bpy.types.Panel):
 		if bpy.app.debug_value != 0:
 			col = layout.column(align=True)
 			col.alert = True
-			col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("op_island_straighten_edge_loops"))
 			row = col.row(align=True)
 			row.operator(op_island_mirror.op.bl_idname, text="Mirror", icon_value = icon_get("op_island_mirror")).is_stack = False;
 			row.operator(op_island_mirror.op.bl_idname, text="Stack", icon_value = icon_get("op_island_mirror")).is_stack = True;
@@ -706,11 +715,13 @@ class Panel_Layout(bpy.types.Panel):
 		row = col.row(align=True)
 		row.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
 
+			
 		if bpy.app.debug_value != 0:
-			row = col.row(align=True)
-			row.alert = True
-			row.operator(op_edge_split_bevel.op.bl_idname, text="Split Bevel")
-		
+			c = col.column(align=True)
+			c.alert = True
+			
+			c.operator(op_edge_split_bevel.op.bl_idname, text="Split Bevel")
+			
 
 		row = col.row(align=True)
 		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("op_island_rotate_90_left")).angle = -math.pi / 2
@@ -747,6 +758,7 @@ class Panel_Layout(bpy.types.Panel):
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
 
+		col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight & Relax", icon_value = icon_get("op_island_straighten_edge_loops"))
 		col.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
 		col.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
 		
@@ -812,11 +824,6 @@ class Panel_Mesh(bpy.types.Panel):
 		# if bpy.context.object and bpy.context.object.mode == 'EDIT':
 		# 	row.enabled  = False
 		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
-
-		row = col.row(align=True)
-		row.scale_y = 1.75
-		row.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
-		
 
 
 		layout.label(text = "Mesh Texture")
@@ -1252,6 +1259,7 @@ def menu_IMAGE_MT_image(self, context):
 	layout = self.layout
 	layout.separator()
 	layout.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
+	layout.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
 	layout.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
 		
 def menu_VIEW3D_MT_object(self, context):

@@ -96,15 +96,15 @@ def main(context):
 	
 		if(abs(avg_normal.x) == max_size):
 			print("x normal")
-			align_island(obj, uvLayer, faces, y, z, avg_normal.x < 0, False)
+			align_island(obj, bm, uvLayer, faces, y, z, avg_normal.x < 0, False)
 
 		elif(abs(avg_normal.y) == max_size):
 			print("y normal")
-			align_island(obj, uvLayer, faces, x, z, avg_normal.y > 0, False)
+			align_island(obj, bm, uvLayer, faces, x, z, avg_normal.y > 0, False)
 
 		elif(abs(avg_normal.z) == max_size):
 			print("z normal")
-			align_island(obj, uvLayer, faces, x, y, False, avg_normal.z < 0)
+			align_island(obj, bm, uvLayer, faces, x, y, False, avg_normal.z < 0)
 
 		print("align island: faces {}x n:{}, max:{}".format(len(faces), avg_normal, max_size))
 
@@ -115,7 +115,7 @@ def main(context):
 
 
 
-def align_island(obj, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
+def align_island(obj, bm, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 
 	# Find lowest and highest verts
 	minmax_val  = [0,0]
@@ -130,23 +130,9 @@ def align_island(obj, uvLayer, faces, x=0, y=1, flip_x=False, flip_y=False):
 		
 
 
-	vert_to_uv = {}
-	uv_to_vert = {}
-	for face in faces:
-
-		# Collect UV to Vert
-		for loop in face.loops:
-			loop[uvLayer].select = True
-			vert = loop.vert
-			uv = loop[uvLayer]
-			# vert_to_uv
-			if vert not in vert_to_uv:
-				vert_to_uv[vert] = [uv];
-			else:
-				vert_to_uv[vert].append(uv)
-			# uv_to_vert
-			if uv not in uv_to_vert:
-				uv_to_vert[ uv ] = vert;
+	# Collect UV to Vert
+	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uvLayer)
+	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uvLayer)
 
 	processed_edges = []
 	edges = []

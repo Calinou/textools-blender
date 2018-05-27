@@ -312,8 +312,8 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=True, type='FACE')
 
 	# Collect Librarys of verts / UV
-	vert_to_uv = {}
-	uv_to_vert = {}
+	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uvLayer)
+	uv_to_vert = utilities_uv.get_uv_to_vert(bm, uvLayer)
 	uv_to_face = {}
 	# UV clusters / groups (within 0.000001 distance)
 	clusters = []
@@ -325,16 +325,7 @@ def mirror_verts(verts_middle, verts_A, verts_B, isAToB):
 			for loop in face.loops:
 				vert = loop.vert
 				uv = loop[uvLayer]
-				
-				# vert_to_uv
-				if vert not in vert_to_uv:
-					vert_to_uv[vert] = [uv];
-				else:
-					vert_to_uv[vert].append(uv)
 
-				# uv_to_vert
-				if uv not in uv_to_vert:
-					uv_to_vert[ uv ] = vert;
 				if uv not in uv_to_face:
 					uv_to_face[ uv ] = face;
 

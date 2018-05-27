@@ -92,7 +92,7 @@ def selectOverlap(context):
 	for group in groups:
 		if len(group) > 1:
 			for i in range(1, len(group)):
-				utilities_uv.setSelectedFaces( group[i].faces )
+				utilities_uv.set_selected_faces( group[i].faces )
 
 
 	print("Groups: "+str(len(groups)))
@@ -115,7 +115,7 @@ class Island_bounds:
 
 		#Select Island
 		bpy.ops.uv.select_all(action='DESELECT')
-		utilities_uv.setSelectedFaces(faces)
+		utilities_uv.set_selected_faces(faces)
 
 		bounds = utilities_uv.getSelectionBBox()
 		self.center = bounds['center']

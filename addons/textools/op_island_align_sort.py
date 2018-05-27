@@ -109,7 +109,7 @@ def main(context, isVertical, padding):
 
 		#Select Island
 		bpy.ops.uv.select_all(action='DESELECT')
-		utilities_uv.setSelectedFaces(island)
+		utilities_uv.set_selected_faces(island)
 		
 		#Offset Island
 		if(isVertical):
@@ -130,7 +130,7 @@ def main(context, isVertical, padding):
 def alignIslandMinimalBounds(uvLayer, faces):
 	# Select Island
 	bpy.ops.uv.select_all(action='DESELECT')
-	utilities_uv.setSelectedFaces(faces)
+	utilities_uv.set_selected_faces(faces)
 
 	steps = 8
 	angle = 45;	# Starting Angle, half each step

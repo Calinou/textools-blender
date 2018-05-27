@@ -59,34 +59,41 @@ def main(context):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uv_layer = bm.loops.layers.uv.verify()
 	
-	edges = get_selected_edges(bm, uv_layer)
-	groups = get_edge_groups(bm, edges)
-
-	print("Edges {}x".format(len(edges)))
-	print("Groups {}x".format(len(groups)))
-	
-	# Restore 3D face selection
-	utilities_uv.selection_restore()
+	edges = get_selected_uv_edges(bm, uv_layer)
 
 	# Get island faces
 	islands = utilities_uv.getSelectionIslands()
 	faces = [f for island in islands for f in island ]
 
-	bpy.ops.uv.seams_from_islands()
+	groups = get_edge_groups(bm, uv_layer, faces, edges)
 
+	print("Edges {}x".format(len(edges)))
+	print("Groups {}x".format(len(groups)))
+
+	return
+	
+	# Restore 3D face selection
+	utilities_uv.selection_restore()
+
+
+	# Restore UV seams and clear pins
+	bpy.ops.uv.seams_from_islands()
+	bpy.ops.uv.pin(clear=True)
 
 	edge_sets = []
 	for edges in groups:
 		edge_sets.append( EdgeSet(bm, uv_layer, edges, faces) )
 		# straighten_edges(bm, uv_layer, edges, faces)
 
+	
+
+
+
 	sorted_sets = sorted(edge_sets, key=lambda x: x.length, reverse=True)
 
 	for edge_set in sorted_sets:
 		edge_set.straighten()
 		
-	return
-
 	#Restore selection
 	utilities_uv.selection_restore()
 	
@@ -108,15 +115,7 @@ class EdgeSet:
 		self.faces = faces
 
 		# Get Vert to UV within faces
-		self.vert_to_uv = {}
-		for face in faces:
-			for loop in face.loops:
-				vert = loop.vert
-				uv = loop[uv_layer]
-				if vert not in self.vert_to_uv:
-					self.vert_to_uv[vert] = [uv];
-				else:
-					self.vert_to_uv[vert].append(uv)
+		self.vert_to_uv = utilities_uv.get_vert_to_uv(bm, uvLayer)
 
 		# Get edge lengths
 		self.edge_length = {}
@@ -171,12 +170,16 @@ class EdgeSet:
 				edges_expand = [e for e in self.edges if e not in processed and (e.verts[0] in verts or e.verts[1] in verts)]
 				verts_ends = [v for e in edges_expand for v in e.verts if v in verts]
 				
+
+				print("Step, proc {} exp: {}".format( [e.index for e in processed] , [e.index for e in edges_expand] ))
+
 				if len(edges_expand) == 0:
 					continue
 
 				for edge in edges_expand:
-					if edge.verts[0] in verts_ends and edge.verts[1] in verts_ends:
-						continue
+					# if edge.verts[0] in verts_ends and edge.verts[1] in verts_ends:
+					# 	print("Cancel at edge {}".format(edge.index))
+					# 	return
 						
 					print("  E {} verts {} verts end: {}".format(edge.index, [v.index for v in edge.verts], [v.index for v in verts_ends]))
 					v1 = [v for v in edge.verts if v in verts_ends][0]
@@ -203,13 +206,13 @@ class EdgeSet:
 		# Pin UV's
 		bpy.ops.uv.pin()
 		bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
-		bpy.ops.uv.pin(clear=True)
+		
 
 
 
 
 
-def get_selected_edges(bm, uv_layer):
+def get_selected_uv_edges(bm, uv_layer):
 	# Collect XYZ verts
 	verts = []
 	for face in bm.faces:
@@ -239,7 +242,10 @@ def get_selected_edges(bm, uv_layer):
 
 
 
-def get_edge_groups(bm, edges):
+
+
+
+def get_edge_groups(bm, uv_layer, faces, edges):
 	print("Get edge groups, edges {}x".format(len(edges))+"x")
 
 	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')	
@@ -251,6 +257,12 @@ def get_edge_groups(bm, edges):
 	for edge in edges:
 		if edge in unmatched:
 
+			bpy.ops.uv.select_all(action='TOGGLE')
+
+
+
+
+			'''
 			# Loop select edge
 			bpy.ops.mesh.select_all(action='DESELECT')
 			edge.select = True
@@ -273,7 +285,7 @@ def get_edge_groups(bm, edges):
 			# 	if e.select and e in unmatched:
 			# 		unmatched.remove(e)
 			# 		group.append(edge)
-
+			'''
 			
 					
 	return groups

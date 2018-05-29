@@ -43,7 +43,7 @@ class op(bpy.types.Operator):
 
 
 	def execute(self, context):
-
+ 
 		main(context)
 		return {'FINISHED'}
 
@@ -68,20 +68,20 @@ def main(context):
 	# Get island faces
 	
 
-	# bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
-	# bpy.ops.mesh.select_all(action='DESELECT')
-	# for face in faces:
-	# 	face.select = True
 	# utilities_uv.selection_restore(bm, uv_layer)
 
 
 	groups = get_edge_groups(bm, uv_layer, faces, edges, uvs)
 
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+	bpy.ops.mesh.select_all(action='DESELECT')
+	for face in faces:
+		face.select = True
+
+
 	print("Edges {}x".format(len(edges)))
 	print("Groups {}x".format(len(groups)))
 
-	return
-	
 	# Restore 3D face selection
 	
 
@@ -229,34 +229,15 @@ class EdgeSet:
 def get_edge_groups(bm, uv_layer, faces, edges, uvs):
 	print("Get edge groups, edges {}x".format(len(edges))+"x")
 
-	# bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')	
-
-
-
-
-	vert_to_uv = utilities_uv.get_vert_to_uv(bm, uv_layer)
-
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')	
 
 	unmatched = edges.copy()
+
 	groups = []
 
 	for edge in edges:
 		if edge in unmatched:
 
-			bpy.ops.uv.select_all(action='DESELECT')
-
-			# face_uvs = [loop[uv_layer] for f in edge.link_faces for loop in f.loops]
-			# uvs = [uv for v in edge.verts for uv in vert_to_uv[v] if uv in face_uvs]
-			uvs2 = [loop[uv_layer] for f in edge.link_faces for loop in f.loops if loop.vert in edge.verts] # if  if loop[uv_layer] in uvs
-			
-			print("...> {} uvs {}x".format(edge.index, len(uvs2) ))
-
-			for uv in uvs2:
-				uv.select = True
-
-			break
-
-			'''
 			# Loop select edge
 			bpy.ops.mesh.select_all(action='DESELECT')
 			edge.select = True
@@ -279,7 +260,7 @@ def get_edge_groups(bm, uv_layer, faces, edges, uvs):
 			# 	if e.select and e in unmatched:
 			# 		unmatched.remove(e)
 			# 		group.append(edge)
-			'''
+
 			
 					
 	return groups

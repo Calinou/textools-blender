@@ -64,6 +64,7 @@ if "bpy" in locals():
 	imp.reload(op_uv_channel_add)
 	imp.reload(op_uv_channel_swap)
 	imp.reload(op_uv_crop)
+	imp.reload(op_uv_fill)
 	imp.reload(op_uv_resize)
 	imp.reload(op_uv_size_get)
 
@@ -119,6 +120,7 @@ else:
 	from . import op_uv_channel_add
 	from . import op_uv_channel_swap
 	from . import op_uv_crop
+	from . import op_uv_fill
 	from . import op_uv_resize
 	from . import op_uv_size_get
 	
@@ -710,6 +712,12 @@ class Panel_Layout(bpy.types.Panel):
 
 
 		row = col.row(align=True)
+		row.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
+		row.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
+		
+
+
+		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
 		
 		row = col.row(align=True)
@@ -722,13 +730,11 @@ class Panel_Layout(bpy.types.Panel):
 			
 			c.operator(op_edge_split_bevel.op.bl_idname, text="Split Bevel")
 			
-
-		row = col.row(align=True)
-		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("op_island_rotate_90_left")).angle = -math.pi / 2
-		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = icon_get("op_island_rotate_90_right")).angle = math.pi / 2
-
+		col.separator()
 		
-		row = box.row(align=True)
+		col_tr = col.column(align=True)
+		
+		row = col_tr.row(align=True)
 		col = row.column(align=True)
 		col.label(text="")
 		col.operator(op_align.op.bl_idname, text="←", icon_value = icon_get("op_align_left")).direction = "left"
@@ -741,6 +747,12 @@ class Panel_Layout(bpy.types.Panel):
 		col.label(text="")
 		col.operator(op_align.op.bl_idname, text="→", icon_value = icon_get("op_align_right")).direction = "right"
 
+		row = col_tr.row(align=True)
+		row.operator(op_island_rotate_90.op.bl_idname, text="-90°", icon_value = icon_get("op_island_rotate_90_left")).angle = -math.pi / 2
+		row.operator(op_island_rotate_90.op.bl_idname, text="+90°", icon_value = icon_get("op_island_rotate_90_right")).angle = math.pi / 2
+
+
+
 
 		col = box.column(align=True)
 		row = col.row(align=True)
@@ -752,8 +764,6 @@ class Panel_Layout(bpy.types.Panel):
 		op.is_vertical = True;
 		op.padding = utilities_ui.get_padding()
 
-		col.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
-		
 
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
@@ -1226,6 +1236,7 @@ def menu_IMAGE_uvs(self, context):
 	layout.operator(op_uv_resize.op.bl_idname, text="Resize", icon_value = icon_get("op_extend_canvas_open"))
 	layout.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
 	layout.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
+	layout.operator(op_uv_fill.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_fill"))
 
 	layout.separator()
 	layout.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
@@ -1349,6 +1360,7 @@ def register():
 		"op_unwrap_faces_iron.png", 
 		"op_unwrap_peel_edge.png", 
 		"op_uv_crop.png", 
+		"op_uv_fill.png", 
 		"texel_density.png"
 	]
 	for icon in icons:

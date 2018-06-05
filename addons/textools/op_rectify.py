@@ -299,7 +299,8 @@ def CursorClosestTo(verts, allowedError = 0.025):
 					min = hyp
 					minV = v
 	
-	if min is not 1000: return minV
+	if min is not 1000: 
+		return minV
 	return None
 
 
@@ -329,7 +330,7 @@ def ShapeFace(uv_layer, operator, targetFace, vertsDict, square):
 	
 	cct = CursorClosestTo([lucv, ldcv, rdcv, rucv])
 	if cct is None: 
-		cct.x, cct.y = lucv.x, lucv.y 
+		cct = lucv
 	
 	MakeUvFaceEqualRectangle(vertsDict, lucv, rucv, rdcv, ldcv, cct, square)
 	return

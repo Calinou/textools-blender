@@ -282,6 +282,20 @@ def get_object_type(obj):
 	return 'low'
 
 
+def get_baked_images(sets):
+	print("Get baked images of set {}x".format(len(sets)))
+
+	images = []
+	for image in bpy.data.images:
+		if image and "_" in image.name:
+			images.append(image)
+
+	for set in sets:
+		print("Set: {}".format(set.name))
+		
+	return images
+
+
 
 def get_bake_sets():
 	filtered = {}

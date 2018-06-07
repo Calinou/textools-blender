@@ -713,8 +713,11 @@ class Panel_Layout(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
-		row.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
-		
+
+		if bpy.app.debug_value != 0:
+			c = row.column(align=True)
+			c.alert = True
+			c.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
 
 
 		row = col.row(align=True)
@@ -928,6 +931,16 @@ class Panel_Bake(bpy.types.Panel):
 		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
 		col.template_icon_view(bpy.context.scene, "TT_bake_mode")
 		
+		# Collected Related Textures
+		images = utilities_bake.get_baked_images(settings.sets)
+		for image in images:
+			col.label(text=image.name)
+			print("--> [ {} ]".format(image))
+			# col.template_preview(image)
+			# col.template_ID_preview (image)
+			# layout.template_preview( context.material, show_buttons=False, preview_id="corona.big_preview")
+
+
 		
 		if bpy.app.debug_value != 0:
 			row = col.row()

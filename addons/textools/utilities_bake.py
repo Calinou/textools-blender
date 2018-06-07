@@ -525,20 +525,46 @@ def get_image_material(image):
 	if bpy.context.scene.render.engine == 'CYCLES':
 		material.use_nodes = True
 
+		node_diffuse = material.node_tree.nodes['Diffuse BSDF']
+
 		node_image = None
 		if "image" in material.node_tree.nodes:
 			node_image = material.node_tree.nodes["image"]
 		else:
 			node_image = material.node_tree.nodes.new("ShaderNodeTexImage")
-		node_image.name = "image"
+			node_image.name = "image"
 		node_image.select = True
 		node_image.image = image
+		node_image.location = node_diffuse.location - Vector((200, 0))
+
 		material.node_tree.nodes.active = node_image
 
-		node_diffuse = material.node_tree.nodes['Diffuse BSDF']
+		# Make links
 
-		# Make link
-		material.node_tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
+		if (image.name.endswith("normal_tangent")):
+			# Normal map image
+			node_image.color_space = "NONE"
+
+			node_normal_map = None
+			if "normal_map" in material.node_tree.nodes:
+				node_normal_map = material.node_tree.nodes["normal_map"]
+			else:
+				node_normal_map = material.node_tree.nodes.new("ShaderNodeNormalMap")
+				node_normal_map.name = "normal_map"
+
+			# image to normal_map link
+			material.node_tree.links.new(node_image.outputs[0], node_normal_map.inputs[1])
+
+			# normal_map to diffuse_bsdf link
+			material.node_tree.links.new(node_normal_map.outputs[0], node_diffuse.inputs[2])
+
+			node_normal_map.location = node_diffuse.location - Vector((200, 0))
+			node_image.location = node_normal_map.location - Vector((200, 0))
+
+		else:
+			# Other images
+			node_image.color_space = "COLOR"
+			material.node_tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
 
 		return material
 

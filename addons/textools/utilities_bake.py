@@ -510,23 +510,23 @@ def setup_vertex_color_id_element(obj):
 
 def get_image_material(image):
 
+	# Claer & Create new material
 	material = None
 	if image.name in bpy.data.materials:
 		# Incorrect existing material, delete first and create new for cycles
 		material = bpy.data.materials[image.name]
-		if bpy.context.scene.render.engine == 'CYCLES' and (not material.node_tree or 'Diffuse BSDF' not in material.node_tree.nodes):
-			material.user_clear()
-			bpy.data.materials.remove(material)
-			material = bpy.data.materials.new(image.name)
+		material.user_clear()
+		bpy.data.materials.remove(material)
+		material = bpy.data.materials.new(image.name)
 	else:
 		material = bpy.data.materials.new(image.name)
 
 
+	# Cyles Material
 	if bpy.context.scene.render.engine == 'CYCLES':
 		material.use_nodes = True
 
-		node_diffuse = material.node_tree.nodes['Diffuse BSDF']
-
+		# Image Node
 		node_image = None
 		if "image" in material.node_tree.nodes:
 			node_image = material.node_tree.nodes["image"]
@@ -535,14 +535,14 @@ def get_image_material(image):
 			node_image.name = "image"
 		node_image.select = True
 		node_image.image = image
-		node_image.location = node_diffuse.location - Vector((200, 0))
-
 		material.node_tree.nodes.active = node_image
 
-		# Make links
+		#Base Diffuse BSDF
+		node_diffuse = material.node_tree.nodes['Diffuse BSDF']
 
-		if (image.name.endswith("normal_tangent")):
-			# Normal map image
+
+		if "_normal_" in image.name:
+			# Add Normal Map Nodes
 			node_image.color_space = "NONE"
 
 			node_normal_map = None
@@ -551,6 +551,12 @@ def get_image_material(image):
 			else:
 				node_normal_map = material.node_tree.nodes.new("ShaderNodeNormalMap")
 				node_normal_map.name = "normal_map"
+
+			# Tangent or World space
+			if(image.name.endswith("normal_tangent")):
+				node_normal_map.space = 'TANGENT'
+			elif(image.name.endswith("normal_object")):
+				node_normal_map.space = 'WORLD'
 
 			# image to normal_map link
 			material.node_tree.links.new(node_image.outputs[0], node_normal_map.inputs[1])
@@ -562,8 +568,9 @@ def get_image_material(image):
 			node_image.location = node_normal_map.location - Vector((200, 0))
 
 		else:
-			# Other images
+			# Other images display as Color
 			node_image.color_space = "COLOR"
+			# image node to diffuse node link
 			material.node_tree.links.new(node_image.outputs[0], node_diffuse.inputs[0])
 
 		return material

@@ -132,6 +132,8 @@ import math
 import string
 import bpy.utils.previews
 
+from bpy.types import Menu, Operator, Panel, UIList
+
 from bpy.props import (
 	StringProperty,
 	BoolProperty,
@@ -933,9 +935,21 @@ class Panel_Bake(bpy.types.Panel):
 		
 		# Collected Related Textures
 		images = utilities_bake.get_baked_images(settings.sets)
+		
+
 		for image in images:
 			col.label(text=image.name)
 			print("--> [ {} ]".format(image))
+			# col.template_icon_view(image)
+
+			# From: https://meshlogic.github.io/posts/blender/addons/extra-image-list/
+			col.template_list(
+                "extra_image_list.image_list", "",
+                bpy.data, "images",
+                bpy.context.scene.texToolsSettings, "image_id",
+                rows = len(bpy.data.images)
+            )
+
 			# col.template_preview(image)
 			# col.template_ID_preview (image)
 			# layout.template_preview( context.material, show_buttons=False, preview_id="corona.big_preview")
@@ -1075,6 +1089,31 @@ class Panel_Bake(bpy.types.Panel):
 		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize {}x".format(len(bpy.context.selected_objects)), icon = 'BOOKMARKS')
 		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
 		
+
+class ExtraImageList_UL(UIList):
+    bl_idname = "extra_image_list.image_list"
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+
+        # Image name and icon
+        row = layout.row(True)
+        row.prop(item, "name", text="", emboss=False, icon_value=icon)
+
+        # Image status (fake user, zero users, packed file)
+        row = row.row(True)
+        row.alignment = 'RIGHT'
+
+        if item.use_fake_user:
+            row.label("F")
+        else:
+            if item.users == 0:
+                row.label("0")
+
+        if item.packed_file:
+            #row.label(icon='PACKAGE')
+            row.operator("image.unpack", text="", icon='PACKAGE', emboss=False)
+
+
 
 
 class op_color_dropdown_io(bpy.types.Menu):

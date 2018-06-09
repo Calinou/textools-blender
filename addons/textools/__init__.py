@@ -509,11 +509,6 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('7', '7 High', 'Mesh Deform precession, increase if not wrapping correctly')], name = "precission", default = '5'
 	)
 
-	image_id = IntProperty(
-		default = 0
-		# update = update_active_image
-	)
-
 	def get_color(hex = "808080"):
 		return bpy.props.FloatVectorProperty(
 			name="Color1", 
@@ -934,18 +929,6 @@ class Panel_Bake(bpy.types.Panel):
 		col.separator()
 
 
-		# Collected Related Textures
-		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
-		
-		images = utilities_bake.get_baked_images(settings.sets)
-		if len(images) > 0:
-			col.template_list(
-				"extra_image_list.image_list", "",
-				bpy.data, "images",
-				bpy.context.scene.texToolsSettings, "image_id",
-				rows = len(images)
-			)
-			col.separator()
 
 		# Bake Mode
 		col.template_icon_view(bpy.context.scene, "TT_bake_mode")
@@ -985,6 +968,71 @@ class Panel_Bake(bpy.types.Panel):
 			if len(settings.sets[0].objects_low) == 0 or len(settings.sets[0].objects_high) == 0:
 				col.label("Need high and low", icon='ERROR')
 	
+
+		# Collected Related Textures
+		col.separator()
+		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
+		
+		images = utilities_bake.get_baked_images(settings.sets)
+		if len(images) > 0:
+			box = col.box()
+			c = box.column(align=True)
+			for image in images:
+				row = c.row(align=True)
+				# row.label(text=image.name, icon='')
+				row.operator(op_ui_image_select.bl_idname, text=image.name, icon="IMAGE_DATA").image_name = image.name
+
+				# row.prop(image, "name", text="", emboss=False) #, icon_value=image.icon
+				
+				row = row.row(align=True)
+				row.alignment = 'RIGHT'
+				row.operator(op_ui_image_save.bl_idname, text="", icon="SAVE_AS").image_name = image.name
+				
+
+
+
+			'''
+class ExtraImageList_UL(UIList):
+	bl_idname = "extra_image_list.image_list"
+
+	def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+
+		# Image name and icon
+		row = layout.row(align=False)
+		row.prop(item, "name", text="", emboss=False, icon_value=icon)
+
+		# Image status (fake user, zero users, packed file)
+		row = row.row(align=False)
+		row.alignment = 'RIGHT'
+
+		row.operator(op_ui_image_save.bl_idname, text="", icon="SAVE_AS").image_name = item.name
+
+		if item.use_fake_user:
+			row.label("F")
+		else:
+			if item.users == 0:
+				row.label("0")
+
+		if item.packed_file:
+			#row.label(icon='PACKAGE')
+			row.operator("image.unpack", text="", icon='PACKAGE', emboss=False)
+			'''
+
+
+
+
+			# col.template_list(
+			# 	"extra_image_list.image_list", "",
+			# 	bpy.data, "images",
+			# 	bpy.context.scene.texToolsSettings, "image_id",
+			# 	# layout_type='COMPACT'
+			# 	# rows =1 #max(3, min(4,len(images)))
+			# 	rows = 3,
+			# 	maxrows =3
+			# )
+			col.separator()
+
+
 
 		box = layout.box()
 		col = box.column(align=True)
@@ -1087,8 +1135,33 @@ class Panel_Bake(bpy.types.Panel):
 
 
 
-class op_ui_save_image(bpy.types.Operator):
-	bl_idname = "uv.textools_ui_save_image"
+class op_ui_image_select(bpy.types.Operator):
+	bl_idname = "uv.textools_ui_image_select"
+	bl_label = "Select image"
+	bl_description = "Select this image"
+
+	image_name = bpy.props.StringProperty(
+		name="image name",
+		default = ""
+	)
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		# bpy.context.scene.tool_settings.use_uv_select_sync = False
+		# bpy.ops.mesh.select_all(action='SELECT')
+
+		print("Select image {}".format(self.image_name))
+		# bpy.ops.image.save_as()
+		return {'FINISHED'}
+
+
+
+
+class op_ui_image_save(bpy.types.Operator):
+	bl_idname = "uv.textools_ui_image_save"
 	bl_label = "Save image"
 	bl_description = "Save this image"
 
@@ -1108,35 +1181,6 @@ class op_ui_save_image(bpy.types.Operator):
 		print("Saving image {}".format(self.image_name))
 		# bpy.ops.image.save_as()
 		return {'FINISHED'}
-
-
-
-
-class ExtraImageList_UL(UIList):
-	bl_idname = "extra_image_list.image_list"
-
-	def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-
-		# Image name and icon
-		row = layout.row(align=False)
-		row.prop(item, "name", text="", emboss=False, icon_value=icon)
-
-		# Image status (fake user, zero users, packed file)
-		row = row.row(align=False)
-		row.alignment = 'RIGHT'
-
-		row.operator(op_ui_save_image.bl_idname, text="", icon="SAVE_AS").image_name = item.name
-
-		if item.use_fake_user:
-			row.label("F")
-		else:
-			if item.users == 0:
-				row.label("0")
-
-		if item.packed_file:
-			#row.label(icon='PACKAGE')
-			row.operator("image.unpack", text="", icon='PACKAGE', emboss=False)
-
 
 
 

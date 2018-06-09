@@ -9,6 +9,7 @@ from mathutils import Color
 
 from . import settings
 from . import utilities_color
+from . import op_bake
 
 
 keywords_low = ['lowpoly','low','lowp','lp','lo','l']
@@ -180,7 +181,7 @@ def restore_materials():
 
 
 
-def get_bake_name_base(obj):
+def get_set_name_base(obj):
 
 	def remove_digits(name):
 		# Remove blender naming digits, e.g. cube.001, cube.002,...
@@ -202,9 +203,9 @@ def get_bake_name_base(obj):
 
 
 
-def get_bake_name(obj):
+def get_set_name(obj):
 	# Get Basic name
-	name = get_bake_name_base(obj)
+	name = get_set_name_base(obj)
 
 	# Split by ' ','_','.' etc.
 	split = name.lower()
@@ -233,7 +234,7 @@ def get_bake_name(obj):
 
 def get_object_type(obj):
 
-	name = get_bake_name_base(obj)
+	name = get_set_name_base(obj)
 
 	# Detect by name pattern
 	split = name.lower()
@@ -282,17 +283,15 @@ def get_object_type(obj):
 	return 'low'
 
 
+
 def get_baked_images(sets):
-	print("Get baked images of set {}x".format(len(sets)))
-
 	images = []
-	for image in bpy.data.images:
-		if image and "_" in image.name:
-			images.append(image)
-
 	for set in sets:
-		print("Set: {}".format(set.name))
-		
+		for mode in op_bake.modes:
+			name_texture = "{}_{}".format(set.name, mode)
+			if name_texture in bpy.data.images:
+				images.append( bpy.data.images[name_texture])
+
 	return images
 
 
@@ -306,14 +305,14 @@ def get_bake_sets():
 	groups = []
 	# Group by names
 	for obj in filtered:
-		name = get_bake_name(obj)
+		name = get_set_name(obj)
 
 		if len(groups)==0:
 			groups.append([obj])
 		else:
 			isFound = False
 			for group in groups:
-				groupName = get_bake_name(group[0])
+				groupName = get_set_name(group[0])
 				if name == groupName:
 					group.append(obj)
 					isFound = True
@@ -323,12 +322,12 @@ def get_bake_sets():
 				groups.append([obj])
 
 	# Sort groups alphabetically
-	keys = [get_bake_name(group[0]) for group in groups]
+	keys = [get_set_name(group[0]) for group in groups]
 	keys.sort()
 	sorted_groups = []
 	for key in keys:
 		for group in groups:
-			if key == get_bake_name(group[0]):
+			if key == get_set_name(group[0]):
 				sorted_groups.append(group)
 				break
 				
@@ -353,7 +352,7 @@ def get_bake_sets():
 				float.append(obj)
 
 
-		name = get_bake_name(group[0])
+		name = get_set_name(group[0])
 		bake_sets.append(BakeSet(name, low, cage, high, float))
 
 	return bake_sets

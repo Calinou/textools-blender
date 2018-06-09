@@ -509,6 +509,11 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		('7', '7 High', 'Mesh Deform precession, increase if not wrapping correctly')], name = "precission", default = '5'
 	)
 
+	image_id = IntProperty(
+		default = 0
+		# update = update_active_image
+	)
+
 	def get_color(hex = "808080"):
 		return bpy.props.FloatVectorProperty(
 			name="Color1", 
@@ -929,31 +934,21 @@ class Panel_Bake(bpy.types.Panel):
 		col.separator()
 
 
-		# Bake Mode
-		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
-		col.template_icon_view(bpy.context.scene, "TT_bake_mode")
-		
 		# Collected Related Textures
-		images = utilities_bake.get_baked_images(settings.sets)
+		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
 		
-
-		for image in images:
-			col.label(text=image.name)
-			print("--> [ {} ]".format(image))
-			# col.template_icon_view(image)
-
-			# From: https://meshlogic.github.io/posts/blender/addons/extra-image-list/
+		images = utilities_bake.get_baked_images(settings.sets)
+		if len(images) > 0:
 			col.template_list(
-                "extra_image_list.image_list", "",
-                bpy.data, "images",
-                bpy.context.scene.texToolsSettings, "image_id",
-                rows = len(bpy.data.images)
-            )
+				"extra_image_list.image_list", "",
+				bpy.data, "images",
+				bpy.context.scene.texToolsSettings, "image_id",
+				rows = len(images)
+			)
+			col.separator()
 
-			# col.template_preview(image)
-			# col.template_ID_preview (image)
-			# layout.template_preview( context.material, show_buttons=False, preview_id="corona.big_preview")
-
+		# Bake Mode
+		col.template_icon_view(bpy.context.scene, "TT_bake_mode")
 
 		
 		if bpy.app.debug_value != 0:
@@ -1090,28 +1085,57 @@ class Panel_Bake(bpy.types.Panel):
 		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
 		
 
+
+
+class op_ui_save_image(bpy.types.Operator):
+	bl_idname = "uv.textools_ui_save_image"
+	bl_label = "Save image"
+	bl_description = "Save this image"
+
+	image_name = bpy.props.StringProperty(
+		name="image name",
+		default = ""
+	)
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		# bpy.context.scene.tool_settings.use_uv_select_sync = False
+		# bpy.ops.mesh.select_all(action='SELECT')
+
+		print("Saving image {}".format(self.image_name))
+		# bpy.ops.image.save_as()
+		return {'FINISHED'}
+
+
+
+
 class ExtraImageList_UL(UIList):
-    bl_idname = "extra_image_list.image_list"
+	bl_idname = "extra_image_list.image_list"
 
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+	def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
 
-        # Image name and icon
-        row = layout.row(True)
-        row.prop(item, "name", text="", emboss=False, icon_value=icon)
+		# Image name and icon
+		row = layout.row(align=False)
+		row.prop(item, "name", text="", emboss=False, icon_value=icon)
 
-        # Image status (fake user, zero users, packed file)
-        row = row.row(True)
-        row.alignment = 'RIGHT'
+		# Image status (fake user, zero users, packed file)
+		row = row.row(align=False)
+		row.alignment = 'RIGHT'
 
-        if item.use_fake_user:
-            row.label("F")
-        else:
-            if item.users == 0:
-                row.label("0")
+		row.operator(op_ui_save_image.bl_idname, text="", icon="SAVE_AS").image_name = item.name
 
-        if item.packed_file:
-            #row.label(icon='PACKAGE')
-            row.operator("image.unpack", text="", icon='PACKAGE', emboss=False)
+		if item.use_fake_user:
+			row.label("F")
+		else:
+			if item.users == 0:
+				row.label("0")
+
+		if item.packed_file:
+			#row.label(icon='PACKAGE')
+			row.operator("image.unpack", text="", icon='PACKAGE', emboss=False)
 
 
 

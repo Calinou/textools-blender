@@ -26,7 +26,7 @@ if "bpy" in locals():
 	imp.reload(op_bake)
 	imp.reload(op_bake_explode)
 	imp.reload(op_bake_organize_names)
-	imp.reload(op_bake_preview_texture)
+	imp.reload(op_texture_preview)
 	imp.reload(op_color_assign)
 	imp.reload(op_color_clear)
 	imp.reload(op_color_convert_texture)
@@ -84,7 +84,7 @@ else:
 	from . import op_bake
 	from . import op_bake_explode
 	from . import op_bake_organize_names
-	from . import op_bake_preview_texture
+	from . import op_texture_preview
 	from . import op_color_assign
 	from . import op_color_clear
 	from . import op_color_convert_texture
@@ -975,23 +975,39 @@ class Panel_Bake(bpy.types.Panel):
 
 		# Collected Related Textures
 		col.separator()
-		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
+		
+		row = col.row(align=True)
+		row.scale_y = 1.75
+		row.operator(op_texture_preview.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_texture_preview"));
 		
 		images = utilities_bake.get_baked_images(settings.sets)
-		col.label(text="images {}x".format(len(images)))
+		
 		if len(images) > 0:
-			box = col.box()
-			c = box.column(align=True)
-			for image in images:
-				row = c.row(align=True)
-				# row.label(text=image.name, icon='')
-				row.operator(op_ui_image_select.bl_idname, text=image.name, icon="IMAGE_DATA").image_name = image.name
 
+			image_background = None
+			for area in bpy.context.screen.areas:
+				if area.type == 'IMAGE_EDITOR':
+					if area.spaces[0].image:
+						image_background = area.spaces[0].image
+						break
+
+			box = col.box()
+			# box.label(text="{}x images".format(len(images)), icon="IMAGE_DATA")
+			col_box = box.column(align=True)
+			for image in images:
+				row = col_box.row(align=True)
+
+				# row.label(text=image.name, icon='')
+				icon = 'RADIOBUT_OFF'
+				if image == image_background:
+					icon = 'RADIOBUT_ON'
+				row.operator(op_texture_select.op.bl_idname, text=image.name, icon=icon).name = image.name #, 
+	
 				# row.prop(image, "name", text="", emboss=False) #, icon_value=image.icon
 				
 				row = row.row(align=True)
 				row.alignment = 'RIGHT'
-				row.operator(op_ui_image_save.bl_idname, text="", icon="SAVE_AS").image_name = image.name
+				row.operator(op_texture_save.op.bl_idname, text="", icon="FILE_TICK").name = image.name
 				
 
 
@@ -1137,56 +1153,6 @@ class ExtraImageList_UL(UIList):
 		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize {}x".format(len(bpy.context.selected_objects)), icon = 'BOOKMARKS')
 		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));
 		
-
-
-
-class op_ui_image_select(bpy.types.Operator):
-	bl_idname = "uv.textools_ui_image_select"
-	bl_label = "Select image"
-	bl_description = "Select this image"
-
-	image_name = bpy.props.StringProperty(
-		name="image name",
-		default = ""
-	)
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		# bpy.context.scene.tool_settings.use_uv_select_sync = False
-		# bpy.ops.mesh.select_all(action='SELECT')
-
-		print("Select image {}".format(self.image_name))
-		# bpy.ops.image.save_as()
-		return {'FINISHED'}
-
-
-
-
-class op_ui_image_save(bpy.types.Operator):
-	bl_idname = "uv.textools_ui_image_save"
-	bl_label = "Save image"
-	bl_description = "Save this image"
-
-	image_name = bpy.props.StringProperty(
-		name="image name",
-		default = ""
-	)
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		# bpy.context.scene.tool_settings.use_uv_select_sync = False
-		# bpy.ops.mesh.select_all(action='SELECT')
-
-		print("Saving image {}".format(self.image_name))
-		# bpy.ops.image.save_as()
-		return {'FINISHED'}
-
 
 
 class op_color_dropdown_io(bpy.types.Menu):
@@ -1396,7 +1362,7 @@ def menu_IMAGE_MT_image(self, context):
 	layout.separator()
 	layout.operator(op_texture_reload_all.op.bl_idname, text="Reload Textures", icon_value = icon_get("op_texture_reload_all"))
 	layout.operator(op_texel_checker_map.op.bl_idname, text ="Checker Map", icon_value = icon_get("op_texel_checker_map"))
-	layout.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
+	layout.operator(op_texture_preview.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_texture_preview"));
 		
 def menu_VIEW3D_MT_object(self, context):
 	self.layout.separator()
@@ -1454,7 +1420,7 @@ def register():
 		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
-		"op_bake_preview_texture.png", 
+		"op_texture_preview.png", 
 		"op_color_convert_texture.png", 
 		"op_color_convert_vertex_colors.png", 
 		"op_color_from_directions.png", 

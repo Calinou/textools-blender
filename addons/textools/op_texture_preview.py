@@ -13,7 +13,7 @@ material_prefix = "TT_atlas_"
 gamma = 2.2
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_bake_preview_texture"
+	bl_idname = "uv.textools_texture_preview"
 	bl_label = "Preview Texture"
 	bl_description = "Preview the current UV image view background image on the selected object."
 	bl_options = {'REGISTER', 'UNDO'}
@@ -35,6 +35,7 @@ class op(bpy.types.Operator):
 		return False
 	
 	def execute(self, context):
+		print("PREVIEW TEXTURE????")
 		preview_texture(self, context)
 		return {'FINISHED'}
 

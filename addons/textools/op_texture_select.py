@@ -5,12 +5,18 @@ import math
 
 from . import settings
 from . import utilities_bake
+from . import op_bake
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_bake_preview_texture"
+	bl_idname = "uv.textools_texture_select"
 	bl_label = "Select Texture"
 	bl_description = "Select the texture and bake mode"
 	bl_options = {'REGISTER', 'UNDO'}
+
+	name = bpy.props.StringProperty(
+		name="image name",
+		default = ""
+	)
 
 	@classmethod
 	def poll(cls, context):
@@ -23,4 +29,41 @@ class op(bpy.types.Operator):
 
 
 def select_texture(self, context):
-	pass
+	print("Select "+self.name)
+
+	# Set background image
+	if self.name in bpy.data.images:
+		image = bpy.data.images[self.name]
+		for area in bpy.context.screen.areas:
+			if area.type == 'IMAGE_EDITOR':
+				area.spaces[0].image = image
+
+	# Set bake mode
+	for mode in op_bake.modes:
+		if mode in self.name:
+			print("Found mode: "+mode)
+			break
+
+'''
+class op_ui_image_select(bpy.types.Operator):
+	bl_idname = "uv.textools_ui_image_select"
+	bl_label = "Select image"
+	bl_description = "Select this image"
+
+	image_name = bpy.props.StringProperty(
+		name="image name",
+		default = ""
+	)
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		# bpy.context.scene.tool_settings.use_uv_select_sync = False
+		# bpy.ops.mesh.select_all(action='SELECT')
+
+		print("Select image {}".format(self.image_name))
+		# bpy.ops.image.save_as()
+		return {'FINISHED'}
+'''

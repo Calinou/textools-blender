@@ -59,6 +59,8 @@ if "bpy" in locals():
 	imp.reload(op_texel_density_get)
 	imp.reload(op_texel_density_set)
 	imp.reload(op_texture_reload_all)
+	imp.reload(op_texture_save)
+	imp.reload(op_texture_select)
 	imp.reload(op_unwrap_faces_iron)
 	imp.reload(op_unwrap_peel_edge)
 	imp.reload(op_uv_channel_add)
@@ -115,6 +117,8 @@ else:
 	from . import op_texel_density_get
 	from . import op_texel_density_set
 	from . import op_texture_reload_all
+	from . import op_texture_save
+	from . import op_texture_select
 	from . import op_unwrap_faces_iron
 	from . import op_unwrap_peel_edge
 	from . import op_uv_channel_add
@@ -974,6 +978,7 @@ class Panel_Bake(bpy.types.Panel):
 		col.operator(op_bake_preview_texture.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_bake_preview_texture"));
 		
 		images = utilities_bake.get_baked_images(settings.sets)
+		col.label(text="images {}x".format(len(images)))
 		if len(images) > 0:
 			box = col.box()
 			c = box.column(align=True)

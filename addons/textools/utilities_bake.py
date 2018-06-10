@@ -9,7 +9,7 @@ from mathutils import Color
 
 from . import settings
 from . import utilities_color
-from . import op_bake
+# from . import op_bake
 
 
 keywords_low = ['lowpoly','low','lowp','lp','lo','l']
@@ -287,10 +287,10 @@ def get_object_type(obj):
 def get_baked_images(sets):
 	images = []
 	for set in sets:
-		for mode in op_bake.modes:
-			name_texture = "{}_{}".format(set.name, mode)
-			if name_texture in bpy.data.images:
-				images.append( bpy.data.images[name_texture])
+		name_texture = "{}_".format(set.name)
+		for image in bpy.data.images:
+			if name_texture in image.name:
+				images.append(image)
 
 	return images
 

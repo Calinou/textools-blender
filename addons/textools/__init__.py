@@ -60,6 +60,7 @@ if "bpy" in locals():
 	imp.reload(op_texel_density_set)
 	imp.reload(op_texture_reload_all)
 	imp.reload(op_texture_save)
+	imp.reload(op_texture_open)
 	imp.reload(op_texture_select)
 	imp.reload(op_unwrap_faces_iron)
 	imp.reload(op_unwrap_peel_edge)
@@ -118,6 +119,7 @@ else:
 	from . import op_texel_density_set
 	from . import op_texture_reload_all
 	from . import op_texture_save
+	from . import op_texture_open
 	from . import op_texture_select
 	from . import op_unwrap_faces_iron
 	from . import op_unwrap_peel_edge
@@ -955,7 +957,11 @@ class Panel_Bake(bpy.types.Panel):
 	
 				row = row.row(align=True)
 				row.alignment = 'RIGHT'
-				row.operator(op_texture_save.op.bl_idname, text="", icon_value=icon_get("op_texture_save") ).name = image.name
+				if image.filepath != "":
+					row.operator(op_texture_open.op.bl_idname, text="", icon = 'FILESEL' ).name = image.name
+				else:
+					row.operator(op_texture_save.op.bl_idname, text="", icon_value=icon_get("op_texture_save") ).name = image.name
+
 				
 			col.separator()
 
@@ -1406,6 +1412,7 @@ def register():
 		"op_texture_preview.png", 
 		"op_texture_reload_all.png",
 		"op_texture_save.png",
+		"op_texture_open.png",
 		"op_unwrap_faces_iron.png", 
 		"op_unwrap_peel_edge.png", 
 		"op_uv_crop.png", 

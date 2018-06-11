@@ -850,7 +850,7 @@ class Panel_Mesh(bpy.types.Panel):
 		col = box.column(align=True)
 
 		row = col.row(align=True)
-		row.scale_y = 1.75
+		row.scale_y = 1.5
 		row.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
 		
 		row = col.row(align=True)
@@ -918,11 +918,11 @@ class Panel_Bake(bpy.types.Panel):
 		# Force Single
 		row = col.row(align=True)
 		row.active = len(settings.sets) > 0
-		row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single")
+		row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single Texture")
 		if len(settings.sets) > 0 and bpy.context.scene.texToolsSettings.bake_force_single:
 			row.label(text="'{}'".format(settings.sets[0].name))
-		else:
-			row.label(text="")
+		# else:
+		# 	row.label(text="")
 
 
 		if bpy.app.debug_value != 0:
@@ -931,6 +931,43 @@ class Panel_Bake(bpy.types.Panel):
 			row.prop(context.scene.texToolsSettings, "bake_force_single", text="Dither Floats")
 
 		col.separator()
+
+
+		# Collected Related Textures
+		col.separator()
+		
+		row = col.row(align=True)
+		row.scale_y = 1.5
+		row.operator(op_texture_preview.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_texture_preview"));
+		
+		images = utilities_bake.get_baked_images(settings.sets)
+		
+		if len(images) > 0:
+
+			image_background = None
+			for area in bpy.context.screen.areas:
+				if area.type == 'IMAGE_EDITOR':
+					if area.spaces[0].image:
+						image_background = area.spaces[0].image
+						break
+
+			box = col.box()
+			# box.label(text="{}x images".format(len(images)), icon="IMAGE_DATA")
+			col_box = box.column(align=True)
+			for image in images:
+				row = col_box.row(align=True)
+
+				# row.label(text=image.name, icon='')
+				icon = 'RADIOBUT_OFF'
+				if image == image_background:
+					icon = 'RADIOBUT_ON'
+				row.operator(op_texture_select.op.bl_idname, text=image.name, icon=icon).name = image.name #, 
+	
+				row = row.row(align=True)
+				row.alignment = 'RIGHT'
+				row.operator(op_texture_save.op.bl_idname, text="", icon_value=icon_get("op_texture_save") ).name = image.name
+				
+			col.separator()
 
 
 
@@ -972,87 +1009,6 @@ class Panel_Bake(bpy.types.Panel):
 			if len(settings.sets[0].objects_low) == 0 or len(settings.sets[0].objects_high) == 0:
 				col.label("Need high and low", icon='ERROR')
 	
-
-		# Collected Related Textures
-		col.separator()
-		
-		row = col.row(align=True)
-		row.scale_y = 1.75
-		row.operator(op_texture_preview.op.bl_idname, text = "Preview Texture", icon_value = icon_get("op_texture_preview"));
-		
-		images = utilities_bake.get_baked_images(settings.sets)
-		
-		if len(images) > 0:
-
-			image_background = None
-			for area in bpy.context.screen.areas:
-				if area.type == 'IMAGE_EDITOR':
-					if area.spaces[0].image:
-						image_background = area.spaces[0].image
-						break
-
-			box = col.box()
-			# box.label(text="{}x images".format(len(images)), icon="IMAGE_DATA")
-			col_box = box.column(align=True)
-			for image in images:
-				row = col_box.row(align=True)
-
-				# row.label(text=image.name, icon='')
-				icon = 'RADIOBUT_OFF'
-				if image == image_background:
-					icon = 'RADIOBUT_ON'
-				row.operator(op_texture_select.op.bl_idname, text=image.name, icon=icon).name = image.name #, 
-	
-				# row.prop(image, "name", text="", emboss=False) #, icon_value=image.icon
-				
-				row = row.row(align=True)
-				row.alignment = 'RIGHT'
-				row.operator(op_texture_save.op.bl_idname, text="", icon="FILE_TICK").name = image.name
-				
-
-
-
-			'''
-class ExtraImageList_UL(UIList):
-	bl_idname = "extra_image_list.image_list"
-
-	def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-
-		# Image name and icon
-		row = layout.row(align=False)
-		row.prop(item, "name", text="", emboss=False, icon_value=icon)
-
-		# Image status (fake user, zero users, packed file)
-		row = row.row(align=False)
-		row.alignment = 'RIGHT'
-
-		row.operator(op_ui_image_save.bl_idname, text="", icon="SAVE_AS").image_name = item.name
-
-		if item.use_fake_user:
-			row.label("F")
-		else:
-			if item.users == 0:
-				row.label("0")
-
-		if item.packed_file:
-			#row.label(icon='PACKAGE')
-			row.operator("image.unpack", text="", icon='PACKAGE', emboss=False)
-			'''
-
-
-
-
-			# col.template_list(
-			# 	"extra_image_list.image_list", "",
-			# 	bpy.data, "images",
-			# 	bpy.context.scene.texToolsSettings, "image_id",
-			# 	# layout_type='COMPACT'
-			# 	# rows =1 #max(3, min(4,len(images)))
-			# 	rows = 3,
-			# 	maxrows =3
-			# )
-			col.separator()
-
 
 
 		box = layout.box()
@@ -1420,7 +1376,6 @@ def register():
 		"op_align_top.png", 
 		"op_bake.png", 
 		"op_bake_explode.png", 
-		"op_texture_preview.png", 
 		"op_color_convert_texture.png", 
 		"op_color_convert_vertex_colors.png", 
 		"op_color_from_directions.png", 
@@ -1447,7 +1402,9 @@ def register():
 		"op_select_islands_overlap.png", 
 		"op_smoothing_uv_islands.png", 
 		"op_texel_checker_map.png", 
+		"op_texture_preview.png", 
 		"op_texture_reload_all.png",
+		"op_texture_save.png",
 		"op_unwrap_faces_iron.png", 
 		"op_unwrap_peel_edge.png", 
 		"op_uv_crop.png", 

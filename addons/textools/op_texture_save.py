@@ -6,6 +6,7 @@ import math
 from . import settings
 from . import utilities_bake
 
+
 class op(bpy.types.Operator):
 	bl_idname = "uv.textools_texture_save"
 	bl_label = "Save Texture"

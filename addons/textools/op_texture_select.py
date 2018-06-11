@@ -42,6 +42,18 @@ def select_texture(self, context):
 	for mode in op_bake.modes:
 		if mode in self.name:
 			print("Found mode: "+mode)
+
+			prop = bpy.context.scene.bl_rna.properties["TT_bake_mode"]
+			enum_values = [e.identifier for e in prop.enum_items]
+
+			# find matching enum
+			for key in enum_values:
+				print("TT_bake "+key)
+				if mode in key:
+					print("set m: "+key)
+					bpy.context.scene.TT_bake_mode = key
+					break;
+
 			break
 
 '''

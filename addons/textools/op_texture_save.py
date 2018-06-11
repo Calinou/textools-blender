@@ -28,7 +28,15 @@ class op(bpy.types.Operator):
 
 
 def save_texture(self, context):
-	pass
+
+	print("Info")
+	if self.name in bpy.data.images:
+		image = bpy.data.images[self.name]
+		# https://meshlogic.github.io/posts/blender/addons/extra-image-list/
+		# https://docs.blender.org/api/blender_python_api_2_78_release/bpy.ops.image.html
+		print("filepath: {}".format(image.filepath))
+
+
 
 '''
 class op_ui_image_save(bpy.types.Operator):

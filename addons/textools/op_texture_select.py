@@ -31,13 +31,7 @@ class op(bpy.types.Operator):
 def select_texture(self, context):
 	print("Select "+self.name)
 
-	# Set background image
-	if self.name in bpy.data.images:
-		image = bpy.data.images[self.name]
-		for area in bpy.context.screen.areas:
-			if area.type == 'IMAGE_EDITOR':
-				area.spaces[0].image = image
-
+	
 	# Set bake mode
 	for mode in op_bake.modes:
 		if mode in self.name:
@@ -55,6 +49,14 @@ def select_texture(self, context):
 					break;
 
 			break
+			
+	# Set background image
+	if self.name in bpy.data.images:
+		image = bpy.data.images[self.name]
+		for area in bpy.context.screen.areas:
+			if area.type == 'IMAGE_EDITOR':
+				area.spaces[0].image = image
+
 
 '''
 class op_ui_image_select(bpy.types.Operator):

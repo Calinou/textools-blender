@@ -915,16 +915,6 @@ class Panel_Bake(bpy.types.Panel):
 		# anti aliasing
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
-		# Force Single
-		row = col.row(align=True)
-		row.active = len(settings.sets) > 0
-		row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single Texture")
-		if len(settings.sets) > 0 and bpy.context.scene.texToolsSettings.bake_force_single:
-			row.label(text="'{}'".format(settings.sets[0].name))
-		# else:
-		# 	row.label(text="")
-
-
 		if bpy.app.debug_value != 0:
 			row = col.row()
 			row.alert = True
@@ -1104,7 +1094,18 @@ class Panel_Bake(bpy.types.Panel):
 				elif count_types['cage'] > 0:
 					r.label(text="")
 
-		
+			# Force Single
+			row = box2.row(align=True)
+			row.active = len(settings.sets) > 0
+			row.prop(context.scene.texToolsSettings, "bake_force_single", text="Single Texture")
+			if len(settings.sets) > 0 and bpy.context.scene.texToolsSettings.bake_force_single:
+				row.label(text="'{}'".format(settings.sets[0].name))
+			# else:
+			# 	row.label(text="")
+
+
+
+
 		col = box.column(align=True)
 		col.operator(op_bake_organize_names.op.bl_idname, text = "Organize {}x".format(len(bpy.context.selected_objects)), icon = 'BOOKMARKS')
 		col.operator(op_bake_explode.op.bl_idname, text = "Explode", icon_value = icon_get("op_bake_explode"));

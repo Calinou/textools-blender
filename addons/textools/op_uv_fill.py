@@ -1,9 +1,11 @@
 import bpy
 import bmesh
 import operator
+import math
+
 from mathutils import Vector
 from collections import defaultdict
-from math import pi
+
 
 from . import utilities_uv
 from . import utilities_ui
@@ -43,14 +45,76 @@ class op(bpy.types.Operator):
 
 
 def fill(self, context):
+
+
+	#Store selection
+	utilities_uv.selection_store()
+
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uv_layer = bm.loops.layers.uv.verify();
 
-
+	
 	# 1.) Rotate minimal bounds (less than 45 degrees rotation)
+	steps = 8
+	angle = 45;	# Starting Angle, half each step
+	bboxPrevious = utilities_uv.getSelectionBBox()
+	
+	for i in range(0, steps):
+		# Rotate right
+		bpy.ops.transform.rotate(value=(angle * math.pi / 180), axis=(0, 0, 1))
+		bbox = utilities_uv.getSelectionBBox()
+
+		if i == 0:
+			# Check if already squared
+			sizeA = bboxPrevious['width'] * bboxPrevious['height']
+			sizeB = bbox['width'] * bbox['height']
+			if abs(bbox['width'] - bbox['height']) <= 0.0001 and sizeA < sizeB:
+				bpy.ops.transform.rotate(value=(-angle * math.pi / 180), axis=(0, 0, 1))
+				break;
+
+		if bbox['minLength'] < bboxPrevious['minLength']:
+			bboxPrevious = bbox;	# Success
+		else:
+			# Rotate Left
+			bpy.ops.transform.rotate(value=(-angle*2 * math.pi / 180), axis=(0, 0, 1))
+			bbox = utilities_uv.getSelectionBBox()
+			if bbox['minLength'] < bboxPrevious['minLength']:
+				bboxPrevious = bbox;	# Success
+			else:
+				# Restore angle of this iteration
+				bpy.ops.transform.rotate(value=(angle * math.pi / 180), axis=(0, 0, 1))
+
+		angle = angle / 2
+
+	if bboxPrevious['width'] < bboxPrevious['height']:
+		bpy.ops.transform.rotate(value=(90 * math.pi / 180), axis=(0, 0, 1))
+
 	# 2.) Match width and height to UV bounds
+	bbox = utilities_uv.getSelectionBBox()
+
+	scale_x = 1.0 / bbox['width']
+	scale_y = 1.0 / bbox['height']
+		
+	print("Scale {} | {}".format(scale_x, scale_y))
+
+	bpy.context.space_data.pivot_point = 'CENTER'
+	bpy.ops.transform.resize(value=(scale_x, scale_y, 1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', proportional='DISABLED')
 
 
+	bbox = utilities_uv.getSelectionBBox()
+	offset_x = -bbox['min'].x
+	offset_y = -bbox['min'].y
+	
+	bpy.ops.transform.translate(value=(offset_x, offset_y, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', proportional='DISABLED')
+
+	#Restore selection
+	utilities_uv.selection_restore()
+
+
+
+
+
+	'''
 	boundsAll = utilities_uv.getSelectionBBox()
 
 
@@ -74,7 +138,7 @@ def fill(self, context):
 
 		bpy.context.window_manager.progress_update(i)
 
-
+	'''
 
 
 
@@ -87,7 +151,7 @@ def fill(self, context):
 
 	print("Fill ")
 
-
+'''
 
 def alignIslandMinimalBounds(uv_layer, faces):
 	# Select Island
@@ -129,3 +193,4 @@ def alignIslandMinimalBounds(uv_layer, faces):
 
 	if bboxPrevious['width'] < bboxPrevious['height']:
 		bpy.ops.transform.rotate(value=(90 * math.pi / 180), axis=(0, 0, 1))
+'''

@@ -9,7 +9,7 @@ from . import utilities_uv
 from . import utilities_ui
 
 class op(bpy.types.Operator):
-	bl_idname = "uv.textools_unwrap_peel_edge"
+	bl_idname = "uv.textools_unwrap_edge_peel"
 	bl_label = "Peel Edge"
 	bl_description = "Unwrap pipe along selected edges"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -39,7 +39,6 @@ class op(bpy.types.Operator):
 
 
 def unwrap_edges_pipe(self, context):
-	print("unwrap_edges_pipe()")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uv_layer = bm.loops.layers.uv.verify()

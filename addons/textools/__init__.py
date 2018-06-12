@@ -63,7 +63,7 @@ if "bpy" in locals():
 	imp.reload(op_texture_open)
 	imp.reload(op_texture_select)
 	imp.reload(op_unwrap_faces_iron)
-	imp.reload(op_unwrap_peel_edge)
+	imp.reload(op_unwrap_edge_peel)
 	imp.reload(op_uv_channel_add)
 	imp.reload(op_uv_channel_swap)
 	imp.reload(op_uv_crop)
@@ -122,7 +122,7 @@ else:
 	from . import op_texture_open
 	from . import op_texture_select
 	from . import op_unwrap_faces_iron
-	from . import op_unwrap_peel_edge
+	from . import op_unwrap_edge_peel
 	from . import op_uv_channel_add
 	from . import op_uv_channel_swap
 	from . import op_uv_crop
@@ -781,7 +781,7 @@ class Panel_Layout(bpy.types.Panel):
 
 		col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Pin & Relax", icon_value = icon_get("op_island_straighten_edge_loops"))
 		col.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
-		col.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
+		col.operator(op_unwrap_edge_peel.op.bl_idname, text="Edge Peel", icon_value = icon_get("op_unwrap_edge_peel"))
 		
 		row = col.row(align=True)
 		row.scale_y = 1.75
@@ -1338,7 +1338,7 @@ def menu_INFO_MT_mesh_add(self, context):
 def menu_VIEW3D_MT_uv_map(self, context):
 	layout = self.layout
 	layout.separator()
-	layout.operator(op_unwrap_peel_edge.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_peel_edge"))
+	layout.operator(op_unwrap_edge_peel.op.bl_idname, text="Peel Edge", icon_value = icon_get("op_unwrap_edge_peel"))
 	layout.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
 	layout.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
 		
@@ -1414,7 +1414,7 @@ def register():
 		"op_texture_save.png",
 		"op_texture_open.png",
 		"op_unwrap_faces_iron.png", 
-		"op_unwrap_peel_edge.png", 
+		"op_unwrap_edge_peel.png", 
 		"op_uv_crop.png", 
 		"op_uv_fill.png", 
 		"texel_density.png"

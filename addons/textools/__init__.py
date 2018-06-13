@@ -721,11 +721,7 @@ class Panel_Layout(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
-
-		if bpy.app.debug_value != 0:
-			c = row.column(align=True)
-			c.alert = True
-			c.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
+		row.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
 
 
 		row = col.row(align=True)

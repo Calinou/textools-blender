@@ -196,7 +196,6 @@ def create_uv_mesh(self, obj):
 	mesh_obj.location = bpy.context.scene.cursor_location
 	bpy.context.scene.objects.link(mesh_obj)
 
-
 	# Add shape keys
 	mesh_obj.shape_key_add(name="uv", from_mix=True)
 	mesh_obj.shape_key_add(name="model", from_mix=True)
@@ -209,7 +208,6 @@ def create_uv_mesh(self, obj):
 	bpy.ops.object.mode_set(mode='EDIT')
 	bm = bmesh.from_edit_mesh(mesh_obj.data)
 	
-
 	if hasattr(bm.faces, "ensure_lookup_table"): 
 		bm.faces.ensure_lookup_table()
 		bm.verts.ensure_lookup_table()
@@ -222,6 +220,15 @@ def create_uv_mesh(self, obj):
 
 	for i in range(len(m_verts_B)):
 		bm.verts[i].co = m_verts_B[i]
+
+
+	# Split concave faces to resolve issues with Shape deform
+	bpy.context.object.active_shape_key_index = 0
+	bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+	bpy.ops.mesh.select_all(action='SELECT')
+	bpy.ops.mesh.vert_connect_concave()
+
+
 	bpy.ops.object.mode_set(mode='OBJECT')
 
 

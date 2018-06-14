@@ -954,7 +954,7 @@ class Panel_Bake(bpy.types.Panel):
 				row = row.row(align=True)
 				row.alignment = 'RIGHT'
 				if image.filepath != "":
-					row.operator(op_texture_open.op.bl_idname, text="", icon = 'FILESEL' ).name = image.name
+					row.operator(op_texture_open.op.bl_idname, text="", icon_value=icon_get("op_texture_open") ).name = image.name
 				else:
 					row.operator(op_texture_save.op.bl_idname, text="", icon_value=icon_get("op_texture_save") ).name = image.name
 

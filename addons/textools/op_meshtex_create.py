@@ -18,7 +18,7 @@ def get_mode():
 
 		# Create UV mesh from whole object
 		if bpy.context.active_object and bpy.context.active_object.type == 'MESH':
-			if "MeshDeform" not in bpy.context.active_object.modifiers:
+			if "SurfaceDeform" not in bpy.context.active_object.modifiers:
 				return 'OBJECT'
 
 	return 'UNDEFINED'

@@ -65,23 +65,20 @@ def wrap_meshtex(self):
 	# Setup Thickness
 	utilities_meshtex.uv_mesh_fit(obj_uv, obj_textures)
 
-	
 	for obj in obj_textures:
 		# Delete previous modifiers
 		for modifier in obj.modifiers:
-			if modifier.type == 'MESH_DEFORM':
+			if modifier.type == 'SURFACE_DEFORM':
 				obj.modifiers.remove(modifier)
 				break
 
 		# Add mesh modifier
-		modifier_deform = obj.modifiers.new(name="MeshDeform", type='MESH_DEFORM')
-		modifier_deform.object = obj_uv
-		modifier_deform.use_dynamic_bind = len(obj.modifiers) > 1
-		modifier_deform.precision = int(bpy.context.scene.texToolsSettings.meshtexture_precission)
+		modifier_deform = obj.modifiers.new(name="SurfaceDeform", type='SURFACE_DEFORM')
+		modifier_deform.target = obj_uv
 
 		obj.select = True
 		bpy.context.scene.objects.active = obj
-		bpy.ops.object.meshdeform_bind(modifier="MeshDeform")
+		bpy.ops.object.surfacedeform_bind(modifier="SurfaceDeform")
 
 	# Apply wrapped morph state
 	bpy.context.scene.texToolsSettings.meshtexture_wrap = 1

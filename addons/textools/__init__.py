@@ -509,11 +509,6 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		update = on_slider_meshtexture_wrap, 
 		subtype  = 'FACTOR'
 	)
-	meshtexture_precission = bpy.props.EnumProperty(items= 
-		[('5', '5 Low', 'Mesh Deform precession, increase if not wrapping correctly'), 
-		('6', '6 Medium', 'Mesh Deform precession, increase if not wrapping correctly'),
-		('7', '7 High', 'Mesh Deform precession, increase if not wrapping correctly')], name = "precission", default = '5'
-	)
 
 	def get_color(hex = "808080"):
 		return bpy.props.FloatVectorProperty(
@@ -785,9 +780,10 @@ class Panel_Layout(bpy.types.Panel):
 		
 
 		#---------- Selection ------------
-		layout.label(text="Select")
+		
 
 		box = layout.box()
+		box.label(text="Select")
 		col = box.column(align=True)
 
 		row = col.row(align=True)
@@ -862,7 +858,6 @@ class Panel_Mesh(bpy.types.Panel):
 		col = box.column(align=True)
 		row = col.row(align = True)
 		row.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon_value = icon_get("op_meshtex_wrap"))
-		row.prop(context.scene.texToolsSettings, "meshtexture_precission", text="")
 
 		row = col.row(align = True)
 		if not utilities_meshtex.find_uv_mesh(bpy.context.selected_objects):
@@ -1350,9 +1345,6 @@ def menu_VIEW3D_MT_object_specials(self, context):
 
 	layout.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
 	layout.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon_value = icon_get("op_meshtex_wrap"))
-	# layout.prop(context.scene.texToolsSettings, "meshtexture_precission", text="")
-	
-	
 
 
 

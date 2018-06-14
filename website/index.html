@@ -82,7 +82,7 @@
 		  </p>
 		<h1>Size Panel</h1>
 		<div class="Panel">
-			<div class="Columns3">
+			<div class="Columns2">
 				<div class="Content">
 					<h2>Size &amp; Padding</h2>
 					<p>Set the texture size in pixels for baking and checker maps. Use the dropdown menu to quickly assign common  texture sizes. </p>
@@ -91,11 +91,7 @@
 					<p><strong>Tip</strong>: Hold down <strong>Ctrl</strong> + scroll <strong>Mouse Wheel</strong> to quickly cycle through the sizes.</p>
 				</div>
 				
-				<div class="Content">
-					<h2><img src="images/op_uv_crop.png" width="32" height="32" alt=""/> Crop</h2>
-					<p>Crop the UV area to the bounds of selected UV faces. Additional <strong>padding</strong> will be added to borders.</p>
-					<p><img src="images/demo_uv_crop.gif" alt=""/></p>
-				</div>
+				
 				<div class="Content">
 					<h2><img src="images/op_uv_resize_area.png" width="32" height="32" alt=""/> Resize</h2>
 					<p>Opens a resize popup where you can extend or resize the UV layout canvas to either direction. Rather than scaling it will extend the UV area size while mainting the UV proportions.</p>
@@ -113,6 +109,12 @@
 					<p>Reload all textures in the current blend file and removes unsued ones. </p>
 					<p><strong>Note</strong>: Blender only fully removes unused items the next time you open the file, press <strong>Ctrl + Shift + O</strong> to quickly re-open your blend file and clear unsused items.</p>
 				</div>
+                <div class="Content">
+					<h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
+					<p>Assigns a checker map texture (blender render) or material (cycles) to the objects. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to <strong>texture mode</strong>.					</p>
+					<p><img src="images/show_checkermap_swap.png" alt=""/></p>
+					<p><strong>Tip:</strong> Assign a checker map again and the checker map will change from <strong>UV Grid</strong> to <strong>Color Grid</strong> to <strong>Gravity Checker</strong> to <strong>None</strong></p>
+				</div>
 			</div>
 		</div>
 		<a class="NoButton" id="uvlayout"></a>
@@ -120,6 +122,16 @@
 		<p>These UV layout tools are used to unwrap or transform your UV layout. <strong>Note: </strong>most of UV Layout tools are not designed for the UV sync mode, once active a '<strong>Disable Sync</strong>' <img src="images/show_disable_sync.png" alt=""/> button appears so you can disable it.</p>
 		<div class="Panel">
 			<div class="Columns3">
+            	<div class="Content">
+					<h2><img src="images/op_uv_crop.png" width="32" height="32" alt=""/> Crop</h2>
+					<p>Crop the UV area to the bounds of selected UV faces. Additional <strong>padding</strong> will be added to borders.</p>
+					<p><img src="images/demo_uv_crop.gif" alt=""/></p>
+				</div>
+              <div class="Content">
+					<h2><img src="images/op_uv_fill.png" width="32" height="32" alt=""/> Fill</h2>
+				  <p><strong>Aligns</strong> the UV selection to the UV grid and then <strong>scales</strong> its width and height to fit within the UV <strong>0 - 1 area</strong>.</p>
+                </div>
+                
 				<div class="Content">
 					<h2><img src="images/op_island_align_edge.png" width="36" height="36" alt=""/> Align Edge</h2>
 					<p>Aligns the UV island of the selected UV edge <img class="Icon" src="images/show_selection_uv_edge.png" alt=""/> to the closest 90 degree angle.</p>
@@ -158,7 +170,7 @@
 					<p><img src="images/demo_iron_faces.gif" alt=""/></p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_unwrap_peel_edge.png" width="32" height="32" alt=""/> Peel Edge </h2>
+					<h2><img src="images/op_unwrap_edge_peel.png" width="32" height="32" alt=""/>  Edge Peel</h2>
 					<p>Select an edge <img src="images/show_selection_view_edge.png" alt="" class="Icon"/> or edge loop and unwrap linked geometry to a rectified UV island. Works best with pipe shapes.	</p>
 					<p><img src="images/demo_peel_edge.gif" alt=""/></p>
 				</div>
@@ -206,12 +218,7 @@
 			</div>
             
           <div class="Columns3">
-				<div class="Content">
-					<h2><img src="images/op_texture_checker.png" width="32" height="36" alt=""/> Checker Map</h2>
-					<p>Assigns a checker map texture (blender render) or material (cycles) to the objects. The assigned checker map matches the width and height of the size inspector. When a checker map is assigned it changes the view to <strong>texture mode</strong>.					</p>
-					<p><img src="images/show_checkermap_swap.png" alt=""/></p>
-					<p><strong>Tip:</strong> Assign a checker map again and the checker map will change from <strong>UV Grid</strong> to <strong>Color Grid</strong> to <strong>Gravity Checker</strong> to <strong>None</strong></p>
-				</div>
+				
 				<div class="Content">
 					<h2><img src="images/texel_density.png" width="32" height="32" alt=""/> Texel Density</h2>
 					<p>Texel density is a value that describes how many <strong>pixels</strong> from a texture are visible <strong>per 1 unit</strong> or 1 meter. </p>

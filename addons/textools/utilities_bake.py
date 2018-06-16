@@ -429,7 +429,12 @@ def setup_vertex_color_dirty(obj):
 	bm = bmesh.from_edit_mesh(obj.data)
 	colorLayer = bm.loops.layers.color.verify()
 
+
 	color = (1, 1, 1)
+	if bpy.app.version > (2, 79, 0):
+		# Newer blender versions support RGBA
+		color = (1, 1, 1, 1)
+
 	for face in bm.faces:
 		for loop in face.loops:
 				loop[colorLayer] = color

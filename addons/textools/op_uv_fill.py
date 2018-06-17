@@ -64,6 +64,10 @@ def fill(self, context):
 		bpy.ops.transform.rotate(value=(angle * math.pi / 180), axis=(0, 0, 1))
 		bbox = utilities_uv.getSelectionBBox()
 
+
+		print("Rotate {}, diff le: {}".format(angle, bbox['height'] - bboxPrevious['height']))
+
+
 		if i == 0:
 			# Check if already squared
 			sizeA = bboxPrevious['width'] * bboxPrevious['height']

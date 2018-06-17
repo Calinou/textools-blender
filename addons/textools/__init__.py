@@ -770,8 +770,11 @@ class Panel_Layout(bpy.types.Panel):
 		aligned = box.row(align=True)
 		col = aligned.column(align=True)
 
-		col.operator(op_island_straighten_edge_loops.op.bl_idname, text="Pin & Relax", icon_value = icon_get("op_island_straighten_edge_loops"))
-		col.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
+		row = col.row(align=True)
+		row.operator(op_island_straighten_edge_loops.op.bl_idname, text="Straight", icon_value = icon_get("op_island_straighten_edge_loops"))
+		row.operator(op_rectify.op.bl_idname, text="Rectify", icon_value = icon_get("op_rectify"))
+
+
 		col.operator(op_unwrap_edge_peel.op.bl_idname, text="Edge Peel", icon_value = icon_get("op_unwrap_edge_peel"))
 		
 		row = col.row(align=True)

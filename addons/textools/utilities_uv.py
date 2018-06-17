@@ -200,17 +200,17 @@ def getSelectionBBox():
 	countFaces = 0;
 	
 	for face in bm.faces:
-		# if face.select == True:
-		for loop in face.loops:
-			if loop[uv_layer].select is True:
-				uv = loop[uv_layer].uv
-				boundsMin.x = min(boundsMin.x, uv.x)
-				boundsMin.y = min(boundsMin.y, uv.y)
-				boundsMax.x = max(boundsMax.x, uv.x)
-				boundsMax.y = max(boundsMax.y, uv.y)
-		
-				boundsCenter+= uv
-				countFaces+=1
+		if face.select:
+			for loop in face.loops:
+				if loop[uv_layer].select is True:
+					uv = loop[uv_layer].uv
+					boundsMin.x = min(boundsMin.x, uv.x)
+					boundsMin.y = min(boundsMin.y, uv.y)
+					boundsMax.x = max(boundsMax.x, uv.x)
+					boundsMax.y = max(boundsMax.y, uv.y)
+			
+					boundsCenter+= uv
+					countFaces+=1
 	
 	bbox['min'] = boundsMin
 	bbox['max'] = boundsMax

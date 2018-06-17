@@ -62,6 +62,7 @@ if "bpy" in locals():
 	imp.reload(op_texture_save)
 	imp.reload(op_texture_open)
 	imp.reload(op_texture_select)
+	imp.reload(op_texture_remove)
 	imp.reload(op_unwrap_faces_iron)
 	imp.reload(op_unwrap_edge_peel)
 	imp.reload(op_uv_channel_add)
@@ -121,6 +122,7 @@ else:
 	from . import op_texture_save
 	from . import op_texture_open
 	from . import op_texture_select
+	from . import op_texture_remove
 	from . import op_unwrap_faces_iron
 	from . import op_unwrap_edge_peel
 	from . import op_uv_channel_add
@@ -955,6 +957,8 @@ class Panel_Bake(bpy.types.Panel):
 					row.operator(op_texture_open.op.bl_idname, text="", icon_value=icon_get("op_texture_open") ).name = image.name
 				else:
 					row.operator(op_texture_save.op.bl_idname, text="", icon_value=icon_get("op_texture_save") ).name = image.name
+				
+				row.operator(op_texture_remove.op.bl_idname, text="", icon='X' ).name = image.name
 
 				
 			col.separator()

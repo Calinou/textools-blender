@@ -2,7 +2,9 @@ import bpy
 import bmesh
 import operator
 import math
+import os
 
+from bpy.props import *
 from . import settings
 from . import utilities_bake
 
@@ -17,42 +19,64 @@ class op(bpy.types.Operator):
 		default = ""
 	)
 
+	# Properties used by the file browser
+	# filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+	# http://nullege.com/codes/show/src%40b%40l%40blenderpython-HEAD%40scripts%40addons_extern%40io_scene_valvesource%40import_smd.py/90/bpy.context.window_manager.fileselect_add/python
+	filepath = bpy.props.StringProperty(name="myName.png", description="Texture filepath", maxlen=1024, default="bla bla.png")
+	filter_folder = BoolProperty(name="Filter folders", description="", default=True, options={'HIDDEN'})
+	filter_glob = StringProperty(default="*.png;*.tga;*.jpg;*.tif;*.exr", options={'HIDDEN'})
+
+	def invoke(self, context, event):
+		# if self.filepath == "":
+		# 	self.filepath = bpy.context.scene.FBXBundleSettings.path
+		# blend_filepath = context.blend_data.filepath
+		# https://blender.stackexchange.com/questions/6159/changing-default-text-value-in-file-dialogue
+		context.window_manager.fileselect_add(self)
+		return {'RUNNING_MODAL'}
+
+
+	def draw(self, context):
+		layout = self.layout
+
+		layout.label(text="Choose your Unity Asset directory")
+
+
 	@classmethod
 	def poll(cls, context):
 		return True
-	
+
 	def execute(self, context):
-		save_texture(self, context)
+		save_texture(self.filepath)
 		return {'FINISHED'}
 
 
 
-def save_texture(self, context):
-
-	print("Info")
-	if self.name in bpy.data.images:
-		image = bpy.data.images[self.name]
-
-		# Set background image
-		if self.name in bpy.data.images:
-			image = bpy.data.images[self.name]
-			for area in bpy.context.screen.areas:
-				if area.type == 'IMAGE_EDITOR':
-					area.spaces[0].image = image
-
-		# bpy.ops.image.save_as(save_as_render=False, filepath="file.png", show_multiview=False, use_multiview=False)
-		
-		
-
-		bpy.ops.image.save_as(file_type='PNG', path="", filename="", directory="", filter_blender=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_folder=True, filemode=9)
-		
+def save_texture(path):
+	print("Save image.. "+path)
 
 
-		# bpy.ops.image.save_as(save_as_render=False, filepath="//test__sdsadasdauzanne_normal_tangent.png", show_multiview=False, use_multiview=False)
 
-		# https://meshlogic.github.io/posts/blender/addons/extra-image-list/
-		# https://docs.blender.org/api/blender_python_api_2_78_release/bpy.ops.image.html
-		# print("filepath: {}".format(image.filepath))
+
+
+# class op(bpy.types.Operator):
+# 	bl_idname = "uv.textools_texture_save"
+# 	bl_label = "Save Texture"
+# 	bl_description = "Save the texture"
+
+# 	name = bpy.props.StringProperty(
+# 		name="image name",
+# 		default = ""
+# 	)
+
+# 	@classmethod
+# 	def poll(cls, context):
+# 		return True
+	
+# 	def execute(self, context):
+# 		save_texture(self, context)
+# 		return {'FINISHED'}
+
+
 
 		
 

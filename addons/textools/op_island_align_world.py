@@ -93,18 +93,20 @@ def main(context):
 		y = 1
 		z = 2
 		max_size = max(abs(avg_normal.x), abs(avg_normal.y), abs(avg_normal.z))
-	
-		if(abs(avg_normal.x) == max_size):
-			print("x normal")
-			align_island(obj, bm, uv_layer, faces, y, z, avg_normal.x < 0, False)
+		
+		# Use multiple steps
+		for i in range(3):
+			if(abs(avg_normal.x) == max_size):
+				print("x normal")
+				align_island(obj, bm, uv_layer, faces, y, z, avg_normal.x < 0, False)
 
-		elif(abs(avg_normal.y) == max_size):
-			print("y normal")
-			align_island(obj, bm, uv_layer, faces, x, z, avg_normal.y > 0, False)
+			elif(abs(avg_normal.y) == max_size):
+				print("y normal")
+				align_island(obj, bm, uv_layer, faces, x, z, avg_normal.y > 0, False)
 
-		elif(abs(avg_normal.z) == max_size):
-			print("z normal")
-			align_island(obj, bm, uv_layer, faces, x, y, False, avg_normal.z < 0)
+			elif(abs(avg_normal.z) == max_size):
+				print("z normal")
+				align_island(obj, bm, uv_layer, faces, x, y, False, avg_normal.z < 0)
 
 		print("align island: faces {}x n:{}, max:{}".format(len(faces), avg_normal, max_size))
 
@@ -180,7 +182,7 @@ def align_island(obj, bm, uv_layer, faces, x=0, y=1, flip_x=False, flip_y=False)
 
 		a_delta = math.atan2(math.sin(a0-a1), math.cos(a0-a1)) 
 		# edge.verts[0].index, edge.verts[1].index
-		print("  turn {:.1f}	.. {:.1f} , {:.1f}".format(a_delta*180/math.pi, a0*180/math.pi,a1*180/math.pi))
+		# print("  turn {:.1f}	.. {:.1f} , {:.1f}".format(a_delta*180/math.pi, a0*180/math.pi,a1*180/math.pi))
 		avg_angle+=a_delta
 
 

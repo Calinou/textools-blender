@@ -686,7 +686,7 @@ class Panel_Layout(bpy.types.Panel):
 		layout = self.layout
 		row = layout.row(align=True)
 		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#uvlayout"
-		row.label(text ="Unwrap")
+		row.label(text ="UV Layout")
 
 	# def draw_header(self, _):
 	# 	layout = self.layout
@@ -783,13 +783,29 @@ class Panel_Layout(bpy.types.Panel):
 		row.scale_y = 1.75
 		row.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
 		
+		col.separator()
+		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
+		
+		col.separator()
+
+		# col = box.column(align=True)
+		row = col.row(align=True)
+		row.label(text="" , icon_value = icon_get("texel_density"))
+		row.separator()
+		row.prop(context.scene.texToolsSettings, "texel_density", text="")
+		row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
+
+		row = col.row(align=True)
+		row.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
+		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
 
 		#---------- Selection ------------
 		
 
-		box = layout.box()
-		box.label(text="Select")
-		col = box.column(align=True)
+		# /box = layout.box()
+		# box.label(text="Select")
+		# col = box.column(align=True)
+		col.separator()
 
 		row = col.row(align=True)
 		row.operator(op_select_islands_identical.op.bl_idname, text="Similar", icon_value = icon_get("op_select_islands_identical"))
@@ -798,78 +814,6 @@ class Panel_Layout(bpy.types.Panel):
 		row = col.row(align=True)
 		row.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
 		row.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
-
-
-		
-class Panel_Mesh(bpy.types.Panel):
-	bl_label = " "
-	bl_space_type = 'IMAGE_EDITOR'
-	bl_region_type = 'TOOLS'
-	bl_category = "TexTools"
-	bl_options = {'DEFAULT_CLOSED'}
-
-	def draw_header(self, _):
-		layout = self.layout
-		row = layout.row(align=True)
-		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#mesh"
-		row.label(text ="Topology")
-
-	def draw(self, context):
-		layout = self.layout
-
-		box = layout.box()
-		col = box.column()
-		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
-		
-		#---------- Texel ------------
-
-		layout.label(text="Texels") #, icon_value=icon_get("texel_density")
-		box = layout.box()
-		
-		col = box.column(align=True)
-		row = col.row(align=True)
-		row.label(text="" , icon_value = icon_get("texel_density"))
-		row.separator()
-		row.prop(context.scene.texToolsSettings, "texel_density", text="")
-		row.operator(op_texel_density_get.op.bl_idname, text="", icon = 'EYEDROPPER')
-
-
-
-		# col = box.column(align=True)
-		row = col.row(align=True)
-		row.operator(op_texel_density_set.op.bl_idname, text="Apply", icon = 'FACESEL_HLT')
-		
-		# if bpy.context.object and bpy.context.object.mode == 'EDIT':
-		# 	row.enabled  = False
-		row.prop(context.scene.texToolsSettings, "texel_mode_scale", text = "", expand=False)
-
-
-		layout.label(text = "Mesh Texture")
-		box = layout.box()
-		col = box.column(align=True)
-
-		row = col.row(align=True)
-		row.scale_y = 1.5
-		row.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
-		
-		row = col.row(align=True)
-		row.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon_value = icon_get("op_meshtex_trim"))
-
-		# Warning about trimmed mesh
-		if op_meshtex_trim_collapse.is_available():
-			row.operator(op_meshtex_trim_collapse.op.bl_idname, text="Collapse Trim", icon_value=icon_get("op_meshtex_trim_collapse"))
-
-
-		col = box.column(align=True)
-		row = col.row(align = True)
-		row.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon_value = icon_get("op_meshtex_wrap"))
-
-		row = col.row(align = True)
-		if not utilities_meshtex.find_uv_mesh(bpy.context.selected_objects):
-			row.enabled = False
-		row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
-
-		box.operator(op_meshtex_pattern.op.bl_idname, text="Create Pattern", icon_value = icon_get("op_meshtex_pattern"))
 
 
 
@@ -956,7 +900,10 @@ class Panel_Bake(bpy.types.Panel):
 				if image.filepath != "":
 					row.operator(op_texture_open.op.bl_idname, text="", icon_value=icon_get("op_texture_open") ).name = image.name
 				else:
-					row.operator(op_texture_save.op.bl_idname, text="", icon_value=icon_get("op_texture_save") ).name = image.name
+					if bpy.app.debug_value != 0:
+						row.operator(op_texture_save.op.bl_idname, text="", icon_value=icon_get("op_texture_save") ).name = image.name
+					else:
+						pass
 				
 				row.operator(op_texture_remove.op.bl_idname, text="", icon='X' ).name = image.name
 
@@ -1116,6 +1063,9 @@ class Panel_Bake(bpy.types.Panel):
 		
 
 
+
+	
+
 class op_color_dropdown_io(bpy.types.Menu):
 	bl_idname = "ui.textools_color_dropdown_io"
 	bl_label = "IO"
@@ -1273,6 +1223,52 @@ class Panel_Colors(bpy.types.Panel):
 		# https://github.com/blenderskool/kaleidoscope/blob/fb5cb1ab87a57b46618d99afaf4d3154ad934529/spectrum.py
 	
 			
+
+	
+class Panel_MeshTexture(bpy.types.Panel):
+	bl_label = " "
+	bl_space_type = 'IMAGE_EDITOR'
+	bl_region_type = 'TOOLS'
+	bl_category = "TexTools"
+	bl_options = {'DEFAULT_CLOSED'}
+
+	def draw_header(self, _):
+		layout = self.layout
+		row = layout.row(align=True)
+		row.operator("wm.url_open", text="", icon='INFO').url = "http://renderhjs.net/textools/blender/index.html#meshtexture"
+		row.label(text ="Mesh Texture")
+
+	def draw(self, context):
+		layout = self.layout
+		box = layout.box()
+		col = box.column(align=True)
+
+		row = col.row(align=True)
+		row.scale_y = 1.5
+		row.operator(op_meshtex_create.op.bl_idname, text="Create UV Mesh", icon_value = icon_get("op_meshtex_create"))
+		
+		row = col.row(align=True)
+		row.operator(op_meshtex_trim.op.bl_idname, text="Trim", icon_value = icon_get("op_meshtex_trim"))
+
+		# Warning about trimmed mesh
+		if op_meshtex_trim_collapse.is_available():
+			row.operator(op_meshtex_trim_collapse.op.bl_idname, text="Collapse Trim", icon_value=icon_get("op_meshtex_trim_collapse"))
+
+
+		col = box.column(align=True)
+		row = col.row(align = True)
+		row.operator(op_meshtex_wrap.op.bl_idname, text="Wrap", icon_value = icon_get("op_meshtex_wrap"))
+
+		row = col.row(align = True)
+		if not utilities_meshtex.find_uv_mesh(bpy.context.selected_objects):
+			row.enabled = False
+		row.prop(context.scene.texToolsSettings, "meshtexture_wrap", text="Wrap")
+
+		box.operator(op_meshtex_pattern.op.bl_idname, text="Create Pattern", icon_value = icon_get("op_meshtex_pattern"))
+
+
+
+
 
 
 keymaps = []

@@ -29,8 +29,6 @@
 			      <td><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZC9X4LE7CPQN6">PayPal Donation</a></td>
                   <td><a href="https://bitbucket.org/renderhjs/textools-blender">Git Source Code</a></td>
                   
-                  
-			      <td><a href="http://www.renderhjs.net/">renderhjs.net </a></td>
                   <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
 			      <td><a href="http://polycount.com/discussion/197226/textools-for-blender">Polycount</a></td>
                    <td><a href="https://blenderartists.org/forum/showthread.php?443182-TexTools-for-Blender">Blender Artists</a></td>
@@ -44,16 +42,16 @@
 			  
 		  </table></p>
 		<div class="Panel">
-			<div class="Columns2">
+			<div class="Columns3">
 				<div class="Content">
 					<h2>Download</h2>
-					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.2.0.zip">Blender_TexTools_1.2.0.zip </a></p>
+					<p><a href="http://renderhjs.net/textools/blender/Blender_TexTools_1.3.0.zip">Blender_TexTools_1.3.0.zip </a></p>
 					<p>Find older releases in the <a href="log.html" class="NoButton">release log</a></p>
 				</div>
 				<div class="Content">
 				  <h2>Requirements</h2>
-					<p><a href="https://www.blender.org/download/releases/2-79/" class="NoButton">Blender 2.79</a> for Windows, Mac or Linux. </p>
-					<p><strong>Tip</strong>: Use <a href="https://builder.blender.org/download/" class="NoButton">nightly builds</a> for additional bevel based baking modes.</p>
+					<p><a href="https://www.blender.org/download/releases/2-79/" class="NoButton">Blender 2.79</a> for Windows, Mac or Linux.</p>
+					<p> <strong>Tip</strong>: Use <a href="https://builder.blender.org/download/" class="NoButton">nightly 2.79 builds</a> for additional bevel based baking modes.</p>
 				</div>
 				
 				<div class="Content">
@@ -61,11 +59,10 @@
 					<ol>
 						<li>Open User Preferences<br>
 						<img src="images/show_open_preferences.png" alt=""/>        </li>
-						<li>Select  the Add-ons tab  <img src="images/show_preferences_addons.png" alt=""/>        </li>
-						<li> Press Install Addon  and Select the zip file<br>
+						<li>Select  the Add-ons tab  and press <strong>Install Addon</strong> and Select the zip file<br>
 						<img src="images/show_install_addon_from_file.png" alt=""/>        </li>
 						<li>Enable the TexTools Addon  <img src="images/show_enable_addon.png" alt=""/>        </li>
-						<li> TexTools  is in the tool panel of the UV/Image Editor <img src="images/show_uv_image_editor.png" alt=""/></li>
+						<li> TexTools  can be found  the <strong>UV/Image</strong> tool panel <img src="images/show_uv_image_editor.png" alt=""/></li>
 					</ol>
 				</div>
 				
@@ -128,7 +125,7 @@
 					<p><img src="images/demo_uv_crop.gif" alt=""/></p>
 				</div>
               <div class="Content">
-					<h2><img src="images/op_uv_fill.png" width="32" height="32" alt=""/> Fill</h2>
+					<h2><img src="images/op_uv_fill.png" width="32" height="32" alt=""/> Fill<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 				  <p><strong>Aligns</strong> the UV selection to the UV grid and then <strong>scales</strong> its width and height to fit within the UV <strong>0 - 1 area</strong>.</p>
                 </div>
                 
@@ -144,41 +141,46 @@
 				  <p><img src="images/demo_align_world.gif" alt=""/></p>
 			  </div>
 				<div class="Content">
+				  <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
+				  <p>This tool has 4 directions to align UV islands or UV vertices to. </p>
+				  <p>In UV vertex mode <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. </p>
+				  <p><img src="images/demo_align.gif" alt=""/></p>
+				  <p> In the UV face mode <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> selected UV islands are aligned to either side of the initial selection bounds. </p>
+			  </div>
+				<div class="Content">
 				  <h2><img src="images/op_island_rotate_90_right.png" width="31" height="32" alt=""/> Rotate 90°</h2>
 					<p>Rotates the associated UV island 90 degrees left or right and aligns the island to the initial bounding box's top left or right.</p>
 				</div>
+				<div class="Content">
+				  <h2><img src="images/op_island_align_sort_v.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
+				  <p>Sorts the selected UV islands by longest side and aligns them <strong>vertically</strong> or <strong>horizontally</strong> in a row.</p>
+				  <p><img src="images/demo_sort_align.gif" alt=""/></p>
+			  </div>
+			  <div class="Content">
+			    <h2><img src="images/op_island_straighten_edge_loops.png" width="32" height="32" alt=""/> Straight</h2>
+			    <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.			  </p>
+			  </div>
 				<div class="Content">
 				  <h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify</h2>
 				  <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.</p>
 				  <p><img src="images/demo_rectify.gif" alt=""/></p>
 			  </div>
 				<div class="Content">
-				  <h2><img src="images/op_align.png" width="33" height="32" alt=""/> Align</h2>
-					<p>This tool has 4 directions to align UV islands or UV vertices to. </p>
-					<p>In UV vertex mode <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> Vert mode it Aligns selected UV verts to either side of the initial selection bounds. </p>
-					<p><img src="images/demo_align.gif" alt=""/></p>
-					<p> In the UV face mode <img src="images/show_selection_uv_face.png" alt="" class="Icon"/>  selected UV islands are aligned to either side of the initial selection bounds.    </p>
-				</div>
-				<div class="Content">
-					<h2><img src="images/op_island_align_sort_v.png" width="32" height="32" alt=""/> Sort &amp; Align</h2>
-					<p>Sorts the selected UV islands by longest side and aligns them <strong>vertically</strong> or <strong>horizontally</strong> in a row.</p>
-					<p><img src="images/demo_sort_align.gif" alt=""/></p>
-				</div>
-				<div class="Content">
-					<h2><img src="images/op_faces_iron.png" width="32" height="32" alt=""/> Iron Faces</h2>
-					<p>Unwraps selected viewport faces Face <img src="images/show_selection_view_face.png" alt="" class="Icon"/> mode into a single UV island. This approach can be quicker than marking edges for UV seams before unwrapping.</p>
-					<p><img src="images/demo_iron_faces.gif" alt=""/></p>
-				</div>
-				<div class="Content">
 					<h2><img src="images/op_unwrap_edge_peel.png" width="32" height="32" alt=""/>  Edge Peel</h2>
 					<p>Select an edge <img src="images/show_selection_view_edge.png" alt="" class="Icon"/> or edge loop and unwrap linked geometry to a rectified UV island. Works best with pipe shapes.	</p>
 					<p><img src="images/demo_peel_edge.gif" alt=""/></p>
 				</div>
+                <div class="Content">
+				  <h2><img src="images/op_faces_iron.png" width="32" height="32" alt=""/> Iron Faces</h2>
+					<p>Unwraps selected viewport faces Face <img src="images/show_selection_view_face.png" alt="" class="Icon"/> mode into a single UV island. This approach can be quicker than marking edges for UV seams before unwrapping.</p>
+					<p><img src="images/demo_iron_faces.gif" alt=""/></p>
+				</div>
 				
-			</div>
+				
+		  </div>
 			
-			<div class="Info"><h3>Selection Tools</h3>
-			</div>
+			<div class="Info"><h3>Selection Tools</h3></div>
+            
 			<div class="Columns3">
 				<div class="Content">
 					<h2> <img src="images/op_select_islands_identical.png" width="32" height="32" alt=""/> Select Similar</h2>
@@ -198,21 +200,18 @@
               </div>
                 
 			</div>
-
-		</div>
-		<a name="mesh" class="NoButton" id="texturebaking"></a>
-		<h1>Topology</h1>
-		<p>Tools that modify the mesh instead of the UVs.</p>
-		<div class="Panel">
-        
-        	 
-		  <div class="Columns1">
-		    <div class="Content">
-		      <h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing</h2>
-		      <p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.	        </p>
-		    </div>
-          </div>
-        
+            
+            <div class="Info"><h3>Selection Tools</h3></div>
+            
+            
+            <div class="Columns3">
+                <div class="Content">
+                  <h2> <img src="images/op_smoothing_uv_islands.png" width="32" height="32" alt=""/> UV Smoothing</h2>
+                  <p>Applies smoothing normals to the object except at the UV island edge bounds.This  is often used for normal map baking so that the edges of UV islands bake nice.	        </p>
+                </div>
+            </div>
+            
+            
         	<div class="Info"><h3> Texel Density Tools   </h3>
 				<p>Texel Densities are used to apply the same size of pixels in 3D (texel) to the surface of your objects or selected faces. This	is	common	for environment game assets or VR assets where texels require a consistent look.</p>
 			</div>
@@ -273,103 +272,11 @@
 			</div>
             
             
-            <div class="Info"><h3>Mesh Texture 
-			</h3>
-              <p>  The Mesh Texture tools use <a href="https://docs.blender.org/manual/en/dev/animation/shape_keys/introduction.html" class="NoButton">shape keys</a> to wrap between a UV shape and 3D Mesh shape. Combined with the <a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/deform/mesh_deform.html" class="NoButton">Mesh Deform modifier</a> we can wrap any mesh from UV space into 3D space. </p>
-            </div>
             
-            
-            
-            
-		  <div class="Columns3">
-          	<div class="Content">
-		      <h2> <img src="images/op_meshtex_create.png" width="32" height="32" alt=""/> UV Mesh</h2>
-		      <p>Create a UV mesh from your active object with 2 shape keys: </p>
-              <ol>
-                <li>A UV map shaped mesh</li>
-                <li>A mesh shape identical to the input 3D model. </li>
-              </ol>
-              <p><strong><img src="images/texmesh_uv_mesh.gif" alt=""/></strong></p>
-		      <p><strong>Tip</strong>: With the UV mesh selected you can transition back and forth using the transition slider.</p>
-		      <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
-          	</div>
-          
-		    <div class="Content">
-		      <h2> <img src="images/op_meshtex_trim.png" width="32" height="32" alt=""/> Trim to UV<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		      <p>Trims the objects to the UV mesh within the object selection. This operator requires a UV mesh to be part of the selection.</p>
-		      <p><strong><img src="images/demo_meshtex_trim.gif" alt=""/></strong></p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td valign="top"><strong><img src="images/op_meshtex_trim_collapse.png" alt=""/></strong></td>
-		          <td valign="top">Collapses the trimmed mesh's modifiers.</td>
-	            </tr>
-		        <tbody>
-	            </tbody>
-	          </table>
-		    </div>
-            
-            <div class="Content">
-		      <h2> <img src="images/op_meshtex_wrap.png" width="32" height="32" alt=""/> Wrap<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		      <p>Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.	        </p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td valign="top"><strong>Quality</strong></td>
-		          <td valign="top"><p>Mesh deform binding precission quality.</p>
-	              <p><strong><img src="images/show_meshtex_wrap_quality.png" alt=""/></strong></p>
-	              <p><strong>Note: </strong>When the mesh deform modifier does not correctly wrap the input mesh try increasing the quality of the binding precission. </p></td>
-	            </tr>
-		        <tbody>
-		          <tr>
-		            <td valign="top"><strong>  Slider</strong></td>
-		            <td valign="top"><p>Slides UV mesh state between UV mesh shape and target mesh shape.</p>
-	                <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
-	                <p>This is the same as adjusting the shape key transition value in the mesh properties tab of blender.</p></td>
-	              </tr>
-	            </tbody>
-	          </table>
-		      <p><strong><img src="images/demo_meshtex_wrap.gif" alt=""/></strong></p>
-            </div>
-           	<div class="Content">
-		      <h2> <img src="images/op_meshtex_pattern.png" width="32" height="32" alt=""/> Create Pattern<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
-		      <p>Creates a new mesh at the 3D cursor with multiple array modifiers to create a pattern. All of the array modifiers use relative offsets so you can edit the mesh in any size while preserving the pattern array.		      </p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td valign="top"><strong>Type</strong></td>
-		          <td valign="top"><p>Type of the pattern to generate</p></td>
-	            </tr>
-		        <tr>
-		          <td valign="top"><strong> Size</strong></td>
-		          <td valign="top"><p>The size in steps of the array to repeat on the x and y axis</p></td>
-	            </tr>
-		        <tbody>
-		          <tr>
-		            <td valign="top"><strong> Scale</strong></td>
-		            <td valign="top"><p>Thel scale of the pattern</p></td>
-	              </tr>
-	            </tbody>
-	          </table>
-		      <p>There are <strong>6 patterns</strong> to choose from.</p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td valign="top"><img src="images/meshtex_pattern_bricks.png" width="120" height="120" alt=""/></td>
-		          <td valign="top"><img src="images/meshtex_pattern_stripes.png" width="120" height="120" alt=""/></td>
-	            </tr>
-		        <tr>
-		          <td valign="top"><img src="images/meshtex_pattern_rectangles.png" width="120" height="120" alt=""/></td>
-		          <td valign="top"><img src="images/meshtex_pattern_hexagons.png" width="120" height="120" alt=""/></td>
-	            </tr>
-		        <tr>
-		          <td valign="top"><img src="images/meshtex_pattern_diamonds.png" width="120" height="120" alt=""/></td>
-		          <td valign="top"><img src="images/meshtex_pattern_triangles.png" width="120" height="120" alt=""/></td>
-	            </tr>
-		        <tbody>
-	            </tbody>
-	          </table>
-           	</div>
-	      </div>
-		  
-		  </div>
-		<h1>Texture Baking</h1>
+
+		</div>
+
+		<h1><a name="mesh" class="NoButton" id="texturebaking"></a>Texture Baking</h1>
 		<p>To bake textures in TexTools just select your objects and press Bake. High  low poly and cageobject pairs are detected via object names. You can bake just with a <strong>single </strong>objects,  <strong>high</strong> <strong>poly </strong>to <strong>low poly</strong> or in addition that with a custom <strong>cage</strong> object. </p>
         
         <div class="Panel">
@@ -405,6 +312,35 @@
         
         </div>
         
+        <h1>Texture List<img src="images/new.png" alt="" width="53" height="22" class="New"/></h1>
+        <p>Once you bake a texture, this texture list will list baked textures. This list allows to quickly switch baking modes and textures of already baked items.</p>
+        
+        <div class="Panel">
+        	<div class="Columns2">
+			  <div class="Content">
+				  <h2> Context sensitive list<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>This list appears as soon as you bake a texture map of the selected objects in the scene. This list is context senitive to your selected objects in the view and the textures you have baked.</p>
+				  <p><img src="images/textures_list.png" alt=""/></p>
+				</div>
+				
+				
+				<div class="Content">
+					<h2> Select<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<p>Selecting an item in the list will set the UV image background texture and change the baking mode.</p>
+			  </div>
+				<div class="Content">
+					<h2><img src="images/op_texture_open.png" width="32" height="32" alt=""/> Open<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+                    <p>If a texture item has been saved to the hard drive this icon will appear. Pressing this open button will open the image file with your default system associated sofware, e.g. Photoshop.</p>
+				</div>
+				
+				
+		  </div>
+        
+        </div>
+        
+        
+        
+        
         <h1>Baking Modes</h1>
 		<p><img src="images/bake_icon_material_affected.png" alt="" class="Icon"/> marked bake modes incorporate existing materials. Other materials are only affected by the geometry of the input objects.</p>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -433,7 +369,7 @@
 				</div>
                 
                 <div class="Content">
-					<h2>Tangent Normal Bevel<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2>Tangent Normal Bevel</h2>
 				<p><img src="images/bake_normal_tangent_bevel.png" width="128" height="128" alt=""/></p>
 			    <p>Bakes a normal map in tangent space with beveled edges. </p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -461,7 +397,7 @@
                 
               
            	  <div class="Content">
-					<h2>Object Normal Bevel<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2>Object Normal Bevel</h2>
 				<p><img src="images/bake_normal_object_bevel.png" width="128" height="128" alt=""/></p>
 			    <p>Bakes a normal map in object space. with beveled edges.</p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -561,7 +497,7 @@
 				  <p><strong>Note: </strong>Uses Blender Render and does not support cages.</p>
 			  </div>
 				<div class="Content">
-				  <h2>Paint Base<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				  <h2>Paint Base</h2>
 				  <p><img src="images/bake_paint_base.png" width="128" height="128" alt=""/></p>
 				  <p>Sometimes also referred to Blizzard or Dota diffuse map. This bake combines a dirt map with vertical gradient and top facing normals with a highlight. Credits to <a href="https://twitter.com/Linko_3D/status/973540986893762565" class="NoButton">Danyl Bekhoucha</a> for sharing his shader setup.</p>
 				  <p>This bake is a good starting point for character texture maps.</p>
@@ -584,7 +520,7 @@
 				
                 
                 <div class="Content">
-					<h2> Bevel Mask<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+					<h2> Bevel Mask</h2>
 				<p><img src="images/bake_bevel_mask.png" width="128" height="128" alt=""/></p>
 			    <p>Bakes a mask using the new bevel shader. Edges are solved shader based and geometry independent.</p>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -860,7 +796,94 @@
 		  </div>
 			<br>
             
-            <h1><a class="NoButton" id="preferences"></a>Preferences</h1>
+            <h1><a class="NoButton" id="meshtexture"></a>Mesh Texture</h1>
+            <p>The Mesh Texture tools use <a href="https://docs.blender.org/manual/en/dev/animation/shape_keys/introduction.html" class="NoButton">shape keys</a> to wrap between a UV shape and 3D Mesh shape. Combined with the <a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/deform/mesh_deform.html" class="NoButton">Mesh Deform modifier</a> we can wrap any mesh from UV space into 3D space. </p>
+			<div class="Panel">
+				<div class="Columns3">
+                
+                  <div class="Content">
+		      <h2> <img src="images/op_meshtex_create.png" width="32" height="32" alt=""/> UV Mesh</h2>
+		      <p>Create a UV mesh from your active object with 2 shape keys: </p>
+              <ol>
+                <li>A UV map shaped mesh</li>
+                <li>A mesh shape identical to the input 3D model. </li>
+              </ol>
+              <p><strong><img src="images/texmesh_uv_mesh.gif" alt=""/></strong></p>
+		      <p><strong>Tip</strong>: With the UV mesh selected you can transition back and forth using the transition slider.</p>
+		      <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
+          	</div>
+          
+		    <div class="Content">
+		      <h2> <img src="images/op_meshtex_trim.png" width="32" height="32" alt=""/> Trim to UV</h2>
+		      <p>Trims the objects to the UV mesh within the object selection. This operator requires a UV mesh to be part of the selection.</p>
+		      <p><strong><img src="images/demo_meshtex_trim.gif" alt=""/></strong></p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><strong><img src="images/op_meshtex_trim_collapse.png" alt=""/></strong></td>
+		          <td valign="top">Collapses the trimmed mesh's modifiers.</td>
+	            </tr>
+		        <tbody>
+	            </tbody>
+	          </table>
+		    </div>
+            
+            <div class="Content">
+		      <h2> <img src="images/op_meshtex_wrap.png" width="32" height="32" alt=""/> Wrap</h2>
+		      <p>Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.	        </p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tbody>
+		          <tr>
+		            <td valign="top"><strong>  Slider</strong></td>
+		            <td valign="top"><p>Slides UV mesh state between UV mesh shape and target mesh shape.</p>
+	                <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
+	                <p>This is the same as adjusting the shape key transition value in the mesh properties tab of blender.</p></td>
+	              </tr>
+	            </tbody>
+	          </table>
+		      <p><strong><img src="images/demo_meshtex_wrap.gif" alt=""/></strong></p>
+            </div>
+           	<div class="Content">
+		      <h2> <img src="images/op_meshtex_pattern.png" width="32" height="32" alt=""/> Create Pattern</h2>
+		      <p>Creates a new mesh at the 3D cursor with multiple array modifiers to create a pattern. All of the array modifiers use relative offsets so you can edit the mesh in any size while preserving the pattern array.		      </p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><strong>Type</strong></td>
+		          <td valign="top"><p>Type of the pattern to generate</p></td>
+	            </tr>
+		        <tr>
+		          <td valign="top"><strong> Size</strong></td>
+		          <td valign="top"><p>The size in steps of the array to repeat on the x and y axis</p></td>
+	            </tr>
+		        <tbody>
+		          <tr>
+		            <td valign="top"><strong> Scale</strong></td>
+		            <td valign="top"><p>Thel scale of the pattern</p></td>
+	              </tr>
+	            </tbody>
+	          </table>
+		      <p>There are <strong>6 patterns</strong> to choose from.</p>
+		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+		        <tr>
+		          <td valign="top"><img src="images/meshtex_pattern_bricks.png" width="120" height="120" alt=""/></td>
+		          <td valign="top"><img src="images/meshtex_pattern_stripes.png" width="120" height="120" alt=""/></td>
+	            </tr>
+		        <tr>
+		          <td valign="top"><img src="images/meshtex_pattern_rectangles.png" width="120" height="120" alt=""/></td>
+		          <td valign="top"><img src="images/meshtex_pattern_hexagons.png" width="120" height="120" alt=""/></td>
+	            </tr>
+		        <tr>
+		          <td valign="top"><img src="images/meshtex_pattern_diamonds.png" width="120" height="120" alt=""/></td>
+		          <td valign="top"><img src="images/meshtex_pattern_triangles.png" width="120" height="120" alt=""/></td>
+	            </tr>
+		        <tbody>
+	            </tbody>
+	          </table>
+           	</div>
+                  
+			  </div>
+		  </div>
+          
+          <h1><a class="NoButton" id="preferences"></a>Preferences</h1>
             <p>You find these preferences in the Addon settings of Blenders Preferences (Ctrl + U) <img src="images/show_open_preferences.png" alt=""/> under the <strong>Addons</strong> tab and the <strong>TexTools</strong> item.</p>
 			<div class="Panel">
 				<div class="Columns1">
@@ -883,7 +906,7 @@
 				  </div>
 				  
                   <div class="Content">
-				    <h2>Image Depth<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
+				    <h2>Image Depth</h2>
 						<p>Bakes images in either 8 bit  or 32 bit.						</p>
 						<table width="100%" border="0" cellspacing="10" cellpadding="0">
 						  <tr>
@@ -902,7 +925,12 @@
                   
 			  </div>
 		  </div>
-			<br>
+          
+          
+          
+          
+          
+		  <br>
             
 		  <hr>
 			<a class="NoButton" id="developer"></a>

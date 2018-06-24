@@ -430,10 +430,7 @@ def setup_vertex_color_dirty(obj):
 	colorLayer = bm.loops.layers.color.verify()
 
 
-	color = (1, 1, 1)
-	if bpy.app.version > (2, 79, 0):
-		# Newer blender versions support RGBA
-		color = (1, 1, 1, 1)
+	color = utilities_color.safe_color( (1, 1, 1) )
 
 	for face in bm.faces:
 		for loop in face.loops:
@@ -473,6 +470,7 @@ def setup_vertex_color_id_material(obj):
 					face.select = True
 
 			color = utilities_color.get_color_id(i, len(obj.material_slots))
+			# color = utilities_color.safe_color( color )
 
 			bpy.ops.object.mode_set(mode='VERTEX_PAINT')
 			bpy.context.tool_settings.vertex_paint.brush.color = color
@@ -515,7 +513,7 @@ def setup_vertex_color_id_element(obj):
 	# Color each group
 	for i in range(0,len(groups)):
 		color = utilities_color.get_color_id(i, len(groups))
-
+		color = utilities_color.safe_color( color )
 		for face in groups[i]:
 			for loop in face.loops:
 				loop[colorLayer] = color

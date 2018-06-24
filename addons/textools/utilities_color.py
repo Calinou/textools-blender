@@ -22,6 +22,22 @@ def assign_slot(obj, index):
 		assign_color(index)
 
 
+def safe_color(color):
+	if len(color) == 3:
+		if bpy.app.version > (2, 79, 0):
+			# Newer blender versions use RGBA
+			return (color[0], color[1], color[2], 1)
+		else:
+			return color
+	elif len(color) == 4:
+		if bpy.app.version > (2, 79, 0):
+			# Newer blender versions use RGBA
+			return color
+		else:
+			return (color[0], color[1], color[2])
+
+	return color
+
 
 def assign_color(index):
 	material = get_material(index)

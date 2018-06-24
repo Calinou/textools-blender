@@ -71,13 +71,13 @@
 		<table width="100%" border="0" cellspacing="16" cellpadding="0">
 		  <tbody>
 		    <tr>
-		      <td align="center"><img src="images/splash_1.2.0.jpg" width="883" height="883" alt=""/></td>
+		      <td align="center"><img src="images/splash_1.3.0.jpg" width="883" height="880" alt=""/></td>
 	        </tr>
 	      </tbody>
 		  </table>
 		<p><a name="sizepanel" class="NoButton" id="size"></a>
 		  </p>
-		<h1>Size Panel</h1>
+		<h1>General Panel</h1>
 		<div class="Panel">
 			<div class="Columns2">
 				<div class="Content">
@@ -158,7 +158,7 @@
 			  </div>
 			  <div class="Content">
 			    <h2><img src="images/op_island_straighten_edge_loops.png" width="32" height="32" alt=""/> Straight</h2>
-			    <p>Align selected UVfaces <img src="images/show_selection_uv_face.png" alt="" class="Icon"/> or UV verts <img class="Icon" src="images/show_selection_uv_vertex.png" alt=""/> to rectangular distribution. Rectify is currently based on UVSquares by <a href="https://github.com/Radivarig/UvSquares" class="NoButton">Reslav Hollos</a>.			  </p>
+			    <p>Unfolds and Pins selected edge loops into straight lines and relaxes the rest of the UV island. Similar to Headus UV layout with its edge constraints.</p>
 			  </div>
 				<div class="Content">
 				  <h2><img src="images/op_rectify.png" width="32" height="32" alt=""/> Rectify</h2>
@@ -299,8 +299,9 @@
 					<p>This options is useful for multi part objects that belong to the same texture.</p>
 				</div>
 				<div class="Content">
-					<h2><img src="images/op_bake_preview_texture.png" width="32" height="32" alt=""/> Preview</h2>
+					<h2><img src="images/op_bake_preview_texture.png" width="32" height="32" alt=""/> Preview<img src="images/new.png" alt="" width="53" height="22" class="New"/></h2>
 					<p>Preview the current <strong>background image</strong> of the Image/UV Editor <img src="images/show_uv_image_editor.png" alt=""/>  as a texture on the selected object.</p>
+					<p><strong>Tip</strong>: Normal maps (Tangent &amp; Object space) are previewed in the viewport using normal mapping shading. Cycles as the renderer is required.</p>
 				</div>
 				<div class="Content">
 					<h2> Bake Mode</h2>

@@ -470,7 +470,6 @@ def setup_vertex_color_id_material(obj):
 					face.select = True
 
 			color = utilities_color.get_color_id(i, len(obj.material_slots))
-			# color = utilities_color.safe_color( color )
 
 			bpy.ops.object.mode_set(mode='VERTEX_PAINT')
 			bpy.context.tool_settings.vertex_paint.brush.color = color

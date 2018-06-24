@@ -218,7 +218,8 @@ class EdgeSet:
 		# Pin UV's
 		bpy.ops.uv.pin()
 		bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
-		
+		bpy.ops.uv.pin(clear=True)
+
 
 
 

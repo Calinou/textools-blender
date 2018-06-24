@@ -43,6 +43,10 @@ def selection_store():
 
 
 def selection_restore(bm = None, uv_layer = None):
+
+	if bpy.context.object.mode != 'EDIT':
+		bpy.ops.object.mode_set(mode = 'EDIT')
+
 	if not bm:
 		bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	if not uv_layer:

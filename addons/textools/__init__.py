@@ -783,8 +783,6 @@ class Panel_Layout(bpy.types.Panel):
 		row.scale_y = 1.75
 		row.operator(op_unwrap_faces_iron.op.bl_idname, text="Iron Faces", icon_value = icon_get("op_unwrap_faces_iron"))
 		
-		col.separator()
-		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
 		
 		col.separator()
 
@@ -815,7 +813,9 @@ class Panel_Layout(bpy.types.Panel):
 		row.operator(op_select_islands_outline.op.bl_idname, text="Bounds", icon_value = icon_get("op_select_islands_outline"))
 		row.operator(op_select_islands_flipped.op.bl_idname, text="Flipped", icon_value = icon_get('op_select_islands_flipped'))
 
-
+		col.separator()
+		col.operator(op_smoothing_uv_islands.op.bl_idname, text="UV Smoothing", icon_value = icon_get("op_smoothing_uv_islands"))
+		
 
 class Panel_Bake(bpy.types.Panel):
 	bl_label = " "

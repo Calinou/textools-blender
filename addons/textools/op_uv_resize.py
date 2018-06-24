@@ -153,7 +153,6 @@ class op(bpy.types.Operator):
 	
 	def execute(self, context):
 
-
 		#Store selection
 		utilities_uv.selection_store()
 
@@ -183,7 +182,6 @@ class op(bpy.types.Operator):
 
 		bpy.context.scene.texToolsSettings.size[0] = self.size_x
 		bpy.context.scene.texToolsSettings.size[1] = self.size_y
-
 
 		#Restore selection
 		utilities_uv.selection_restore()
@@ -220,13 +218,6 @@ def resize_image(context, mode, size_A, size_B):
 
 	# Notes: 	https://blender.stackexchange.com/questions/31514/active-image-of-uv-image-editor
 	# 			https://docs.blender.org/api/blender_python_api_2_70_4/bpy.types.SpaceImageEditor.html
-
-	# check if current image not 'None'
-
-	# image = utilities_texel.get_object_texture_image
-	# image_editor = context.area.spaces.active.image
-
-	# if image:
 
 
 	if context.area.spaces.active != None:

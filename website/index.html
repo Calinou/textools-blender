@@ -800,85 +800,85 @@
             <p>The Mesh Texture tools use <a href="https://docs.blender.org/manual/en/dev/animation/shape_keys/introduction.html" class="NoButton">shape keys</a> to wrap between a UV shape and 3D Mesh shape. Combined with the <a href="https://docs.blender.org/manual/en/dev/modeling/modifiers/deform/mesh_deform.html" class="NoButton">Mesh Deform modifier</a> we can wrap any mesh from UV space into 3D space. </p>
 			<div class="Panel">
 				<div class="Columns3">
-                
-                  <div class="Content">
-		      <h2> <img src="images/op_meshtex_create.png" width="32" height="32" alt=""/> UV Mesh</h2>
-		      <p>Create a UV mesh from your active object with 2 shape keys: </p>
-              <ol>
-                <li>A UV map shaped mesh</li>
-                <li>A mesh shape identical to the input 3D model. </li>
-              </ol>
-              <p><strong><img src="images/texmesh_uv_mesh.gif" alt=""/></strong></p>
-		      <p><strong>Tip</strong>: With the UV mesh selected you can transition back and forth using the transition slider.</p>
-		      <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
-          	</div>
-          
-		    <div class="Content">
-		      <h2> <img src="images/op_meshtex_trim.png" width="32" height="32" alt=""/> Trim to UV</h2>
-		      <p>Trims the objects to the UV mesh within the object selection. This operator requires a UV mesh to be part of the selection.</p>
-		      <p><strong><img src="images/demo_meshtex_trim.gif" alt=""/></strong></p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td valign="top"><strong><img src="images/op_meshtex_trim_collapse.png" alt=""/></strong></td>
-		          <td valign="top">Collapses the trimmed mesh's modifiers.</td>
-	            </tr>
-		        <tbody>
-	            </tbody>
-	          </table>
-		    </div>
-            
-            <div class="Content">
-		      <h2> <img src="images/op_meshtex_wrap.png" width="32" height="32" alt=""/> Wrap</h2>
-		      <p>Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.	        </p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tbody>
-		          <tr>
-		            <td valign="top"><strong>  Slider</strong></td>
-		            <td valign="top"><p>Slides UV mesh state between UV mesh shape and target mesh shape.</p>
-	                <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
-	                <p>This is the same as adjusting the shape key transition value in the mesh properties tab of blender.</p></td>
-	              </tr>
-	            </tbody>
-	          </table>
-		      <p><strong><img src="images/demo_meshtex_wrap.gif" alt=""/></strong></p>
-            </div>
-           	<div class="Content">
-		      <h2> <img src="images/op_meshtex_pattern.png" width="32" height="32" alt=""/> Create Pattern</h2>
-		      <p>Creates a new mesh at the 3D cursor with multiple array modifiers to create a pattern. All of the array modifiers use relative offsets so you can edit the mesh in any size while preserving the pattern array.		      </p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td valign="top"><strong>Type</strong></td>
-		          <td valign="top"><p>Type of the pattern to generate</p></td>
-	            </tr>
-		        <tr>
-		          <td valign="top"><strong> Size</strong></td>
-		          <td valign="top"><p>The size in steps of the array to repeat on the x and y axis</p></td>
-	            </tr>
-		        <tbody>
-		          <tr>
-		            <td valign="top"><strong> Scale</strong></td>
-		            <td valign="top"><p>Thel scale of the pattern</p></td>
-	              </tr>
-	            </tbody>
-	          </table>
-		      <p>There are <strong>6 patterns</strong> to choose from.</p>
-		      <table width="100%" border="0" cellspacing="10" cellpadding="0">
-		        <tr>
-		          <td valign="top"><img src="images/meshtex_pattern_bricks.png" width="120" height="120" alt=""/></td>
-		          <td valign="top"><img src="images/meshtex_pattern_stripes.png" width="120" height="120" alt=""/></td>
-	            </tr>
-		        <tr>
-		          <td valign="top"><img src="images/meshtex_pattern_rectangles.png" width="120" height="120" alt=""/></td>
-		          <td valign="top"><img src="images/meshtex_pattern_hexagons.png" width="120" height="120" alt=""/></td>
-	            </tr>
-		        <tr>
-		          <td valign="top"><img src="images/meshtex_pattern_diamonds.png" width="120" height="120" alt=""/></td>
-		          <td valign="top"><img src="images/meshtex_pattern_triangles.png" width="120" height="120" alt=""/></td>
-	            </tr>
-		        <tbody>
-	            </tbody>
-	          </table>
-           	</div>
+                        
+                   <div class="Content">
+                      <h2> <img src="images/op_meshtex_create.png" width="32" height="32" alt=""/> UV Mesh</h2>
+                      <p>Create a UV mesh from your active object with 2 shape keys: </p>
+                      <ol>
+                        <li>A UV map shaped mesh</li>
+                        <li>A mesh shape identical to the input 3D model. </li>
+                      </ol>
+                      <p><strong><img src="images/texmesh_uv_mesh.gif" alt=""/></strong></p>
+                      <p><strong>Tip</strong>: With the UV mesh selected you can transition back and forth using the transition slider.</p>
+                      <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
+                    </div>
+                  
+                    <div class="Content">
+                      <h2> <img src="images/op_meshtex_trim.png" width="32" height="32" alt=""/> Trim to UV</h2>
+                      <p>Trims the objects to the UV mesh within the object selection. This operator requires a UV mesh to be part of the selection.</p>
+                      <p><strong><img src="images/demo_meshtex_trim.gif" alt=""/></strong></p>
+                      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+                        <tr>
+                          <td valign="top"><strong><img src="images/op_meshtex_trim_collapse.png" alt=""/></strong></td>
+                          <td valign="top">Collapses the trimmed mesh's modifiers.</td>
+                        </tr>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div class="Content">
+                      <h2> <img src="images/op_meshtex_wrap.png" width="32" height="32" alt=""/> Wrap</h2>
+                      <p>Wraps the selected meshes around the also selected uv mesh and binds it to a mesh deform modifier.	        </p>
+                      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+                        <tbody>
+                          <tr>
+                            <td valign="top"><strong>  Slider</strong></td>
+                            <td valign="top"><p>Slides UV mesh state between UV mesh shape and target mesh shape.</p>
+                            <p><strong><img src="images/show_texmesh_slider.gif" alt=""/></strong></p>
+                            <p>This is the same as adjusting the shape key transition value in the mesh properties tab of blender.</p></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <p><strong><img src="images/demo_meshtex_wrap.gif" alt=""/></strong></p>
+                    </div>
+                    <div class="Content">
+                      <h2> <img src="images/op_meshtex_pattern.png" width="32" height="32" alt=""/> Create Pattern</h2>
+                      <p>Creates a new mesh at the 3D cursor with multiple array modifiers to create a pattern. All of the array modifiers use relative offsets so you can edit the mesh in any size while preserving the pattern array.		      </p>
+                      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+                        <tr>
+                          <td valign="top"><strong>Type</strong></td>
+                          <td valign="top"><p>Type of the pattern to generate</p></td>
+                        </tr>
+                        <tr>
+                          <td valign="top"><strong> Size</strong></td>
+                          <td valign="top"><p>The size in steps of the array to repeat on the x and y axis</p></td>
+                        </tr>
+                        <tbody>
+                          <tr>
+                            <td valign="top"><strong> Scale</strong></td>
+                            <td valign="top"><p>Thel scale of the pattern</p></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <p>There are <strong>6 patterns</strong> to choose from.</p>
+                      <table width="100%" border="0" cellspacing="10" cellpadding="0">
+                        <tr>
+                          <td valign="top"><img src="images/meshtex_pattern_bricks.png" width="120" height="120" alt=""/></td>
+                          <td valign="top"><img src="images/meshtex_pattern_stripes.png" width="120" height="120" alt=""/></td>
+                        </tr>
+                        <tr>
+                          <td valign="top"><img src="images/meshtex_pattern_rectangles.png" width="120" height="120" alt=""/></td>
+                          <td valign="top"><img src="images/meshtex_pattern_hexagons.png" width="120" height="120" alt=""/></td>
+                        </tr>
+                        <tr>
+                          <td valign="top"><img src="images/meshtex_pattern_diamonds.png" width="120" height="120" alt=""/></td>
+                          <td valign="top"><img src="images/meshtex_pattern_triangles.png" width="120" height="120" alt=""/></td>
+                        </tr>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
                   
 			  </div>
 		  </div>

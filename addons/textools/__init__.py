@@ -39,6 +39,7 @@ if "bpy" in locals():
 	imp.reload(op_color_io_import)
 	imp.reload(op_color_select)
 	imp.reload(op_island_align_edge)
+	imp.reload(op_island_align_size)
 	imp.reload(op_island_align_sort)
 	imp.reload(op_island_align_world)
 	imp.reload(op_island_mirror)
@@ -99,6 +100,7 @@ else:
 	from . import op_color_io_import
 	from . import op_color_select
 	from . import op_island_align_edge
+	from . import op_island_align_size
 	from . import op_island_align_sort
 	from . import op_island_align_world
 	from . import op_island_mirror
@@ -718,14 +720,16 @@ class Panel_Layout(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
-		row.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
+		
 
 
 		row = col.row(align=True)
 		row.operator(op_island_align_edge.op.bl_idname, text="Align Edge", icon_value = icon_get("op_island_align_edge"))
 		
+		
 		row = col.row(align=True)
 		row.operator(op_island_align_world.op.bl_idname, text="Align World", icon_value = icon_get("op_island_align_world"))
+
 
 			
 		if bpy.app.debug_value != 0:
@@ -759,6 +763,13 @@ class Panel_Layout(bpy.types.Panel):
 
 
 		col = box.column(align=True)
+
+		row = col.row(align=True)
+		row.operator(op_island_align_size.op.bl_idname, text="↔", icon_value = icon_get("op_align_width")).mode = "WIDTH"
+		row.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
+		row.operator(op_island_align_size.op.bl_idname, text="↕", icon_value = icon_get("op_align_height")).mode = "HEIGHT"
+		
+
 		row = col.row(align=True)
 		op = row.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))
 		op.is_vertical = False;
@@ -1389,6 +1400,8 @@ def register():
 		"op_color_from_materials.png", 
 		"op_extend_canvas_open.png",
 		"op_island_align_edge.png", 
+		"op_align_width.png", 
+		"op_align_height.png", 
 		"op_island_align_sort_h.png", 
 		"op_island_align_sort_v.png", 
 		"op_island_align_world.png", 

@@ -64,6 +64,8 @@ def rectify(self, context):
 		# Select faces in island
 		bpy.ops.uv.select_all(action='DESELECT')
 		utilities_uv.set_selected_uv_faces(faces)
+
+		# Apply rectify on UV face selection
 		main(False)
 
 	#Restore selection

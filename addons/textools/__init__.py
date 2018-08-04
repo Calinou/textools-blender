@@ -857,6 +857,14 @@ class Panel_Bake(bpy.types.Panel):
 		# anti aliasing
 		col.prop(context.scene.texToolsSettings, "bake_sampling", icon_value =icon_get("bake_anti_alias"))
 		
+		# Warning: Show actual 
+		size_aa = int(bpy.context.scene.texToolsSettings.bake_sampling)
+		if size_aa > 1:
+			size_x = bpy.context.scene.texToolsSettings.size[0] * size_aa
+			size_y = bpy.context.scene.texToolsSettings.size[1] * size_aa
+			col.label(text="Bake   {} x {}".format(size_x, size_y), icon='ERROR')
+
+
 		if bpy.app.debug_value != 0:
 			row = col.row()
 			row.alert = True
@@ -1420,8 +1428,6 @@ def register():
 	bpy.types.INFO_MT_add.append(menu_INFO_MT_mesh_add)
 	bpy.types.VIEW3D_MT_uv_map.append(menu_VIEW3D_MT_uv_map)
 	bpy.types.VIEW3D_MT_object_specials.append(menu_VIEW3D_MT_object_specials)
-	
-
 
 
 def unregister():

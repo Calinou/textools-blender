@@ -107,7 +107,7 @@ def get_selected_faces():
 
 
 
-def set_selected_faces(faces):
+def set_selected_uv_faces(faces):
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data);
 	uv_layer = bm.loops.layers.uv.verify();
 	for face in faces:

@@ -53,7 +53,18 @@ def rectify(self, context):
 	#Store selection
 	utilities_uv.selection_store()
 
-	main(False)
+	# Find selection islands
+	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
+	faces = utilities_uv.get_selected_uv_faces(bm, uv_layer)
+	islands = utilities_uv.getSelectionIslands()
+	for i in range(len(islands)):
+		islands[i] = [f for f in islands[i] if f in faces]
+
+	for faces in islands:
+		# Select faces in island
+		bpy.ops.uv.select_all(action='DESELECT')
+		utilities_uv.set_selected_uv_faces(faces)
+		main(False)
 
 	#Restore selection
 	utilities_uv.selection_restore()

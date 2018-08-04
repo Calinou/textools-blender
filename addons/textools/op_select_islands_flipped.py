@@ -108,7 +108,7 @@ class Island_bounds:
 
 		#Select Island
 		bpy.ops.uv.select_all(action='DESELECT')
-		utilities_uv.set_selected_faces(faces)
+		utilities_uv.set_selected_uv_faces(faces)
 
 		bounds = utilities_uv.getSelectionBBox()
 		self.center = bounds['center']

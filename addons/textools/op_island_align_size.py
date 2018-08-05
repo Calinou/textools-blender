@@ -46,7 +46,7 @@ class op(bpy.types.Operator):
 		#Store selection
 		utilities_uv.selection_store()
 
-		main(context)
+		main(context, self.mode)
 
 		#Restore selection
 		utilities_uv.selection_restore()
@@ -55,7 +55,7 @@ class op(bpy.types.Operator):
 
 
 
-def main(context):
+def main(context, mode):
 	print("Executing operator_island_align_edge")
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
@@ -65,7 +65,7 @@ def main(context):
 	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 
 	islands = utilities_uv.getSelectionIslands()
-
+	island_sizes = {}
 
 	#Rotate to minimal bounds
 	for i in range(0, len(islands)):
@@ -75,8 +75,21 @@ def main(context):
 
 		# Collect BBox sizes
 		bounds = utilities_uv.getSelectionBBox()
+		island_sizes[i]= bounds['width'] if mode == 'WIDTH' else bounds['height'] 
 
-		print("ISland {}  = {} x {}".format(i, bounds['width'], bounds['height']))
-		# allSizes[i] = max(bounds['width'], bounds['height']) + i*0.000001;#Make each size unique
-		# allBounds[i] = bounds;
-		# print("Rotate compact:  "+str(allSizes[i]))
+
+	sorted_size = sorted(island_sizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
+	sorted_size.reverse()
+
+	for i in range(0, len(islands)):
+		index = sorted_size[i][0]
+		scale = sorted_size[0][1] / island_sizes[index]
+
+		bpy.ops.uv.select_all(action='DESELECT')
+		utilities_uv.set_selected_uv_faces(islands[index])
+
+		bpy.ops.transform.resize(value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
+
+
+		print("Scale {}".format(scale))
+

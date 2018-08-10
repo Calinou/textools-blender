@@ -720,7 +720,7 @@ class Panel_Layout(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.operator(op_uv_crop.op.bl_idname, text="Crop", icon_value = icon_get("op_uv_crop"))
-		
+		row.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
 
 
 		row = col.row(align=True)
@@ -766,7 +766,7 @@ class Panel_Layout(bpy.types.Panel):
 
 		row = col.row(align=True)
 		row.operator(op_island_align_size.op.bl_idname, text="↔", icon_value = icon_get("op_align_width")).mode = "WIDTH"
-		row.operator(op_uv_fill.op.bl_idname, text="Fill", icon_value = icon_get("op_uv_fill"))
+		
 		row.operator(op_island_align_size.op.bl_idname, text="↕", icon_value = icon_get("op_align_height")).mode = "HEIGHT"
 		
 

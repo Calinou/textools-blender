@@ -65,9 +65,9 @@ def main(context, mode):
 	bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 
 	islands = utilities_uv.getSelectionIslands()
-	island_sizes = {}
+	islands_size = {}
 
-	#Rotate to minimal bounds
+	# Collect bounds
 	for i in range(0, len(islands)):
 
 		bpy.ops.uv.select_all(action='DESELECT')
@@ -75,15 +75,16 @@ def main(context, mode):
 
 		# Collect BBox sizes
 		bounds = utilities_uv.getSelectionBBox()
-		island_sizes[i]= bounds['width'] if mode == 'WIDTH' else bounds['height'] 
+		islands_size[i]= bounds['width'] if mode == 'WIDTH' else bounds['height'] 
 
 
-	sorted_size = sorted(island_sizes.items(), key=operator.itemgetter(1))#Sort by values, store tuples
+	sorted_size = sorted(islands_size.items(), key=operator.itemgetter(1))#Sort by values, store tuples
 	sorted_size.reverse()
 
+	# Apply size to match largest
 	for i in range(0, len(islands)):
 		index = sorted_size[i][0]
-		scale = sorted_size[0][1] / island_sizes[index]
+		scale = sorted_size[0][1] / islands_size[index]
 
 		bpy.ops.uv.select_all(action='DESELECT')
 		utilities_uv.set_selected_uv_faces(islands[index])
@@ -91,5 +92,5 @@ def main(context, mode):
 		bpy.ops.transform.resize(value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
 
 
-		print("Scale {}".format(scale))
+	# Sort by bbox center position
 

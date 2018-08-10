@@ -15,7 +15,8 @@ class op(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	mode = bpy.props.StringProperty(name="Mode", default="HEIGHT")
-	
+	padding = bpy.props.FloatProperty(description="Padding between UV islands", default=0.05)
+
 	@classmethod
 	def poll(cls, context):
 		#Only in UV editor mode
@@ -46,7 +47,7 @@ class op(bpy.types.Operator):
 		#Store selection
 		utilities_uv.selection_store()
 
-		main(context, self.mode)
+		main(context, self.mode, self.padding)
 
 		#Restore selection
 		utilities_uv.selection_restore()
@@ -55,8 +56,7 @@ class op(bpy.types.Operator):
 
 
 
-def main(context, mode):
-	print("Executing operator_island_align_edge")
+def main(context, mode, padding):
 
 	bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
 	uv_layer = bm.loops.layers.uv.verify()
@@ -66,6 +66,7 @@ def main(context, mode):
 
 	islands = utilities_uv.getSelectionIslands()
 	islands_size = {}
+	islands_center = {}
 
 	# Collect bounds
 	for i in range(0, len(islands)):
@@ -75,9 +76,10 @@ def main(context, mode):
 
 		# Collect BBox sizes
 		bounds = utilities_uv.getSelectionBBox()
-		islands_size[i]= bounds['width'] if mode == 'WIDTH' else bounds['height'] 
+		islands_size[i]= bounds['width'] if mode == 'WIDTH' else bounds['height']
+		islands_center[i] = bounds['center'].x if mode =='WIDTH' else bounds['center'].y
 
-
+	# Sort largest to smallest
 	sorted_size = sorted(islands_size.items(), key=operator.itemgetter(1))#Sort by values, store tuples
 	sorted_size.reverse()
 
@@ -92,5 +94,40 @@ def main(context, mode):
 		bpy.ops.transform.resize(value=(scale, scale, 1), constraint_axis=(True, True, False), constraint_orientation='GLOBAL')
 
 
-	# Sort by bbox center position
+	# Sort by position 
+	sorted_center = sorted(islands_center.items(), key=operator.itemgetter(1))
+
+	# Set position in order
+	offset = None
+	for i in range(0, len(islands)):
+		index = sorted_size[i][0]
+		
+		bpy.ops.uv.select_all(action='DESELECT')
+		utilities_uv.set_selected_uv_faces(islands[index])
+
+		bounds = utilities_uv.getSelectionBBox()
+
+		if i > 0:
+			if mode == 'HEIGHT':
+				delta = offset - bounds['min']
+				delta.y-= bounds['height']
+				delta.x+= padding
+				bpy.ops.transform.translate(value=(delta.x, delta.y, 0))
+			else:
+				delta = offset - bounds['max']
+				delta.x+= bounds['width']
+				delta.y-= padding
+				bpy.ops.transform.translate(value=(delta.x, delta.y, 0))
+			
+
+			utilities_uv.set_selected_uv_faces(islands[index])
+			bounds = utilities_uv.getSelectionBBox()
+
+		if mode == 'HEIGHT':
+			offset = bounds['max']
+		else:
+			offset = bounds['min']
+
+
+
 

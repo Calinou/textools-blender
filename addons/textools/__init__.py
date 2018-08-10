@@ -765,10 +765,14 @@ class Panel_Layout(bpy.types.Panel):
 		col = box.column(align=True)
 
 		row = col.row(align=True)
-		row.operator(op_island_align_size.op.bl_idname, text="↔", icon_value = icon_get("op_align_width")).mode = "WIDTH"
 		
-		row.operator(op_island_align_size.op.bl_idname, text="↕", icon_value = icon_get("op_align_height")).mode = "HEIGHT"
-		
+		op = row.operator(op_island_align_size.op.bl_idname, text="↔", icon_value = icon_get("op_align_width"))
+		op.mode = "WIDTH"
+		op.padding = utilities_ui.get_padding()
+
+		op = row.operator(op_island_align_size.op.bl_idname, text="↕", icon_value = icon_get("op_align_height"))
+		op.mode = "HEIGHT"
+		op.padding = utilities_ui.get_padding()
 
 		row = col.row(align=True)
 		op = row.operator(op_island_align_sort.op.bl_idname, text="Sort H", icon_value = icon_get("op_island_align_sort_h"))

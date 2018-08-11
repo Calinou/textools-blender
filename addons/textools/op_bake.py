@@ -31,10 +31,11 @@ modes={
 }
 
 if hasattr(bpy.types,"ShaderNodeBevel"):
-	# Has newer bevel shader (2.7 nightly build series)
-	modes['bevel_mask'] = ub.BakeMode('bake_bevel_mask',				type='EMIT', 	color=(0, 0, 0, 1), params=["bake_bevel_samples","bake_bevel_size"])
-	modes['normal_tangent_bevel'] = ub.BakeMode('bake_bevel_normal',	type='NORMAL', 	color=(0.5, 0.5, 1, 1), params=["bake_bevel_samples","bake_bevel_size"])
-	modes['normal_object_bevel'] = ub.BakeMode('bake_bevel_normal',		type='NORMAL', 	color=(0.5, 0.5, 1, 1), normal_space='OBJECT', params=["bake_bevel_samples","bake_bevel_size"])
+	# Has newer bevel shader (2.7x nightly build series)
+	modes['thickness'] = ub.BakeMode('bake_thickness',					type='EMIT', 	color=(0, 0, 0, 1), params=["bake_samples","bake_thickness_distance","bake_thickness_contrast"], version=280)
+	modes['bevel_mask'] = ub.BakeMode('bake_bevel_mask',				type='EMIT', 	color=(0, 0, 0, 1), params=["bake_bevel_samples","bake_bevel_size"], version=280)
+	modes['normal_tangent_bevel'] = ub.BakeMode('bake_bevel_normal',	type='NORMAL', 	color=(0.5, 0.5, 1, 1), params=["bake_bevel_samples","bake_bevel_size"], version=280)
+	modes['normal_object_bevel'] = ub.BakeMode('bake_bevel_normal',		type='NORMAL', 	color=(0.5, 0.5, 1, 1), normal_space='OBJECT', params=["bake_bevel_samples","bake_bevel_size"], version=280)
 
 
 
@@ -432,6 +433,14 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 			if "Bevel" in material_bake.node_tree.nodes:
 				material_bake.node_tree.nodes["Bevel"].inputs[0].default_value = bpy.context.scene.texToolsSettings.bake_bevel_size
 				material_bake.node_tree.nodes["Bevel"].samples = bpy.context.scene.texToolsSettings.bake_bevel_samples
+		if mode == 'thickness':
+			if "ao" in material_bake.node_tree.nodes:
+				material_bake.node_tree.nodes["ao"].samples = bpy.context.scene.texToolsSettings.bake_samples
+			if "Distance" in material_bake.node_tree.nodes:
+				material_bake.node_tree.nodes["Distance"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_thickness_distance
+			if "Contrast" in material_bake.node_tree.nodes:
+				material_bake.node_tree.nodes["Contrast"].outputs[0].default_value = bpy.context.scene.texToolsSettings.bake_thickness_contrast
+			
 
 
 
@@ -472,15 +481,14 @@ def assign_material(mode, obj, material_bake=None, material_empty=None):
 
 def get_material(mode):
 
-	
-
 	if modes[mode].material == "":
 		return None # No material setup requires
 
 	# Find or load material
 	name = modes[mode].material
 	path = os.path.join(os.path.dirname(__file__), "resources/materials.blend")+"\\Material\\"
-	if "bevel" in mode:
+	if modes[mode].version >= 280:
+		# 2.80 Features
 		path = os.path.join(os.path.dirname(__file__), "resources/materials_2.80.blend")+"\\Material\\"
 	
 	print("Get mat {}\n{}".format(mode, path))

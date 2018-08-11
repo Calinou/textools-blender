@@ -467,7 +467,20 @@ class TexToolsSettings(bpy.types.PropertyGroup):
 		min = 1,
 		max = 16
 	)
-
+	bake_thickness_distance = bpy.props.FloatProperty(
+		name = "Distance",
+		description = "AO distance",
+		default = 1.0,
+		min = 0.0,
+		max = 16.0
+	)
+	bake_thickness_contrast = bpy.props.FloatProperty(
+		name = "Contrast",
+		description = "AO contrast",
+		default = 0.0,
+		min = 0.0,
+		max = 2.0
+	)
 
 	bake_ray_distance = bpy.props.FloatProperty(
 		name = "Ray Dist.",

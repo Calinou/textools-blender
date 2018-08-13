@@ -27,6 +27,12 @@ class op(bpy.types.Operator):
 		max = 0.35
 	)
 
+	def draw(self, context):
+		layout = self.layout
+		col = layout.column()
+		col.label(text="Properties?")
+		col.prop(self, "radius")
+
 
 	@classmethod
 	def poll(cls, context):
